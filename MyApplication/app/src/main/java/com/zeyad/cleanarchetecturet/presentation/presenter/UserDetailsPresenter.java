@@ -1,0 +1,142 @@
+/**
+ * Copyright (C) 2015 Fernando Cejas Open Source Project
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.zeyad.cleanarchetecturet.presentation.presenter;
+
+import android.support.annotation.NonNull;
+
+import com.zeyad.cleanarchetecturet.domain.User;
+import com.zeyad.cleanarchetecturet.domain.exception.DefaultErrorBundle;
+import com.zeyad.cleanarchetecturet.domain.exception.ErrorBundle;
+import com.zeyad.cleanarchetecturet.domain.interactor.DefaultSubscriber;
+import com.zeyad.cleanarchetecturet.domain.interactor.UseCase;
+import com.zeyad.cleanarchetecturet.presentation.exception.ErrorMessageFactory;
+import com.zeyad.cleanarchetecturet.presentation.internal.di.PerActivity;
+import com.zeyad.cleanarchetecturet.presentation.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchetecturet.presentation.model.UserModel;
+import com.zeyad.cleanarchetecturet.presentation.view.UserDetailsView;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+/**
+ * {@link Presenter} that controls communication between views and models of the presentation
+ * layer.
+ */
+@PerActivity
+public class UserDetailsPresenter implements Presenter {
+
+    /**
+     * id used to retrieve user details
+     */
+    private int userId;
+
+    private UserDetailsView viewDetailsView;
+
+    private final UseCase getUserDetailsUseCase;
+    private final UserModelDataMapper userModelDataMapper;
+
+    @Inject
+    public UserDetailsPresenter(@Named("userDetails") UseCase getUserDetailsUseCase,
+                                UserModelDataMapper userModelDataMapper) {
+        this.getUserDetailsUseCase = getUserDetailsUseCase;
+        this.userModelDataMapper = userModelDataMapper;
+    }
+
+    public void setView(@NonNull UserDetailsView view) {
+        this.viewDetailsView = view;
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void destroy() {
+        this.getUserDetailsUseCase.unsubscribe();
+    }
+
+    /**
+     * Initializes the presenter by start retrieving user details.
+     */
+    public void initialize(int userId) {
+        this.userId = userId;
+        this.loadUserDetails();
+    }
+
+    /**
+     * Loads user details.
+     */
+    private void loadUserDetails() {
+        this.hideViewRetry();
+        this.showViewLoading();
+        this.getUserDetails();
+    }
+
+    private void showViewLoading() {
+        this.viewDetailsView.showLoading();
+    }
+
+    private void hideViewLoading() {
+        this.viewDetailsView.hideLoading();
+    }
+
+    private void showViewRetry() {
+        this.viewDetailsView.showRetry();
+    }
+
+    private void hideViewRetry() {
+        this.viewDetailsView.hideRetry();
+    }
+
+    private void showErrorMessage(ErrorBundle errorBundle) {
+        String errorMessage = ErrorMessageFactory.create(this.viewDetailsView.getContext(),
+                errorBundle.getException());
+        this.viewDetailsView.showError(errorMessage);
+    }
+
+    private void showUserDetailsInView(User user) {
+        final UserModel userModel = this.userModelDataMapper.transform(user);
+        this.viewDetailsView.renderUser(userModel);
+    }
+
+    private void getUserDetails() {
+        this.getUserDetailsUseCase.execute(new UserDetailsSubscriber());
+    }
+
+    private final class UserDetailsSubscriber extends DefaultSubscriber<User> {
+
+        @Override
+        public void onCompleted() {
+            UserDetailsPresenter.this.hideViewLoading();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            UserDetailsPresenter.this.hideViewLoading();
+            UserDetailsPresenter.this.showErrorMessage(new DefaultErrorBundle((Exception) e));
+            UserDetailsPresenter.this.showViewRetry();
+        }
+
+        @Override
+        public void onNext(User user) {
+            UserDetailsPresenter.this.showUserDetailsInView(user);
+        }
+    }
+}
