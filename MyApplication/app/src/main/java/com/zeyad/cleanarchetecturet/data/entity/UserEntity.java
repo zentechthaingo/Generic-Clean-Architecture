@@ -2,8 +2,6 @@ package com.zeyad.cleanarchetecturet.data.entity;
 
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-
 /**
  * User Entity used in the data layer.
  */
