@@ -10,6 +10,7 @@ import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.zeyad.cleanarchetecturet.data.entity.ProductEntity;
 import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
 import com.zeyad.cleanarchetecturet.utilities.Constants;
 
@@ -86,5 +87,17 @@ public class ApiConnection {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userEntityById(userId);
+    }
+
+    public static Observable<List<ProductEntity>> productList() {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).getProductList();
+    }
+
+    public static Observable<ProductEntity> product(int productId) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).getProductById(productId);
     }
 }

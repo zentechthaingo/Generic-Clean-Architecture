@@ -1,9 +1,11 @@
 package com.zeyad.cleanarchetecturet.data.net;
 
+import com.zeyad.cleanarchetecturet.data.entity.ProductEntity;
 import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
 
 import java.util.List;
 
+import retrofit.http.Path;
 import rx.Observable;
 
 /**
@@ -22,5 +24,15 @@ public class RestApiImpl implements RestApi {
     @Override
     public Observable<UserEntity> userEntityById(final int userId) {
         return ApiConnection.user(userId);
+    }
+
+    @Override
+    public Observable<List<ProductEntity>> getProductList() {
+        return null;
+    }
+
+    @Override
+    public Observable<ProductEntity> getProductById(final int id) {
+        return null;
     }
 }

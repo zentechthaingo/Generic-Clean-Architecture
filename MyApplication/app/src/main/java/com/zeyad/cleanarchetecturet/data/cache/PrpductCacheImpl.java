@@ -2,8 +2,9 @@ package com.zeyad.cleanarchetecturet.data.cache;
 
 import android.content.Context;
 
+import com.zeyad.cleanarchetecturet.data.cache.serializer.ProductJsonSerializer;
 import com.zeyad.cleanarchetecturet.data.cache.serializer.UserJsonSerializer;
-import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
+import com.zeyad.cleanarchetecturet.data.entity.ProductEntity;
 import com.zeyad.cleanarchetecturet.data.exception.UserNotFoundException;
 import com.zeyad.cleanarchetecturet.domain.executor.ThreadExecutor;
 
@@ -21,7 +22,7 @@ import rx.Subscriber;
  * {@link UserCache} implementation.
  */
 @Singleton
-public class UserCacheImpl implements UserCache {
+public class PrpductCacheImpl implements ProductCache {
 
     private static final String SETTINGS_FILE_NAME = "com.fernandocejas.android10.SETTINGS";
     private static final String SETTINGS_KEY_LAST_CACHE_UPDATE = "last_cache_update";
@@ -31,40 +32,40 @@ public class UserCacheImpl implements UserCache {
 
     private final Context context;
     private final File cacheDir;
-    private final UserJsonSerializer serializer;
+    private final ProductJsonSerializer serializer;
     private final UserFileManager userFileManager;
     private final ThreadExecutor threadExecutor;
 
     /**
-     * Constructor of the class {@link UserCacheImpl}.
+     * Constructor of the class {@link PrpductCacheImpl}.
      *
-     * @param context             A
-     * @param userCacheSerializer {@link UserJsonSerializer} for object serialization.
-     * @param userFileManager         {@link UserFileManager} for saving serialized objects to the file system.
+     * @param context               A
+     * @param productJsonSerializer {@link UserJsonSerializer} for object serialization.
+     * @param userFileManager       {@link UserFileManager} for saving serialized objects to the file system.
      */
     @Inject
-    public UserCacheImpl(Context context, UserJsonSerializer userCacheSerializer,
-                         UserFileManager userFileManager, ThreadExecutor executor) {
-        if (context == null || userCacheSerializer == null || userFileManager == null || executor == null) {
+    public PrpductCacheImpl(Context context, ProductJsonSerializer productJsonSerializer,
+                            UserFileManager userFileManager, ThreadExecutor executor) {
+        if (context == null || productJsonSerializer == null || userFileManager == null || executor == null) {
             throw new IllegalArgumentException("Invalid null parameter");
         }
         this.context = context.getApplicationContext();
         this.cacheDir = this.context.getCacheDir();
-        this.serializer = userCacheSerializer;
+        this.serializer = productJsonSerializer;
         this.userFileManager = userFileManager;
         this.threadExecutor = executor;
     }
 
     @Override
-    public Observable<UserEntity> get(final int userId) {
-        return Observable.create(new Observable.OnSubscribe<UserEntity>() {
+    public Observable<ProductEntity> get(final int userId) {
+        return Observable.create(new Observable.OnSubscribe<ProductEntity>() {
             @Override
-            public void call(Subscriber<? super UserEntity> subscriber) {
-                File userEntityFile = UserCacheImpl.this.buildFile(userId);
-                String fileContent = UserCacheImpl.this.userFileManager.readFileContent(userEntityFile);
-                UserEntity userEntity = UserCacheImpl.this.serializer.deserialize(fileContent);
-                if (userEntity != null) {
-                    subscriber.onNext(userEntity);
+            public void call(Subscriber<? super ProductEntity> subscriber) {
+                File productEntityFile = buildFile(userId);
+                String fileContent = userFileManager.readFileContent(productEntityFile);
+                ProductEntity productEntity = serializer.deserialize(fileContent);
+                if (productEntity != null) {
+                    subscriber.onNext(productEntity);
                     subscriber.onCompleted();
                 } else {
                     subscriber.onError(new UserNotFoundException());
@@ -74,12 +75,12 @@ public class UserCacheImpl implements UserCache {
     }
 
     @Override
-    public void put(UserEntity userEntity) {
-        if (userEntity != null) {
-            File userEntityFile = this.buildFile(userEntity.getUserId());
-            if (!isCached(userEntity.getUserId())) {
-                String jsonString = this.serializer.serialize(userEntity);
-                this.executeAsynchronously(new CacheWriter(this.userFileManager, userEntityFile,
+    public void put(ProductEntity productEntity) {
+        if (productEntity != null) {
+            File productEntityFile = buildFile(Integer.parseInt(productEntity.getProduct_id()));
+            if (!isCached(Integer.parseInt(productEntity.getProduct_id()))) {
+                String jsonString = serializer.serialize(productEntity);
+                this.executeAsynchronously(new CacheWriter(this.userFileManager, productEntityFile,
                         jsonString));
                 setLastCacheUpdateTimeMillis();
             }
@@ -87,9 +88,9 @@ public class UserCacheImpl implements UserCache {
     }
 
     @Override
-    public boolean isCached(int userId) {
-        File userEntitiyFile = this.buildFile(userId);
-        return this.userFileManager.exists(userEntitiyFile);
+    public boolean isCached(int productId) {
+        File productEntitiyFile = buildFile(productId);
+        return userFileManager.exists(productEntitiyFile);
     }
 
     @Override
@@ -197,13 +198,13 @@ public class UserCacheImpl implements UserCache {
 
     //
 //    @Override
-//    public Observable<UserEntity> get(final int userId) {
-//        return Observable.create(new Observable.OnSubscribe<UserEntity>() {
+//    public Observable<ProductEntity> get(final int userId) {
+//        return Observable.create(new Observable.OnSubscribe<ProductEntity>() {
 //            @Override
-//            public void call(Subscriber<? super UserEntity> subscriber) {
-//                UserEntity userEntity = mRealm.where(UserEntity.class).equalTo("id", userId).findAll().first();
-//                if (userEntity != null) {
-//                    subscriber.onNext(userEntity);
+//            public void call(Subscriber<? super ProductEntity> subscriber) {
+//                ProductEntity productEntity = mRealm.where(ProductEntity.class).equalTo("id", userId).findAll().first();
+//                if (productEntity != null) {
+//                    subscriber.onNext(productEntity);
 //                    subscriber.onCompleted();
 //                } else {
 //                    subscriber.onError(new UserNotFoundException());
@@ -213,19 +214,19 @@ public class UserCacheImpl implements UserCache {
 //    }
 //
 //    @Override
-//    public void put(final UserEntity userEntity) {
-//        if (userEntity != null) {
-//            if (!isCached(userEntity.getUserId())) {
-//                Observable.create(new Observable.OnSubscribe<UserEntity>() {
+//    public void put(final ProductEntity productEntity) {
+//        if (productEntity != null) {
+//            if (!isCached(productEntity.getUserId())) {
+//                Observable.create(new Observable.OnSubscribe<ProductEntity>() {
 //                    @Override
-//                    public void call(final Subscriber<? super UserEntity> subscriber) {
-//                        UserEntity roomEntity2 = mRealm.createObject(UserEntity.class);
-//                        userEntity.setLastUpdateTimeMillis(System.currentTimeMillis());
-//                        roomEntity2 = userEntity;
+//                    public void call(final Subscriber<? super ProductEntity> subscriber) {
+//                        ProductEntity roomEntity2 = mRealm.createObject(ProductEntity.class);
+//                        productEntity.setLastUpdateTimeMillis(System.currentTimeMillis());
+//                        roomEntity2 = productEntity;
 //                        subscriber.onNext(roomEntity2);
 //                        subscriber.onCompleted();
 //                    }
-//                }).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(new Observer<UserEntity>() {
+//                }).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(new Observer<ProductEntity>() {
 //                    @Override
 //                    public void onCompleted() { // Called when the observable has no more data to emit
 ////                        Log.d("Rx image caching", "Image download complete");
@@ -238,7 +239,7 @@ public class UserCacheImpl implements UserCache {
 //                    }
 //
 //                    @Override
-//                    public void onNext(UserEntity file) {// Called each time the observable emits data
+//                    public void onNext(ProductEntity file) {// Called each time the observable emits data
 ////                        Log.d("Rx image caching", "Image download successful, name: " + file.getName());
 ////                        subscriber.onNext(file);
 //                    }
@@ -249,20 +250,20 @@ public class UserCacheImpl implements UserCache {
 //
 //    @Override
 //    public boolean isCached(int userId) {
-//        return mRealm.where(UserEntity.class).equalTo("id", userId).findAll().first().isValid();
+//        return mRealm.where(ProductEntity.class).equalTo("id", userId).findAll().first().isValid();
 //    }
 //
 //    @Override
 //    public boolean isExpired(int userId) {
-//        UserEntity userEntity = mRealm.where(UserEntity.class).equalTo("id", userId).findAll().first();
+//        ProductEntity productEntity = mRealm.where(ProductEntity.class).equalTo("id", userId).findAll().first();
 ////        if (expired)
 ////            evictAll();
-//        return ((System.currentTimeMillis() - userEntity.getLastUpdateTimeMillis()) > EXPIRATION_TIME);
+//        return ((System.currentTimeMillis() - productEntity.getLastUpdateTimeMillis()) > EXPIRATION_TIME);
 //    }
 //
 //    @Override
 //    public void evictAll() {
-//        mRealm.where(UserEntity.class).findAll().clear();
+//        mRealm.where(ProductEntity.class).findAll().clear();
 //    }
 //
     @Override
@@ -270,7 +271,7 @@ public class UserCacheImpl implements UserCache {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
-//                mRealm.where(UserEntity.class).equalTo("id", userId).findAll().first().removeFromRealm();
+//                mRealm.where(ProductEntity.class).equalTo("id", userId).findAll().first().removeFromRealm();
                 subscriber.onNext(true);
                 subscriber.onCompleted();
             }
@@ -278,11 +279,11 @@ public class UserCacheImpl implements UserCache {
     }
 
     @Override
-    public Observable<Boolean> evict(final UserEntity userEntity) {
+    public Observable<Boolean> evict(final ProductEntity productEntity) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
-//                userEntity.removeFromRealm();
+//                productEntity.removeFromRealm();
                 subscriber.onNext(true);
                 subscriber.onCompleted();
             }

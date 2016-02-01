@@ -18,10 +18,10 @@ import javax.inject.Singleton;
  * Helper class to do operations on regular files/directories.
  */
 @Singleton
-public class FileManager {
+public class UserFileManager {
 
     @Inject
-    public FileManager() {
+    public UserFileManager() {
     }
 
     /**

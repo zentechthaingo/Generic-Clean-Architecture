@@ -1,6 +1,6 @@
 package com.zeyad.cleanarchetecturet.data.cache;
 
-import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
+import com.zeyad.cleanarchetecturet.data.entity.ProductEntity;
 
 import rx.Observable;
 // TODO: 1/29/16 Change Name!
@@ -8,35 +8,35 @@ import rx.Observable;
 /**
  * An interface representing a user Cache.
  */
-public interface UserCache {
+public interface ProductCache {
     /**
-     * Gets an {@link rx.Observable} which will emit a {@link UserEntity}.
+     * Gets an {@link Observable} which will emit a {@link ProductEntity}.
      *
      * @param userId The user id to retrieve data.
      */
-    Observable<UserEntity> get(final int userId);
+    Observable<ProductEntity> get(final int userId);
 
     /**
      * Puts and element into the cache.
      *
-     * @param userEntity Element to insert in the cache.
+     * @param productEntity Element to insert in the cache.
      */
-    void put(UserEntity userEntity);
+    void put(ProductEntity productEntity);
 
     /**
      * Checks if an element (User) exists in the cache.
      *
-     * @param userId The id used to look for inside the cache.
+     * @param productId The id used to look for inside the cache.
      * @return true if the element is cached, otherwise false.
      */
-    boolean isCached(final int userId);
+    boolean isCached(final int productId);
 
     /**
      * Checks if the cache is expired.
      *
      * @return true, the cache is expired, otherwise false.
      */
-    boolean isExpired(/*final int userId*/);
+    boolean isExpired(/*final int productId*/);
 
     /**
      * Evict all elements of the cache.
@@ -45,5 +45,5 @@ public interface UserCache {
 
     Observable<Boolean> evictById(final int userId);
 
-    Observable<Boolean> evict(final UserEntity userEntity);
+    Observable<Boolean> evict(final ProductEntity productEntity);
 }
