@@ -1,21 +1,7 @@
-/**
- * Copyright (C) 2015 Fernando Cejas Open Source Project
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.zeyad.cleanarchetecturet.data.entity.mapper;
 
 import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
+import com.zeyad.cleanarchetecturet.data.entity.UserRealmModel;
 import com.zeyad.cleanarchetecturet.domain.User;
 
 import java.util.ArrayList;
@@ -25,10 +11,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-/**
- * Mapper class used to transform {@link UserEntity} (in the data layer) to {@link User} in the
- * domain layer.
- */
 @Singleton
 public class UserEntityDataMapper {
 
@@ -57,6 +39,57 @@ public class UserEntityDataMapper {
     }
 
     /**
+     * Transform a {@link UserRealmModel} into an {@link UserEntity}.
+     *
+     * @param userRealmModels Objects to be transformed.
+     * @return {@link UserEntity} if valid {@link UserRealmModel} otherwise null.
+     */
+    public List<UserEntity> transformAll(Collection<UserRealmModel> userRealmModels) {
+        List<UserEntity> userEntityList = new ArrayList<>();
+        UserEntity userEntity;
+        for (UserRealmModel userRealmModel : userRealmModels) {
+            userEntity = transform(userRealmModel);
+            if (userEntity != null)
+                userEntityList.add(userEntity);
+        }
+        return userEntityList;
+    }
+
+    /**
+     * Transform a {@link UserRealmModel} into an {@link UserEntity}.
+     *
+     * @param userRealmModel Object to be transformed.
+     * @return {@link UserEntity} if valid {@link UserRealmModel} otherwise null.
+     */
+    public UserEntity transform(UserRealmModel userRealmModel) {
+        UserEntity userEntity = null;
+        if (userRealmModel != null) {
+            userEntity = new UserEntity();
+            userEntity.setUserId(userRealmModel.getUserId());
+            userEntity.setCoverUrl(userRealmModel.getCoverUrl());
+            userEntity.setFullname(userRealmModel.getFullName());
+            userEntity.setDescription(userRealmModel.getDescription());
+            userEntity.setFollowers(userRealmModel.getFollowers());
+            userEntity.setEmail(userRealmModel.getEmail());
+        }
+        return userEntity;
+    }
+
+    public UserRealmModel transformToRealm(UserEntity userEntity) {
+        UserRealmModel userRealmModel = null;
+        if (userEntity != null) {
+            userRealmModel = new UserRealmModel();
+            userRealmModel.setUserId(userEntity.getUserId());
+            userRealmModel.setCoverUrl(userEntity.getCoverUrl());
+            userRealmModel.setFullName(userEntity.getFullname());
+            userRealmModel.setDescription(userEntity.getDescription());
+            userRealmModel.setFollowers(userEntity.getFollowers());
+            userRealmModel.setEmail(userEntity.getEmail());
+        }
+        return userRealmModel;
+    }
+
+    /**
      * Transform a List of {@link UserEntity} into a Collection of {@link User}.
      *
      * @param userEntityCollection Object Collection to be transformed.
@@ -71,7 +104,6 @@ public class UserEntityDataMapper {
                 userList.add(user);
             }
         }
-
         return userList;
     }
 }

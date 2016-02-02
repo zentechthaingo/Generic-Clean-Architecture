@@ -1,8 +1,3 @@
-/**
- * Copyright (C) 2014 android10.org. All rights reserved.
- *
- * @author Fernando Cejas (the android10 coder)
- */
 package com.zeyad.cleanarchetecturet.presentation.view.adapter;
 
 import android.content.Context;
@@ -44,27 +39,25 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     @Override
     public int getItemCount() {
-        return (this.usersCollection != null) ? this.usersCollection.size() : 0;
+        return (usersCollection != null) ? usersCollection.size() : 0;
     }
 
     @Override
     public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = this.layoutInflater.inflate(R.layout.row_user, parent, false);
+        View view = layoutInflater.inflate(R.layout.row_user, parent, false);
         UserViewHolder userViewHolder = new UserViewHolder(view);
-
         return userViewHolder;
     }
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, final int position) {
-        final UserModel userModel = this.usersCollection.get(position);
+        final UserModel userModel = usersCollection.get(position);
         holder.textViewTitle.setText(userModel.getFullName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (UsersAdapter.this.onItemClickListener != null) {
-                    UsersAdapter.this.onItemClickListener.onUserItemClicked(userModel);
-                }
+                if (onItemClickListener != null)
+                    onItemClickListener.onUserItemClicked(userModel);
             }
         });
     }
@@ -75,9 +68,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     }
 
     public void setUsersCollection(Collection<UserModel> usersCollection) {
-        this.validateUsersCollection(usersCollection);
+        validateUsersCollection(usersCollection);
         this.usersCollection = (List<UserModel>) usersCollection;
-        this.notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -85,9 +78,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     }
 
     private void validateUsersCollection(Collection<UserModel> usersCollection) {
-        if (usersCollection == null) {
+        if (usersCollection == null)
             throw new IllegalArgumentException("The list cannot be null");
-        }
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {

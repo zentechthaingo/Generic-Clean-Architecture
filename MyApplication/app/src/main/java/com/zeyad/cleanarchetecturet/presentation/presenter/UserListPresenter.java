@@ -43,15 +43,17 @@ public class UserListPresenter implements Presenter {
 
     @Override
     public void resume() {
+        getUserList();
     }
 
     @Override
     public void pause() {
+        getUserListUseCase.unsubscribe();
     }
 
     @Override
     public void destroy() {
-        getUserListUseCase.unsubscribe();
+//        getUserListUseCase.unsubscribe();
     }
 
     /**
@@ -91,15 +93,12 @@ public class UserListPresenter implements Presenter {
     }
 
     private void showErrorMessage(ErrorBundle errorBundle) {
-        String errorMessage = ErrorMessageFactory.create(viewListView.getContext(),
-                errorBundle.getException());
-        viewListView.showError(errorMessage);
+        viewListView.showError(ErrorMessageFactory.create(viewListView.getContext(),
+                errorBundle.getException()));
     }
 
     private void showUsersCollectionInView(Collection<User> usersCollection) {
-        final Collection<UserModel> userModelsCollection =
-                userModelDataMapper.transform(usersCollection);
-        viewListView.renderUserList(userModelsCollection);
+        viewListView.renderUserList(userModelDataMapper.transform(usersCollection));
     }
 
     private void getUserList() {

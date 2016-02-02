@@ -1,18 +1,3 @@
-/**
- * Copyright (C) 2015 Fernando Cejas Open Source Project
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.zeyad.cleanarchetecturet.presentation.presenter;
 
 import android.support.annotation.NonNull;
@@ -69,7 +54,7 @@ public class UserDetailsPresenter implements Presenter {
 
     @Override
     public void destroy() {
-        this.getUserDetailsUseCase.unsubscribe();
+        getUserDetailsUseCase.unsubscribe();
     }
 
     /**
@@ -77,66 +62,66 @@ public class UserDetailsPresenter implements Presenter {
      */
     public void initialize(int userId) {
         this.userId = userId;
-        this.loadUserDetails();
+        loadUserDetails();
     }
 
     /**
      * Loads user details.
      */
     private void loadUserDetails() {
-        this.hideViewRetry();
-        this.showViewLoading();
-        this.getUserDetails();
+        hideViewRetry();
+        showViewLoading();
+        getUserDetails();
     }
 
     private void showViewLoading() {
-        this.viewDetailsView.showLoading();
+        viewDetailsView.showLoading();
     }
 
     private void hideViewLoading() {
-        this.viewDetailsView.hideLoading();
+        viewDetailsView.hideLoading();
     }
 
     private void showViewRetry() {
-        this.viewDetailsView.showRetry();
+        viewDetailsView.showRetry();
     }
 
     private void hideViewRetry() {
-        this.viewDetailsView.hideRetry();
+        viewDetailsView.hideRetry();
     }
 
     private void showErrorMessage(ErrorBundle errorBundle) {
-        String errorMessage = ErrorMessageFactory.create(this.viewDetailsView.getContext(),
+        String errorMessage = ErrorMessageFactory.create(viewDetailsView.getContext(),
                 errorBundle.getException());
-        this.viewDetailsView.showError(errorMessage);
+        viewDetailsView.showError(errorMessage);
     }
 
     private void showUserDetailsInView(User user) {
-        final UserModel userModel = this.userModelDataMapper.transform(user);
-        this.viewDetailsView.renderUser(userModel);
+        final UserModel userModel = userModelDataMapper.transform(user);
+        viewDetailsView.renderUser(userModel);
     }
 
     private void getUserDetails() {
-        this.getUserDetailsUseCase.execute(new UserDetailsSubscriber());
+        getUserDetailsUseCase.execute(new UserDetailsSubscriber());
     }
 
     private final class UserDetailsSubscriber extends DefaultSubscriber<User> {
 
         @Override
         public void onCompleted() {
-            UserDetailsPresenter.this.hideViewLoading();
+            hideViewLoading();
         }
 
         @Override
         public void onError(Throwable e) {
-            UserDetailsPresenter.this.hideViewLoading();
-            UserDetailsPresenter.this.showErrorMessage(new DefaultErrorBundle((Exception) e));
-            UserDetailsPresenter.this.showViewRetry();
+            hideViewLoading();
+            showErrorMessage(new DefaultErrorBundle((Exception) e));
+            showViewRetry();
         }
 
         @Override
         public void onNext(User user) {
-            UserDetailsPresenter.this.showUserDetailsInView(user);
+            showUserDetailsInView(user);
         }
     }
 }

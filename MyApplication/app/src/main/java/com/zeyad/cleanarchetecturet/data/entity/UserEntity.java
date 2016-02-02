@@ -93,7 +93,7 @@ public class UserEntity /*extends RealmObject*/ {
 //        stringBuilder.append("***** User Entity Details *****\n");
 //        stringBuilder.append("id=" + this.getUserId() + "\n");
 //        stringBuilder.append("cover url=" + this.getCoverUrl() + "\n");
-//        stringBuilder.append("fullname=" + this.getFullname() + "\n");
+//        stringBuilder.append("fullname=" + this.getFullName() + "\n");
 //        stringBuilder.append("email=" + this.getEmail() + "\n");
 //        stringBuilder.append("description=" + this.getDescription() + "\n");
 //        stringBuilder.append("followers=" + this.getFollowers() + "\n");

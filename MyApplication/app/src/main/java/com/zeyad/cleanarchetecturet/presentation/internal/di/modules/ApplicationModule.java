@@ -2,10 +2,9 @@ package com.zeyad.cleanarchetecturet.presentation.internal.di.modules;
 
 import android.content.Context;
 
-import com.zeyad.cleanarchetecturet.data.cache.UserCache;
-import com.zeyad.cleanarchetecturet.data.cache.UserCacheImpl;
+import com.zeyad.cleanarchetecturet.data.cache.RealmManager;
+import com.zeyad.cleanarchetecturet.data.cache.RealmManagerImpl;
 import com.zeyad.cleanarchetecturet.data.executor.JobExecutor;
-import com.zeyad.cleanarchetecturet.data.net.RestApi;
 import com.zeyad.cleanarchetecturet.data.repository.UserDataRepository;
 import com.zeyad.cleanarchetecturet.domain.executor.PostExecutionThread;
 import com.zeyad.cleanarchetecturet.domain.executor.ThreadExecutor;
@@ -13,10 +12,10 @@ import com.zeyad.cleanarchetecturet.domain.repository.UserRepository;
 import com.zeyad.cleanarchetecturet.presentation.AndroidApplication;
 import com.zeyad.cleanarchetecturet.presentation.UIThread;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
-
-import javax.inject.Singleton;
 
 /**
  * Dagger module that provides objects which will live during the application lifecycle.
@@ -47,10 +46,16 @@ public class ApplicationModule {
         return uiThread;
     }
 
+//    @Provides
+//    @Singleton
+//    UserCache provideUserCache(UserCacheImpl userCache) {
+//        return userCache;
+//    }
+
     @Provides
     @Singleton
-    UserCache provideUserCache(UserCacheImpl userCache) {
-        return userCache;
+    RealmManager provideRealmManager(RealmManagerImpl realmManager) {
+        return realmManager;
     }
 
     @Provides

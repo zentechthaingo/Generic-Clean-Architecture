@@ -33,7 +33,7 @@ public class PrpductCacheImpl implements ProductCache {
     private final Context context;
     private final File cacheDir;
     private final ProductJsonSerializer serializer;
-    private final UserFileManager userFileManager;
+    private final ProductFileManager userFileManager;
     private final ThreadExecutor threadExecutor;
 
     /**
@@ -41,11 +41,11 @@ public class PrpductCacheImpl implements ProductCache {
      *
      * @param context               A
      * @param productJsonSerializer {@link UserJsonSerializer} for object serialization.
-     * @param userFileManager       {@link UserFileManager} for saving serialized objects to the file system.
+     * @param userFileManager       {@link ProductFileManager} for saving serialized objects to the file system.
      */
     @Inject
     public PrpductCacheImpl(Context context, ProductJsonSerializer productJsonSerializer,
-                            UserFileManager userFileManager, ThreadExecutor executor) {
+                            ProductFileManager userFileManager, ThreadExecutor executor) {
         if (context == null || productJsonSerializer == null || userFileManager == null || executor == null) {
             throw new IllegalArgumentException("Invalid null parameter");
         }
@@ -153,11 +153,11 @@ public class PrpductCacheImpl implements ProductCache {
      * {@link Runnable} class for writing to disk.
      */
     private static class CacheWriter implements Runnable {
-        private final UserFileManager userFileManager;
+        private final ProductFileManager userFileManager;
         private final File fileToWrite;
         private final String fileContent;
 
-        CacheWriter(UserFileManager userFileManager, File fileToWrite, String fileContent) {
+        CacheWriter(ProductFileManager userFileManager, File fileToWrite, String fileContent) {
             this.userFileManager = userFileManager;
             this.fileToWrite = fileToWrite;
             this.fileContent = fileContent;
@@ -173,10 +173,10 @@ public class PrpductCacheImpl implements ProductCache {
      * {@link Runnable} class for evicting all the cached files
      */
     private static class CacheEvictor implements Runnable {
-        private final UserFileManager userFileManager;
+        private final ProductFileManager userFileManager;
         private final File cacheDir;
 
-        CacheEvictor(UserFileManager userFileManager, File cacheDir) {
+        CacheEvictor(ProductFileManager userFileManager, File cacheDir) {
             this.userFileManager = userFileManager;
             this.cacheDir = cacheDir;
         }

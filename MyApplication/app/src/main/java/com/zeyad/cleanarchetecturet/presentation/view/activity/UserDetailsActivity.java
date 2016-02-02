@@ -1,8 +1,3 @@
-/**
- * Copyright (C) 2014 android10.org. All rights reserved.
- *
- * @author Fernando Cejas (the android10 coder)
- */
 package com.zeyad.cleanarchetecturet.presentation.view.activity;
 
 import android.content.Context;
@@ -31,7 +26,6 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
     public static Intent getCallingIntent(Context context, int userId) {
         Intent callingIntent = new Intent(context, UserDetailsActivity.class);
         callingIntent.putExtra(INTENT_EXTRA_PARAM_USER_ID, userId);
-
         return callingIntent;
     }
 
@@ -40,16 +34,14 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_user_details);
-
-        this.initializeActivity(savedInstanceState);
-        this.initializeInjector();
+        initializeActivity(savedInstanceState);
+        initializeInjector();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (outState != null) {
-            outState.putInt(INSTANCE_STATE_PARAM_USER_ID, this.userId);
-        }
+        if (outState != null)
+            outState.putInt(INSTANCE_STATE_PARAM_USER_ID, userId);
         super.onSaveInstanceState(outState);
     }
 
@@ -58,18 +50,17 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
      */
     private void initializeActivity(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
-            this.userId = getIntent().getIntExtra(INTENT_EXTRA_PARAM_USER_ID, -1);
-            addFragment(R.id.fl_fragment, UserDetailsFragment.newInstance(this.userId));
-        } else {
-            this.userId = savedInstanceState.getInt(INSTANCE_STATE_PARAM_USER_ID);
-        }
+            userId = getIntent().getIntExtra(INTENT_EXTRA_PARAM_USER_ID, -1);
+            addFragment(R.id.fl_fragment, UserDetailsFragment.newInstance(userId));
+        } else
+            userId = savedInstanceState.getInt(INSTANCE_STATE_PARAM_USER_ID);
     }
 
     private void initializeInjector() {
-        this.userComponent = DaggerUserComponent.builder()
+        userComponent = DaggerUserComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .activityModule(getActivityModule())
-                .userModule(new UserModule(this.userId))
+                .userModule(new UserModule(userId))
                 .build();
     }
 

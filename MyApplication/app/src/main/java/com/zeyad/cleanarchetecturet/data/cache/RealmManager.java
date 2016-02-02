@@ -1,27 +1,32 @@
 package com.zeyad.cleanarchetecturet.data.cache;
 
-import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
+import com.zeyad.cleanarchetecturet.data.entity.UserRealmModel;
 
+import io.realm.RealmResults;
 import rx.Observable;
-// TODO: 1/29/16 Change Name!
 
 /**
  * An interface representing a user Cache.
  */
-public interface UserCache {
+public interface RealmManager {
     /**
-     * Gets an {@link rx.Observable} which will emit a {@link UserEntity}.
+     * Gets an {@link Observable} which will emit a {@link UserRealmModel}.
      *
      * @param userId The user id to retrieve data.
      */
-    Observable<UserEntity> get(final int userId);
+    Observable<UserRealmModel> get(final int userId);
+
+    /**
+     * Gets an {@link Observable} which will emit a {@link RealmResults<UserRealmModel>}.
+     */
+    Observable<RealmResults<UserRealmModel>> getAll();
 
     /**
      * Puts and element into the cache.
      *
-     * @param userEntity Element to insert in the cache.
+     * @param userRealmModel Element to insert in the cache.
      */
-    void put(UserEntity userEntity);
+    void put(UserRealmModel userRealmModel);
 
     /**
      * Checks if an element (User) exists in the cache.
@@ -36,14 +41,15 @@ public interface UserCache {
      *
      * @return true, the cache is expired, otherwise false.
      */
-    boolean isExpired(/*final int userId*/);
+    boolean isValid(final int userId);
+    boolean isValid();
 
     /**
      * Evict all elements of the cache.
      */
     void evictAll();
 
-    Observable<Boolean> evictById(final int userId);
+    void evictById(final int userId);
 
-    Observable<Boolean> evict(final UserEntity userEntity);
+    void evict(final UserRealmModel userRealmModel);
 }

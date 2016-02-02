@@ -1,8 +1,3 @@
-/**
- * Copyright (C) 2014 android10.org. All rights reserved.
- *
- * @author Fernando Cejas (the android10 coder)
- */
 package com.zeyad.cleanarchetecturet.presentation.view.activity;
 
 import android.content.Context;
@@ -16,7 +11,6 @@ import com.zeyad.cleanarchetecturet.presentation.internal.di.components.DaggerUs
 import com.zeyad.cleanarchetecturet.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchetecturet.presentation.model.UserModel;
 import com.zeyad.cleanarchetecturet.presentation.view.fragment.UserListFragment;
-
 
 /**
  * Activity that shows a list of Users.

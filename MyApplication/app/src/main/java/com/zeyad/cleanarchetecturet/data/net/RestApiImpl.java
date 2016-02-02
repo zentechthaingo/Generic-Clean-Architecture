@@ -26,6 +26,7 @@ public class RestApiImpl implements RestApi {
         return ApiConnection.user(userId);
     }
 
+    // TODO: 2/2/16 Implement!
     @Override
     public Observable<List<ProductEntity>> getProductList() {
         return null;

@@ -41,7 +41,7 @@ public abstract class BaseActivity extends Activity {
     /**
      * Get the Main Application component for dependency injection.
      *
-     * @return {@link com.fernandocejas.android10.sample.presentation.internal.di.components.ApplicationComponent}
+     * @return {@link com.zeyad.cleanarchetecturet.presentation.internal.di.components.ApplicationComponent}
      */
     protected ApplicationComponent getApplicationComponent() {
         return ((AndroidApplication) getApplicationContext()).getApplicationComponent();
@@ -50,7 +50,7 @@ public abstract class BaseActivity extends Activity {
     /**
      * Get an Activity module for dependency injection.
      *
-     * @return {@link com.fernandocejas.android10.sample.presentation.internal.di.modules.ActivityModule}
+     * @return {@link com.zeyad.cleanarchetecturet.presentation.internal.di.modules.ActivityModule}
      */
     protected ActivityModule getActivityModule() {
         return new ActivityModule(this);

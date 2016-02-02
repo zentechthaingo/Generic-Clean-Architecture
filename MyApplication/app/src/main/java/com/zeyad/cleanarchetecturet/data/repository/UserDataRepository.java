@@ -2,8 +2,6 @@ package com.zeyad.cleanarchetecturet.data.repository;
 
 import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
 import com.zeyad.cleanarchetecturet.data.entity.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchetecturet.data.exception.NetworkConnectionException;
-import com.zeyad.cleanarchetecturet.data.repository.datasource.UserDataStore;
 import com.zeyad.cleanarchetecturet.data.repository.datasource.UserDataStoreFactory;
 import com.zeyad.cleanarchetecturet.domain.User;
 import com.zeyad.cleanarchetecturet.domain.repository.UserRepository;
@@ -34,7 +32,7 @@ public class UserDataRepository implements UserRepository {
     @Inject
     public UserDataRepository(UserDataStoreFactory dataStoreFactory,
                               UserEntityDataMapper userEntityDataMapper) {
-        this.userDataStoreFactory = dataStoreFactory;
+        userDataStoreFactory = dataStoreFactory;
         this.userEntityDataMapper = userEntityDataMapper;
     }
 
@@ -42,41 +40,23 @@ public class UserDataRepository implements UserRepository {
     @Override
     public Observable<List<User>> users() {
         //we always get all users from the cloud
-        final UserDataStore userDataStore = userDataStoreFactory.createCloudDataStore();
-        return userDataStore.userEntityList().map(new Func1<List<UserEntity>, List<User>>() {
-            @Override
-            public List<User> call(List<UserEntity> roomEntities) {
-                return userEntityDataMapper.transform(roomEntities);
-            }
-        });
+        return userDataStoreFactory.createAll(userEntityDataMapper).userEntityList()
+                .map(new Func1<List<UserEntity>, List<User>>() {
+                    @Override
+                    public List<User> call(List<UserEntity> roomEntities) {
+                        return userEntityDataMapper.transform(roomEntities);
+                    }
+                });
     }
 
     @SuppressWarnings("Convert2MethodRef")
     @Override
     public Observable<User> user(int userId) {
-        try {
-            final UserDataStore userDataStore = this.userDataStoreFactory.create(userId);
-            return userDataStore.userEntityDetails(userId).map(new Func1<UserEntity, User>() {
-                @Override
-                public User call(UserEntity roomEntity) {
-                    return userEntityDataMapper.transform(roomEntity);
-                }
-            });
-        } catch (NetworkConnectionException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return userDataStoreFactory.createById(userId, userEntityDataMapper).userEntityDetails(userId).map(new Func1<UserEntity, User>() {
+            @Override
+            public User call(UserEntity roomEntity) {
+                return userEntityDataMapper.transform(roomEntity);
+            }
+        });
     }
-
-//    @SuppressWarnings("Convert2MethodRef")
-//    @Override
-//    public Observable<User> user(int userId) {
-//        final UserDataStore userDataStore = this.userDataStoreFactory.create(userId);
-//        return userDataStore.userEntityDetails(userId).map(new Func1<UserEntity, User>() {
-//            @Override
-//            public User call(UserEntity roomEntity) {
-//                return userEntityDataMapper.transform(roomEntity);
-//            }
-//        });
-//    }
 }
