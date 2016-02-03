@@ -3,14 +3,14 @@ package com.zeyad.cleanarchetecturet.presentation.presenter;
 import android.support.annotation.NonNull;
 
 import com.zeyad.cleanarchetecturet.domain.User;
-import com.zeyad.cleanarchetecturet.domain.exception.DefaultErrorBundle;
-import com.zeyad.cleanarchetecturet.domain.exception.ErrorBundle;
+import com.zeyad.cleanarchetecturet.domain.exceptions.DefaultErrorBundle;
+import com.zeyad.cleanarchetecturet.domain.exceptions.ErrorBundle;
 import com.zeyad.cleanarchetecturet.domain.interactor.DefaultSubscriber;
 import com.zeyad.cleanarchetecturet.domain.interactor.UseCase;
 import com.zeyad.cleanarchetecturet.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.PerActivity;
-import com.zeyad.cleanarchetecturet.presentation.mapper.UserModelDataMapper;
 import com.zeyad.cleanarchetecturet.presentation.model.UserModel;
+import com.zeyad.cleanarchetecturet.presentation.model.mapper.UserModelDataMapper;
 import com.zeyad.cleanarchetecturet.presentation.view.UserDetailsView;
 
 import javax.inject.Inject;

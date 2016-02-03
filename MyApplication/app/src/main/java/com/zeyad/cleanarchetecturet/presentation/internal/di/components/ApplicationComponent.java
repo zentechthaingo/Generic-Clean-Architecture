@@ -2,9 +2,9 @@ package com.zeyad.cleanarchetecturet.presentation.internal.di.components;
 
 import android.content.Context;
 
-import com.zeyad.cleanarchetecturet.domain.executor.PostExecutionThread;
-import com.zeyad.cleanarchetecturet.domain.executor.ThreadExecutor;
-import com.zeyad.cleanarchetecturet.domain.repository.UserRepository;
+import com.zeyad.cleanarchetecturet.domain.executors.PostExecutionThread;
+import com.zeyad.cleanarchetecturet.domain.executors.ThreadExecutor;
+import com.zeyad.cleanarchetecturet.domain.repositories.UserRepository;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.modules.ApplicationModule;
 import com.zeyad.cleanarchetecturet.presentation.view.activity.BaseActivity;
 

@@ -18,8 +18,8 @@ package com.zeyad.cleanarchetecturet.presentation.exception;
 import android.content.Context;
 
 import com.zeyad.cleanarchetecturet.R;
-import com.zeyad.cleanarchetecturet.data.exception.NetworkConnectionException;
-import com.zeyad.cleanarchetecturet.data.exception.UserNotFoundException;
+import com.zeyad.cleanarchetecturet.data.exceptions.NetworkConnectionException;
+import com.zeyad.cleanarchetecturet.data.exceptions.UserNotFoundException;
 
 /**
  * Factory used to create error messages from an Exception as a condition.

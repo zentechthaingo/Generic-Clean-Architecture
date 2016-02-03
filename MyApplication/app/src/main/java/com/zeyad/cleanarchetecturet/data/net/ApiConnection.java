@@ -7,7 +7,7 @@ import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
-import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
+import com.zeyad.cleanarchetecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchetecturet.utilities.Constants;
 
 import java.io.File;

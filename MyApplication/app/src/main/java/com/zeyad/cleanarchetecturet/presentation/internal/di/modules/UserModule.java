@@ -15,12 +15,12 @@
  */
 package com.zeyad.cleanarchetecturet.presentation.internal.di.modules;
 
-import com.zeyad.cleanarchetecturet.domain.executor.PostExecutionThread;
-import com.zeyad.cleanarchetecturet.domain.executor.ThreadExecutor;
+import com.zeyad.cleanarchetecturet.domain.executors.PostExecutionThread;
+import com.zeyad.cleanarchetecturet.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchetecturet.domain.interactor.GetUserDetails;
 import com.zeyad.cleanarchetecturet.domain.interactor.GetUserList;
 import com.zeyad.cleanarchetecturet.domain.interactor.UseCase;
-import com.zeyad.cleanarchetecturet.domain.repository.UserRepository;
+import com.zeyad.cleanarchetecturet.domain.repositories.UserRepository;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.PerActivity;
 
 import javax.inject.Named;

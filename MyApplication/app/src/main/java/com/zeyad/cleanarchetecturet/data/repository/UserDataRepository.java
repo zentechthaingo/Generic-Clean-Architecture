@@ -1,10 +1,10 @@
 package com.zeyad.cleanarchetecturet.data.repository;
 
-import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
-import com.zeyad.cleanarchetecturet.data.entity.mapper.UserEntityDataMapper;
+import com.zeyad.cleanarchetecturet.data.entities.UserEntity;
+import com.zeyad.cleanarchetecturet.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchetecturet.data.repository.datasource.UserDataStoreFactory;
 import com.zeyad.cleanarchetecturet.domain.User;
-import com.zeyad.cleanarchetecturet.domain.repository.UserRepository;
+import com.zeyad.cleanarchetecturet.domain.repositories.UserRepository;
 
 import java.util.List;
 

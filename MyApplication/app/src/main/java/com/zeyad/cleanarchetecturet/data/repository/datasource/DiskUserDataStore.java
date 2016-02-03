@@ -1,9 +1,9 @@
 package com.zeyad.cleanarchetecturet.data.repository.datasource;
 
-import com.zeyad.cleanarchetecturet.data.cache.RealmManager;
-import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
-import com.zeyad.cleanarchetecturet.data.entity.UserRealmModel;
-import com.zeyad.cleanarchetecturet.data.entity.mapper.UserEntityDataMapper;
+import com.zeyad.cleanarchetecturet.data.db.RealmManager;
+import com.zeyad.cleanarchetecturet.data.entities.UserEntity;
+import com.zeyad.cleanarchetecturet.data.entities.UserRealmModel;
+import com.zeyad.cleanarchetecturet.data.entities.mapper.UserEntityDataMapper;
 
 import java.util.List;
 

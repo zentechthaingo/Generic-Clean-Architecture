@@ -15,7 +15,7 @@
  */
 package com.zeyad.cleanarchetecturet.presentation;
 
-import com.zeyad.cleanarchetecturet.domain.executor.PostExecutionThread;
+import com.zeyad.cleanarchetecturet.domain.executors.PostExecutionThread;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

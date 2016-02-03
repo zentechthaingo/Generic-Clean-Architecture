@@ -15,8 +15,8 @@
  */
 package com.zeyad.cleanarchetecturet.domain.interactor;
 
-import com.zeyad.cleanarchetecturet.domain.executor.PostExecutionThread;
-import com.zeyad.cleanarchetecturet.domain.executor.ThreadExecutor;
+import com.zeyad.cleanarchetecturet.domain.executors.PostExecutionThread;
+import com.zeyad.cleanarchetecturet.domain.executors.ThreadExecutor;
 
 import rx.Observable;
 import rx.Subscriber;

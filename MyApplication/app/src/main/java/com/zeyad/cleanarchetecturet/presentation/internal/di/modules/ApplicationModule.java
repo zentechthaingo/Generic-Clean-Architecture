@@ -2,13 +2,13 @@ package com.zeyad.cleanarchetecturet.presentation.internal.di.modules;
 
 import android.content.Context;
 
-import com.zeyad.cleanarchetecturet.data.cache.RealmManager;
-import com.zeyad.cleanarchetecturet.data.cache.RealmManagerImpl;
+import com.zeyad.cleanarchetecturet.data.db.RealmManager;
+import com.zeyad.cleanarchetecturet.data.db.RealmManagerImpl;
 import com.zeyad.cleanarchetecturet.data.executor.JobExecutor;
 import com.zeyad.cleanarchetecturet.data.repository.UserDataRepository;
-import com.zeyad.cleanarchetecturet.domain.executor.PostExecutionThread;
-import com.zeyad.cleanarchetecturet.domain.executor.ThreadExecutor;
-import com.zeyad.cleanarchetecturet.domain.repository.UserRepository;
+import com.zeyad.cleanarchetecturet.domain.executors.PostExecutionThread;
+import com.zeyad.cleanarchetecturet.domain.executors.ThreadExecutor;
+import com.zeyad.cleanarchetecturet.domain.repositories.UserRepository;
 import com.zeyad.cleanarchetecturet.presentation.AndroidApplication;
 import com.zeyad.cleanarchetecturet.presentation.UIThread;
 
@@ -45,12 +45,6 @@ public class ApplicationModule {
     PostExecutionThread providePostExecutionThread(UIThread uiThread) {
         return uiThread;
     }
-
-//    @Provides
-//    @Singleton
-//    UserCache provideUserCache(UserCacheImpl userCache) {
-//        return userCache;
-//    }
 
     @Provides
     @Singleton

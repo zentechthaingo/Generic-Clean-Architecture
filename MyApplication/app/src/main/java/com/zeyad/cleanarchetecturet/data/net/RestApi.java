@@ -1,11 +1,9 @@
 package com.zeyad.cleanarchetecturet.data.net;
 
-import com.zeyad.cleanarchetecturet.data.entity.ProductEntity;
-import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
+import com.zeyad.cleanarchetecturet.data.entities.UserEntity;
 
 import java.util.List;
 
-import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import rx.Observable;
@@ -29,10 +27,4 @@ public interface RestApi {
      */
     @GET("user_{id}.json")
     Observable<UserEntity> userEntityById(@Path("id") final int userId);
-
-    @GET("/cart/list")
-    Observable<List<ProductEntity>> getProductList();
-
-    @GET("/cart/{id}/detail")
-    Observable<ProductEntity> getProductById(@Path("id") final int id);
 }

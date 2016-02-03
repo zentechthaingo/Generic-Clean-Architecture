@@ -1,6 +1,6 @@
 package com.zeyad.cleanarchetecturet.data.repository.datasource;
 
-import com.zeyad.cleanarchetecturet.data.entity.UserEntity;
+import com.zeyad.cleanarchetecturet.data.entities.UserEntity;
 
 import java.util.List;
 

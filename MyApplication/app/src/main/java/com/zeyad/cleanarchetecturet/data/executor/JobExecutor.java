@@ -1,6 +1,6 @@
 package com.zeyad.cleanarchetecturet.data.executor;
 
-import com.zeyad.cleanarchetecturet.domain.executor.ThreadExecutor;
+import com.zeyad.cleanarchetecturet.domain.executors.ThreadExecutor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
