@@ -4,7 +4,7 @@ import com.zeyad.cleanarchetecturet.data.ApplicationTestCase;
 import com.zeyad.cleanarchetecturet.data.db.RealmManager;
 import com.zeyad.cleanarchetecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchetecturet.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchetecturet.data.net.RestApi;
+import com.zeyad.cleanarchetecturet.data.network.RestApi;
 
 import org.junit.Before;
 import org.junit.Test;

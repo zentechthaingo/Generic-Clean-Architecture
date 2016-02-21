@@ -1,8 +1,8 @@
 package com.zeyad.cleanarchetecturet.data.db;
 
 import android.content.Context;
+import android.test.AndroidTestCase;
 
-import com.zeyad.cleanarchetecturet.data.ApplicationTestCase;
 import com.zeyad.cleanarchetecturet.data.entities.UserRealmModel;
 
 import org.junit.After;
@@ -11,27 +11,34 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertTrue;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
+import rx.Subscriber;
+
 import static org.mockito.Mockito.verify;
 
-public class RealmManagerTest extends ApplicationTestCase {
+public class RealmManagerTest extends AndroidTestCase {
 
     private RealmManagerImpl realmManager;
     @Mock
     Context context;
     private static final int FAKE_USER_ID = 1;
 
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+        assertNotNull(context);
+//        RealmConfiguration config = ;
+//        Realm.deleteRealm(config);
+        Realm.setDefaultConfiguration(new RealmConfiguration.Builder(context).deleteRealmIfMigrationNeeded().build());
         realmManager = new RealmManagerImpl(context);
     }
 
     @After
     public void tearDown() throws Exception {
-        realmManager.evictAll();
-        realmManager.getmRealm().close();
+//        realmManager.evictAll();
+        realmManager.getRealm().close();
     }
 
     @Test
@@ -128,6 +135,22 @@ public class RealmManagerTest extends ApplicationTestCase {
             realmManager.put(userRealmModel);
         }
         realmManager.evictAll();
+        realmManager.getAll().asObservable().subscribe(new Subscriber<RealmResults<UserRealmModel>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                fail();
+            }
+
+            @Override
+            public void onNext(RealmResults<UserRealmModel> userRealmModels) {
+                assertEquals(userRealmModels.size(), 0);
+            }
+        });
     }
 
     // TODO: 2/3/16 finish!
@@ -142,7 +165,22 @@ public class RealmManagerTest extends ApplicationTestCase {
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
         realmManager.evictById(FAKE_USER_ID);
+        realmManager.get(FAKE_USER_ID).asObservable().subscribe(new Subscriber<UserRealmModel>() {
+            @Override
+            public void onCompleted() {
 
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                fail();
+            }
+
+            @Override
+            public void onNext(UserRealmModel userRealmModel) {
+                assertNull(userRealmModel);
+            }
+        });
     }
 
     // TODO: 2/3/16 finish!
@@ -157,6 +195,21 @@ public class RealmManagerTest extends ApplicationTestCase {
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
         realmManager.evict(userRealmModel);
+        realmManager.get(FAKE_USER_ID).asObservable().subscribe(new Subscriber<UserRealmModel>() {
+            @Override
+            public void onCompleted() {
 
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                fail();
+            }
+
+            @Override
+            public void onNext(UserRealmModel userRealmModel) {
+                assertNull(userRealmModel);
+            }
+        });
     }
 }

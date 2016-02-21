@@ -2,11 +2,12 @@ package com.zeyad.cleanarchetecturet.presentation.internal.di.components;
 
 import android.content.Context;
 
+import com.firebase.client.Firebase;
 import com.zeyad.cleanarchetecturet.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchetecturet.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchetecturet.domain.repositories.UserRepository;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.modules.ApplicationModule;
-import com.zeyad.cleanarchetecturet.presentation.view.activity.BaseActivity;
+import com.zeyad.cleanarchetecturet.presentation.view.activities.BaseActivity;
 
 import javax.inject.Singleton;
 
@@ -28,4 +29,6 @@ public interface ApplicationComponent {
     PostExecutionThread postExecutionThread();
 
     UserRepository userRepository();
+
+    Firebase firebase();
 }

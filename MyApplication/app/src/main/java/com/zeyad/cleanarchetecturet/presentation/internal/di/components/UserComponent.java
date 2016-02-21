@@ -18,8 +18,8 @@ package com.zeyad.cleanarchetecturet.presentation.internal.di.components;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.modules.ActivityModule;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.modules.UserModule;
-import com.zeyad.cleanarchetecturet.presentation.view.fragment.UserDetailsFragment;
-import com.zeyad.cleanarchetecturet.presentation.view.fragment.UserListFragment;
+import com.zeyad.cleanarchetecturet.presentation.view.fragments.UserDetailsFragment;
+import com.zeyad.cleanarchetecturet.presentation.view.fragments.UserListFragment;
 
 import dagger.Component;
 

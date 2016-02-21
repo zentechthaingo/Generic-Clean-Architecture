@@ -12,8 +12,6 @@ import javax.inject.Singleton;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
 
 /**
  * {@link RealmManager} implementation.
@@ -49,34 +47,51 @@ public class RealmManagerImpl implements RealmManager {
     public void put(final UserRealmModel userEntity) {
         if (userEntity != null) {
             if (!isCached(userEntity.getUserId())) {
-                Observable.create(new Observable.OnSubscribe<UserRealmModel>() {
+                mRealm.executeTransaction(new Realm.Transaction() {
                     @Override
-                    public void call(final Subscriber<? super UserRealmModel> subscriber) {
-                        mRealm = Realm.getDefaultInstance();
-                        mRealm.beginTransaction();
+                    public void execute(Realm bgRealm) {
                         mRealm.copyToRealmOrUpdate(userEntity);
-                        mRealm.commitTransaction();
-                        writeToPreferences(System.currentTimeMillis());
-                        subscriber.onNext(userEntity);
-                        subscriber.onCompleted();
                     }
-                }).subscribe(new Observer<UserRealmModel>() {
+                }, new Realm.Transaction.Callback() {
                     @Override
-                    public void onCompleted() {
+                    public void onSuccess() {
                         Log.d("RealmManagerImpl", "UserRealmModel insert complete");
+                        writeToPreferences(System.currentTimeMillis());
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(Exception e) {
                         Log.d("RealmManagerImpl", "Failed to insert UserRealmModel", e);
-                    }
-
-                    @Override
-                    public void onNext(UserRealmModel userRealmModel) {
-                        Log.d("RealmManagerImpl", "UserRealmModel insert successful, name: "
-                                + userRealmModel.getFullName());
+                        // transaction is automatically rolled-back, do any cleanup here
                     }
                 });
+//                Observable.create(new Observable.OnSubscribe<UserRealmModel>() {
+//                    @Override
+//                    public void call(final Subscriber<? super UserRealmModel> subscriber) {
+//                        mRealm = Realm.getDefaultInstance();
+//                        mRealm.beginTransaction();
+//                        mRealm.copyToRealmOrUpdate(userEntity);
+//                        mRealm.commitTransaction();
+//                        writeToPreferences(System.currentTimeMillis());
+//                        subscriber.onNext(userEntity);
+//                        subscriber.onCompleted();
+//                    }
+//                }).subscribe(new Observer<UserRealmModel>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(UserRealmModel userRealmModel) {
+//
+//                    }
+//                });
             }
         }
     }
@@ -106,92 +121,143 @@ public class RealmManagerImpl implements RealmManager {
 
     @Override
     public void evictAll() {
-        Observable.create(new Observable.OnSubscribe<Boolean>() {
+        mRealm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-                mRealm = Realm.getDefaultInstance();
-                mRealm.beginTransaction();
+            public void execute(Realm bgRealm) {
                 mRealm.where(UserRealmModel.class).findAll().clear();
-                mRealm.commitTransaction();
-                subscriber.onNext(true);
-                subscriber.onCompleted();
             }
-        }).subscribe(new Observer<Boolean>() {
+        }, new Realm.Transaction.Callback() {
             @Override
-            public void onCompleted() {
+            public void onSuccess() {
                 Log.d("RealmManagerImpl", "UserRealmModel evict complete");
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(Exception e) {
                 Log.d("RealmManagerImpl", "Failed to evict UserRealmModel", e);
-            }
-
-            @Override
-            public void onNext(Boolean file) {
-                Log.d("RealmManagerImpl", "UserRealmModel evict successful");
+                // transaction is automatically rolled-back, do any cleanup here
             }
         });
+//        Observable.create(new Observable.OnSubscribe<Boolean>() {
+//            @Override
+//            public void call(Subscriber<? super Boolean> subscriber) {
+//                mRealm = Realm.getDefaultInstance();
+//                mRealm.beginTransaction();
+//                mRealm.where(UserRealmModel.class).findAll().clear();
+//                mRealm.commitTransaction();
+//                subscriber.onNext(true);
+//                subscriber.onCompleted();
+//            }
+//        }).subscribe(new Observer<Boolean>() {
+//            @Override
+//            public void onCompleted() {
+//                Log.d("RealmManagerImpl", "UserRealmModel evict complete");
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                Log.d("RealmManagerImpl", "Failed to evict UserRealmModel", e);
+//            }
+//
+//            @Override
+//            public void onNext(Boolean file) {
+//                Log.d("RealmManagerImpl", "UserRealmModel evict successful");
+//            }
+//        });
     }
 
     @Override
     public void evictById(final int userId) {
-        Observable.create(new Observable.OnSubscribe<Boolean>() {
+        mRealm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-                mRealm = Realm.getDefaultInstance();
-                mRealm.beginTransaction();
+            public void execute(Realm bgRealm) {
                 mRealm.where(UserRealmModel.class).equalTo("userId", userId).findFirst().removeFromRealm();
-                mRealm.commitTransaction();
-                subscriber.onNext(true);
-                subscriber.onCompleted();
             }
-        }).subscribe(new Observer<Boolean>() {
+        }, new Realm.Transaction.Callback() {
             @Override
-            public void onCompleted() {
+            public void onSuccess() {
                 Log.d("RealmManagerImpl", "UserRealmModel evict complete");
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(Exception e) {
                 Log.d("RealmManagerImpl", "Failed to evict UserRealmModel", e);
-            }
-
-            @Override
-            public void onNext(Boolean file) {
-                Log.d("RealmManagerImpl", "UserRealmModel evict successful");
+                // transaction is automatically rolled-back, do any cleanup here
             }
         });
+//        Observable.create(new Observable.OnSubscribe<Boolean>() {
+//            @Override
+//            public void call(Subscriber<? super Boolean> subscriber) {
+//                mRealm = Realm.getDefaultInstance();
+//                mRealm.beginTransaction();
+//                mRealm.where(UserRealmModel.class).equalTo("userId", userId).findFirst().removeFromRealm();
+//                mRealm.commitTransaction();
+//                subscriber.onNext(true);
+//                subscriber.onCompleted();
+//            }
+//        }).subscribe(new Observer<Boolean>() {
+//            @Override
+//            public void onCompleted() {
+//                Log.d("RealmManagerImpl", "UserRealmModel evict complete");
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                Log.d("RealmManagerImpl", "Failed to evict UserRealmModel", e);
+//            }
+//
+//            @Override
+//            public void onNext(Boolean file) {
+//                Log.d("RealmManagerImpl", "UserRealmModel evict successful");
+//            }
+//        });
     }
 
     @Override
     public void evict(final UserRealmModel userRealmModel) {
-        Observable.create(new Observable.OnSubscribe<Boolean>() {
+        mRealm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void call(Subscriber<? super Boolean> subscriber) {
-                mRealm = Realm.getDefaultInstance();
-                mRealm.beginTransaction();
+            public void execute(Realm bgRealm) {
                 userRealmModel.removeFromRealm();
-                mRealm.commitTransaction();
-                subscriber.onNext(true);
-                subscriber.onCompleted();
             }
-        }).subscribe(new Observer<Boolean>() {
+        }, new Realm.Transaction.Callback() {
             @Override
-            public void onCompleted() {
+            public void onSuccess() {
                 Log.d("RealmManagerImpl", "UserRealmModel evict complete");
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(Exception e) {
                 Log.d("RealmManagerImpl", "Failed to evict UserRealmModel", e);
-            }
-
-            @Override
-            public void onNext(Boolean file) {
-                Log.d("RealmManagerImpl", "UserRealmModel evict successful");
+                // transaction is automatically rolled-back, do any cleanup here
             }
         });
+//        Observable.create(new Observable.OnSubscribe<Boolean>() {
+//            @Override
+//            public void call(Subscriber<? super Boolean> subscriber) {
+//                mRealm = Realm.getDefaultInstance();
+//                mRealm.beginTransaction();
+//                userRealmModel.removeFromRealm();
+//                mRealm.commitTransaction();
+//                subscriber.onNext(true);
+//                subscriber.onCompleted();
+//            }
+//        }).subscribe(new Observer<Boolean>() {
+//            @Override
+//            public void onCompleted() {
+//                Log.d("RealmManagerImpl", "UserRealmModel evict complete");
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                Log.d("RealmManagerImpl", "Failed to evict UserRealmModel", e);
+//            }
+//
+//            @Override
+//            public void onNext(Boolean file) {
+//                Log.d("RealmManagerImpl", "UserRealmModel evict successful");
+//            }
+//        });
     }
 
     /**
@@ -216,11 +282,7 @@ public class RealmManagerImpl implements RealmManager {
                 .getLong(SETTINGS_KEY_LAST_CACHE_UPDATE, 0);
     }
 
-    public Realm getmRealm() {
+    public Realm getRealm() {
         return mRealm;
-    }
-
-    public void setmRealm(Realm mRealm) {
-        this.mRealm = mRealm;
     }
 }

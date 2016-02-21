@@ -6,7 +6,7 @@ import com.zeyad.cleanarchetecturet.data.db.RealmManager;
 import com.zeyad.cleanarchetecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchetecturet.data.entities.UserRealmModel;
 import com.zeyad.cleanarchetecturet.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchetecturet.data.net.RestApi;
+import com.zeyad.cleanarchetecturet.data.network.RestApi;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

@@ -3,6 +3,8 @@ package com.zeyad.cleanarchetecturet.presentation;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.firebase.client.Logger;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.components.ApplicationComponent;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.components.DaggerApplicationComponent;
 import com.zeyad.cleanarchetecturet.presentation.internal.di.modules.ApplicationModule;
@@ -17,13 +19,30 @@ public class AndroidApplication extends Application {
 
     private ApplicationComponent applicationComponent;
 
+    private static AndroidApplication androidApplication;
+
+    public static AndroidApplication getInstance() {
+        return androidApplication;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        androidApplication = this;
+        initializeRealm();
+        initializeFirebase();
+        initializeInjector();
+    }
+
+    private void initializeRealm() {
         RealmConfiguration config = new RealmConfiguration.Builder(this).build();
         Realm.deleteRealm(config);
         Realm.setDefaultConfiguration(config);
-        initializeInjector();
+    }
+
+    private void initializeFirebase() {
+        Firebase.setAndroidContext(this);
+        Firebase.getDefaultConfig().setLogLevel(Logger.Level.DEBUG);
     }
 
     private void initializeInjector() {

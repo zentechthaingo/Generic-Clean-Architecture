@@ -2,7 +2,7 @@ package com.zeyad.cleanarchetecturet.data.repository.datasource;
 
 import com.zeyad.cleanarchetecturet.data.db.RealmManager;
 import com.zeyad.cleanarchetecturet.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchetecturet.data.net.RestApiImpl;
+import com.zeyad.cleanarchetecturet.data.network.RestApiImpl;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

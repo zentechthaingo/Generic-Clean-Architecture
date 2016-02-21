@@ -18,8 +18,8 @@ package com.zeyad.cleanarchetecturet.presentation.navigation;
 import android.content.Context;
 import android.content.Intent;
 
-import com.zeyad.cleanarchetecturet.presentation.view.activity.UserDetailsActivity;
-import com.zeyad.cleanarchetecturet.presentation.view.activity.UserListActivity;
+import com.zeyad.cleanarchetecturet.presentation.view.activities.UserDetailsActivity;
+import com.zeyad.cleanarchetecturet.presentation.view.activities.UserListActivity;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

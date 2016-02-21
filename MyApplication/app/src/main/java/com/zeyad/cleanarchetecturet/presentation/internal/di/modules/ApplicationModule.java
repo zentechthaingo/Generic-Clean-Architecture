@@ -2,6 +2,7 @@ package com.zeyad.cleanarchetecturet.presentation.internal.di.modules;
 
 import android.content.Context;
 
+import com.firebase.client.Firebase;
 import com.zeyad.cleanarchetecturet.data.db.RealmManager;
 import com.zeyad.cleanarchetecturet.data.db.RealmManagerImpl;
 import com.zeyad.cleanarchetecturet.data.executor.JobExecutor;
@@ -11,6 +12,7 @@ import com.zeyad.cleanarchetecturet.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchetecturet.domain.repositories.UserRepository;
 import com.zeyad.cleanarchetecturet.presentation.AndroidApplication;
 import com.zeyad.cleanarchetecturet.presentation.UIThread;
+import com.zeyad.cleanarchetecturet.utilities.Constants;
 
 import javax.inject.Singleton;
 
@@ -56,5 +58,11 @@ public class ApplicationModule {
     @Singleton
     UserRepository provideUserRepository(UserDataRepository userDataRepository) {
         return userDataRepository;
+    }
+
+    @Provides
+    @Singleton
+    Firebase provideFirebase() {
+        return new Firebase(Constants.FIREBASE_URL);
     }
 }
