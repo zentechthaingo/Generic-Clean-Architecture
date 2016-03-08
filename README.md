@@ -24,6 +24,19 @@ This is a sample project showcasing the use new technologies and apis within the
 * Code review
 * Other guidelines
 
+### Todo:
+
+* Generalize Realm (In progress)
+* Image download intent service (In progress) 
+* Tablet support
+* Login use case (Facebook, Twitter and Instagram login) with Fire base
+* Fire base 
+* Animations
+* User items use case
+* GCM push notifications
+* Analytics
+* Data binding (when stable)
+
 ### Who do I talk to? ###
 
 * Repo owner or admin
