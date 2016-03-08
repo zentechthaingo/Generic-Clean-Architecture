@@ -1,9 +1,9 @@
-package com.zeyad.cleanarchetecturet.presentation.view.activities;
+package com.zeyad.cleanarchitecturet.presentation.view.activities;
 
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.zeyad.cleanarchetecturet.R;
+import com.zeyad.cleanarchitecturet.R;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;

@@ -1,10 +1,10 @@
-package com.zeyad.cleanarchetecturet.presentation.mapper;
+package com.zeyad.cleanarchitecturet.presentation.mapper;
 
 import android.test.AndroidTestCase;
 
-import com.zeyad.cleanarchetecturet.domain.User;
-import com.zeyad.cleanarchetecturet.presentation.model.UserModel;
-import com.zeyad.cleanarchetecturet.presentation.model.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchitecturet.domain.User;
+import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
+import com.zeyad.cleanarchitecturet.presentation.model.mapper.UserModelDataMapper;
 
 import java.util.ArrayList;
 import java.util.Collection;

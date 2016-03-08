@@ -1,12 +1,12 @@
-package com.zeyad.cleanarchetecturet.test;
+package com.zeyad.cleanarchitecturet.test;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
 
-import com.zeyad.cleanarchetecturet.domain.interactor.GetUserDetails;
-import com.zeyad.cleanarchetecturet.presentation.model.mapper.UserModelDataMapper;
-import com.zeyad.cleanarchetecturet.presentation.presenters.UserDetailsPresenter;
-import com.zeyad.cleanarchetecturet.presentation.view.UserDetailsView;
+import com.zeyad.cleanarchitecturet.domain.interactor.GetUserDetails;
+import com.zeyad.cleanarchitecturet.presentation.model.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchitecturet.presentation.presenters.UserDetailsPresenter;
+import com.zeyad.cleanarchitecturet.presentation.view.UserDetailsView;
 
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;

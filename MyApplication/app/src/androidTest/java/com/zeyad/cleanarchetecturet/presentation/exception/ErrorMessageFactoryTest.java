@@ -1,10 +1,10 @@
-package com.zeyad.cleanarchetecturet.presentation.exception;
+package com.zeyad.cleanarchitecturet.presentation.exception;
 
 import android.test.AndroidTestCase;
 
-import com.zeyad.cleanarchetecturet.R;
-import com.zeyad.cleanarchetecturet.data.exceptions.NetworkConnectionException;
-import com.zeyad.cleanarchetecturet.data.exceptions.UserNotFoundException;
+import com.zeyad.cleanarchitecturet.R;
+import com.zeyad.cleanarchitecturet.data.exceptions.NetworkConnectionException;
+import com.zeyad.cleanarchitecturet.data.exceptions.UserNotFoundException;
 
 
 public class ErrorMessageFactoryTest extends AndroidTestCase {

@@ -1,16 +1,19 @@
-package com.zeyad.cleanarchetecturet.db;
+package com.zeyad.cleanarchitecturet.db;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
 
-import com.zeyad.cleanarchetecturet.data.db.RealmManagerImpl;
-import com.zeyad.cleanarchetecturet.data.entities.UserRealmModel;
+import com.zeyad.cleanarchitecturet.data.db.RealmManagerImpl;
+import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -81,6 +84,25 @@ public class RealmManagerTest extends AndroidTestCase {
     }
 
     @Test
+    public void testPutAll() throws Exception {
+        List<UserRealmModel> userRealmModels = new ArrayList<>();
+        UserRealmModel userRealmModel;
+        for (int i = 0; i < 10; i++) {
+            userRealmModel = new UserRealmModel();
+            userRealmModel.setUserId(FAKE_USER_ID + i);
+            userRealmModel.setCoverUrl("www.test.com");
+            userRealmModel.setDescription("fake description");
+            userRealmModel.setEmail("fake@email.com");
+            userRealmModel.setFollowers(22);
+            userRealmModel.setFullName("Fake Name");
+            userRealmModels.add(userRealmModel);
+        }
+        verify(realmManager).putAll(userRealmModels);
+        for (int i = 0; i < 10; i++)
+            verify(realmManager).get(FAKE_USER_ID + i);
+    }
+
+    @Test
     public void testIsCached() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
         userRealmModel.setUserId(FAKE_USER_ID);
@@ -103,7 +125,7 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.isValid(FAKE_USER_ID));
+        assertTrue(realmManager.isUserValid(FAKE_USER_ID));
     }
 
     @Test
@@ -116,10 +138,9 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.isValid());
+        assertTrue(realmManager.areUsersValid());
     }
 
-    // TODO: 2/3/16 finish!
     @Test
     public void testEvictAll() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
@@ -136,7 +157,6 @@ public class RealmManagerTest extends AndroidTestCase {
         realmManager.getAll().asObservable().subscribe(new Subscriber<RealmResults<UserRealmModel>>() {
             @Override
             public void onCompleted() {
-
             }
 
             @Override
@@ -151,7 +171,6 @@ public class RealmManagerTest extends AndroidTestCase {
         });
     }
 
-    // TODO: 2/3/16 finish!
     @Test
     public void testEvictById() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
@@ -181,7 +200,6 @@ public class RealmManagerTest extends AndroidTestCase {
         });
     }
 
-    // TODO: 2/3/16 finish!
     @Test
     public void testEvict() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
