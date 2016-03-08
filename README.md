@@ -6,14 +6,14 @@ This README would normally document whatever steps are necessary to get your app
 
 * Quick summary
 
-This an virtual jamming studio for musicians who are too lazy to go the studio or want to find new musicians to jam with.
+This is a sample project showcasing the use new technologies and apis within the clean architecture pattern. 
 
 * Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* 0.1(https://bitbucket.org/tutorials/markdowndemo)
 
 ### How do I get set up? ###
 
-* Summary of set up
+* Clone and sync and run
 * Configuration
 * Dependencies
 * Database configuration
