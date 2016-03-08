@@ -1,15 +1,13 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
-### What is this repository for? ###
+What is this repository for?
 
 * Quick summary
 
 This is a sample project showcasing the use new technologies and apis within the clean architecture pattern. 
 
 * Version
-* 0.1(https://bitbucket.org/tutorials/markdowndemo)
+* 0.1 (https://bitbucket.org/tutorials/markdowndemo)
 
 ### How do I get set up? ###
 
