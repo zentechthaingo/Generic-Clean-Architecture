@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 
@@ -58,11 +59,13 @@ public abstract class UseCase {
 //                    })
 //                    .onErrorResumeNext(Observable.empty())
 //                    .groupBy(o -> new AtomicInteger(0).getAndIncrement() % Constants.THREADCT)
-                .subscribeOn(Schedulers.from(executor))
-                .observeOn(postExecutionThread.getScheduler())
-//                    .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo(executor::shutdown
-                ).subscribe(UseCaseSubscriber);
+//                .subscribeOn(Schedulers.from(executor))
+                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+//                .observeOn(postExecutionThread.getScheduler())
+                    .observeOn(AndroidSchedulers.mainThread())
+//                .finallyDo(executor::shutdown)
+                .subscribe(UseCaseSubscriber);
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.zeyad.cleanarchitecturet.presentation.presenters;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 
 import com.zeyad.cleanarchitecturet.domain.User;
 import com.zeyad.cleanarchitecturet.domain.exceptions.DefaultErrorBundle;
@@ -118,6 +120,7 @@ public class UserListPresenter implements BasePresenter {
             e.printStackTrace();
         }
 
+        // TODO: 3/7/16 get access to ui thread!
         @Override
         public void onNext(List<User> users) {
             showUsersCollectionInView(users);

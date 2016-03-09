@@ -1,6 +1,7 @@
 package com.zeyad.cleanarchitecturet.data.network;
 
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
+import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 
 import java.util.List;
 
@@ -22,6 +23,12 @@ public interface RestApi {
      */
     @GET("users.json")
     Observable<List<UserEntity>> userEntityList();
+
+    /**
+     * Retrieves an {@link rx.Observable} which will emit a List of {@link UserEntity}.
+     */
+    @GET("users.json")
+    Observable<List<UserRealmModel>> userRealmList();
 
     /**
      * Retrieves an {@link rx.Observable} which will emit a {@link UserEntity}.

@@ -15,6 +15,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 /**
  * {@link RealmManager} implementation.
@@ -61,11 +62,13 @@ public class RealmManagerImpl implements RealmManager {
         if (userEntity != null) {
 //            if (!isCached(userEntity.getUserId())) {
             mRealm = Realm.getInstance(mContext);
-            mRealm.beginTransaction();
-            mRealm.copyToRealmOrUpdate(userEntity);
-            mRealm.commitTransaction();
+//            mRealm.beginTransaction();
+//            mRealm.copyToRealmOrUpdate(userEntity);
+//            mRealm.commitTransaction();
             mRealm.asObservable()
                     .map(realm -> mRealm.copyToRealmOrUpdate(userEntity))
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.io())
                     .subscribe(new Subscriber<Object>() {
                         @Override
                         public void onCompleted() {

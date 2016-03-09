@@ -2,11 +2,15 @@ package com.zeyad.cleanarchitecturet.data.network;
 
 import android.util.Log;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
+import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecturet.utilities.Constants;
 
 import java.io.File;
@@ -14,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import io.realm.RealmObject;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
@@ -47,7 +52,19 @@ public class ApiConnection {
         return new Retrofit.Builder()
                 .baseUrl(RestApi.API_BASE_URL)
                 .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
+//                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
+                        .setExclusionStrategies(new ExclusionStrategy() {
+                            @Override
+                            public boolean shouldSkipField(FieldAttributes f) {
+                                return f.getDeclaringClass().equals(RealmObject.class);
+                            }
+
+                            @Override
+                            public boolean shouldSkipClass(Class<?> clazz) {
+                                return false;
+                            }
+                        }).create()))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
     }
@@ -56,6 +73,12 @@ public class ApiConnection {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userEntityList();
+    }
+
+    public static Observable<List<UserRealmModel>> userRealmList() {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).userRealmList();
     }
 
     public static Observable<UserEntity> user(int userId) {

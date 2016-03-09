@@ -18,7 +18,7 @@ import rx.functions.Action1;
 public class CloudUserDataStore implements UserDataStore {
 
     private final RestApi restApi;
-    private final RealmManager realmManager;
+    private RealmManager realmManager;
     private final UserEntityDataMapper userEntityDataMapper;
     private final String TAG = "CloudUserDataStore";
 
@@ -29,12 +29,11 @@ public class CloudUserDataStore implements UserDataStore {
                 realmManager.put(userRealmModel);
         }
     };
-    private final Action1<List<UserRealmModel>> saveAllToCacheAction = new Action1<List<UserRealmModel>>() {
-        @Override
-        public void call(List<UserRealmModel> userRealmModels) {
+    private final Action1<List<UserRealmModel>> saveAllToCacheAction = userRealmModels -> {
+        new Thread(() -> {
             if (userRealmModels != null)
                 realmManager.putAll(userRealmModels);
-        }
+        }).start();
     };
 
     /**
@@ -51,7 +50,7 @@ public class CloudUserDataStore implements UserDataStore {
 
     @Override
     public Observable<List<UserEntity>> userEntityList() {
-        return restApi.userEntityList()
+        return restApi.userRealmList()
 //                .retryWhen(observable -> {
 //                    Log.v(TAG, "retryWhen, call");
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
@@ -62,7 +61,7 @@ public class CloudUserDataStore implements UserDataStore {
 //                })
 //                .map(userEntityDataMapper::transformAllToRealm)
 //                .doOnNext(saveAllToCacheAction)
-//                .map(userEntityDataMapper::transformAll)
+                .map(userEntityDataMapper::transformAll)
                 .compose(Utils.logUsersSource(TAG, realmManager));
     }
 

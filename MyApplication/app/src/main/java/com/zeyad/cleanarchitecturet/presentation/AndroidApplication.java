@@ -36,10 +36,10 @@ public class AndroidApplication extends Application {
     }
 
     private void initializeRealm() {
-        RealmConfiguration config = new RealmConfiguration.Builder(this).build();
-//        RealmConfiguration config = new RealmConfiguration.Builder(this)
-//                .rxFactory(new RealmObservableFactory())
-//                .build();
+//        RealmConfiguration config = new RealmConfiguration.Builder(this).build();
+        RealmConfiguration config = new RealmConfiguration.Builder(this)
+                .rxFactory(new RealmObservableFactory())
+                .build();
         Realm.deleteRealm(config);
         Realm.setDefaultConfiguration(config);
     }
@@ -61,8 +61,6 @@ public class AndroidApplication extends Application {
 
     @Override
     public void onTerminate() {
-//        Realm realm = Realm.getDefaultInstance();
-//        realm.close();
         Toast.makeText(getApplicationContext(), "Good bye!", Toast.LENGTH_SHORT).show();
         super.onTerminate();
     }
