@@ -26,7 +26,6 @@ This is a sample project showcasing the use new technologies and apis within the
 
 ### Todo:
 
-* Fixed Realm Thread bug (In progress)
 * Generalize Realm (In progress)
 * Image download intent service (In progress) 
 * Tablet support
