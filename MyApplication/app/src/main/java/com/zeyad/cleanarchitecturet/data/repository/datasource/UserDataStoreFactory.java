@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
+// TODO: 3/10/16 Generalize!
 
 /**
  * Factory that creates different implementations of {@link UserDataStore}.

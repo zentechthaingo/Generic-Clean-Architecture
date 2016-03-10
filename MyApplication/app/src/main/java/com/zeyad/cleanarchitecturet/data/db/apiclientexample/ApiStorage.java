@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.data.apiclientexample;
+package com.zeyad.cleanarchitecturet.data.db.apiclientexample;
 
 import java.util.List;
 

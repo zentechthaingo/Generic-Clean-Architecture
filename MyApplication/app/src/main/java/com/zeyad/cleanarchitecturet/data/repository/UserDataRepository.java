@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
-
+// TODO: 3/10/16 Generalize!
 /**
  * {@link UserRepository} for retrieving user data.
  */
