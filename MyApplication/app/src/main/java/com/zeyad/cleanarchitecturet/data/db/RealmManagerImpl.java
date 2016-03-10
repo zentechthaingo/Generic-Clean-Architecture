@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.zeyad.cleanarchitecturet.data.db.leaderboardexample.RealmObservable;
 import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,7 +16,9 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+// TODO: 3/10/16 Generalize!
 
 /**
  * {@link RealmManager} implementation.
@@ -28,6 +30,15 @@ public class RealmManagerImpl implements RealmManager {
     private static final String SETTINGS_KEY_LAST_CACHE_UPDATE = "last_cache_update";
     private static final long EXPIRATION_TIME = 60 * 10 * 1000;
     private Realm mRealm;
+
+    public Context getmContext() {
+        return mContext;
+    }
+
+    public void setmContext(Context mContext) {
+        this.mContext = mContext;
+    }
+
     private Context mContext;
 
     @Inject
@@ -48,48 +59,28 @@ public class RealmManagerImpl implements RealmManager {
     }
 
     @Override
-    public Observable<RealmResults<UserRealmModel>> getAll() {
+    public Observable<List<UserRealmModel>> getAll() {
         mRealm = Realm.getInstance(mContext);
         return mRealm.asObservable()
                 .map(realm -> realm.where(UserRealmModel.class)
                         .findAllAsync())
-                .asObservable();
+                .asObservable().map((Func1<RealmResults<UserRealmModel>, List<UserRealmModel>>) ArrayList::new);
 //        return mRealm.where(UserRealmModel.class).findAllAsync().asObservable();
     }
 
-    // FIXME: 3/5/16 access from the same thread!
     @Override
     public void put(final UserRealmModel userRealmModel) {
         if (userRealmModel != null) {
-//            if (!isCached(userEntity.getUserId())) {
-//            mRealm = Realm.getInstance(mContext);
-//            mRealm.beginTransaction();
-//            mRealm.copyToRealmOrUpdate(userEntity);
-//            mRealm.commitTransaction();
-//            mRealm.asObservable()
-//                    .map(realm -> mRealm.copyToRealmOrUpdate(userRealmModel))
-//                    .observeOn(Schedulers.io())
-//                    .subscribeOn(Schedulers.io())
-//                    .subscribe(new Subscriber<Object>() {
-//                        @Override
-//                        public void onCompleted() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        @Override
-//                        public void onNext(Object o) {
-//                            Log.d("RealmManager", "user added!");
-//                        }
-//                    });
-            RealmObservable.object(mContext, realm -> realm.copyToRealm(userRealmModel))
-                    .observeOn(Schedulers.io())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(new Subscriber<UserRealmModel>() {
+            Observable.create(new Observable.OnSubscribe<Void>() {
+                @Override
+                public void call(final Subscriber<? super Void> subscriber) {
+                    mRealm = Realm.getInstance(mContext);
+                    mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(userRealmModel));
+                    subscriber.onNext(null);
+                    subscriber.onCompleted();
+                }
+            }).subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<Void>() {
                         @Override
                         public void onCompleted() {
 
@@ -101,42 +92,10 @@ public class RealmManagerImpl implements RealmManager {
                         }
 
                         @Override
-                        public void onNext(UserRealmModel userRealmModel) {
+                        public void onNext(Void userRealmModel) {
                             Log.d("RealmManager", "user added!");
                         }
                     });
-//            Observable.create(new Observable.OnSubscribe<Void>() {
-//                @Override
-//                public void call(final Subscriber<? super Void> subscriber) {
-//                    mRealm = Realm.getInstance(mContext);
-//                    mRealm.beginTransaction();
-//                    mRealm.copyToRealm(userRealmModel);
-//                    subscriber.onNext(null);
-//                    mRealm.commitTransaction();
-////                    mRealm.close();
-//                    subscriber.onCompleted();
-//                }
-//            })
-////                    .flatMap(Observable::just)
-////                    .observeOn(Schedulers.io())
-////                    .subscribeOn(Schedulers.io())
-//                    .subscribe(new Subscriber<Void>() {
-//                        @Override
-//                        public void onCompleted() {
-//
-//                        }
-//
-//                        @Override
-//                        public void onError(Throwable e) {
-//                            e.printStackTrace();
-//                        }
-//
-//                        @Override
-//                        public void onNext(Void userRealmModel) {
-//                            Log.d("RealmManager", "user added!");
-//                        }
-//                    });
-////            .flatMap(Observable::from);
         }
     }
 

@@ -12,11 +12,11 @@ public class ApiStorage {
     private Realm mRealm;
 
     public ApiStorage() {
-        mRealm = Realm.getDefaultInstance();
+        this.mRealm = Realm.getDefaultInstance();
     }
 
     public ApiStorage(Realm realm) {
-        mRealm = realm;
+        this.mRealm = realm;
     }
 
     public Realm getStorage() {

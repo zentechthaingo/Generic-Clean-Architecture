@@ -9,9 +9,14 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.zeyad.cleanarchitecturet.data.network.RestApi;
+import com.zeyad.cleanarchitecturet.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecturet.utilities.Constants;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -53,7 +58,7 @@ public class ImageDownloadIntentService extends IntentService {
 //    private final ArrayMap<String, List<String>> categorizedKeys = new ArrayMap<>();
     private File dir;
     private BitmapFactory.Options bmOptions;
-    @Inject
+//    @Inject
     RestApi restAdapter;
 
     public ImageDownloadIntentService() {
@@ -78,7 +83,7 @@ public class ImageDownloadIntentService extends IntentService {
         bmOptions = new BitmapFactory.Options();
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565;
         addAllCachedFiles();
-//        AndroidApplication.getInstance().getComponent(this).inject(this);
+//        AndroidApplication.getInstance().getApplicationComponent().inject(this);
     }
 
     private void addAllCachedFiles() {

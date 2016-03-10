@@ -1,8 +1,5 @@
 package com.zeyad.cleanarchitecturet.data.apiclientexample;
 
-import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
-import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
-
 import java.util.List;
 
 import io.realm.Realm;
@@ -53,34 +50,8 @@ public class ApiObserver extends ApiStorage {
             return api;
     }
 
-    public <Item extends RealmObject> Observable<List<Item>> getApiObservable2(Observable<List<Item>> api, Class<Item> realmClass, String sortedField, List<Integer> ids) {
-        if (getStorage() != null) {
-            RealmResults<Item> realmResults;
-            if (sortedField != null)
-                realmResults = (ids == null) ? getItems(realmClass, sortedField) : getItems(realmClass, sortedField, ids);
-            else
-                realmResults = getItems(realmClass);
-            Observable<List<Item>> realmObserver = realmResults.asObservable()
-                    .filter(RealmResults::isLoaded)
-                    .compose(getLifecycle())
-                    .switchMap(Observable::just);
-            Observable<List<Item>> retrofitObserver = api
-                    .compose(applySchedulers())
-                    .compose(getLifecycle());
-            return Observable.<List<Item>>create(subscriber -> {
-                realmObserver.subscribe(subscriber::onNext, subscriber::onError);
-                retrofitObserver.subscribe(this::setItems, subscriber::onError, subscriber::onCompleted);
-            }).compose(getLifecycle());
-        } else
-            return api;
-    }
-
     public <Item extends RealmObject> Observable<List<Item>> getApiObservable(Observable<List<Item>> api, Class<Item> realmClass) {
         return getApiObservable(api, realmClass, null);
-    }
-
-    public <Item extends RealmObject> Observable<List<Item>> getApiObservable2(Observable<List<UserEntity>> api, Class<UserRealmModel> userRealmModelClass, Class<UserRealmModel> aClass) {
-        return getApiObservable2(api, aClass, null);
     }
 
     public <Item extends RealmObject> Observable<List<Item>> getApiObservable(Observable<List<Item>> api, Class<Item> realmClass, String sortedField) {

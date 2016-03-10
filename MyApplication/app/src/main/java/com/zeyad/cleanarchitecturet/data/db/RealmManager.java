@@ -21,7 +21,7 @@ public interface RealmManager {
     /**
      * Gets an {@link Observable} which will emit a {@link RealmResults<UserRealmModel>}.
      */
-    Observable<RealmResults<UserRealmModel>> getAll();
+    Observable<List<UserRealmModel>> getAll();
 
     /**
      * Puts and element into the cache.

@@ -8,6 +8,8 @@ import com.zeyad.cleanarchitecturet.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecturet.domain.repositories.UserRepository;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.modules.ApplicationModule;
 import com.zeyad.cleanarchitecturet.presentation.view.activities.BaseActivity;
+import com.zeyad.cleanarchitecturet.presentation.view.fragments.UserDetailsFragment;
+import com.zeyad.cleanarchitecturet.presentation.view.services.ImageDownloadIntentService;
 
 import javax.inject.Singleton;
 
@@ -31,4 +33,6 @@ public interface ApplicationComponent {
     UserRepository userRepository();
 
     Firebase firebase();
+
+//    void inject(ImageDownloadIntentService imageDownloadIntentService);
 }

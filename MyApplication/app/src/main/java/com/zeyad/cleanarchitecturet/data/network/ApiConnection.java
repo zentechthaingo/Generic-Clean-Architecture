@@ -53,7 +53,7 @@ public class ApiConnection {
         return new Retrofit.Builder()
                 .baseUrl(RestApi.API_BASE_URL)
                 .client(okHttpClient)
-//                .callbackExecutor(new JobExecutor())
+                .callbackExecutor(new JobExecutor())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
                         .setExclusionStrategies(new ExclusionStrategy() {
                             @Override

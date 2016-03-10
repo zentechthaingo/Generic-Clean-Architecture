@@ -64,7 +64,7 @@ public abstract class UseCase {
 //                .observeOn(Schedulers.io())
                 .observeOn(postExecutionThread.getScheduler())
 //                .observeOn(AndroidSchedulers.mainThread())
-//                .finallyDo(executor::shutdown)
+                .finallyDo(executor::shutdown)
                 .subscribe(UseCaseSubscriber);
     }
 
