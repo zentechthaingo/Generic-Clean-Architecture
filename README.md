@@ -1,19 +1,17 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-
-### What is this repository for? ###
+What is this repository for?
 
 * Quick summary
 
-This an virtual jamming studio for musicians who are too lazy to go the studio or want to find new musicians to jam with.
+This is a sample project showcasing the use new technologies and apis within the clean architecture pattern. 
 
 * Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* 0.1 (https://bitbucket.org/tutorials/markdowndemo)
 
 ### How do I get set up? ###
 
-* Summary of set up
+* Clone and sync and run
 * Configuration
 * Dependencies
 * Database configuration
@@ -25,6 +23,20 @@ This an virtual jamming studio for musicians who are too lazy to go the studio o
 * Writing tests
 * Code review
 * Other guidelines
+
+### Todo:
+
+* Fixed Realm Thread bug (In progress)
+* Generalize Realm (In progress)
+* Image download intent service (In progress) 
+* Tablet support
+* Login use case (Facebook, Twitter and Instagram login) with Fire base
+* Fire base 
+* Animations
+* User items use case
+* GCM push notifications
+* Analytics
+* Data binding (when stable)
 
 ### Who do I talk to? ###
 

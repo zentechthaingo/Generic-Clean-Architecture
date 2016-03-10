@@ -59,11 +59,11 @@ public abstract class UseCase {
 //                    })
 //                    .onErrorResumeNext(Observable.empty())
 //                    .groupBy(o -> new AtomicInteger(0).getAndIncrement() % Constants.THREADCT)
-//                .subscribeOn(Schedulers.from(executor))
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(executor))
+//                .subscribeOn(Schedulers.io())
 //                .observeOn(Schedulers.io())
-//                .observeOn(postExecutionThread.getScheduler())
-                    .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(postExecutionThread.getScheduler())
+//                .observeOn(AndroidSchedulers.mainThread())
 //                .finallyDo(executor::shutdown)
                 .subscribe(UseCaseSubscriber);
     }

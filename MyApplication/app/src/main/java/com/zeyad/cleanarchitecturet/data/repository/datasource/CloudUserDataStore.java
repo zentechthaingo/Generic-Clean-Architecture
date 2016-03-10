@@ -60,7 +60,7 @@ public class CloudUserDataStore implements UserDataStore {
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
 //                })
 //                .map(userEntityDataMapper::transformAllToRealm)
-//                .doOnNext(saveAllToCacheAction)
+                .doOnNext(saveAllToCacheAction)
                 .map(userEntityDataMapper::transformAll)
                 .compose(Utils.logUsersSource(TAG, realmManager));
     }
