@@ -1,6 +1,7 @@
 package com.zeyad.cleanarchitecturet.data.repository.datasource;
 
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
+import com.zeyad.cleanarchitecturet.data.db.RealmRepository;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
@@ -19,6 +20,7 @@ public class CloudUserDataStore implements UserDataStore {
 
     private final RestApi restApi;
     private RealmManager realmManager;
+    private RealmRepository realmRepository;
     private final UserEntityDataMapper userEntityDataMapper;
     private final String TAG = "CloudUserDataStore";
 
@@ -48,6 +50,12 @@ public class CloudUserDataStore implements UserDataStore {
         this.realmManager = realmManager;
     }
 
+    public CloudUserDataStore(RestApi restApi, RealmRepository realmRepository, UserEntityDataMapper userEntityDataMapper) {
+        this.restApi = restApi;
+        this.userEntityDataMapper = userEntityDataMapper;
+        this.realmRepository = realmRepository;
+    }
+
     @Override
     public Observable<List<UserEntity>> userEntityList() {
         return restApi.userRealmList()
@@ -67,7 +75,7 @@ public class CloudUserDataStore implements UserDataStore {
 
     @Override
     public Observable<UserEntity> userEntityDetails(final int userId) {
-        return restApi.userEntityById(userId)
+        return restApi.userRealmById(userId)
 //                .retryWhen(observable -> {
 //                    Log.v(TAG, "retryWhen, call");
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
@@ -75,8 +83,8 @@ public class CloudUserDataStore implements UserDataStore {
 //                    Log.v(TAG, "repeatWhen, call");
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
 //                }).map(userEntityDataMapper::transformToRealm)
-//                .doOnNext(saveToCacheAction)
-//                .map(userEntityDataMapper::transform)
+                .doOnNext(saveToCacheAction)
+                .map(userEntityDataMapper::transform)
                 .compose(Utils.logUserSource("Cloud", realmManager));
     }
 }

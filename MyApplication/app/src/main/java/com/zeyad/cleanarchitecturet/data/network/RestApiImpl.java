@@ -34,6 +34,11 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
+    public Observable<UserRealmModel> userRealmById(@Path("id") int userId) {
+        return ApiConnection.userRealm(userId);
+    }
+
+    @Override
     public Observable<Response> getStream(@Path("index") String index) {
         return ApiConnection.getStream(index);
     }

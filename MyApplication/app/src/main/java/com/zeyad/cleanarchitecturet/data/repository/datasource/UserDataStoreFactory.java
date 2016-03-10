@@ -1,7 +1,9 @@
 package com.zeyad.cleanarchitecturet.data.repository.datasource;
 
+import com.zeyad.cleanarchitecturet.data.apiclientexample.ApiObserver;
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
+import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecturet.data.network.RestApiImpl;
 
@@ -41,10 +43,12 @@ public class UserDataStoreFactory {
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
     public UserDataStore createAll(UserEntityDataMapper userEntityDataMapper) {
+        new ApiObserver().getApiObservable2(createCloudDataStore(userEntityDataMapper).userEntityList(),
+                UserRealmModel.class);
 //        if (realmManager.areUsersValid())
 //            return new DiskUserDataStore(realmManager, userEntityDataMapper);
 //        else
-            return createCloudDataStore(userEntityDataMapper);
+        return createCloudDataStore(userEntityDataMapper);
     }
 
     /**

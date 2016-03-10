@@ -38,6 +38,14 @@ public interface RestApi {
     @GET("user_{id}.json")
     Observable<UserEntity> userEntityById(@Path("id") final int userId);
 
+    /**
+     * Retrieves an {@link rx.Observable} which will emit a {@link UserEntity}.
+     *
+     * @param userId The user id used to get user data.
+     */
+    @GET("user_{id}.json")
+    Observable<UserRealmModel> userRealmById(@Path("id") final int userId);
+
     @Streaming
     @GET("/images/{index}.jpg")
     Observable<Response> getStream(@Path("index") String index);

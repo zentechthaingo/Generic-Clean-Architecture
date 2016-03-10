@@ -11,6 +11,7 @@ import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
+import com.zeyad.cleanarchitecturet.data.executor.JobExecutor;
 import com.zeyad.cleanarchitecturet.utilities.Constants;
 
 import java.io.File;
@@ -52,7 +53,7 @@ public class ApiConnection {
         return new Retrofit.Builder()
                 .baseUrl(RestApi.API_BASE_URL)
                 .client(okHttpClient)
-//                .addConverterFactory(GsonConverterFactory.create())
+//                .callbackExecutor(new JobExecutor())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
                         .setExclusionStrategies(new ExclusionStrategy() {
                             @Override
@@ -85,6 +86,12 @@ public class ApiConnection {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userEntityById(userId);
+    }
+
+    public static Observable<UserRealmModel> userRealm(int userId) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).userRealmById(userId);
     }
 
     // TODO: 3/6/16 Test!
