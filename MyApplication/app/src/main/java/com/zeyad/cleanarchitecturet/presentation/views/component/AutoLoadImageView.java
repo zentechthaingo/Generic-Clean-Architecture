@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.component;
+package com.zeyad.cleanarchitecturet.presentation.views.component;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zeyad.cleanarchitecturet.R;
-import com.zeyad.cleanarchitecturet.presentation.view.services.ImageDownloadIntentService;
+import com.zeyad.cleanarchitecturet.presentation.views.services.ImageDownloadIntentService;
 import com.zeyad.cleanarchitecturet.utilities.Utils;
 
 import java.io.File;

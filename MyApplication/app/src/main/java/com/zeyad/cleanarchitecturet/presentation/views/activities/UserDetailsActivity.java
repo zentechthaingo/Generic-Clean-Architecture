@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.activities;
+package com.zeyad.cleanarchitecturet.presentation.views.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import com.zeyad.cleanarchitecturet.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.modules.UserModule;
-import com.zeyad.cleanarchitecturet.presentation.view.fragments.UserDetailsFragment;
+import com.zeyad.cleanarchitecturet.presentation.views.fragments.UserDetailsFragment;
 
 /**
  * Activity that shows details of a certain user.

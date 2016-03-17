@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.fragments;
+package com.zeyad.cleanarchitecturet.presentation.views.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;

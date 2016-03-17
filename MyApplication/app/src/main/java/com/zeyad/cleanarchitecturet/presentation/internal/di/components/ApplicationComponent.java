@@ -5,10 +5,9 @@ import android.content.Context;
 import com.firebase.client.Firebase;
 import com.zeyad.cleanarchitecturet.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecturet.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecturet.domain.repositories.Repository;
 import com.zeyad.cleanarchitecturet.domain.repositories.UserRepository;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.modules.ApplicationModule;
-import com.zeyad.cleanarchitecturet.presentation.view.activities.BaseActivity;
+import com.zeyad.cleanarchitecturet.presentation.views.activities.BaseActivity;
 
 import javax.inject.Singleton;
 

@@ -4,7 +4,7 @@
 
     <fragment
         android:id="@+id/fragmentUserList"
-        android:name="com.zeyad.cleanarchitecturet.presentation.view.fragments.UserListFragment"
+        android:name="com.zeyad.cleanarchitecturet.presentation.views.fragments.UserListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

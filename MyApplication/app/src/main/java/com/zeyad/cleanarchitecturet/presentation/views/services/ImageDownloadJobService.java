@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.services;
+package com.zeyad.cleanarchitecturet.presentation.views.services;
 
 import android.annotation.TargetApi;
 import android.app.job.JobInfo;

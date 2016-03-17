@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view;
+package com.zeyad.cleanarchitecturet.presentation.views;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

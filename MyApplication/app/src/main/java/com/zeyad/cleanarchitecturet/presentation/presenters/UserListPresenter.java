@@ -11,7 +11,7 @@ import com.zeyad.cleanarchitecturet.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
 import com.zeyad.cleanarchitecturet.presentation.model.mapper.UserModelDataMapper;
-import com.zeyad.cleanarchitecturet.presentation.view.UserListView;
+import com.zeyad.cleanarchitecturet.presentation.views.UserListView;
 
 import java.util.Collection;
 import java.util.List;

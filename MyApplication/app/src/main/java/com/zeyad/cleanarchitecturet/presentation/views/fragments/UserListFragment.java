@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.fragments;
+package com.zeyad.cleanarchitecturet.presentation.views.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,14 +11,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.zeyad.cleanarchitecturet.R;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
-import com.zeyad.cleanarchitecturet.presentation.view.FirebaseUserListView;
-import com.zeyad.cleanarchitecturet.presentation.presenters.UserListFirebasePresenter;
-import com.zeyad.cleanarchitecturet.presentation.view.UserViewHolder;
+import com.zeyad.cleanarchitecturet.presentation.presenters.UserListPresenter;
+import com.zeyad.cleanarchitecturet.presentation.views.UserListView;
+import com.zeyad.cleanarchitecturet.presentation.views.adapters.UsersAdapter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -30,7 +30,7 @@ import butterknife.OnClick;
 /**
  * Fragment that shows a list of Users.
  */
-public class UserListFirebaseFragment extends BaseFragment implements FirebaseUserListView {
+public class UserListFragment extends BaseFragment implements UserListView {
 
     /**
      * Interface for listening user list events.
@@ -40,7 +40,7 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
     }
 
     @Inject
-    UserListFirebasePresenter userListFirebasePresenter;
+    UserListPresenter userListPresenter;
     @Bind(R.id.rv_users)
     RecyclerView rv_users;
     @Bind(R.id.rl_progress)
@@ -49,10 +49,10 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
     RelativeLayout rl_retry;
     @Bind(R.id.bt_retry)
     Button bt_retry;
-    private FirebaseRecyclerAdapter<UserModel, UserViewHolder> recyclerAdapter;
+    private UsersAdapter usersAdapter;
     private UserListListener userListListener;
 
-    public UserListFirebaseFragment() {
+    public UserListFragment() {
         super();
     }
 
@@ -82,20 +82,19 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
     @Override
     public void onResume() {
         super.onResume();
-        userListFirebasePresenter.resume();
+        userListPresenter.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        userListFirebasePresenter.pause();
+        userListPresenter.pause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        recyclerAdapter.cleanup();
-        userListFirebasePresenter.destroy();
+        userListPresenter.destroy();
     }
 
     @Override
@@ -106,13 +105,18 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
 
     private void initialize() {
         getComponent(UserComponent.class).inject(this);
-        userListFirebasePresenter.setView(this, rv_users);
+        userListPresenter.setView(this);
     }
 
-    // TODO: 2/28/16 setup adapter!
     private void setupUI() {
-        rv_users.setHasFixedSize(true);
         rv_users.setLayoutManager(new LinearLayoutManager(getActivity()));
+        usersAdapter = new UsersAdapter(getActivity(), new ArrayList<>());
+        usersAdapter.setOnItemClickListener(onItemClickListener);
+//        usersAdapter.setOnItemClickListener(userModel -> {
+//            if (userListPresenter != null && userModel != null)
+//                userListPresenter.onUserClicked(userModel);
+//        });
+        rv_users.setAdapter(usersAdapter);
     }
 
     @Override
@@ -138,25 +142,15 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
     }
 
     @Override
-    public void renderUserList(FirebaseRecyclerAdapter<UserModel, UserViewHolder> adapter) {
-        recyclerAdapter = adapter;
-        rv_users.setAdapter(recyclerAdapter);
-    }
-
-    @Override
     public void renderUserList(Collection<UserModel> userModelCollection) {
+        if (userModelCollection != null)
+            usersAdapter.setUsersCollection(userModelCollection);
     }
 
     @Override
     public void viewUser(UserModel userModel) {
         if (userListListener != null)
             userListListener.onUserClicked(userModel);
-    }
-
-    @Override
-    public void setupFirebaseAdapter(FirebaseRecyclerAdapter<UserModel, UserViewHolder> recyclerAdapter) {
-        this.recyclerAdapter = recyclerAdapter;
-        rv_users.setAdapter(recyclerAdapter);
     }
 
     @Override
@@ -173,11 +167,20 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
      * Loads all users.
      */
     private void loadUserList() {
-        userListFirebasePresenter.initialize();
+        userListPresenter.initialize();
     }
 
     @OnClick(R.id.bt_retry)
     void onButtonRetryClick() {
         loadUserList();
     }
+
+    private UsersAdapter.OnItemClickListener onItemClickListener =
+            new UsersAdapter.OnItemClickListener() {
+                @Override
+                public void onUserItemClicked(UserModel userModel) {
+                    if (userListPresenter != null && userModel != null)
+                        userListPresenter.onUserClicked(userModel);
+                }
+            };
 }

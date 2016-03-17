@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.fragments;
+package com.zeyad.cleanarchitecturet.presentation.views.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,8 +13,8 @@ import com.zeyad.cleanarchitecturet.R;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
 import com.zeyad.cleanarchitecturet.presentation.presenters.UserDetailsPresenter;
-import com.zeyad.cleanarchitecturet.presentation.view.UserDetailsView;
-import com.zeyad.cleanarchitecturet.presentation.view.component.AutoLoadImageView;
+import com.zeyad.cleanarchitecturet.presentation.views.UserDetailsView;
+import com.zeyad.cleanarchitecturet.presentation.views.component.AutoLoadImageView;
 
 import javax.inject.Inject;
 

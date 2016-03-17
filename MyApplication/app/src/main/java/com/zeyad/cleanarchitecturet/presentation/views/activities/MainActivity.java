@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.activities;
+package com.zeyad.cleanarchitecturet.presentation.views.activities;
 
 import android.os.Bundle;
 import android.widget.Button;

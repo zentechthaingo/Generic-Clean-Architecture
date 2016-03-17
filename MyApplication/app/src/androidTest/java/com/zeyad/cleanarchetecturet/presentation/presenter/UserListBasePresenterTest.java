@@ -6,7 +6,7 @@ import android.test.AndroidTestCase;
 import com.zeyad.cleanarchitecturet.domain.interactor.GetUserList;
 import com.zeyad.cleanarchitecturet.presentation.model.mapper.UserModelDataMapper;
 import com.zeyad.cleanarchitecturet.presentation.presenters.UserListPresenter;
-import com.zeyad.cleanarchitecturet.presentation.view.UserListView;
+import com.zeyad.cleanarchitecturet.presentation.views.UserListView;
 
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;

@@ -22,7 +22,7 @@ import rx.Observable;
 public class Utils {
 
     private static final int COUNTER_START = 1, ATTEMPTS = 5;
-    private static final String BASE_IMAGE_NAME_CACHED = "image_";
+
 
     public static <T> Observable.Transformer<T, Long> zipWithFlatMap(String TAG) {
         return observable -> observable.zipWith(Observable.range(COUNTER_START, ATTEMPTS), (t, repeatAttempt) -> {
@@ -119,7 +119,7 @@ public class Utils {
         String hash = String.valueOf(imageUrl.hashCode());
         if (hash.startsWith("-"))
             hash = hash.substring(1);
-        return BASE_IMAGE_NAME_CACHED + hash;
+        return Constants.BASE_IMAGE_NAME_CACHED + hash + Constants.IMAGE_EXTENSION;
     }
 
     /**
@@ -129,8 +129,7 @@ public class Utils {
      * @return A {@link File} representing a unique element.
      */
     public static File buildFileFromFilename(String fileName) {
-        String fullPath = Constants.CACHE_DIR + File.separator + fileName;
-        return new File(fullPath);
+        return new File(Constants.CACHE_DIR + File.separator + fileName);
     }
 
     public static boolean hasLollipop() {

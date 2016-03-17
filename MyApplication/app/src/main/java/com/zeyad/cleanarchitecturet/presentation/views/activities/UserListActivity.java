@@ -1,11 +1,8 @@
-package com.zeyad.cleanarchitecturet.presentation.view.activities;
+package com.zeyad.cleanarchitecturet.presentation.views.activities;
 
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Pair;
-import android.view.View;
 import android.view.Window;
 
 import com.zeyad.cleanarchitecturet.R;
@@ -13,7 +10,7 @@ import com.zeyad.cleanarchitecturet.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
-import com.zeyad.cleanarchitecturet.presentation.view.fragments.UserListFragment;
+import com.zeyad.cleanarchitecturet.presentation.views.fragments.UserListFragment;
 
 /**
  * Activity that shows a list of Users.

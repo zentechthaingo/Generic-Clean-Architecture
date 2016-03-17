@@ -11,7 +11,7 @@ import com.zeyad.cleanarchitecturet.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
 import com.zeyad.cleanarchitecturet.presentation.model.mapper.UserModelDataMapper;
-import com.zeyad.cleanarchitecturet.presentation.view.UserDetailsView;
+import com.zeyad.cleanarchitecturet.presentation.views.UserDetailsView;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -117,6 +117,7 @@ public class UserDetailsPresenter implements BasePresenter {
             hideViewLoading();
             showErrorMessage(new DefaultErrorBundle((Exception) e));
             showViewRetry();
+            e.printStackTrace();
         }
 
         @Override

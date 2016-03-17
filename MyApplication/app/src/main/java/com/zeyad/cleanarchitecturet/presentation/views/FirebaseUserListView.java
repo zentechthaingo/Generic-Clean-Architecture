@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view;
+package com.zeyad.cleanarchitecturet.presentation.views;
 
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;

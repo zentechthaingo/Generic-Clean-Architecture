@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.activities;
+package com.zeyad.cleanarchitecturet.presentation.views.activities;
 
 import android.app.Fragment;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.adapters;
+package com.zeyad.cleanarchitecturet.presentation.views.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.zeyad.cleanarchitecturet.R;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
-import com.zeyad.cleanarchitecturet.presentation.view.UserViewHolder;
+import com.zeyad.cleanarchitecturet.presentation.views.UserViewHolder;
 
 import java.util.Collection;
 import java.util.List;

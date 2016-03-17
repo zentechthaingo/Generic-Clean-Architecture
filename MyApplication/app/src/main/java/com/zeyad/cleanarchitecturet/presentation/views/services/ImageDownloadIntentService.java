@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.presentation.view.services;
+package com.zeyad.cleanarchitecturet.presentation.views.services;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -9,8 +9,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
-import com.zeyad.cleanarchitecturet.data.network.RestApi;
-import com.zeyad.cleanarchitecturet.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecturet.utilities.Constants;
 import com.zeyad.cleanarchitecturet.utilities.Utils;
 
@@ -25,10 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-// TODO: 3/6/16 Generalize!
 public class ImageDownloadIntentService extends IntentService {
-    //    @Inject
-    private RestApi restAdapter;
+
     public static final String TAG = ImageDownloadIntentService.class.getSimpleName(),
             EXTRA_REMOTE_PATH = "REMOTE_PATH",
             EXTRA_REMOTE_NAME = "REMOTE_NAME",
@@ -56,24 +52,19 @@ public class ImageDownloadIntentService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (restAdapter == null)
-            restAdapter = new RestApiImpl();
         CACHE_DIR = Constants.CACHE_DIR = new File(String.valueOf(getCacheDir())).getAbsolutePath();
         dir = new File(CACHE_DIR);
         File lockSignature = new File(dir, "dl.lock");
         if (!dir.exists()) {
             dir.mkdirs();
+        } else if (lockSignature.exists()) {
+            // TODO: check signature
         } else {
-            if (lockSignature.exists()) {
-                // TODO: check signature
-            } else {
-                // TODO: generate signature
-            }
+            // TODO: generate signature
         }
         bmOptions = new BitmapFactory.Options();
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565;
         addAllCachedFiles();
-//        AndroidApplication.getInstance().getApplicationComponent().inject(this);
     }
 
     private void addAllCachedFiles() {
@@ -102,23 +93,20 @@ public class ImageDownloadIntentService extends IntentService {
         String cat = intent.getStringExtra(EXTRA_CATEGORY);
         String filter = intent.getStringExtra(EXTRA_FILTER_SCHEME);
         boolean localCopy = false;
-        if (url.startsWith(Constants.CACHE_DIR))
-            if (new File(url).exists()) {
-                url = url.replaceFirst(Constants.CACHE_DIR, "");
+        if (name.startsWith(Constants.CACHE_DIR))
+            if (Utils.buildFileFromFilename(Utils.getFileNameFromUrl(url)).exists()) {
                 downloadedKeys.add(url);
                 localCopy = true;
             }
         Intent localIntent = new Intent(DOWNLOAD_STATUS_CHANGED + "-" + filter).putExtra(EXTENDED_DATA_KEY,
                 url);
-        File target = new File(dir, name);
+        File target = Utils.buildFileFromFilename(Utils.getFileNameFromUrl(url));
         String targetPath = target.getAbsolutePath();
         if (downloadedKeys.contains(url)) {
-            if (localCopy) {
-                targetPath = Constants.CACHE_DIR + url;
+            if (localCopy)
                 Log.d(TAG, "Found in wallet " + url + ", file " + targetPath);
-            } else {
+            else
                 Log.d(TAG, "Found in cache " + url + ", file " + targetPath);
-            }
             localIntent.putExtra(EXTENDED_DATA_STATUS, EXTENDED_DATA_STATUS_COMPLETED)
                     .putExtra(EXTENDED_DATA_FILE_PATH, targetPath);
         } else {
@@ -127,8 +115,7 @@ public class ImageDownloadIntentService extends IntentService {
             } else {
                 Log.d(TAG, "Downloading " + url + " into " + targetPath);
                 try {
-                    download(target, url.substring(url.lastIndexOf("/") + 1, url.length() - 4));
-//                    download(target, url);
+                    download(target, url);
                     downloadedKeys.add(url);
                     if (cat != null && !cat.isEmpty()) {
                         if (!categorizedKeys.containsKey(cat))
@@ -151,7 +138,6 @@ public class ImageDownloadIntentService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
-    // FIXME: 3/17/16 fix!
     private void download(final File target, String imageUrl) {
         try {
             FileOutputStream fOut = new FileOutputStream(target);
