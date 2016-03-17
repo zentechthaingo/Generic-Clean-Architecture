@@ -26,13 +26,13 @@ This is a sample project showcasing the use new technologies and apis within the
 
 ### Todo:
 
-* Generalize Realm (In progress)
-* Image download intent service (In progress) 
+* Generalize Realm (In test)
 * Tablet support
-* Login use case (Facebook, Twitter and Instagram login) with Fire base
+* Login use case (Google and Facebook login) with Fire base
 * Fire base 
-* Animations
 * User items use case
+* Animations
+* Strict Mode
 * GCM push notifications
 * Analytics
 * Data binding (when stable)
