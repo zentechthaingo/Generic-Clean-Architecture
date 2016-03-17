@@ -18,6 +18,7 @@ import rx.Subscriber;
 
 import static org.mockito.Mockito.verify;
 
+// FIXME: 3/10/16 Update with current RealmManager!
 public class RealmManagerTest extends AndroidTestCase {
 
     private RealmManagerImpl realmManager;
@@ -118,7 +119,7 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.areUsersValid());
+        assertTrue(realmManager.areItemsValid());
     }
 
     // TODO: 2/3/16 finish!

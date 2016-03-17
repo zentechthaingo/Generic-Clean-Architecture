@@ -2,7 +2,7 @@ package com.zeyad.cleanarchitecturet.data.entities.mapper;
 
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
-import com.zeyad.cleanarchitecturet.domain.User;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,10 +41,27 @@ public class UserEntityDataMapper {
     /**
      * Transform a {@link UserRealmModel} into an {@link UserEntity}.
      *
+     * @param userEntities Objects to be transformed.
+     * @return {@link UserEntity} if valid {@link UserRealmModel} otherwise null.
+     */
+    public List<User> transformAll(Collection<UserEntity> userEntities) {
+        List<User> userList = new ArrayList<>();
+        User user;
+        for (UserEntity userEntity : userEntities) {
+            user = transform(userEntity);
+            if (user != null)
+                userList.add(user);
+        }
+        return userList;
+    }
+
+    /**
+     * Transform a {@link UserRealmModel} into an {@link UserEntity}.
+     *
      * @param userRealmModels Objects to be transformed.
      * @return {@link UserEntity} if valid {@link UserRealmModel} otherwise null.
      */
-    public List<UserEntity> transformAll(Collection<UserRealmModel> userRealmModels) {
+    public List<UserEntity> transformAllFromRealm(Collection<UserRealmModel> userRealmModels) {
         List<UserEntity> userEntityList = new ArrayList<>();
         UserEntity userEntity;
         for (UserRealmModel userRealmModel : userRealmModels) {

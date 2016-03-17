@@ -6,9 +6,11 @@ import com.firebase.client.Firebase;
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.db.RealmManagerImpl;
 import com.zeyad.cleanarchitecturet.data.executor.JobExecutor;
+import com.zeyad.cleanarchitecturet.data.repository.DataRepository;
 import com.zeyad.cleanarchitecturet.data.repository.UserDataRepository;
 import com.zeyad.cleanarchitecturet.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecturet.domain.executors.ThreadExecutor;
+import com.zeyad.cleanarchitecturet.domain.repositories.Repository;
 import com.zeyad.cleanarchitecturet.domain.repositories.UserRepository;
 import com.zeyad.cleanarchitecturet.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecturet.presentation.UIThread;
@@ -58,6 +60,12 @@ public class ApplicationModule {
     @Singleton
     UserRepository provideUserRepository(UserDataRepository userDataRepository) {
         return userDataRepository;
+    }
+
+    @Provides
+    @Singleton
+    Repository provideRepository(DataRepository dataRepository) {
+        return dataRepository;
     }
 
     @Provides

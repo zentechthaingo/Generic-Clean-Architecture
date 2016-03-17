@@ -5,7 +5,6 @@ import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 
 import java.util.List;
 
-import retrofit.Callback;
 import retrofit.Response;
 import retrofit.http.GET;
 import retrofit.http.Path;
@@ -28,6 +27,9 @@ public interface RestApi {
      * Retrieves an {@link rx.Observable} which will emit a List of {@link UserEntity}.
      */
     @GET("users.json")
+    Observable<List<?>> userList();
+
+    @GET("users.json")
     Observable<List<UserRealmModel>> userRealmList();
 
     /**
@@ -43,6 +45,9 @@ public interface RestApi {
      *
      * @param userId The user id used to get user data.
      */
+    @GET("user_{id}.json")
+    Observable<?> userById(@Path("id") final int userId);
+
     @GET("user_{id}.json")
     Observable<UserRealmModel> userRealmById(@Path("id") final int userId);
 

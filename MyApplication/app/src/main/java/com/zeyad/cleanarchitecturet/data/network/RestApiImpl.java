@@ -19,6 +19,11 @@ public class RestApiImpl implements RestApi {
 
     @Override
     public Observable<List<UserEntity>> userEntityList() {
+        return ApiConnection.userEntityList();
+    }
+
+    @Override
+    public Observable<List<?>> userList() {
         return ApiConnection.userList();
     }
 
@@ -26,7 +31,6 @@ public class RestApiImpl implements RestApi {
     public Observable<List<UserRealmModel>> userRealmList() {
         return ApiConnection.userRealmList();
     }
-
 
     @Override
     public Observable<UserEntity> userEntityById(final int userId) {
@@ -36,6 +40,11 @@ public class RestApiImpl implements RestApi {
     @Override
     public Observable<UserRealmModel> userRealmById(@Path("id") int userId) {
         return ApiConnection.userRealm(userId);
+    }
+
+    @Override
+    public Observable<?> userById(@Path("id") int userId) {
+        return ApiConnection.userById(userId);
     }
 
     @Override

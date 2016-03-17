@@ -1,17 +1,20 @@
 package com.zeyad.cleanarchitecturet.data.repository;
 
+import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchitecturet.data.repository.datasource.UserDataStoreFactory;
-import com.zeyad.cleanarchitecturet.domain.User;
+import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.UserDataStoreFactory;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.domain.repositories.UserRepository;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
-// TODO: 3/10/16 Generalize!
+import rx.functions.Func1;
+
 /**
  * {@link UserRepository} for retrieving user data.
  */
@@ -37,9 +40,10 @@ public class UserDataRepository implements UserRepository {
     @SuppressWarnings("Convert2MethodRef")
     @Override
     public Observable<List<User>> users() {
-        return userDataStoreFactory.createAll(userEntityDataMapper)
+        return userDataStoreFactory
+                .createAll(userEntityDataMapper)
                 .userEntityList()
-                .map(roomEntities -> userEntityDataMapper.transform(roomEntities));
+                .map(userEntities -> userEntityDataMapper.transformAll((List<UserEntity>) userEntities));
         // TODO: 3/2/16 Test!
 //        return userDataStoreFactory.getAllUsersFromAllSources(userDataStoreFactory
 //                .createAllFromCloud(userEntityDataMapper)
@@ -52,7 +56,7 @@ public class UserDataRepository implements UserRepository {
     public Observable<User> user(int userId) {
         return userDataStoreFactory.createById(userId, userEntityDataMapper)
                 .userEntityDetails(userId)
-                .map(roomEntity -> userEntityDataMapper.transform(roomEntity));
+                .map(userEntity -> userEntityDataMapper.transform(userEntity));
         // TODO: 3/2/16 Test!
 //        return userDataStoreFactory.getUserFromAllSources(userDataStoreFactory
 //                .createByIdFromCloud(userEntityDataMapper)

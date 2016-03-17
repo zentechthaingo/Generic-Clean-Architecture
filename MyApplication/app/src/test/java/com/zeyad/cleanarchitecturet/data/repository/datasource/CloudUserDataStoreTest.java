@@ -5,6 +5,7 @@ import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecturet.data.network.RestApi;
+import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.CloudUserDataStore;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,17 +1,15 @@
-package com.zeyad.cleanarchitecturet.data.repository.datasource;
+package com.zeyad.cleanarchitecturet.data.repository.datasource.userstore;
 
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecturet.data.network.RestApi;
-import com.zeyad.cleanarchitecturet.utilities.Utils;
 
-import java.util.List;
+import java.util.Collection;
 
 import rx.Observable;
 import rx.functions.Action1;
-// TODO: 3/10/16 Generalize!
 
 /**
  * {@link UserDataStore} implementation based on connections to the api (Cloud).
@@ -29,7 +27,7 @@ public class CloudUserDataStore implements UserDataStore {
                 realmManager.put(userRealmModel);
         }
     };
-    private final Action1<List<UserRealmModel>> saveAllToCacheAction = userRealmModels -> {
+    private final Action1<Collection<UserRealmModel>> saveAllToCacheAction = userRealmModels -> {
         if (userRealmModels != null)
             realmManager.putAll(userRealmModels);
     };
@@ -47,18 +45,32 @@ public class CloudUserDataStore implements UserDataStore {
     }
 
     @Override
-    public Observable<List<UserEntity>> userEntityList() {
+    public Observable<Collection<UserEntity>> userEntityList() {
         return restApi.userRealmList()
+//                .retryWhen(observable -> {
+//                    Log.v(TAG, "retryWhen, call");
+//                    return observable.compose(Utils.zipWithFlatMap(TAG));
+//                }).repeatWhen(observable -> {
+//                    Log.v(TAG, "repeatWhen, call");
+//                    return observable.compose(Utils.zipWithFlatMap(TAG));
+//                })
                 .doOnNext(saveAllToCacheAction::call)
-                .map(userEntityDataMapper::transformAll)
-                .compose(Utils.logUsersSource(TAG, realmManager));
+                .map(userEntityDataMapper::transformAllFromRealm);
+//                .compose(Utils.logUsersSource(TAG, realmManager));
     }
 
     @Override
     public Observable<UserEntity> userEntityDetails(final int userId) {
         return restApi.userRealmById(userId)
+//                .retryWhen(observable -> {
+////                    Log.v(TAG, "retryWhen, call");
+//                    return observable.compose(Utils.zipWithFlatMap(TAG));
+//                }).repeatWhen(observable -> {
+////                    Log.v(TAG, "repeatWhen, call");
+//                    return observable.compose(Utils.zipWithFlatMap(TAG));
+//                })
                 .doOnNext(saveToCacheAction::call)
-                .map(userEntityDataMapper::transform)
-                .compose(Utils.logUserSource(TAG, realmManager));
+                .map(userEntityDataMapper::transform);
+//                .compose(Utils.logUserSource(TAG, realmManager));
     }
 }

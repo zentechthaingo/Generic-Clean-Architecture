@@ -4,11 +4,10 @@ import android.support.annotation.NonNull;
 
 import com.zeyad.cleanarchitecturet.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecturet.domain.exceptions.ErrorBundle;
-import com.zeyad.cleanarchitecturet.domain.interactor.BaseUseCase;
 import com.zeyad.cleanarchitecturet.domain.interactor.DefaultSubscriber;
+import com.zeyad.cleanarchitecturet.domain.interactor.GeneralBaseUseCase;
 import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.presentation.exception.ErrorMessageFactory;
-import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
 import com.zeyad.cleanarchitecturet.presentation.model.mapper.UserModelDataMapper;
 import com.zeyad.cleanarchitecturet.presentation.view.UserListView;
@@ -19,21 +18,16 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-/**
- * {@link BasePresenter} that controls communication between views and models of the presentation
- * layer.
- */
-@PerActivity
-public class UserListPresenter implements BasePresenter {
+public class GeneralListPreseneter implements BasePresenter {
 
     private UserListView viewListView;
-    private final BaseUseCase getUserListBaseUseCase;
+    private GeneralBaseUseCase getGeneralListUseCase;
     private final UserModelDataMapper userModelDataMapper;
 
     @Inject
-    public UserListPresenter(@Named("userEntityList") BaseUseCase getUserListUserCase, UserModelDataMapper userModelDataMapper) {
-        getUserListBaseUseCase = getUserListUserCase;
+    public GeneralListPreseneter(@Named("userEntityList") GeneralBaseUseCase getUserListUserCase, UserModelDataMapper userModelDataMapper) {
         this.userModelDataMapper = userModelDataMapper;
+        getGeneralListUseCase = getUserListUserCase;
     }
 
     public void setView(@NonNull UserListView view) {
@@ -47,7 +41,7 @@ public class UserListPresenter implements BasePresenter {
 
     @Override
     public void pause() {
-        getUserListBaseUseCase.unsubscribe();
+        getGeneralListUseCase.unsubscribe();
     }
 
     @Override
@@ -100,7 +94,7 @@ public class UserListPresenter implements BasePresenter {
     }
 
     private void getUserList() {
-        getUserListBaseUseCase.execute(new UserListSubscriber());
+        getGeneralListUseCase.execute(new UserListSubscriber());
     }
 
     private final class UserListSubscriber extends DefaultSubscriber<List<User>> {

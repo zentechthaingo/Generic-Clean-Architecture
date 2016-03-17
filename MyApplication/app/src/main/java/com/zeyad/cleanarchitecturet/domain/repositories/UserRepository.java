@@ -1,6 +1,6 @@
 package com.zeyad.cleanarchitecturet.domain.repositories;
 
-import com.zeyad.cleanarchitecturet.domain.User;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 
 import java.util.List;
 

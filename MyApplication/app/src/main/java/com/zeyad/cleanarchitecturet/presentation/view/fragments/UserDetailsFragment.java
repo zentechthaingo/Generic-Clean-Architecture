@@ -9,8 +9,6 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zeyad.cleanarchitecturet.R;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
@@ -110,13 +108,10 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     @Override
     public void renderUser(UserModel user) {
         if (user != null) {
-            Glide.with(getActivity().getApplicationContext()).load(user.getCoverUrl())
-                    .placeholder(R.drawable.placer_holder_img)
-                    .fallback(R.drawable.placer_holder_img)
-                    .override(iv_cover.getWidth(), iv_cover.getHeight())
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .into(iv_cover);
-//            iv_cover.setImageUrl(user.getCoverUrl());
+            iv_cover.setImageUrl(user.getCoverUrl())
+                    .setImagePlaceHolder(R.drawable.placer_holder_img)
+                    .setImageFallBackResourceId(R.drawable.placer_holder_img)
+                    .setImageOnErrorResourceId(R.drawable.placer_holder_img);
             tv_fullName.setText(user.getFullName());
             tv_email.setText(user.getEmail());
             tv_followers.setText(String.valueOf(user.getFollowers()));

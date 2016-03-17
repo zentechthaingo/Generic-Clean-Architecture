@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import com.firebase.client.Firebase;
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.zeyad.cleanarchitecturet.R;
-import com.zeyad.cleanarchitecturet.domain.User;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
 import com.zeyad.cleanarchitecturet.presentation.view.FirebaseUserListView;

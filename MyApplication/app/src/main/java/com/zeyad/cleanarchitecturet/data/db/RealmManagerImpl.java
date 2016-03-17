@@ -7,6 +7,7 @@ import android.util.Log;
 import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,7 +19,6 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-// TODO: 3/10/16 Generalize!
 
 /**
  * {@link RealmManager} implementation.
@@ -30,15 +30,6 @@ public class RealmManagerImpl implements RealmManager {
     private static final String SETTINGS_KEY_LAST_CACHE_UPDATE = "last_cache_update";
     private static final long EXPIRATION_TIME = 60 * 10 * 1000;
     private Realm mRealm;
-
-    public Context getmContext() {
-        return mContext;
-    }
-
-    public void setmContext(Context mContext) {
-        this.mContext = mContext;
-    }
-
     private Context mContext;
 
     @Inject
@@ -59,7 +50,7 @@ public class RealmManagerImpl implements RealmManager {
     }
 
     @Override
-    public Observable<List<UserRealmModel>> getAll() {
+    public Observable<Collection<UserRealmModel>> getAll() {
         mRealm = Realm.getInstance(mContext);
         return mRealm.asObservable()
                 .map(realm -> realm.where(UserRealmModel.class)
@@ -100,7 +91,7 @@ public class RealmManagerImpl implements RealmManager {
     }
 
     @Override
-    public void putAll(List<UserRealmModel> userRealmModels) {
+    public void putAll(Collection<UserRealmModel> userRealmModels) {
         for (UserRealmModel userRealmModel : userRealmModels)
             put(userRealmModel);
     }
@@ -122,7 +113,7 @@ public class RealmManagerImpl implements RealmManager {
     @Override
     public boolean areUsersValid() {
         if (((System.currentTimeMillis() - getFromPreferences()) > EXPIRATION_TIME)) {
-//            evictAll();
+            evictAll();
             return false;
         } else
             return true;
@@ -132,26 +123,28 @@ public class RealmManagerImpl implements RealmManager {
     @Override
     public void evictAll() {
         mRealm = Realm.getInstance(mContext);
-//        mRealm.where(UserRealmModel.class).findAll().clear();
-        mRealm.asObservable().map(realm -> {
-            mRealm.where(UserRealmModel.class).findAll().clear();
-            return null;
-        }).subscribe(new Subscriber<Object>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onNext(Object o) {
-                Log.d("RealmManager", "all users deleted!");
-            }
-        });
+        mRealm.beginTransaction();
+        mRealm.where(UserRealmModel.class).findAll().clear();
+        mRealm.commitTransaction();
+//        mRealm.asObservable().map(realm -> {
+//            mRealm.where(UserRealmModel.class).findAll().clear();
+//            return null;
+//        }).subscribe(new Subscriber<Object>() {
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                e.printStackTrace();
+//            }
+//
+//            @Override
+//            public void onNext(Object o) {
+//                Log.d("RealmManager", "all users deleted!");
+//            }
+//        });
     }
 
     @Override

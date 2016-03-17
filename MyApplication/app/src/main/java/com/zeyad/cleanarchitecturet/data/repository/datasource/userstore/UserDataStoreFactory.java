@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.data.repository.datasource;
+package com.zeyad.cleanarchitecturet.data.repository.datasource.userstore;
 
 import android.content.Context;
 
@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
-// TODO: 3/10/16 Generalize!
 
 /**
  * Factory that creates different implementations of {@link UserDataStore}.
@@ -37,7 +36,7 @@ public class UserDataStoreFactory {
      * Create {@link UserDataStore} from a user id.
      */
     public UserDataStore createById(int userId, UserEntityDataMapper userEntityDataMapper) {
-        if (mRealmManager.isUserValid(userId))
+        if (mRealmManager.isUserValid(userId) || !Utils.isNetworkAvailable(mContext))
             return new DiskUserDataStore(mRealmManager, userEntityDataMapper);
         else
             return createCloudDataStore(userEntityDataMapper);

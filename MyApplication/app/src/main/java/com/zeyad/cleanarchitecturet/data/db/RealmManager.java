@@ -2,7 +2,7 @@ package com.zeyad.cleanarchitecturet.data.db;
 
 import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 
-import java.util.List;
+import java.util.Collection;
 
 import io.realm.RealmResults;
 import rx.Observable;
@@ -21,7 +21,7 @@ public interface RealmManager {
     /**
      * Gets an {@link Observable} which will emit a {@link RealmResults<UserRealmModel>}.
      */
-    Observable<List<UserRealmModel>> getAll();
+    Observable<Collection<UserRealmModel>> getAll();
 
     /**
      * Puts and element into the cache.
@@ -35,7 +35,7 @@ public interface RealmManager {
      *
      * @param userRealmModels Element to insert in the cache.
      */
-    void putAll(List<UserRealmModel> userRealmModels);
+    void putAll(Collection<UserRealmModel> userRealmModels);
 
     /**
      * Checks if an element (User) exists in the cache.

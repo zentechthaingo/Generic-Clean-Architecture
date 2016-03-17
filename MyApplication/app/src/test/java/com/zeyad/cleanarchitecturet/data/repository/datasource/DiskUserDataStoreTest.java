@@ -3,6 +3,7 @@ package com.zeyad.cleanarchitecturet.data.repository.datasource;
 import com.zeyad.cleanarchitecturet.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
+import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.DiskUserDataStore;
 
 import org.junit.Before;
 import org.junit.Rule;

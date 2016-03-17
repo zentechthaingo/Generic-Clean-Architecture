@@ -2,11 +2,11 @@ package com.zeyad.cleanarchitecturet.presentation.presenters;
 
 import android.support.annotation.NonNull;
 
-import com.zeyad.cleanarchitecturet.domain.User;
 import com.zeyad.cleanarchitecturet.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecturet.domain.exceptions.ErrorBundle;
+import com.zeyad.cleanarchitecturet.domain.interactor.BaseUseCase;
 import com.zeyad.cleanarchitecturet.domain.interactor.DefaultSubscriber;
-import com.zeyad.cleanarchitecturet.domain.interactor.UseCase;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
@@ -25,18 +25,18 @@ public class UserDetailsPresenter implements BasePresenter {
 
     /**
      * id used to retrieve user details
-     */
+    */
     private int userId;
 
     private UserDetailsView viewDetailsView;
 
-    private final UseCase getUserDetailsUseCase;
+    private final BaseUseCase getUserDetailsBaseUseCase;
     private final UserModelDataMapper userModelDataMapper;
 
     @Inject
-    public UserDetailsPresenter(@Named("userDetails") UseCase getUserDetailsUseCase,
+    public UserDetailsPresenter(@Named("userDetails") BaseUseCase getUserDetailsBaseUseCase,
                                 UserModelDataMapper userModelDataMapper) {
-        this.getUserDetailsUseCase = getUserDetailsUseCase;
+        this.getUserDetailsBaseUseCase = getUserDetailsBaseUseCase;
         this.userModelDataMapper = userModelDataMapper;
     }
 
@@ -54,7 +54,7 @@ public class UserDetailsPresenter implements BasePresenter {
 
     @Override
     public void destroy() {
-        getUserDetailsUseCase.unsubscribe();
+        getUserDetailsBaseUseCase.unsubscribe();
     }
 
     /**
@@ -102,7 +102,7 @@ public class UserDetailsPresenter implements BasePresenter {
     }
 
     private void getUserDetails() {
-        getUserDetailsUseCase.execute(new UserDetailsSubscriber());
+        getUserDetailsBaseUseCase.execute(new UserDetailsSubscriber());
     }
 
     private final class UserDetailsSubscriber extends DefaultSubscriber<User> {

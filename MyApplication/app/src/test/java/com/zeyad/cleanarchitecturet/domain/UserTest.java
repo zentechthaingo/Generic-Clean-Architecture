@@ -1,5 +1,7 @@
 package com.zeyad.cleanarchitecturet.domain;
 
+import com.zeyad.cleanarchitecturet.domain.models.User;
+
 import org.junit.Before;
 import org.junit.Test;
 

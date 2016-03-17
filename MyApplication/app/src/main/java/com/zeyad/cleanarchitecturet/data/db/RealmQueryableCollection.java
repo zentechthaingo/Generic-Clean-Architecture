@@ -8,12 +8,9 @@ import rx.Observable;
 import rx.functions.Func1;
 import rx.subjects.BehaviorSubject;
 
-/**
- * Created by Zherebtsov Alexandr on 07.01.2016.
- */
 public class RealmQueryableCollection {
 
-    List<RealmQueryable> queryables;
+    private List<RealmQueryable> queryables;
 
     public RealmQueryableCollection() {
         queryables = new ArrayList<>();
@@ -34,5 +31,10 @@ public class RealmQueryableCollection {
 
     public void clear() {
         queryables.clear();
+    }
+
+
+    public List<RealmQueryable> getQueryables() {
+        return queryables;
     }
 }

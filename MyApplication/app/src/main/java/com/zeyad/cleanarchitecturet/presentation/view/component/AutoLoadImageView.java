@@ -1,28 +1,18 @@
 package com.zeyad.cleanarchitecturet.presentation.view.component;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zeyad.cleanarchitecturet.R;
-import com.zeyad.cleanarchitecturet.utilities.Constants;
+import com.zeyad.cleanarchitecturet.presentation.view.services.ImageDownloadIntentService;
+import com.zeyad.cleanarchitecturet.utilities.Utils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-// FIXME: 3/6/16 !
 
 /**
  * Simple implementation of {@link ImageView} with extended features like setting an
@@ -30,8 +20,7 @@ import rx.schedulers.Schedulers;
  */
 public class AutoLoadImageView extends ImageView {
 
-    private static final String TAG = "AutoLoadImageView", BASE_IMAGE_NAME_CACHED = "image_",
-            CLOUD = "Cloud", DISK = "Disk";
+    private static final String TAG = "AutoLoadImageView", CLOUD = "Cloud", DISK = "Disk";
     private String imageUrl;
     private File img;
     private int imagePlaceHolderResourceId = -1, imageOnErrorResourceId = -1, imageFallBackResourceId = -1;
@@ -54,12 +43,13 @@ public class AutoLoadImageView extends ImageView {
      *
      * @param imageUrl The url of the resource to load.
      */
-    public void setImageUrl(final String imageUrl) {
-        this.imageUrl = imageUrl;
-        if (imageUrl != null)
+    public AutoLoadImageView setImageUrl(final String imageUrl) {
+        if (imageUrl != null) {
+            this.imageUrl = imageUrl;
             loadImageFromUrl(imageUrl);
-        else throw new NullPointerException();
+        } else throw new NullPointerException();
         imagePlaceHolderResourceId = imageOnErrorResourceId = imageFallBackResourceId = R.drawable.placer_holder_img;
+        return this;
     }
 
     /**
@@ -67,8 +57,9 @@ public class AutoLoadImageView extends ImageView {
      *
      * @param resourceId The resource id to use as a place holder.
      */
-    public void setImagePlaceHolder(int resourceId) {
+    public AutoLoadImageView setImagePlaceHolder(int resourceId) {
         imagePlaceHolderResourceId = resourceId;
+        return this;
     }
 
     /**
@@ -76,8 +67,9 @@ public class AutoLoadImageView extends ImageView {
      *
      * @param resourceId The resource id to use as a place holder.
      */
-    public void setImageFallBackResourceId(int resourceId) {
+    public AutoLoadImageView setImageFallBackResourceId(int resourceId) {
         imageFallBackResourceId = resourceId;
+        return this;
     }
 
     /**
@@ -85,8 +77,9 @@ public class AutoLoadImageView extends ImageView {
      *
      * @param resourceId The resource id to use as a place holder.
      */
-    public void setImageOnErrorResourceId(int resourceId) {
+    public AutoLoadImageView setImageOnErrorResourceId(int resourceId) {
         imageOnErrorResourceId = resourceId;
+        return this;
     }
 
     /**
@@ -95,36 +88,16 @@ public class AutoLoadImageView extends ImageView {
      * @param imageUrl The remote image url to load.
      */
     private void loadImageFromUrl(final String imageUrl) {
-        // FIXME: 3/6/16 fix string path!
-        img = buildFileFromFilename(getFileNameFromUrl(imageUrl));
-        if (!img.exists()) {
+        img = Utils.buildFileFromFilename(Utils.getFileNameFromUrl(imageUrl));
+        if (img.exists())
+            loadBitmap(DISK);
+        else {
             loadBitmap(CLOUD);
-            Observable.create(new Observable.OnSubscribe<Void>() {
-                @Override
-                public void call(Subscriber<? super Void> subscriber) {
-                    put(getFileNameFromUrl(imageUrl));
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
-                }
-            }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Void>() {
-                @Override
-                public void onCompleted() { // Called when the observable has no more data to emit
-                    Log.d("Rx image caching", "Image download complete");
-                }
-
-                @Override
-                public void onError(Throwable e) {// Called when the observable encounters an error
-                    Log.d("Rx image caching", "Failed to download image", e);
-                }
-
-                @Override
-                public void onNext(Void nA) {// Called each time the observable emits data
-                    Log.d("Rx image caching", "Image download successful, name: " + img.getName());
-                }
-            });
-//            Intent intent = new Intent(getContext(), ImageDownloadIntentService.class);
-//            getContext().startService(intent.putExtra(ImageDownloadIntentService.EXTRA_REMOTE_PATH, imageUrl)
-//                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_NAME, getFileNameFromUrl(imageUrl)));
+            Intent intent = new Intent(getContext(), ImageDownloadIntentService.class);
+            getContext().startService(intent.putExtra(ImageDownloadIntentService.EXTRA_REMOTE_PATH, imageUrl)
+                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(imageUrl))
+                    .putExtra(ImageDownloadIntentService.WIDTH, getWidth())
+                    .putExtra(ImageDownloadIntentService.HEIGHT, getHeight()));
         }
     }
 
@@ -140,6 +113,7 @@ public class AutoLoadImageView extends ImageView {
                     .placeholder(imagePlaceHolderResourceId)
                     .fallback(imageFallBackResourceId)
                     .error(imageOnErrorResourceId)
+                    .override(getWidth(), getHeight())
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .into(this);
         else if (channel.equalsIgnoreCase(DISK))
@@ -148,69 +122,17 @@ public class AutoLoadImageView extends ImageView {
                     .placeholder(imagePlaceHolderResourceId)
                     .fallback(imageFallBackResourceId)
                     .error(imageOnErrorResourceId)
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .override(getWidth(), getHeight())
+//                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .into(this);
-    }
-
-    /**
-     * Creates a file name from an image url
-     *
-     * @param imageUrl The image url used to build the file name.
-     * @return An String representing a unique file name.
-     */
-    private String getFileNameFromUrl(String imageUrl) {
-        //we could generate an unique MD5/SHA-1 here
-        String hash = String.valueOf(imageUrl.hashCode());
-        if (hash.startsWith("-"))
-            hash = hash.substring(1);
-        return BASE_IMAGE_NAME_CACHED + hash;
-    }
-
-    /**
-     * Cache an element.
-     *
-     * @param fileName A string representing the name of the file to be cached.
-     */
-    void put(String fileName) {
-        try {
-            File dir = new File(Constants.CACHE_DIR);
-            if (!dir.exists())
-                dir.mkdirs();
-            img = buildFileFromFilename(fileName);
-            if (!img.exists()) {
-                FileOutputStream fOut = new FileOutputStream(img);
-                Glide.with(getContext().getApplicationContext())
-                        .load(imageUrl)
-                        .asBitmap()
-                        .into(getWidth(), getHeight())
-                        .get()
-                        .compress(Bitmap.CompressFormat.PNG, 85, fOut);
-                fOut.flush();
-                fOut.close();
-            }
-
-        } catch (InterruptedException | ExecutionException | IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, e.getMessage());
-        }
     }
 
     /**
      * Invalidate and expire the cache.
      */
-    void evictAll(File cacheDir) {
+    public AutoLoadImageView evictAll(File cacheDir) {
         for (File file : cacheDir.listFiles())
             file.delete();
-    }
-
-    /**
-     * Creates a file name from an image url
-     *
-     * @param fileName The image url used to build the file name.
-     * @return A {@link File} representing a unique element.
-     */
-    private File buildFileFromFilename(String fileName) {
-        String fullPath = Constants.CACHE_DIR + File.separator + fileName;
-        return new File(fullPath);
+        return this;
     }
 }

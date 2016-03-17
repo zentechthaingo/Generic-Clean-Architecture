@@ -70,7 +70,7 @@ public class RealmRepositoryImpl implements RealmRepository {
         Observable.from(realmQueryCollection.getQuerables(clazz))
                 .subscribe(realmQuerable -> {
                     if (!realmQuerable.getSubject().hasObservers()) {
-                        realmQueryCollection.queryables.remove(realmQuerable);
+                        realmQueryCollection.getQueryables().remove(realmQuerable);
                     } else {
                         RealmResults realmResults = getInner(clazz, realmQuerable.getPredicate());
                         realmResults.load();

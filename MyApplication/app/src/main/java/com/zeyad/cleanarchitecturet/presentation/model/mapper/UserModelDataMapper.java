@@ -15,7 +15,7 @@
  */
 package com.zeyad.cleanarchitecturet.presentation.model.mapper;
 
-import com.zeyad.cleanarchitecturet.domain.User;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
 

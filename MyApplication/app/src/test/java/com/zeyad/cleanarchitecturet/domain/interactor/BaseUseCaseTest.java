@@ -17,9 +17,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.BDDMockito.given;
 
-public class UseCaseTest {
+public class BaseUseCaseTest {
 
-    private UseCaseTestClass useCase;
+    private BaseUseCaseTestClass useCase;
     @Mock
     private ThreadExecutor mockThreadExecutor;
     @Mock
@@ -28,7 +28,7 @@ public class UseCaseTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        this.useCase = new UseCaseTestClass(mockThreadExecutor, mockPostExecutionThread);
+        this.useCase = new BaseUseCaseTestClass(mockThreadExecutor, mockPostExecutionThread);
     }
 
     @Test
@@ -49,9 +49,9 @@ public class UseCaseTest {
         assertThat(testSubscriber.isUnsubscribed(), is(true));
     }
 
-    private static class UseCaseTestClass extends UseCase {
+    private static class BaseUseCaseTestClass extends BaseUseCase {
 
-        protected UseCaseTestClass(
+        protected BaseUseCaseTestClass(
                 ThreadExecutor threadExecutor,
                 PostExecutionThread postExecutionThread) {
             super(threadExecutor, postExecutionThread);
@@ -60,6 +60,16 @@ public class UseCaseTest {
         @Override
         protected Observable buildUseCaseObservable() {
             return Observable.empty();
+        }
+
+        @Override
+        protected Observable buildUseCaseObservableList(Class clazz) {
+            return null;
+        }
+
+        @Override
+        protected Observable buildUseCaseObservableDetail(Class clazz) {
+            return null;
         }
 
         @Override

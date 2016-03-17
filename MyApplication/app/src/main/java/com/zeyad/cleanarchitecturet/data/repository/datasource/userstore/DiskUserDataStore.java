@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecturet.data.repository.datasource;
+package com.zeyad.cleanarchitecturet.data.repository.datasource.userstore;
 
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
@@ -37,14 +37,14 @@ public class DiskUserDataStore implements UserDataStore {
 
     @Override
     public Observable<List<UserEntity>> userEntityList() {
-        return realmManager.getAll().map(userEntityDataMapper::transformAll)
-                .compose(Utils.logUsersSource(TAG, realmManager));
+        return realmManager.getAll().map(userEntityDataMapper::transformAllFromRealm);
+//                .compose(Utils.logUsersSource(TAG, realmManager));
     }
 
     @Override
     public Observable<UserEntity> userEntityDetails(final int userId) {
-        return realmManager.get(userId).map(userEntityDataMapper::transform)
-                .compose(Utils.logUserSource(TAG, realmManager));
+        return realmManager.get(userId).map(userEntityDataMapper::transform);
+//                .compose(Utils.logUserSource(TAG, realmManager));
     }
 
     //--------------------------------------------------------------------------------------------//

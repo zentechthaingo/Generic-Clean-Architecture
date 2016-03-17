@@ -70,7 +70,7 @@ public class ApiConnection {
                 .build();
     }
 
-    public static Observable<List<UserEntity>> userList() {
+    public static Observable<List<UserEntity>> userEntityList() {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userEntityList();
@@ -92,6 +92,18 @@ public class ApiConnection {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userRealmById(userId);
+    }
+
+    public static Observable<List<?>> userList() {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).userList();
+    }
+
+    public static Observable<?> userById(int id) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).userById(id);
     }
 
     // TODO: 3/6/16 Test!

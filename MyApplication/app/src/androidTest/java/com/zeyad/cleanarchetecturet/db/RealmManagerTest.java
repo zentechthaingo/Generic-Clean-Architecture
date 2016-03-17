@@ -125,7 +125,7 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.isUserValid(FAKE_USER_ID));
+        assertTrue(realmManager.isItemValid(FAKE_USER_ID));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.areUsersValid());
+        assertTrue(realmManager.areItemsValid());
     }
 
     @Test

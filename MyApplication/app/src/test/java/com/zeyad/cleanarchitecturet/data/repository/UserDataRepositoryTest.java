@@ -3,9 +3,9 @@ package com.zeyad.cleanarchitecturet.data.repository;
 import com.zeyad.cleanarchitecturet.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchitecturet.data.repository.datasource.UserDataStore;
-import com.zeyad.cleanarchitecturet.data.repository.datasource.UserDataStoreFactory;
-import com.zeyad.cleanarchitecturet.domain.User;
+import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.UserDataStore;
+import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.UserDataStoreFactory;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 
 import java.util.ArrayList;
 import java.util.List;

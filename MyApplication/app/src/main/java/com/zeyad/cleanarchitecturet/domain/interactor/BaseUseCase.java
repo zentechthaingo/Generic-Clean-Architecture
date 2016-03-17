@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.Subscriptions;
 
@@ -17,25 +16,25 @@ import rx.subscriptions.Subscriptions;
  * Abstract class for a Use Case (Interactor in terms of Clean Architecture).
  * This interface represents a execution unit for different use cases (this means any use case
  * in the application should implement this contract).
- * <p/>
- * By convention each UseCase implementation will return the result using a {@link rx.Subscriber}
+ * <p>
+ * By convention each BaseUseCase implementation will return the result using a {@link rx.Subscriber}
  * that will execute its job in a background thread and will post the result in the UI thread.
  */
-public abstract class UseCase {
+public abstract class BaseUseCase {
 
     private final ThreadExecutor threadExecutor;
     private final PostExecutionThread postExecutionThread;
-
     private Subscription subscription;
 
-    protected UseCase(ThreadExecutor threadExecutor, PostExecutionThread postExecutionThread) {
+    protected BaseUseCase(ThreadExecutor threadExecutor, PostExecutionThread postExecutionThread) {
         this.threadExecutor = threadExecutor;
+//      final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
         this.postExecutionThread = postExecutionThread;
         subscription = Subscriptions.empty();
     }
 
     /**
-     * Builds an {@link rx.Observable} which will be used when executing the current {@link UseCase}.
+     * Builds an {@link rx.Observable} which will be used when executing the current {@link BaseUseCase}.
      */
     protected abstract Observable buildUseCaseObservable();
 
@@ -46,7 +45,7 @@ public abstract class UseCase {
      */
     @SuppressWarnings("unchecked")
     public void execute(Subscriber UseCaseSubscriber) {
-        final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
         subscription = buildUseCaseObservable()
 //                    .doOnSubscribe(() -> {  /* starting request */
 //                        // show Loading Spinner
@@ -59,8 +58,8 @@ public abstract class UseCase {
 //                    })
 //                    .onErrorResumeNext(Observable.empty())
 //                    .groupBy(o -> new AtomicInteger(0).getAndIncrement() % Constants.THREADCT)
-                .subscribeOn(Schedulers.from(executor))
-//                .subscribeOn(Schedulers.io())
+//                .subscribeOn(Schedulers.from(executor))
+                .subscribeOn(Schedulers.from(threadExecutor))
 //                .observeOn(Schedulers.io())
                 .observeOn(postExecutionThread.getScheduler())
 //                .observeOn(AndroidSchedulers.mainThread())

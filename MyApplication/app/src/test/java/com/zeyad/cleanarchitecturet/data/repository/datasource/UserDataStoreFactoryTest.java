@@ -3,6 +3,10 @@ package com.zeyad.cleanarchitecturet.data.repository.datasource;
 import com.zeyad.cleanarchitecturet.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
+import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.CloudUserDataStore;
+import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.DiskUserDataStore;
+import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.UserDataStore;
+import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.UserDataStoreFactory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +41,7 @@ public class UserDataStoreFactoryTest extends ApplicationTestCase {
     @Test
     public void testCreateDiskDataStore() {
         given(mockRealmManager.isCached(FAKE_USER_ID)).willReturn(true);
-        given(mockRealmManager.areUsersValid()).willReturn(false);
+        given(mockRealmManager.areItemsValid()).willReturn(false);
 
         UserDataStore userDataStore = userDataStoreFactory.createById(FAKE_USER_ID, mockUserEntityDataMapper);
 
@@ -45,12 +49,12 @@ public class UserDataStoreFactoryTest extends ApplicationTestCase {
         assertThat(userDataStore, is(instanceOf(DiskUserDataStore.class)));
 
         verify(mockRealmManager).isCached(FAKE_USER_ID);
-        verify(mockRealmManager).isUserValid(FAKE_USER_ID);
+        verify(mockRealmManager).isItemValid(FAKE_USER_ID);
     }
 
     @Test
     public void testCreateCloudDataStore() {
-        given(mockRealmManager.areUsersValid()).willReturn(true);
+        given(mockRealmManager.areItemsValid()).willReturn(true);
         given(mockRealmManager.isCached(FAKE_USER_ID)).willReturn(false);
 
         UserDataStore userDataStore = userDataStoreFactory.createById(FAKE_USER_ID, mockUserEntityDataMapper);
@@ -58,25 +62,25 @@ public class UserDataStoreFactoryTest extends ApplicationTestCase {
         assertThat(userDataStore, is(notNullValue()));
         assertThat(userDataStore, is(instanceOf(CloudUserDataStore.class)));
 
-        verify(mockRealmManager).isUserValid(FAKE_USER_ID);
+        verify(mockRealmManager).isItemValid(FAKE_USER_ID);
     }
 
     @Test
     public void testCreateDiskDataStoreForUsers() {
         given(mockRealmManager.isCached(FAKE_USER_ID)).willReturn(true);
-        given(mockRealmManager.areUsersValid()).willReturn(false);
+        given(mockRealmManager.areItemsValid()).willReturn(false);
 
         UserDataStore userDataStore = userDataStoreFactory.createAll(mockUserEntityDataMapper);
 
         assertThat(userDataStore, is(notNullValue()));
         assertThat(userDataStore, is(instanceOf(DiskUserDataStore.class)));
 
-        verify(mockRealmManager).areUsersValid();
+        verify(mockRealmManager).areItemsValid();
     }
 
     @Test
     public void testCreateCloudDataStoreForUsers() {
-        given(mockRealmManager.areUsersValid()).willReturn(true);
+        given(mockRealmManager.areItemsValid()).willReturn(true);
         given(mockRealmManager.isCached(FAKE_USER_ID)).willReturn(false);
 
         UserDataStore userDataStore = userDataStoreFactory.createAll(mockUserEntityDataMapper);
@@ -84,6 +88,6 @@ public class UserDataStoreFactoryTest extends ApplicationTestCase {
         assertThat(userDataStore, is(notNullValue()));
         assertThat(userDataStore, is(instanceOf(CloudUserDataStore.class)));
 
-        verify(mockRealmManager).areUsersValid();
+        verify(mockRealmManager).areItemsValid();
     }
 }
