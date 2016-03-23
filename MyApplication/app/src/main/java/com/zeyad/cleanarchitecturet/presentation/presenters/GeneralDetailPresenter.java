@@ -4,39 +4,32 @@ import android.support.annotation.NonNull;
 
 import com.zeyad.cleanarchitecturet.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecturet.domain.exceptions.ErrorBundle;
-import com.zeyad.cleanarchitecturet.domain.interactor.BaseUseCase;
 import com.zeyad.cleanarchitecturet.domain.interactor.DefaultSubscriber;
-import com.zeyad.cleanarchitecturet.domain.models.User;
+import com.zeyad.cleanarchitecturet.domain.interactor.GeneralizedUseCase;
 import com.zeyad.cleanarchitecturet.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
-import com.zeyad.cleanarchitecturet.presentation.model.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
 import com.zeyad.cleanarchitecturet.presentation.views.UserDetailsView;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-/**
- * {@link BasePresenter} that controls communication between views and models of the presentation
- * layer.
- */
 @PerActivity
-public class UserDetailsPresenter implements BasePresenter {
+public class GeneralDetailPresenter implements BasePresenter {
 
     /**
      * id used to retrieve user details
      */
     private int userId;
-
     private UserDetailsView viewDetailsView;
-
-    private final BaseUseCase getUserDetailsBaseUseCase;
-    private final UserModelDataMapper userModelDataMapper;
+    private final GeneralizedUseCase getUserDetailsBaseUseCase;
+//    private final UserModelDataMapper userModelDataMapper;
 
     @Inject
-    public UserDetailsPresenter(@Named("userDetails") BaseUseCase getUserDetailsBaseUseCase,
-                                UserModelDataMapper userModelDataMapper) {
+    public GeneralDetailPresenter(@Named("generalEntityList") GeneralizedUseCase getUserDetailsBaseUseCase/*,
+                                  UserModelDataMapper userModelDataMapper*/) {
         this.getUserDetailsBaseUseCase = getUserDetailsBaseUseCase;
-        this.userModelDataMapper = userModelDataMapper;
+//        this.userModelDataMapper = userModelDataMapper;
     }
 
     public void setView(@NonNull UserDetailsView view) {
@@ -95,15 +88,15 @@ public class UserDetailsPresenter implements BasePresenter {
         viewDetailsView.showError(errorMessage);
     }
 
-    private void showUserDetailsInView(User user) {
-        viewDetailsView.renderUser(userModelDataMapper.transform(user));
+    private void showUserDetailsInView(UserModel userModel) {
+        viewDetailsView.renderUser(userModel);
     }
 
     private void getUserDetails() {
         getUserDetailsBaseUseCase.execute(new UserDetailsSubscriber());
     }
 
-    private final class UserDetailsSubscriber extends DefaultSubscriber<User> {
+    private final class UserDetailsSubscriber extends DefaultSubscriber<UserModel> {
 
         @Override
         public void onCompleted() {
@@ -119,8 +112,8 @@ public class UserDetailsPresenter implements BasePresenter {
         }
 
         @Override
-        public void onNext(User user) {
-            showUserDetailsInView(user);
+        public void onNext(UserModel userModel) {
+            showUserDetailsInView(userModel);
         }
     }
 }

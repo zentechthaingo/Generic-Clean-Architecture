@@ -38,13 +38,13 @@ public class DiskUserDataStore implements UserDataStore {
     @Override
     public Observable<List<UserEntity>> userEntityList() {
         return realmManager.getAll().map(userEntityDataMapper::transformAllFromRealm);
-//                .compose(Utils.logUsersSource(TAG, realmManager));
+//                .compose(Utils.logSources(TAG, realmManager));
     }
 
     @Override
     public Observable<UserEntity> userEntityDetails(final int userId) {
         return realmManager.get(userId).map(userEntityDataMapper::transform);
-//                .compose(Utils.logUserSource(TAG, realmManager));
+//                .compose(Utils.logSource(TAG, realmManager));
     }
 
     //--------------------------------------------------------------------------------------------//

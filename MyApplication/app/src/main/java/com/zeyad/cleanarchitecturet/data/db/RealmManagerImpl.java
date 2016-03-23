@@ -40,7 +40,7 @@ public class RealmManagerImpl implements RealmManager {
 
     @Override
     public Observable<UserRealmModel> get(final int userId) {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
         return mRealm.asObservable()
                 .map(realm -> realm.where(UserRealmModel.class)
                         .equalTo("userId", userId)
@@ -51,7 +51,7 @@ public class RealmManagerImpl implements RealmManager {
 
     @Override
     public Observable<Collection<UserRealmModel>> getAll() {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
         return mRealm.asObservable()
                 .map(realm -> realm.where(UserRealmModel.class)
                         .findAllAsync())
@@ -65,7 +65,7 @@ public class RealmManagerImpl implements RealmManager {
             Observable.create(new Observable.OnSubscribe<Void>() {
                 @Override
                 public void call(final Subscriber<? super Void> subscriber) {
-                    mRealm = Realm.getInstance(mContext);
+                    mRealm = Realm.getDefaultInstance();
                     mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(userRealmModel));
                     subscriber.onNext(null);
                     subscriber.onCompleted();
@@ -98,7 +98,7 @@ public class RealmManagerImpl implements RealmManager {
 
     @Override
     public boolean isCached(int userId) {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
         mRealm.beginTransaction();
         boolean isCached = mRealm.where(UserRealmModel.class).equalTo("userId", userId).findFirst() != null;
         mRealm.commitTransaction();
@@ -122,7 +122,7 @@ public class RealmManagerImpl implements RealmManager {
     // FIXME: 3/5/16 access from the same thread!
     @Override
     public void evictAll() {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
         mRealm.beginTransaction();
         mRealm.where(UserRealmModel.class).findAll().clear();
         mRealm.commitTransaction();
@@ -149,7 +149,7 @@ public class RealmManagerImpl implements RealmManager {
 
     @Override
     public void evictById(final int userId) {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
         mRealm.asObservable().map(realm -> {
             mRealm.where(UserRealmModel.class).equalTo("userId", userId).findFirst().removeFromRealm();
             return null;
@@ -173,7 +173,7 @@ public class RealmManagerImpl implements RealmManager {
 
     @Override
     public void evict(final UserRealmModel userRealmModel) {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
         mRealm.asObservable().map(aVoid -> {
             userRealmModel.removeFromRealm();
             return null;

@@ -5,11 +5,10 @@ import android.support.annotation.NonNull;
 import com.zeyad.cleanarchitecturet.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecturet.domain.exceptions.ErrorBundle;
 import com.zeyad.cleanarchitecturet.domain.interactor.DefaultSubscriber;
-import com.zeyad.cleanarchitecturet.domain.interactor.GeneralBaseUseCase;
-import com.zeyad.cleanarchitecturet.domain.models.User;
+import com.zeyad.cleanarchitecturet.domain.interactor.GeneralizedUseCase;
 import com.zeyad.cleanarchitecturet.presentation.exception.ErrorMessageFactory;
+import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
-import com.zeyad.cleanarchitecturet.presentation.model.mapper.UserModelDataMapper;
 import com.zeyad.cleanarchitecturet.presentation.views.UserListView;
 
 import java.util.Collection;
@@ -18,15 +17,14 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-public class GeneralListPreseneter implements BasePresenter {
+@PerActivity
+public class GeneralListPresenter implements BasePresenter {
 
     private UserListView viewListView;
-    private GeneralBaseUseCase getGeneralListUseCase;
-    private final UserModelDataMapper userModelDataMapper;
+    private GeneralizedUseCase getGeneralListUseCase;
 
     @Inject
-    public GeneralListPreseneter(@Named("userEntityList") GeneralBaseUseCase getUserListUserCase, UserModelDataMapper userModelDataMapper) {
-        this.userModelDataMapper = userModelDataMapper;
+    public GeneralListPresenter(@Named("generalEntityList") GeneralizedUseCase getUserListUserCase) {
         getGeneralListUseCase = getUserListUserCase;
     }
 
@@ -34,9 +32,10 @@ public class GeneralListPreseneter implements BasePresenter {
         viewListView = view;
     }
 
+    // FIXME: 3/19/16 Doubles the call!
     @Override
     public void resume() {
-        getUserList();
+//        getUserList();
     }
 
     @Override
@@ -89,15 +88,16 @@ public class GeneralListPreseneter implements BasePresenter {
                 errorBundle.getException()));
     }
 
-    private void showUsersCollectionInView(Collection<User> usersCollection) {
-        viewListView.renderUserList(userModelDataMapper.transform(usersCollection));
+    private void showUsersCollectionInView(Collection<UserModel> userModels) {
+        viewListView.renderUserList(userModels);
+//        viewListView.renderUserList(userModelDataMapper.transformToDomain(usersCollection));
     }
 
     private void getUserList() {
-        getGeneralListUseCase.execute(new UserListSubscriber());
+        getGeneralListUseCase.execute(new UserListSubscriber(), UserModel.class);
     }
 
-    private final class UserListSubscriber extends DefaultSubscriber<List<User>> {
+    private final class UserListSubscriber extends DefaultSubscriber<List<UserModel>> {
         @Override
         public void onCompleted() {
             hideViewLoading();
@@ -112,7 +112,7 @@ public class GeneralListPreseneter implements BasePresenter {
         }
 
         @Override
-        public void onNext(List<User> users) {
+        public void onNext(List<UserModel> users) {
             showUsersCollectionInView(users);
         }
     }

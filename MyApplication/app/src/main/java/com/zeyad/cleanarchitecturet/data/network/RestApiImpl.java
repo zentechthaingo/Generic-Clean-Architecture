@@ -3,8 +3,9 @@ package com.zeyad.cleanarchitecturet.data.network;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 
-import java.util.List;
+import java.util.Collection;
 
+import io.realm.RealmObject;
 import retrofit.Response;
 import retrofit.http.Path;
 import rx.Observable;
@@ -18,18 +19,23 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public Observable<List<UserEntity>> userEntityList() {
-        return ApiConnection.userEntityList();
+    public Observable<Collection<UserEntity>> userEntityCollection() {
+        return ApiConnection.userEntityCollection();
     }
 
     @Override
-    public Observable<List<?>> userList() {
-        return ApiConnection.userList();
+    public Observable<Collection> userCollection() {
+        return ApiConnection.userCollection();
     }
 
     @Override
-    public Observable<List<UserRealmModel>> userRealmList() {
-        return ApiConnection.userRealmList();
+    public Observable<Collection<RealmObject>> userRealmObjectCollection() {
+        return ApiConnection.realmCollection();
+    }
+
+    @Override
+    public Observable<Collection<UserRealmModel>> userRealmModelCollection() {
+        return ApiConnection.userRealmCollection();
     }
 
     @Override
@@ -40,6 +46,11 @@ public class RestApiImpl implements RestApi {
     @Override
     public Observable<UserRealmModel> userRealmById(@Path("id") int userId) {
         return ApiConnection.userRealm(userId);
+    }
+
+    @Override
+    public Observable<RealmObject> realmObjectById(@Path("id") int userId) {
+        return ApiConnection.realmObject(userId);
     }
 
     @Override

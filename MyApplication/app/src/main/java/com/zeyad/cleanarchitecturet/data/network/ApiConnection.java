@@ -15,7 +15,7 @@ import com.zeyad.cleanarchitecturet.data.executor.JobExecutor;
 import com.zeyad.cleanarchitecturet.utilities.Constants;
 
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -70,16 +70,22 @@ public class ApiConnection {
                 .build();
     }
 
-    public static Observable<List<UserEntity>> userEntityList() {
+    public static Observable<Collection<UserEntity>> userEntityCollection() {
         if (retrofit == null)
             retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).userEntityList();
+        return retrofit.create(RestApi.class).userEntityCollection();
     }
 
-    public static Observable<List<UserRealmModel>> userRealmList() {
+    public static Observable<Collection<UserRealmModel>> userRealmCollection() {
         if (retrofit == null)
             retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).userRealmList();
+        return retrofit.create(RestApi.class).userRealmModelCollection();
+    }
+
+    public static Observable<Collection<RealmObject>> realmCollection() {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).userRealmObjectCollection();
     }
 
     public static Observable<UserEntity> user(int userId) {
@@ -88,22 +94,28 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).userEntityById(userId);
     }
 
+    public static Observable<Collection> userCollection() {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).userCollection();
+    }
+
     public static Observable<UserRealmModel> userRealm(int userId) {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userRealmById(userId);
     }
 
-    public static Observable<List<?>> userList() {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).userList();
-    }
-
     public static Observable<?> userById(int id) {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userById(id);
+    }
+
+    public static Observable<RealmObject> realmObject(int userId) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).realmObjectById(userId);
     }
 
     // TODO: 3/6/16 Test!

@@ -4,21 +4,20 @@ import com.google.gson.Gson;
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.db.RealmRepository;
 import com.zeyad.cleanarchitecturet.data.db.generalize.GeneralRealmManager;
-import com.zeyad.cleanarchitecturet.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.UserDataStore;
+import com.zeyad.cleanarchitecturet.utilities.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
+import java.util.Collection;
 
 import rx.Observable;
 
-public class DiskDataStore<T> implements DataStore<T> {
+public class DiskDataStore implements DataStore {
 
     private final GeneralRealmManager realmManager;
     private RealmRepository realmRepository;
-    private final EntityDataMapper entityDataMapper;
     private final String TAG = "DiskUserDataStore";
 
     /**
@@ -26,28 +25,22 @@ public class DiskDataStore<T> implements DataStore<T> {
      *
      * @param realmManager A {@link RealmManager} to cache data retrieved from the api.
      */
-    public DiskDataStore(GeneralRealmManager realmManager,
-                         EntityDataMapper entityDataMapper) {
+    public DiskDataStore(GeneralRealmManager realmManager) {
         this.realmManager = realmManager;
-        this.entityDataMapper = entityDataMapper;
     }
 
-    // FIXME: 3/12/16 Generalize data mapper!
     @Override
-    public Observable<List<?>> entityListFromDisk(Class clazz) {
-        return realmManager.getAll(clazz).map(realmObjects -> entityDataMapper.transformAll(realmObjects));
-//                .compose(Utils.logUsersSource(TAG, realmManager));
+    public Observable<Collection> entityListFromDisk(Class clazz) {
+        return realmManager.getAll(clazz).compose(Utils.logSources(TAG, realmManager));
     }
 
-    // FIXME: 3/12/16 Generalize data mapper!
     @Override
     public Observable<?> entityDetailsFromDisk(final int itemId, Class clazz) {
-        return realmManager.get(itemId, clazz).map(realmObject -> entityDataMapper.transform(realmObject));
-//                .compose(Utils.logUserSource(TAG, realmManager));
+        return realmManager.get(itemId, clazz).compose(Utils.logSource(TAG, realmManager));
     }
 
     @Override
-    public Observable<List<?>> entityListFromCloud() {
+    public Observable<Collection> collectionFromCloud(Class clazz) {
         try {
             throw new Exception("cant get from cloud in disk data store");
         } catch (Exception e) {
@@ -57,7 +50,7 @@ public class DiskDataStore<T> implements DataStore<T> {
     }
 
     @Override
-    public Observable<?> entityDetailsFromCloud(int itemId) {
+    public Observable<?> entityDetailsFromCloud(int itemId, Class clazz) {
         try {
             throw new Exception("cant get from cloud in disk data store");
         } catch (Exception e) {

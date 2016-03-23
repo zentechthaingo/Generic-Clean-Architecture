@@ -6,18 +6,16 @@ import com.zeyad.cleanarchitecturet.data.repository.datasource.generalstore.Data
 import com.zeyad.cleanarchitecturet.domain.repositories.Repository;
 import com.zeyad.cleanarchitecturet.domain.repositories.UserRepository;
 
-import java.util.List;
+import java.util.Collection;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.realm.RealmObject;
 import rx.Observable;
 
-/**
- * Created by ZIaDo on 3/12/16.
- */
 @Singleton
-public class DataRepository<T> implements Repository<T> {
+public class DataRepository implements Repository {
 
     private final DataStoreFactory dataStoreFactory;
     private final EntityDataMapper entityDataMapper;
@@ -29,60 +27,59 @@ public class DataRepository<T> implements Repository<T> {
      * @param entityDataMapper {@link UserEntityDataMapper}.
      */
     @Inject
-    public DataRepository(DataStoreFactory dataStoreFactory,
-                          EntityDataMapper entityDataMapper) {
+    public DataRepository(DataStoreFactory dataStoreFactory, EntityDataMapper entityDataMapper) {
         this.dataStoreFactory = dataStoreFactory;
         this.entityDataMapper = entityDataMapper;
     }
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
-    public Observable<List<?>> list(Class clazz) {
-        return dataStoreFactory.createAll(entityDataMapper)
-                .entityListFromDisk(clazz);
-//                .map(roomEntities -> entityDataMapper.transform(roomEntities));
+    public Observable<Collection> Collection(Class clazz) {
+        return dataStoreFactory.createAll(entityDataMapper, clazz)
+                .collectionFromCloud(clazz);
+//                .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, clazz));
         // TODO: 3/2/16 Test!
 //        return userDataStoreFactory.getAllUsersFromAllSources(userDataStoreFactory
 //                .createAllFromCloud(entityDataMapper)
 //                .userEntityList(), userDataStoreFactory.createAllFromDisk(entityDataMapper)
-//                .userEntityList()).map(userEntities -> entityDataMapper.transform(userEntities));
+//                .userEntityList()).map(userEntities -> entityDataMapper.transformToDomain(userEntities));
     }
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
-    public Observable<T> item(int itemId, Class clazz) {
-        return dataStoreFactory.createById(itemId, entityDataMapper)
-                .entityDetailsFromDisk(itemId, clazz);
-//                .map(roomEntity -> entityDataMapper.transform(roomEntity));
+    public Observable<?> item(int itemId, Class clazz) {
+        return dataStoreFactory.createById(itemId, entityDataMapper, clazz)
+                .entityDetailsFromCloud(itemId, clazz);
+//                .map(entityDataMapper::transform);
         // TODO: 3/2/16 Test!
 //        return userDataStoreFactory.getUserFromAllSources(userDataStoreFactory
 //                .createByIdFromCloud(entityDataMapper)
 //                .userEntityDetails(userId), userDataStoreFactory.createByIdFromDisk(entityDataMapper)
-//                .userEntityDetails(userId)).map(userEntity -> entityDataMapper.transform(userEntity));
+//                .userEntityDetails(userId)).map(userEntity -> entityDataMapper.transformToDomain(userEntity));
     }
 
     @Override
-    public Observable<T> putAll(int itemId, Class clazz) {
+    public Observable<?> putAll(int itemId, Class clazz) {
         return null;
     }
 
     @Override
-    public Observable<T> put(int itemId, Class clazz) {
+    public Observable<?> put(int itemId, Class clazz) {
         return null;
     }
 
     @Override
-    public Observable<T> delete(int itemId, Class clazz) {
+    public Observable<?> delete(int itemId, Class clazz) {
         return null;
     }
 
     @Override
-    public Observable<T> delete(T t, Class clazz) {
+    public Observable<?> delete(RealmObject realmObject, Class clazz) {
         return null;
     }
 
     @Override
-    public Observable<T> evictAll(Class clazz) {
+    public Observable<?> evictAll(Class clazz) {
         return null;
     }
 }

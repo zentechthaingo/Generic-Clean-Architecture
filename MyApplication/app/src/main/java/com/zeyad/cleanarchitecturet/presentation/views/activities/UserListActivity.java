@@ -45,6 +45,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         return userComponent;
     }
 
+    // TODO: 3/22/16 Add Animations!
     @Override
     public void onUserClicked(UserModel userModel) {
         navigator.navigateToUserDetails(this, userModel.getUserId());

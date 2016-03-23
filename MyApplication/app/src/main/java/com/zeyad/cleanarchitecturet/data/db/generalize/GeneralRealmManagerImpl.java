@@ -4,31 +4,21 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.zeyad.cleanarchitecturet.data.db.RealmManager;
-import com.zeyad.cleanarchitecturet.data.db.RealmQueryableCollection;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-import rx.subjects.BehaviorSubject;
 // TODO: 3/10/16 Test and add queries!
 
 /**
- * {@link RealmManager} implementation.
+ * {@link GeneralRealmManager} implementation.
  */
 @Singleton
 public class GeneralRealmManagerImpl implements GeneralRealmManager {
@@ -46,45 +36,45 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     }
 
     @Override
-    public <T extends RealmObject> Observable<T> get(final int itemId, Class clazz) {
-        mRealm = Realm.getInstance(mContext);
-        return (Observable<T>) mRealm.<T>asObservable()
+    public Observable<?> get(final int itemId, Class clazz) {
+        mRealm = Realm.getDefaultInstance();
+        return mRealm.asObservable()
                 .map(realm -> realm.where(clazz)
                         .equalTo("itemId", itemId)
                         .findFirstAsync())
-                .<T>asObservable();
+                .asObservable();
 //        return mRealm.where(UserRealmModel.class).equalTo("userId", userId).findFirstAsync().asObservable();
     }
 
     @Override
-    public <T extends RealmObject> Observable<List<T>> getAll(Class clazz) {
-        mRealm = Realm.getInstance(mContext);
-        return mRealm.<List<T>>asObservable()
+    public Observable<Collection> getAll(Class clazz) {
+        mRealm = Realm.getDefaultInstance();
+        return mRealm.asObservable()
                 .map(realm -> realm.where(clazz)
                         .findAllAsync())
-                .<List<T>>asObservable()
+                .asObservable()
                 .map(userRealmModels -> {
-                    ArrayList<T> result = new ArrayList<>();
-                    for (int i = 0; i < userRealmModels.size(); i++) {
-                        // do magic here
-                        result.add(((T) userRealmModels.get(i)));
-                    }
+                    ArrayList result = new ArrayList<>();
+                    for (int i = 0; i < userRealmModels.size(); i++)
+                        result.add(userRealmModels.get(i));
                     return result;
                 });
         //userRealmModels -> new ArrayList<T>(userRealmModels.toArray());
-//        (Func1<RealmResults<T>, List<T>>) List<T>::new);
+//        (Func1<RealmResults<T>, Collection<T>>) Collection<T>::new);
 //        return mRealm.where(UserRealmModel.class).findAllAsync().asObservable();
     }
 
     @Override
-    public void put(final JSONObject jsonObject, Class clazz) {
-        if (jsonObject != null) {
+//    public void put(final JSONObject jsonObject, Class clazz) {
+    public void put(RealmObject realmModel) {
+        if (realmModel != null) {
             Observable.create(new Observable.OnSubscribe<Void>() {
                 @Override
                 public void call(final Subscriber<? super Void> subscriber) {
-                    mRealm = Realm.getInstance(mContext);
+                    mRealm = Realm.getDefaultInstance();
                     mRealm.beginTransaction();
-                    mRealm.createOrUpdateObjectFromJson(clazz, jsonObject);
+                    mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(realmModel));
+//                    mRealm.createOrUpdateObjectFromJson(clazz, jsonObject);
                     mRealm.commitTransaction();
                     subscriber.onNext(null);
                     subscriber.onCompleted();
@@ -110,39 +100,38 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     }
 
     @Override
-    public void putAll(JSONArray realmModels, Class clazz) {
-        if (realmModels != null)
-            Observable.create(new Observable.OnSubscribe<Void>() {
-                @Override
-                public void call(final Subscriber<? super Void> subscriber) {
-                    mRealm = Realm.getInstance(mContext);
-                    mRealm.beginTransaction();
-                    mRealm.createOrUpdateAllFromJson(clazz, realmModels);
-                    mRealm.commitTransaction();
-                    subscriber.onNext(null);
-                    subscriber.onCompleted();
-                }
-            }).subscribeOn(Schedulers.io())
-                    .subscribe(new Subscriber<Void>() {
-                        @Override
-                        public void onCompleted() {
-                        }
+    public void putAll(Collection<RealmObject> realmModels) {
+        Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(final Subscriber<? super Void> subscriber) {
+                mRealm = Realm.getDefaultInstance();
+                mRealm.beginTransaction();
+                mRealm.copyToRealmOrUpdate(realmModels);
+                mRealm.commitTransaction();
+                subscriber.onNext(null);
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .subscribe(new Subscriber<Void>() {
+                    @Override
+                    public void onCompleted() {
+                    }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            e.printStackTrace();
-                        }
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
 
-                        @Override
-                        public void onNext(Void userRealmModel) {
-                            Log.d("RealmManager", "user added!");
-                        }
-                    });
+                    @Override
+                    public void onNext(Void userRealmModel) {
+                        Log.d("RealmManager", "users added or updated!");
+                    }
+                });
     }
 
     @Override
     public boolean isCached(int itemId, Class clazz) {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
         mRealm.beginTransaction();
         boolean isCached = mRealm.where(clazz).equalTo("userId", itemId).findFirst() != null;
         mRealm.commitTransaction();
@@ -166,7 +155,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     // FIXME: 3/5/16 access from the same thread!
     @Override
     public void evictAll(Class clazz) {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
 //        mRealm.where(UserRealmModel.class).findAll().clear();
         mRealm.asObservable().map(realm -> {
             mRealm.where(clazz).findAll().clear();
@@ -191,9 +180,9 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
     @Override
     public void evictById(final int itemId, Class clazz) {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
         mRealm.asObservable().map(realm -> {
-            mRealm.where(clazz).equalTo("itemId", itemId).findFirst().removeFromRealm();
+            mRealm.where(clazz).equalTo("userId", itemId).findFirst().removeFromRealm();
             return null;
         }).subscribe(new Subscriber<Object>() {
             @Override
@@ -215,7 +204,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
     @Override
     public void evict(final RealmObject realmModel, Class clazz) {
-        mRealm = Realm.getInstance(mContext);
+        mRealm = Realm.getDefaultInstance();
         mRealm.asObservable().map(aVoid -> {
             realmModel.removeFromRealm();
             return null;
@@ -259,32 +248,32 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                 .getLong(SETTINGS_KEY_LAST_CACHE_UPDATE, 0);
     }
 
-    // TODO: 3/14/16 Check it out!
-    RealmQueryableCollection realmQueryCollection;
-
-    public <T> Observable<T> get(Class clazz, Func1<RealmQuery, RealmQuery> predicate) {
-        BehaviorSubject<T> behaviorSubject = BehaviorSubject.create((T) getInner(clazz, predicate));
-        realmQueryCollection.add(clazz, predicate, behaviorSubject);
-        return behaviorSubject;
-    }
-
-    public <T extends RealmObject> RealmResults<T> getInner(Class clazz, Func1<RealmQuery, RealmQuery> predicate) {
-        RealmQuery query = mRealm.where(clazz);
-        if (predicate != null)
-            query = predicate.call(query);
-        return query.findAllAsync();
-    }
-
-    private void notifyObservers(Class clazz) {
-        Observable.from(realmQueryCollection.getQuerables(clazz))
-                .subscribe(realmQuerable -> {
-                    if (!realmQuerable.getSubject().hasObservers()) {
-                        realmQueryCollection.getQueryables().remove(realmQuerable);
-                    } else {
-                        RealmResults realmResults = getInner(clazz, realmQuerable.getPredicate());
-                        realmResults.load();
-                        realmQuerable.getSubject().onNext(realmResults);
-                    }
-                });
-    }
+//    // TODO: 3/14/16 Check it out!
+//    RealmQueryableCollection realmQueryCollection;
+//
+//    public <T> Observable<T> get(Class clazz, Func1<RealmQuery, RealmQuery> predicate) {
+//        BehaviorSubject<T> behaviorSubject = BehaviorSubject.create((T) getInner(clazz, predicate));
+//        realmQueryCollection.add(clazz, predicate, behaviorSubject);
+//        return behaviorSubject;
+//    }
+//
+//    public <T extends RealmObject> RealmResults<T> getInner(Class clazz, Func1<RealmQuery, RealmQuery> predicate) {
+//        RealmQuery query = mRealm.where(clazz);
+//        if (predicate != null)
+//            query = predicate.call(query);
+//        return query.findAllAsync();
+//    }
+//
+//    private void notifyObservers(Class clazz) {
+//        Observable.from(realmQueryCollection.getQuerables(clazz))
+//                .subscribe(realmQuerable -> {
+//                    if (!realmQuerable.getSubject().hasObservers()) {
+//                        realmQueryCollection.getQueryables().remove(realmQuerable);
+//                    } else {
+//                        RealmResults realmResults = getInner(clazz, realmQuerable.getPredicate());
+//                        realmResults.load();
+//                        realmQuerable.getSubject().onNext(realmResults);
+//                    }
+//                });
+//    }
 }

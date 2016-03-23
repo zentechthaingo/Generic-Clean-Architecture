@@ -48,7 +48,7 @@ public class UserDataRepository implements UserRepository {
 //        return userDataStoreFactory.getAllUsersFromAllSources(userDataStoreFactory
 //                .createAllFromCloud(userEntityDataMapper)
 //                .userEntityList(), userDataStoreFactory.createAllFromDisk(userEntityDataMapper)
-//                .userEntityList()).map(userEntities -> userEntityDataMapper.transform(userEntities));
+//                .userEntityList()).map(userEntities -> userEntityDataMapper.transformToDomain(userEntities));
     }
 
     @SuppressWarnings("Convert2MethodRef")
@@ -61,6 +61,6 @@ public class UserDataRepository implements UserRepository {
 //        return userDataStoreFactory.getUserFromAllSources(userDataStoreFactory
 //                .createByIdFromCloud(userEntityDataMapper)
 //                .userEntityDetails(userId), userDataStoreFactory.createByIdFromDisk(userEntityDataMapper)
-//                .userEntityDetails(userId)).map(userEntity -> userEntityDataMapper.transform(userEntity));
+//                .userEntityDetails(userId)).map(userEntity -> userEntityDataMapper.transformToDomain(userEntity));
     }
 }

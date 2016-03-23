@@ -24,8 +24,20 @@ public class GetUserList extends BaseUseCase {
         this.userRepository = userRepository;
     }
 
+    // TODO: 3/22/16 Try it out!
     @Override
     public Observable buildUseCaseObservable() {
         return userRepository.users();
+//                .map(users -> userModelDataMapper.transformToDomain(users));
+    }
+
+    @Override
+    protected Observable buildUseCaseObservableList(Class clazz) {
+        return null;
+    }
+
+    @Override
+    protected Observable buildUseCaseObservableDetail(int itemId, Class clazz) {
+        return null;
     }
 }

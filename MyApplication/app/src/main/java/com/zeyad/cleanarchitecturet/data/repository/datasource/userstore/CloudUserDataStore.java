@@ -5,6 +5,7 @@ import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecturet.data.network.RestApi;
+import com.zeyad.cleanarchitecturet.utilities.Utils;
 
 import java.util.Collection;
 
@@ -46,7 +47,7 @@ public class CloudUserDataStore implements UserDataStore {
 
     @Override
     public Observable<Collection<UserEntity>> userEntityList() {
-        return restApi.userRealmList()
+        return restApi.userRealmModelCollection()
 //                .retryWhen(observable -> {
 //                    Log.v(TAG, "retryWhen, call");
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
@@ -55,8 +56,8 @@ public class CloudUserDataStore implements UserDataStore {
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
 //                })
                 .doOnNext(saveAllToCacheAction::call)
-                .map(userEntityDataMapper::transformAllFromRealm);
-//                .compose(Utils.logUsersSource(TAG, realmManager));
+                .map(userEntityDataMapper::transformAllFromRealm)
+                .compose(Utils.logUsersSources(TAG, realmManager));
     }
 
     @Override
@@ -70,7 +71,7 @@ public class CloudUserDataStore implements UserDataStore {
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
 //                })
                 .doOnNext(saveToCacheAction::call)
-                .map(userEntityDataMapper::transform);
-//                .compose(Utils.logUserSource(TAG, realmManager));
+                .map(userEntityDataMapper::transform)
+                .compose(Utils.logUserSource(TAG, realmManager));
     }
 }

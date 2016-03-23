@@ -6,22 +6,16 @@ import com.google.gson.annotations.SerializedName;
  * User Entity used in the data layer.
  */
 public class UserEntity {
-
     @SerializedName("id")
     private int userId;
-
     @SerializedName("cover_url")
     private String coverUrl;
-
     @SerializedName("full_name")
-    private String fullname;
-
+    private String fullName;
     @SerializedName("description")
     private String description;
-
     @SerializedName("followers")
     private int followers;
-
     @SerializedName("email")
     private String email;
     private long lastUpdateTimeMillis;
@@ -46,12 +40,12 @@ public class UserEntity {
         this.coverUrl = coverUrl;
     }
 
-    public String getFullname() {
-        return fullname;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getDescription() {

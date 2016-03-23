@@ -68,7 +68,7 @@ public class BaseUseCaseTest {
         }
 
         @Override
-        protected Observable buildUseCaseObservableDetail(Class clazz) {
+        protected Observable buildUseCaseObservableDetail(int itemId, Class clazz) {
             return null;
         }
 

@@ -9,12 +9,16 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -22,7 +26,6 @@ import rx.Observable;
 public class Utils {
 
     private static final int COUNTER_START = 1, ATTEMPTS = 5;
-
 
     public static <T> Observable.Transformer<T, Long> zipWithFlatMap(String TAG) {
         return observable -> observable.zipWith(Observable.range(COUNTER_START, ATTEMPTS), (t, repeatAttempt) -> {
@@ -36,8 +39,8 @@ public class Utils {
     }
 
     // Simple logging to let us know what each source is returning
-    public static Observable.Transformer<List<UserEntity>, List<UserEntity>> logUsersSource(final String source,
-                                                                                            RealmManager realmManager) {
+    public static Observable.Transformer<Collection<UserEntity>, Collection<UserEntity>>
+    logUsersSources(final String source, RealmManager realmManager) {
         return observable -> observable.doOnNext(userEntities -> {
             if (userEntities == null)
                 System.out.println(source + " does not have any data.");
@@ -49,12 +52,12 @@ public class Utils {
     }
 
     // Simple logging to let us know what each source is returning
-    public static Observable.Transformer<List<UserEntity>, List<UserEntity>> logUsersSource(final String source,
-                                                                                            GeneralRealmManager realmManager) {
-        return observable -> observable.doOnNext(userEntities -> {
-            if (userEntities == null)
+    public static Observable.Transformer<Collection, Collection> logSources(final String source,
+                                                                            GeneralRealmManager realmManager) {
+        return observable -> observable.doOnNext(entities -> {
+            if (entities == null)
                 System.out.println(source + " does not have any data.");
-            else if (!realmManager.areItemsValid(userEntities.getClass()))
+            else if (!realmManager.areItemsValid(entities.getClass()))
                 System.out.println(source + " has stale data.");
             else
                 System.out.println(source + " has the data you are looking for!");
@@ -74,16 +77,22 @@ public class Utils {
         });
     }
 
+    // TODO: 3/22/16 Test!
     // Simple logging to let us know what each source is returning
-    public static Observable.Transformer<UserEntity, UserEntity> logUserSource(final String source,
-                                                                               GeneralRealmManager realmManager) {
+    public static <T> Observable.Transformer<T, T> logSource(final String source,
+                                                             GeneralRealmManager realmManager) {
         return observable -> observable.doOnNext(userEntity -> {
-            if (userEntity == null)
-                System.out.println(source + " does not have any data.");
-            else if (!realmManager.isItemValid(userEntity.getUserId(), userEntity.getClass()))
-                System.out.println(source + " has stale data.");
-            else
-                System.out.println(source + " has the data you are looking for!");
+            try {
+                JSONObject jsonObject = new JSONObject(new Gson().toJson(userEntity));
+                if (userEntity == null)
+                    System.out.println(source + " does not have any data.");
+                else if (!realmManager.isItemValid(jsonObject.getInt("id"), userEntity.getClass()))
+                    System.out.println(source + " has stale data.");
+                else
+                    System.out.println(source + " has the data you are looking for!");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         });
     }
 

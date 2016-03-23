@@ -31,6 +31,8 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     private int userId;
     @Inject
     UserDetailsPresenter userDetailsPresenter;
+    //    @Inject
+//    GeneralDetailPresenter userDetailsPresenter;
     @Bind(R.id.iv_cover)
     AutoLoadImageView iv_cover;
     @Bind(R.id.tv_fullname)

@@ -2,18 +2,19 @@ package com.zeyad.cleanarchitecturet.domain.repositories;
 
 import com.zeyad.cleanarchitecturet.domain.models.User;
 
-import java.util.List;
+import java.util.Collection;
 
+import io.realm.RealmObject;
 import rx.Observable;
 
 /**
  * Interface that represents a Repository for getting {@link User} related data.
  */
-public interface Repository<T> {
+public interface Repository {
     /**
-     * Get an {@link rx.Observable} which will emit a List of Items.
+     * Get an {@link rx.Observable} which will emit a Collection of Items.
      */
-    Observable<List<?>> list(Class clazz);
+    Observable<Collection> Collection(Class clazz);
 
     /**
      * Get an {@link rx.Observable} which will emit an Item.
@@ -28,7 +29,7 @@ public interface Repository<T> {
 
     Observable<?> delete(final int itemId, Class clazz);
 
-    Observable<?> delete(final T t, Class clazz);
+    Observable<?> delete(final RealmObject realmObject, Class clazz);
 
     Observable<?> evictAll(Class clazz);
 }

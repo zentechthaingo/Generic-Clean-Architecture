@@ -37,7 +37,7 @@ public class CloudUserDataStoreTest extends ApplicationTestCase {
     @Test
     public void testGetUserEntityListFromApi() {
         cloudUserDataStore.userEntityList();
-        verify(mockRestApi).userEntityList();
+        verify(mockRestApi).userEntityCollection();
     }
 
     @Test

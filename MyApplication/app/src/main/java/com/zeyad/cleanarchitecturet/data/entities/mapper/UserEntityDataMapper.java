@@ -29,7 +29,7 @@ public class UserEntityDataMapper {
         if (userEntity != null) {
             user = new User(userEntity.getUserId());
             user.setCoverUrl(userEntity.getCoverUrl());
-            user.setFullName(userEntity.getFullname());
+            user.setFullName(userEntity.getFullName());
             user.setDescription(userEntity.getDescription());
             user.setFollowers(userEntity.getFollowers());
             user.setEmail(userEntity.getEmail());
@@ -101,7 +101,7 @@ public class UserEntityDataMapper {
             userEntity = new UserEntity();
             userEntity.setUserId(userRealmModel.getUserId());
             userEntity.setCoverUrl(userRealmModel.getCoverUrl());
-            userEntity.setFullname(userRealmModel.getFullName());
+            userEntity.setFullName(userRealmModel.getFullName());
             userEntity.setDescription(userRealmModel.getDescription());
             userEntity.setFollowers(userRealmModel.getFollowers());
             userEntity.setEmail(userRealmModel.getEmail());
@@ -115,7 +115,7 @@ public class UserEntityDataMapper {
             userRealmModel = new UserRealmModel();
             userRealmModel.setUserId(userEntity.getUserId());
             userRealmModel.setCoverUrl(userEntity.getCoverUrl());
-            userRealmModel.setFullName(userEntity.getFullname());
+            userRealmModel.setFullName(userEntity.getFullName());
             userRealmModel.setDescription(userEntity.getDescription());
             userRealmModel.setFollowers(userEntity.getFollowers());
             userRealmModel.setEmail(userEntity.getEmail());
@@ -134,9 +134,8 @@ public class UserEntityDataMapper {
         User user;
         for (UserEntity userEntity : userEntityCollection) {
             user = transform(userEntity);
-            if (user != null) {
+            if (user != null)
                 userList.add(user);
-            }
         }
         return userList;
     }

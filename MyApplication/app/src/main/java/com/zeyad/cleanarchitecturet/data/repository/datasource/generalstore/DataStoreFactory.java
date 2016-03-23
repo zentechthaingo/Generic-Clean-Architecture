@@ -6,14 +6,15 @@ import com.zeyad.cleanarchitecturet.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecturet.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.UserDataStore;
+import com.zeyad.cleanarchitecturet.utilities.Utils;
 
-import java.util.List;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
 import rx.Observable;
 
-public class DataStoreFactory<T> {
+public class DataStoreFactory {
 
     private final GeneralRealmManager mRealmManager;
     private final Context mContext;
@@ -29,27 +30,28 @@ public class DataStoreFactory<T> {
     /**
      * Create {@link UserDataStore} from a user id.
      */
-    public DataStore<?> createById(int id, EntityDataMapper entityDataMapper) {
-//        if (mRealmManager.isItemValid(id, clazz) || !Utils.isNetworkAvailable(mContext))
-//            return new DiskDataStore<>(mRealmManager, entityDataMapper);
-//        else
-        return createCloudDataStore(entityDataMapper);
+    public DataStore createById(int id, EntityDataMapper entityDataMapper, Class clazz) {
+        if (mRealmManager.isItemValid(id, clazz) || !Utils.isNetworkAvailable(mContext))
+            return new DiskDataStore(mRealmManager);
+        else
+            return createCloudDataStore(entityDataMapper);
     }
 
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
-    public DataStore<?> createAll(EntityDataMapper entityDataMapper) {
-//        if (mRealmManager.areItemsValid() || !Utils.isNetworkAvailable(mContext))
-        return new DiskDataStore<>(mRealmManager, entityDataMapper);
-//        else return createCloudDataStore(userEntityDataMapper);
+    public DataStore createAll(EntityDataMapper entityDataMapper, Class clazz) {
+        if (mRealmManager.areItemsValid(clazz) || !Utils.isNetworkAvailable(mContext))
+            return new DiskDataStore(mRealmManager);
+        else
+            return createCloudDataStore(entityDataMapper);
     }
 
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud.
      */
-    public DataStore<?> createCloudDataStore(EntityDataMapper userEntityDataMapper) {
-        return new CloudDataStore<>(new RestApiImpl(), mRealmManager, userEntityDataMapper);
+    public DataStore createCloudDataStore(EntityDataMapper userEntityDataMapper) {
+        return new CloudDataStore(new RestApiImpl(), mRealmManager, userEntityDataMapper);
     }
 
     //----------------------------------Get Simultaneously----------------------------------------//
@@ -57,22 +59,22 @@ public class DataStoreFactory<T> {
     /**
      * Create {@link UserDataStore} from a user id.
      */
-    public DataStore<?> createByIdFromDisk(EntityDataMapper entityDataMapper) {
-        return new DiskDataStore<T>(mRealmManager, entityDataMapper);
+    public DataStore createByIdFromDisk() {
+        return new DiskDataStore(mRealmManager);
     }
 
     /**
      * Create {@link UserDataStore} from a user id.
      */
-    public DataStore<?> createByIdFromCloud(EntityDataMapper entityDataMapper) {
+    public DataStore createByIdFromCloud(EntityDataMapper entityDataMapper) {
         return createCloudDataStore(entityDataMapper);
     }
 
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
-    public DataStore<?> createAllFromDisk(EntityDataMapper entityDataMapper) {
-        return new DiskDataStore<T>(mRealmManager, entityDataMapper);
+    public DataStore createAllFromDisk() {
+        return new DiskDataStore(mRealmManager);
     }
 
     /**
@@ -82,14 +84,13 @@ public class DataStoreFactory<T> {
         return createCloudDataStore(entityDataMapper);
     }
 
-    public Observable<List<?>> getAllUsersFromAllSources(Observable<List<?>> cloud,
-                                                         Observable<List<?>> disk) {
+    public Observable<Collection> getAllUsersFromAllSources(Observable<Collection> cloud,
+                                                            Observable<Collection> disk) {
         return Observable.concat(disk, cloud)
                 .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(null));
     }
 
-    public Observable<?> getUserFromAllSources(Observable<?> cloud,
-                                               Observable<?> disk) {
+    public Observable getUserFromAllSources(Observable cloud, Observable disk) {
         return Observable.concat(disk, cloud)
                 .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(null));
     }

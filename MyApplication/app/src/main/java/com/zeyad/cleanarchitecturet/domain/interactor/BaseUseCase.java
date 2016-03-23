@@ -3,9 +3,6 @@ package com.zeyad.cleanarchitecturet.domain.interactor;
 import com.zeyad.cleanarchitecturet.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecturet.domain.executors.ThreadExecutor;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -16,7 +13,7 @@ import rx.subscriptions.Subscriptions;
  * Abstract class for a Use Case (Interactor in terms of Clean Architecture).
  * This interface represents a execution unit for different use cases (this means any use case
  * in the application should implement this contract).
- * <p>
+ * <p/>
  * By convention each BaseUseCase implementation will return the result using a {@link rx.Subscriber}
  * that will execute its job in a background thread and will post the result in the UI thread.
  */
@@ -28,7 +25,6 @@ public abstract class BaseUseCase {
 
     protected BaseUseCase(ThreadExecutor threadExecutor, PostExecutionThread postExecutionThread) {
         this.threadExecutor = threadExecutor;
-//      final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
         this.postExecutionThread = postExecutionThread;
         subscription = Subscriptions.empty();
     }
@@ -38,6 +34,10 @@ public abstract class BaseUseCase {
      */
     protected abstract Observable buildUseCaseObservable();
 
+    protected abstract Observable buildUseCaseObservableList(Class clazz);
+
+    protected abstract Observable buildUseCaseObservableDetail(int itemId, Class clazz);
+
     /**
      * Executes the current use case.
      *
@@ -45,7 +45,6 @@ public abstract class BaseUseCase {
      */
     @SuppressWarnings("unchecked")
     public void execute(Subscriber UseCaseSubscriber) {
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
         subscription = buildUseCaseObservable()
 //                    .doOnSubscribe(() -> {  /* starting request */
 //                        // show Loading Spinner
@@ -60,10 +59,35 @@ public abstract class BaseUseCase {
 //                    .groupBy(o -> new AtomicInteger(0).getAndIncrement() % Constants.THREADCT)
 //                .subscribeOn(Schedulers.from(executor))
                 .subscribeOn(Schedulers.from(threadExecutor))
-//                .observeOn(Schedulers.io())
                 .observeOn(postExecutionThread.getScheduler())
-//                .observeOn(AndroidSchedulers.mainThread())
-                .finallyDo(executor::shutdown)
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public void execute(Subscriber UseCaseSubscriber, Class clazz) {
+        subscription = buildUseCaseObservableList(clazz)
+                .subscribeOn(Schedulers.from(threadExecutor))
+                .observeOn(postExecutionThread.getScheduler())
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public void execute(Subscriber UseCaseSubscriber, Class clazz, int id) {
+        subscription = buildUseCaseObservableDetail(id, clazz)
+//                .compose(applySchedulers())
+//                .compose(getLifecycle())
+                .subscribeOn(Schedulers.from(threadExecutor))
+                .observeOn(postExecutionThread.getScheduler())
                 .subscribe(UseCaseSubscriber);
     }
 
@@ -71,8 +95,30 @@ public abstract class BaseUseCase {
      * Unsubscribes from current {@link rx.Subscription}.
      */
     public void unsubscribe() {
-        if (!subscription.isUnsubscribed()) {
+        if (!subscription.isUnsubscribed())
             subscription.unsubscribe();
-        }
+    }
+    //--------------------------------------------------------------------------------//
+
+    /**
+     * Apply the default android schedulers to a observable
+     *
+     * @param <T> the current observable
+     * @return the transformed observable
+     */
+    protected <T> Observable.Transformer<T, T> applySchedulers() {
+        return observable -> observable.subscribeOn(Schedulers.from(threadExecutor))
+                .observeOn(postExecutionThread.getScheduler())
+                .unsubscribeOn(Schedulers.from(threadExecutor));
+    }
+
+    private Observable.Transformer mLifecycle;
+
+    protected void setLifecycle(Observable.Transformer mLifecycle) {
+        this.mLifecycle = mLifecycle;
+    }
+
+    protected <T> Observable.Transformer<T, T> getLifecycle() {
+        return mLifecycle != null ? mLifecycle : o -> o;
     }
 }

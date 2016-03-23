@@ -95,6 +95,7 @@ public class UserListPresenter implements BasePresenter {
                 errorBundle.getException()));
     }
 
+    // TODO: 3/22/16 Move to the background Rx style
     private void showUsersCollectionInView(Collection<User> usersCollection) {
         viewListView.renderUserList(userModelDataMapper.transform(usersCollection));
     }

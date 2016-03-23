@@ -5,6 +5,8 @@ import android.content.Context;
 import com.firebase.client.Firebase;
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.db.RealmManagerImpl;
+import com.zeyad.cleanarchitecturet.data.db.generalize.GeneralRealmManager;
+import com.zeyad.cleanarchitecturet.data.db.generalize.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecturet.data.executor.JobExecutor;
 import com.zeyad.cleanarchitecturet.data.repository.DataRepository;
 import com.zeyad.cleanarchitecturet.data.repository.UserDataRepository;
@@ -55,6 +57,13 @@ public class ApplicationModule {
     RealmManager provideRealmManager(RealmManagerImpl realmManager) {
         return realmManager;
     }
+
+    @Provides
+    @Singleton
+    GeneralRealmManager provideGeneralRealmManager(GeneralRealmManagerImpl generalRealmManager) {
+        return generalRealmManager;
+    }
+
 
     @Provides
     @Singleton

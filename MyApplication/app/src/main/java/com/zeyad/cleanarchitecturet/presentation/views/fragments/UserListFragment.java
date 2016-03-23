@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import com.zeyad.cleanarchitecturet.R;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
-import com.zeyad.cleanarchitecturet.presentation.presenters.UserListPresenter;
+import com.zeyad.cleanarchitecturet.presentation.presenters.GeneralListPresenter;
 import com.zeyad.cleanarchitecturet.presentation.views.UserListView;
 import com.zeyad.cleanarchitecturet.presentation.views.adapters.UsersAdapter;
 
@@ -39,8 +39,10 @@ public class UserListFragment extends BaseFragment implements UserListView {
         void onUserClicked(final UserModel userModel);
     }
 
+//    @Inject
+//    UserListPresenter userListPresenter;
     @Inject
-    UserListPresenter userListPresenter;
+    GeneralListPresenter userListPresenter;
     @Bind(R.id.rv_users)
     RecyclerView rv_users;
     @Bind(R.id.rl_progress)

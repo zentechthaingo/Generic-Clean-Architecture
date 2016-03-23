@@ -56,7 +56,7 @@ public class UserEntityDataMapperTest extends ApplicationTestCase {
     private UserEntity createFakeUserEntity() {
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(FAKE_USER_ID);
-        userEntity.setFullname(FAKE_FULLNAME);
+        userEntity.setFullName(FAKE_FULLNAME);
         return userEntity;
     }
 }

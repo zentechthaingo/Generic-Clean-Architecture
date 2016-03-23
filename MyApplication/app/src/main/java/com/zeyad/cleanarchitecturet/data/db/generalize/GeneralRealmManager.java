@@ -5,7 +5,7 @@ import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.List;
+import java.util.Collection;
 
 import io.realm.RealmObject;
 import io.realm.RealmResults;
@@ -17,26 +17,31 @@ public interface GeneralRealmManager {
      *
      * @param userId The user id to retrieve data.
      */
-    <T extends RealmObject> Observable<T> get(final int userId, Class clazz);
+    // TODO: 3/23/16 Generalize!
+    Observable<?> get(final int userId, Class clazz);
 
     /**
      * Gets an {@link Observable} which will emit a {@link RealmResults <UserRealmModel>}.
      */
-    <T extends RealmObject> Observable<List<T>> getAll(Class clazz);
+    Observable<Collection> getAll(Class clazz);
 
     /**
      * Puts and element into the cache.
      *
      * @param realmModel Element to insert in the cache.
      */
-    void put(JSONObject realmModel, Class clazz);
+//    void put(JSONObject realmModel, Class clazz);
+
+    void put(RealmObject realmModel);
 
     /**
      * Puts and element into the cache.
      *
      * @param realmModels Element to insert in the cache.
      */
-    void putAll(JSONArray realmModels, Class clazz);
+//    void putAll(JSONArray realmModels, Class clazz);
+
+    void putAll(Collection<RealmObject> realmModels);
 
     /**
      * Checks if an element (User) exists in the cache.

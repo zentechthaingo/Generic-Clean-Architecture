@@ -30,4 +30,14 @@ public class GetUserDetails extends BaseUseCase {
     protected Observable buildUseCaseObservable() {
         return userRepository.user(userId);
     }
+
+    @Override
+    protected Observable buildUseCaseObservableList(Class clazz) {
+        return null;
+    }
+
+    @Override
+    protected Observable buildUseCaseObservableDetail(int itemId, Class clazz) {
+        return null;
+    }
 }

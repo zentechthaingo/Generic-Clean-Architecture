@@ -3,6 +3,8 @@ package com.zeyad.cleanarchitecturet.presentation;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.firebase.client.Firebase;
 import com.firebase.client.Logger;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.ApplicationComponent;
@@ -12,6 +14,7 @@ import com.zeyad.cleanarchitecturet.presentation.internal.di.modules.Application
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.rx.RealmObservableFactory;
+import okhttp3.OkHttpClient;
 
 /**
  * Android Main Application
@@ -33,6 +36,25 @@ public class AndroidApplication extends Application {
         initializeRealm();
         initializeFirebase();
         initializeInjector();
+        initializeStetho();
+    }
+
+    private void initializeStetho() {
+        Stetho.initializeWithDefaults(this);
+        new OkHttpClient.Builder()
+                .addNetworkInterceptor(new StethoInterceptor())
+                .build();
+//        Stetho.initialize(Stetho.newInitializerBuilder(this)
+//                .enableDumpapp(new DumperPluginsProvider() {
+//                    @Override
+//                    public Iterable<DumperPlugin> get() {
+//                        return new Stetho.DefaultDumperPluginsBuilder(this)
+//                                .provide(new MyDumperPlugin())
+//                                .finish();
+//                    }
+//                })
+//                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+//                .build());
     }
 
     private void initializeRealm() {

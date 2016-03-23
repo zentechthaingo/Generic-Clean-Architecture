@@ -4,7 +4,7 @@ What is this repository for?
 
 * Quick summary
 
-This is a sample project showcasing the use new technologies and apis within the clean architecture pattern. 
+This is a sample project showcasing the use new technologies and apis within the clean architecture pattern.
 
 * Version
 * 0.1 (https://bitbucket.org/tutorials/markdowndemo)
@@ -26,10 +26,10 @@ This is a sample project showcasing the use new technologies and apis within the
 
 ### Todo:
 
-* Generalize Realm (In test)
+* Add queries in Realm
 * Tablet support
 * Login use case (Google and Facebook login) with Fire base
-* Fire base 
+* Fire base
 * User items use case
 * Animations
 * Strict Mode

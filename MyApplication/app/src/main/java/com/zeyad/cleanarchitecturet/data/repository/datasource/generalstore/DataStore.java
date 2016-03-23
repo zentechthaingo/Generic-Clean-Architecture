@@ -1,21 +1,20 @@
 package com.zeyad.cleanarchitecturet.data.repository.datasource.generalstore;
 
-
-import java.util.List;
+import java.util.Collection;
 
 import rx.Observable;
-// TODO: 3/12/16 Generalize to disk and cloud, aka add more methods!
+// TODO: 3/20/16 Add all crud operations!
 
 /**
  * Interface that represents a data store from where data is retrieved.
  */
-public interface DataStore<T> {
+public interface DataStore {
     /**
-     * Get an {@link rx.Observable} which will emit a List of ?.
+     * Get an {@link rx.Observable} which will emit a Collection of ?.
      */
-    Observable<List<?>> entityListFromDisk(Class clazz);
+    Observable<Collection> entityListFromDisk(Class clazz);
 
-    Observable<List<?>> entityListFromCloud();
+    Observable<Collection> collectionFromCloud(Class clazz);
 
     /**
      * Get an {@link rx.Observable} which will emit a ? by its id.
@@ -24,5 +23,5 @@ public interface DataStore<T> {
      */
     Observable<?> entityDetailsFromDisk(final int itemId, Class clazz);
 
-    Observable<?> entityDetailsFromCloud(final int itemId);
+    Observable<?> entityDetailsFromCloud(final int itemId, Class clazz);
 }

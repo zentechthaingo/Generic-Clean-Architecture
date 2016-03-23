@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collection;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
@@ -119,7 +121,7 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.areItemsValid());
+        assertTrue(realmManager.areUsersValid());
     }
 
     // TODO: 2/3/16 finish!
@@ -136,22 +138,24 @@ public class RealmManagerTest extends AndroidTestCase {
             realmManager.put(userRealmModel);
         }
         realmManager.evictAll();
-        realmManager.getAll().asObservable().subscribe(new Subscriber<RealmResults<UserRealmModel>>() {
-            @Override
-            public void onCompleted() {
+        realmManager.getAll()
+                .asObservable()
+                .subscribe(new Subscriber<Collection<UserRealmModel>>() {
+                    @Override
+                    public void onCompleted() {
 
-            }
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                fail();
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        fail();
+                    }
 
-            @Override
-            public void onNext(RealmResults<UserRealmModel> userRealmModels) {
-                assertEquals(userRealmModels.size(), 0);
-            }
-        });
+                    @Override
+                    public void onNext(Collection<UserRealmModel> userRealmModels) {
+                        assertEquals(userRealmModels.size(), 0);
+                    }
+                });
     }
 
     // TODO: 2/3/16 finish!

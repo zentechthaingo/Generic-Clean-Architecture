@@ -8,7 +8,6 @@ import io.realm.RealmObject;
 import io.realm.exceptions.RealmException;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action0;
 import rx.subscriptions.Subscriptions;
 
 public abstract class OnSubscribeRealmList<T extends RealmObject> implements Observable.OnSubscribe<RealmList<T>> {
@@ -27,14 +26,11 @@ public abstract class OnSubscribeRealmList<T extends RealmObject> implements Obs
     @Override
     public void call(final Subscriber<? super RealmList<T>> subscriber) {
         final Realm realm = fileName != null ? Realm.getInstance(context) : Realm.getInstance(context);
-        subscriber.add(Subscriptions.create(new Action0() {
-            @Override
-            public void call() {
-                try {
-                    realm.close();
-                } catch (RealmException ex) {
-                    subscriber.onError(ex);
-                }
+        subscriber.add(Subscriptions.create(() -> {
+            try {
+                realm.close();
+            } catch (RealmException ex) {
+                subscriber.onError(ex);
             }
         }));
 
