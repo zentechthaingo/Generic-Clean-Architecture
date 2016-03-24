@@ -32,12 +32,12 @@ public class GetUserDetails extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservableList(Class clazz) {
+    protected Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass) {
         return null;
     }
 
     @Override
-    protected Observable buildUseCaseObservableDetail(int itemId, Class clazz) {
+    protected Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
         return null;
     }
 }

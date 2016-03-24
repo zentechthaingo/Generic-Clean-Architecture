@@ -52,4 +52,12 @@ public class UserModule {
                                                     PostExecutionThread postExecutionThread) {
         return new GeneralizedUseCase(repository, threadExecutor, postExecutionThread);
     }
+
+    @Provides
+    @PerActivity
+    @Named("generalEntityDetail")
+    GeneralizedUseCase provideGetGeneralDetailUseCase(Repository repository, ThreadExecutor threadExecutor,
+                                                      PostExecutionThread postExecutionThread) {
+        return new GeneralizedUseCase(repository, threadExecutor, postExecutionThread);
+    }
 }

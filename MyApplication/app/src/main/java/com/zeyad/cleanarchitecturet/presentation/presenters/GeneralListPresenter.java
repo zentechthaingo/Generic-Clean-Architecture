@@ -2,10 +2,12 @@ package com.zeyad.cleanarchitecturet.presentation.presenters;
 
 import android.support.annotation.NonNull;
 
+import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecturet.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecturet.domain.exceptions.ErrorBundle;
 import com.zeyad.cleanarchitecturet.domain.interactor.DefaultSubscriber;
 import com.zeyad.cleanarchitecturet.domain.interactor.GeneralizedUseCase;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
@@ -32,7 +34,6 @@ public class GeneralListPresenter implements BasePresenter {
         viewListView = view;
     }
 
-    // FIXME: 3/19/16 Doubles the call!
     @Override
     public void resume() {
 //        getUserList();
@@ -90,11 +91,10 @@ public class GeneralListPresenter implements BasePresenter {
 
     private void showUsersCollectionInView(Collection<UserModel> userModels) {
         viewListView.renderUserList(userModels);
-//        viewListView.renderUserList(userModelDataMapper.transformToDomain(usersCollection));
     }
 
     private void getUserList() {
-        getGeneralListUseCase.execute(new UserListSubscriber(), UserModel.class);
+        getGeneralListUseCase.execute(new UserListSubscriber(), UserModel.class, User.class, UserRealmModel.class);
     }
 
     private final class UserListSubscriber extends DefaultSubscriber<List<UserModel>> {

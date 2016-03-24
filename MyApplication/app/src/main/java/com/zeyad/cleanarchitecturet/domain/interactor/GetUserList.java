@@ -1,8 +1,8 @@
 package com.zeyad.cleanarchitecturet.domain.interactor;
 
-import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecturet.domain.executors.ThreadExecutor;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.domain.repositories.UserRepository;
 
 import javax.inject.Inject;
@@ -32,12 +32,12 @@ public class GetUserList extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservableList(Class clazz) {
+    protected Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass) {
         return null;
     }
 
     @Override
-    protected Observable buildUseCaseObservableDetail(int itemId, Class clazz) {
+    protected Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
         return null;
     }
 }

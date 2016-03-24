@@ -2,7 +2,6 @@ package com.zeyad.cleanarchitecturet.data.repository.datasource;
 
 import com.zeyad.cleanarchitecturet.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecturet.data.db.RealmManager;
-import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecturet.data.network.RestApi;
 import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.CloudUserDataStore;

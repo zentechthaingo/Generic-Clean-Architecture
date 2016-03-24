@@ -5,7 +5,6 @@ import com.zeyad.cleanarchitecturet.data.db.RealmManager;
 import com.zeyad.cleanarchitecturet.data.db.RealmRepository;
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchitecturet.utilities.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

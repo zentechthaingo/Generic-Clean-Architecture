@@ -2,10 +2,12 @@ package com.zeyad.cleanarchitecturet.presentation.presenters;
 
 import android.support.annotation.NonNull;
 
+import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecturet.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecturet.domain.exceptions.ErrorBundle;
 import com.zeyad.cleanarchitecturet.domain.interactor.DefaultSubscriber;
 import com.zeyad.cleanarchitecturet.domain.interactor.GeneralizedUseCase;
+import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
@@ -23,13 +25,10 @@ public class GeneralDetailPresenter implements BasePresenter {
     private int userId;
     private UserDetailsView viewDetailsView;
     private final GeneralizedUseCase getUserDetailsBaseUseCase;
-//    private final UserModelDataMapper userModelDataMapper;
 
     @Inject
-    public GeneralDetailPresenter(@Named("generalEntityList") GeneralizedUseCase getUserDetailsBaseUseCase/*,
-                                  UserModelDataMapper userModelDataMapper*/) {
+    public GeneralDetailPresenter(@Named("generalEntityDetail") GeneralizedUseCase getUserDetailsBaseUseCase) {
         this.getUserDetailsBaseUseCase = getUserDetailsBaseUseCase;
-//        this.userModelDataMapper = userModelDataMapper;
     }
 
     public void setView(@NonNull UserDetailsView view) {
@@ -83,9 +82,8 @@ public class GeneralDetailPresenter implements BasePresenter {
     }
 
     private void showErrorMessage(ErrorBundle errorBundle) {
-        String errorMessage = ErrorMessageFactory.create(viewDetailsView.getContext(),
-                errorBundle.getException());
-        viewDetailsView.showError(errorMessage);
+        viewDetailsView.showError(ErrorMessageFactory.create(viewDetailsView.getContext(),
+                errorBundle.getException()));
     }
 
     private void showUserDetailsInView(UserModel userModel) {
@@ -93,11 +91,11 @@ public class GeneralDetailPresenter implements BasePresenter {
     }
 
     private void getUserDetails() {
-        getUserDetailsBaseUseCase.execute(new UserDetailsSubscriber());
+        getUserDetailsBaseUseCase.execute(new UserDetailsSubscriber(), UserModel.class, User.class,
+                UserRealmModel.class, userId);
     }
 
     private final class UserDetailsSubscriber extends DefaultSubscriber<UserModel> {
-
         @Override
         public void onCompleted() {
             hideViewLoading();

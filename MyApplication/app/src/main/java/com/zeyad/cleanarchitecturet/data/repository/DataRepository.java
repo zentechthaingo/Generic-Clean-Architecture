@@ -34,10 +34,10 @@ public class DataRepository implements Repository {
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
-    public Observable<Collection> Collection(Class clazz) {
-        return dataStoreFactory.createAll(entityDataMapper, clazz)
-                .collectionFromCloud(clazz);
-//                .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, clazz));
+    public Observable<Collection> Collection(Class presentationClass, Class domainClass, Class dataClass) {
+        return dataStoreFactory.createAll(entityDataMapper, dataClass)
+                .collectionFromCloud(domainClass, dataClass)//;
+                .map(realmModels -> entityDataMapper.transformAllToPresentation(realmModels, presentationClass));
         // TODO: 3/2/16 Test!
 //        return userDataStoreFactory.getAllUsersFromAllSources(userDataStoreFactory
 //                .createAllFromCloud(entityDataMapper)
@@ -47,10 +47,10 @@ public class DataRepository implements Repository {
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
-    public Observable<?> item(int itemId, Class clazz) {
-        return dataStoreFactory.createById(itemId, entityDataMapper, clazz)
-                .entityDetailsFromCloud(itemId, clazz);
-//                .map(entityDataMapper::transform);
+    public Observable<?> item(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
+        return dataStoreFactory.createById(itemId, entityDataMapper, dataClass)
+                .entityDetailsFromCloud(itemId, domainClass, dataClass)//;
+                .map(realmModel -> entityDataMapper.transformToPresentation(realmModel, presentationClass));
         // TODO: 3/2/16 Test!
 //        return userDataStoreFactory.getUserFromAllSources(userDataStoreFactory
 //                .createByIdFromCloud(entityDataMapper)

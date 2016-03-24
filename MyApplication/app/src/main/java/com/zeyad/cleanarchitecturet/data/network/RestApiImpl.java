@@ -54,6 +54,11 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
+    public Observable<Object> objectById(@Path("id") int userId) {
+        return ApiConnection.objectById(userId);
+    }
+
+    @Override
     public Observable<?> userById(@Path("id") int userId) {
         return ApiConnection.userById(userId);
     }

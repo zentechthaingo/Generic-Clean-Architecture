@@ -6,7 +6,6 @@ import com.zeyad.cleanarchitecturet.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecturet.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecturet.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.UserDataStore;
-import com.zeyad.cleanarchitecturet.utilities.Utils;
 
 import java.util.Collection;
 
@@ -30,21 +29,21 @@ public class DataStoreFactory {
     /**
      * Create {@link UserDataStore} from a user id.
      */
-    public DataStore createById(int id, EntityDataMapper entityDataMapper, Class clazz) {
-        if (mRealmManager.isItemValid(id, clazz) || !Utils.isNetworkAvailable(mContext))
-            return new DiskDataStore(mRealmManager);
-        else
-            return createCloudDataStore(entityDataMapper);
+    public DataStore createById(int id, EntityDataMapper entityDataMapper, Class dataClass) {
+//        if (mRealmManager.isItemValid(id, dataClass) || !Utils.isNetworkAvailable(mContext))
+//            return new DiskDataStore(mRealmManager);
+//        else
+        return createCloudDataStore(entityDataMapper);
     }
 
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
-    public DataStore createAll(EntityDataMapper entityDataMapper, Class clazz) {
-        if (mRealmManager.areItemsValid(clazz) || !Utils.isNetworkAvailable(mContext))
-            return new DiskDataStore(mRealmManager);
-        else
-            return createCloudDataStore(entityDataMapper);
+    public DataStore createAll(EntityDataMapper entityDataMapper, Class dataClass) {
+//        if (mRealmManager.areItemsValid(dataClass) || !Utils.isNetworkAvailable(mContext))
+//            return new DiskDataStore(mRealmManager);
+//        else
+        return createCloudDataStore(entityDataMapper);
     }
 
     /**

@@ -57,6 +57,9 @@ public interface RestApi {
     @GET("user_{id}.json")
     Observable<RealmObject> realmObjectById(@Path("id") final int userId);
 
+    @GET("user_{id}.json")
+    Observable<Object> objectById(@Path("id") final int userId);
+
     @Streaming
     @GET("/images/{index}.jpg")
     Observable<Response> getStream(@Path("index") String index);

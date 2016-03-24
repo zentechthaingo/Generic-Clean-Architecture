@@ -112,6 +112,12 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).userById(id);
     }
 
+    public static Observable<Object> objectById(int id) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).objectById(id);
+    }
+
     public static Observable<RealmObject> realmObject(int userId) {
         if (retrofit == null)
             retrofit = createRetro2Client();

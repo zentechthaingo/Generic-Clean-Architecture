@@ -1,6 +1,5 @@
 package com.zeyad.cleanarchitecturet.domain.interactor;
 
-import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 import com.zeyad.cleanarchitecturet.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecturet.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecturet.domain.models.User;
@@ -27,16 +26,16 @@ public class GeneralizedUseCase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        return repository.Collection(UserEntity.class);
+        return null;
     }
 
     @Override
-    public Observable buildUseCaseObservableList(Class clazz) {
-        return repository.Collection(clazz);
+    public Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass) {
+        return repository.Collection(presentationClass, domainClass, dataClass);
     }
 
     @Override
-    public Observable buildUseCaseObservableDetail(int itemId, Class clazz) {
-        return repository.item(itemId, clazz);
+    public Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
+        return repository.item(itemId, presentationClass, domainClass, dataClass);
     }
 }

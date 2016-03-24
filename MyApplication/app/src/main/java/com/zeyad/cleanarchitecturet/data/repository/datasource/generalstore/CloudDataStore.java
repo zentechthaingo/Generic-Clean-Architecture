@@ -20,10 +20,11 @@ public class CloudDataStore implements DataStore {
     private GeneralRealmManager realmManager;
     private EntityDataMapper entityDataMapper;
     private static final String TAG = "CloudDataStore";
-    private final Action1<RealmObject> saveGenericToCacheAction = object -> realmManager.put(entityDataMapper.transformToRealm(object));
+    private Class dataClass;
+    private final Action1<Object> saveGenericToCacheAction = object -> realmManager.put((RealmObject) entityDataMapper.transformToRealm(object, dataClass));
     private final Action1<Collection> saveAllGenericsToCacheAction = collection -> {
         Collection<RealmObject> realmObjectCollection = new ArrayList<>();
-        realmObjectCollection.addAll(entityDataMapper.transformAllToRealm(collection));
+        realmObjectCollection.addAll((Collection) entityDataMapper.transformAllToRealm(collection, dataClass));
         realmManager.putAll(realmObjectCollection);
     };
 
@@ -50,7 +51,8 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<Collection> collectionFromCloud(Class clazz) {
+    public Observable<Collection> collectionFromCloud(Class domainClass, Class dataClass) {
+        this.dataClass = dataClass;
         return restApi.userCollection()
 //                .retryWhen(observable -> {
 //                    Log.v(TAG, "retryWhen, call");
@@ -60,7 +62,7 @@ public class CloudDataStore implements DataStore {
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
 //                })
                 .doOnNext(saveAllGenericsToCacheAction)
-                .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, clazz))
+                .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass))
                 .compose(Utils.logSources(TAG, realmManager));
     }
 
@@ -75,8 +77,9 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> entityDetailsFromCloud(final int itemId, Class clazz) {
-        return restApi.realmObjectById(itemId)
+    public Observable<?> entityDetailsFromCloud(final int itemId, Class domainClass, Class dataClass) {
+        this.dataClass = dataClass;
+        return restApi.objectById(itemId)
 //                .retryWhen(observable -> {
 //                    Log.v(TAG, "retryWhen, call");
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
@@ -85,7 +88,7 @@ public class CloudDataStore implements DataStore {
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
 //                })
                 .doOnNext(saveGenericToCacheAction)
-                .map(entities -> entityDataMapper.transformToDomain(entities, clazz))
-                .compose(Utils.logSource(TAG, realmManager));
+                .map(entities -> entityDataMapper.transformToDomain(entities, domainClass));
+//                .compose(Utils.logSource(TAG, realmManager));
     }
 }

@@ -14,7 +14,7 @@ public interface DataStore {
      */
     Observable<Collection> entityListFromDisk(Class clazz);
 
-    Observable<Collection> collectionFromCloud(Class clazz);
+    Observable<Collection> collectionFromCloud(Class domainClass, Class dataClass);
 
     /**
      * Get an {@link rx.Observable} which will emit a ? by its id.
@@ -23,5 +23,5 @@ public interface DataStore {
      */
     Observable<?> entityDetailsFromDisk(final int itemId, Class clazz);
 
-    Observable<?> entityDetailsFromCloud(final int itemId, Class clazz);
+    Observable<?> entityDetailsFromCloud(final int itemId, Class domainClass, Class dataClass);
 }

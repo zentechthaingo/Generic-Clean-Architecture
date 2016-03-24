@@ -14,14 +14,14 @@ public interface Repository {
     /**
      * Get an {@link rx.Observable} which will emit a Collection of Items.
      */
-    Observable<Collection> Collection(Class clazz);
+    Observable<Collection> Collection(Class presentationClass, Class domainClass, Class dataClass);
 
     /**
      * Get an {@link rx.Observable} which will emit an Item.
      *
      * @param itemId The user id used to retrieve item data.
      */
-    Observable<?> item(final int itemId, Class clazz);
+    Observable<?> item(final int itemId, Class presentationClass, Class domainClass, Class dataClass);
 
     Observable<?> putAll(final int itemId, Class clazz);
 

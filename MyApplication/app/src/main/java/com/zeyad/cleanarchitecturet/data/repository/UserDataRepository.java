@@ -6,14 +6,12 @@ import com.zeyad.cleanarchitecturet.data.repository.datasource.userstore.UserDat
 import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.domain.repositories.UserRepository;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
-import rx.functions.Func1;
 
 /**
  * {@link UserRepository} for retrieving user data.

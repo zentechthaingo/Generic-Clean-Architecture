@@ -9,9 +9,6 @@ import com.zeyad.cleanarchitecturet.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecturet.domain.models.User;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,35 +18,35 @@ import javax.inject.Singleton;
 
 import io.realm.RealmObject;
 
+// TODO: 3/24/16 Generalize!
 @Singleton
 public class EntityDataMapper {
     private Gson gson;
 
     @Inject
     public EntityDataMapper() {
-        gson = new GsonBuilder()
-                .setExclusionStrategies(new ExclusionStrategy() {
-                    @Override
-                    public boolean shouldSkipField(FieldAttributes f) {
-                        return f.getDeclaringClass().equals(RealmObject.class);
-                    }
+        gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes f) {
+                return f.getDeclaringClass().equals(RealmObject.class);
+            }
 
-                    @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return false;
-                    }
-                }).create();
+            @Override
+            public boolean shouldSkipClass(Class<?> clazz) {
+                return false;
+            }
+        }).create();
     }
 
     /**
-     * Transform a {@link UserEntity} into an {@link User}.
+     * Transform a {@link User} into an {@link User}.
      *
-     * @param userRealmModel Object to be transformed.
-     * @return {@link User} if valid {@link UserEntity} otherwise null.
+     * @param userDomain Object to be transformed.
+     * @return {@link User} if valid {@link User} otherwise null.
      */
-    public UserModel transformToDomain(Object userRealmModel, Class clazz) {
-        if (userRealmModel != null) {
-            UserEntity cast = gson.fromJson(gson.toJson(userRealmModel), UserEntity.class);
+    public UserModel transformToPresentation(Object userDomain, Class presentationClass) {
+        if (userDomain != null) {
+            User cast = gson.fromJson(gson.toJson(userDomain), User.class);
             UserModel user = new UserModel(cast.getUserId());
             user.setCoverUrl(cast.getCoverUrl());
             user.setFullName(cast.getFullName());
@@ -62,51 +59,78 @@ public class EntityDataMapper {
     }
 
     /**
-     * Transform a {@link UserRealmModel} into an {@link UserEntity}.
+     * Transform a {@link UserRealmModel} into an {@link User}.
      *
      * @param userRealmModels Objects to be transformed.
-     * @return {@link UserEntity} if valid {@link UserRealmModel} otherwise null.
+     * @return {@link User} if valid {@link UserRealmModel} otherwise null.
      */
-    public Collection<UserModel> transformAllToDomain(Collection userRealmModels, Class clazz) {
-        Collection<UserModel> userEntityList = new ArrayList<>();
+    public Collection<UserModel> transformAllToPresentation(Collection userRealmModels, Class presentationClass) {
+        Collection<UserModel> userModels = new ArrayList<>();
         for (int i = 0; i < userRealmModels.size(); i++)
-            userEntityList.add(transformToDomain(userRealmModels.toArray()[i], clazz));
-//        userEntityList.add(gson.fromJson(gson.toJson(userRealmModels.iterator().next()),
-//                clazz));
-        return userEntityList;
+            userModels.add(transformToPresentation(userRealmModels.toArray()[i], presentationClass));
+        return userModels;
     }
 
     /**
-     * Transform a {@link UserRealmModel} into an {@link UserEntity}.
+     * Transform a {@link User} into an {@link User}.
+     *
+     * @param userRealmModel Object to be transformed.
+     * @return {@link User} if valid {@link User} otherwise null.
+     */
+    public User transformToDomain(Object userRealmModel, Class domainClass) {
+        if (userRealmModel != null) {
+            UserEntity cast = gson.fromJson(gson.toJson(userRealmModel), UserEntity.class);
+            User user = new User(cast.getUserId());
+            user.setCoverUrl(cast.getCoverUrl());
+            user.setFullName(cast.getFullName());
+            user.setDescription(cast.getDescription());
+            user.setFollowers(cast.getFollowers());
+            user.setEmail(cast.getEmail());
+            return user;
+        }
+        return null;
+    }
+
+    /**
+     * Transform a {@link UserRealmModel} into an {@link User}.
+     *
+     * @param userRealmModels Objects to be transformed.
+     * @return {@link User} if valid {@link UserRealmModel} otherwise null.
+     */
+    public Collection<User> transformAllToDomain(Collection userRealmModels, Class domainClass) {
+        Collection<User> users = new ArrayList<>();
+        for (int i = 0; i < userRealmModels.size(); i++)
+            users.add(transformToDomain(userRealmModels.toArray()[i], domainClass));
+        return users;
+    }
+
+    /**
+     * Transform a {@link User} into an {@link User}.
+     *
+     * @param item Object to be transformed.
+     * @return {@link UserRealmModel} if valid {@link User} otherwise null.
+     */
+    public Object transformToRealm(Object item, Class dataClass) {
+        if (item != null) {
+            return gson.fromJson(gson.toJson(item), dataClass);
+        }
+        return null;
+    }
+
+    /**
+     * Transform a {@link UserRealmModel} into an {@link User}.
      *
      * @param collection Objects to be transformed.
      * @return {@link List <UserRealmModel>} if valid {@link UserRealmModel} otherwise null.
      */
-    public Collection<UserRealmModel> transformAllToRealm(Collection collection) {
-        List<UserRealmModel> userRealmModels = new ArrayList<>();
-        UserRealmModel userRealmModel;
+    public Collection<Object> transformAllToRealm(Collection collection, Class dataClass) {
+        List<Object> userRealmModels = new ArrayList<>();
+        Object userRealmModel;
         for (Object userEntity : collection) {
-            userRealmModel = transformToRealm(userEntity);
+            userRealmModel = transformToRealm(userEntity, dataClass);
             if (userRealmModel != null)
                 userRealmModels.add(userRealmModel);
         }
         return userRealmModels;
-    }
-
-    /**
-     * Transform a {@link UserEntity} into an {@link User}.
-     *
-     * @param item Object to be transformed.
-     * @return {@link UserRealmModel} if valid {@link UserEntity} otherwise null.
-     */
-    public UserRealmModel transformToRealm(Object item) {
-        if (item != null)
-            try {
-                return gson.fromJson(String.valueOf(new JSONObject(gson.toJson(item))),
-                        UserRealmModel.class);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        return null;
     }
 }

@@ -23,7 +23,7 @@ import rx.schedulers.Schedulers;
 @Singleton
 public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
-    private static final String SETTINGS_FILE_NAME = "com.zeyad.cleanarchitecture.SETTINGS",
+    private static final String TAG = "GeneralRealmManagerImpl", SETTINGS_FILE_NAME = "com.zeyad.cleanarchitecture.SETTINGS",
             SETTINGS_KEY_LAST_CACHE_UPDATE = "last_cache_update";
     private static final long EXPIRATION_TIME = 60 * 10 * 1000;
     private Realm mRealm;
@@ -65,16 +65,14 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     }
 
     @Override
-//    public void put(final JSONObject jsonObject, Class clazz) {
-    public void put(RealmObject realmModel) {
-        if (realmModel != null) {
+    public void put(RealmObject realmObject) {
+        if (realmObject != null) {
             Observable.create(new Observable.OnSubscribe<Void>() {
                 @Override
                 public void call(final Subscriber<? super Void> subscriber) {
                     mRealm = Realm.getDefaultInstance();
                     mRealm.beginTransaction();
-                    mRealm.executeTransaction(realm -> realm.copyToRealmOrUpdate(realmModel));
-//                    mRealm.createOrUpdateObjectFromJson(clazz, jsonObject);
+                    mRealm.copyToRealmOrUpdate(realmObject);
                     mRealm.commitTransaction();
                     subscriber.onNext(null);
                     subscriber.onCompleted();
@@ -93,7 +91,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
                         @Override
                         public void onNext(Void userRealmModel) {
-                            Log.d("RealmManager", "user added!");
+                            Log.d(TAG, "user added!");
                         }
                     });
         }
@@ -124,7 +122,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
                     @Override
                     public void onNext(Void userRealmModel) {
-                        Log.d("RealmManager", "users added or updated!");
+                        Log.d(TAG, "users added or updated!");
                     }
                 });
     }
@@ -145,11 +143,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
     @Override
     public boolean areItemsValid(Class clazz) {
-        if (((System.currentTimeMillis() - getFromPreferences()) > EXPIRATION_TIME)) {
-//            evictAll(clazz);
-            return false;
-        } else
-            return true;
+        return ((System.currentTimeMillis() - getFromPreferences()) <= EXPIRATION_TIME);
     }
 
     // FIXME: 3/5/16 access from the same thread!
@@ -173,7 +167,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
             @Override
             public void onNext(Object o) {
-                Log.d("RealmManager", "all " + clazz.getSimpleName() + "s deleted!");
+                Log.d(TAG, "all " + clazz.getSimpleName() + "s deleted!");
             }
         });
     }
@@ -197,7 +191,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
             @Override
             public void onNext(Object o) {
-                Log.d("RealmManager", clazz.getSimpleName() + " deleted!");
+                Log.d(TAG, clazz.getSimpleName() + " deleted!");
             }
         });
     }
@@ -221,7 +215,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
             @Override
             public void onNext(Object o) {
-                Log.d("RealmManager", clazz.getSimpleName() + " deleted!");
+                Log.d(TAG, clazz.getSimpleName() + " deleted!");
             }
         });
     }

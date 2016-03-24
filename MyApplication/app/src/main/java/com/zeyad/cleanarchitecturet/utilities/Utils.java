@@ -77,7 +77,7 @@ public class Utils {
         });
     }
 
-    // TODO: 3/22/16 Test!
+    // Fixme: 3/22/16 fix!
     // Simple logging to let us know what each source is returning
     public static <T> Observable.Transformer<T, T> logSource(final String source,
                                                              GeneralRealmManager realmManager) {
@@ -86,7 +86,7 @@ public class Utils {
                 JSONObject jsonObject = new JSONObject(new Gson().toJson(userEntity));
                 if (userEntity == null)
                     System.out.println(source + " does not have any data.");
-                else if (!realmManager.isItemValid(jsonObject.getInt("id"), userEntity.getClass()))
+                else if (!realmManager.isItemValid(jsonObject.getInt("userId"), userEntity.getClass()))
                     System.out.println(source + " has stale data.");
                 else
                     System.out.println(source + " has the data you are looking for!");
@@ -115,7 +115,6 @@ public class Utils {
         }
         return false;
     }
-
 
     /**
      * Creates a file name from an image url

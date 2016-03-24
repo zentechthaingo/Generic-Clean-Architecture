@@ -13,7 +13,7 @@ import rx.subscriptions.Subscriptions;
  * Abstract class for a Use Case (Interactor in terms of Clean Architecture).
  * This interface represents a execution unit for different use cases (this means any use case
  * in the application should implement this contract).
- * <p/>
+ * <p>
  * By convention each BaseUseCase implementation will return the result using a {@link rx.Subscriber}
  * that will execute its job in a background thread and will post the result in the UI thread.
  */
@@ -34,9 +34,9 @@ public abstract class BaseUseCase {
      */
     protected abstract Observable buildUseCaseObservable();
 
-    protected abstract Observable buildUseCaseObservableList(Class clazz);
+    protected abstract Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass);
 
-    protected abstract Observable buildUseCaseObservableDetail(int itemId, Class clazz);
+    protected abstract Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass);
 
     /**
      * Executes the current use case.
@@ -56,10 +56,8 @@ public abstract class BaseUseCase {
 //                    /* log the error */
 //                    })
 //                    .onErrorResumeNext(Observable.empty())
-//                    .groupBy(o -> new AtomicInteger(0).getAndIncrement() % Constants.THREADCT)
-//                .subscribeOn(Schedulers.from(executor))
-                .subscribeOn(Schedulers.from(threadExecutor))
-                .observeOn(postExecutionThread.getScheduler())
+                .compose(applySchedulers())
+                .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);
     }
 
@@ -69,10 +67,10 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void execute(Subscriber UseCaseSubscriber, Class clazz) {
-        subscription = buildUseCaseObservableList(clazz)
-                .subscribeOn(Schedulers.from(threadExecutor))
-                .observeOn(postExecutionThread.getScheduler())
+    public void execute(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass) {
+        subscription = buildUseCaseObservableList(presentationClass, domainClass, dataClass)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);
     }
 
@@ -82,12 +80,10 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void execute(Subscriber UseCaseSubscriber, Class clazz, int id) {
-        subscription = buildUseCaseObservableDetail(id, clazz)
-//                .compose(applySchedulers())
-//                .compose(getLifecycle())
-                .subscribeOn(Schedulers.from(threadExecutor))
-                .observeOn(postExecutionThread.getScheduler())
+    public void execute(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass, int id) {
+        subscription = buildUseCaseObservableDetail(id, presentationClass, domainClass, dataClass)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);
     }
 

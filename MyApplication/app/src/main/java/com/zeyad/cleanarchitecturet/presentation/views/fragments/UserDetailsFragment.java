@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.zeyad.cleanarchitecturet.R;
 import com.zeyad.cleanarchitecturet.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecturet.presentation.model.UserModel;
-import com.zeyad.cleanarchitecturet.presentation.presenters.UserDetailsPresenter;
+import com.zeyad.cleanarchitecturet.presentation.presenters.GeneralDetailPresenter;
 import com.zeyad.cleanarchitecturet.presentation.views.UserDetailsView;
 import com.zeyad.cleanarchitecturet.presentation.views.component.AutoLoadImageView;
 
@@ -29,10 +29,10 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
 
     private static final String ARGUMENT_KEY_USER_ID = "USER_ID";
     private int userId;
-    @Inject
-    UserDetailsPresenter userDetailsPresenter;
     //    @Inject
-//    GeneralDetailPresenter userDetailsPresenter;
+//    UserDetailsPresenter userDetailsPresenter;
+    @Inject
+    GeneralDetailPresenter userDetailsPresenter;
     @Bind(R.id.iv_cover)
     AutoLoadImageView iv_cover;
     @Bind(R.id.tv_fullname)

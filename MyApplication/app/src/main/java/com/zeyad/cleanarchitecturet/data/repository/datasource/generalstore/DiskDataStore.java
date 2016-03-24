@@ -35,12 +35,22 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
+    public Observable<Collection> collectionFromCloud(Class domainClass, Class dataClass) {
+        try {
+            throw new Exception("cant get from cloud in disk data store");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public Observable<?> entityDetailsFromDisk(final int itemId, Class clazz) {
         return realmManager.get(itemId, clazz).compose(Utils.logSource(TAG, realmManager));
     }
 
     @Override
-    public Observable<Collection> collectionFromCloud(Class clazz) {
+    public Observable<?> entityDetailsFromCloud(int itemId, Class domainClass, Class dataClass) {
         try {
             throw new Exception("cant get from cloud in disk data store");
         } catch (Exception e) {
@@ -48,17 +58,6 @@ public class DiskDataStore implements DataStore {
         }
         return null;
     }
-
-    @Override
-    public Observable<?> entityDetailsFromCloud(int itemId, Class clazz) {
-        try {
-            throw new Exception("cant get from cloud in disk data store");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     //--------------------------------------------------------------------------------------------//
 
     public Observable store(Class clazz, Object object) {

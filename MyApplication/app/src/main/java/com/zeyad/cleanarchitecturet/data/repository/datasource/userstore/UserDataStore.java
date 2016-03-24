@@ -2,8 +2,6 @@ package com.zeyad.cleanarchitecturet.data.repository.datasource.userstore;
 
 import com.zeyad.cleanarchitecturet.data.entities.UserEntity;
 
-import java.util.List;
-
 import rx.Observable;
 
 /**
