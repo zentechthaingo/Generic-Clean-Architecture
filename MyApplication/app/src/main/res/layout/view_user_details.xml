@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.zeyad.cleanarchitecturet.presentation.views.component.AutoLoadImageView
-        android:id="@+id/iv_cover"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/iv_cover_height"
-        android:background="@android:color/darker_gray" />
+    <!--<com.zeyad.cleanarchitecture.presentation.views.component.AutoLoadImageView-->
+        <!--android:id="@+id/iv_cover"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/iv_cover_height"-->
+        <!--android:background="@android:color/darker_gray" />-->
 
     <TextView
         android:id="@+id/tv_fullname"

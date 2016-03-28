@@ -1,0 +1,46 @@
+package com.zeyad.cleanarchetecture.data.repository.datasource;
+
+import com.zeyad.cleanarchetecture.data.ApplicationTestCase;
+import com.zeyad.cleanarchitecture.data.db.RealmManager;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
+import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.DiskUserDataStore;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import static org.mockito.Mockito.verify;
+
+public class DiskUserDataStoreTest extends ApplicationTestCase {
+
+    private static final int FAKE_USER_ID = 11;
+    private DiskUserDataStore diskUserDataStore;
+    @Mock
+    private RealmManager mockRealmManager;
+    @Mock
+    private UserEntityDataMapper mockUserEntityDataMapper;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        diskUserDataStore = new DiskUserDataStore(mockRealmManager, mockUserEntityDataMapper);
+    }
+
+    @Test
+    public void testGetUserEntityListUnsupported() {
+        expectedException.expect(UnsupportedOperationException.class);
+        diskUserDataStore.userEntityList();
+    }
+
+    @Test
+    public void testGetUserEntityDetailesFromCache() {
+        diskUserDataStore.userEntityDetails(FAKE_USER_ID);
+        verify(mockRealmManager).get(FAKE_USER_ID);
+    }
+}
