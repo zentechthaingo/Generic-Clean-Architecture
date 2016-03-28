@@ -26,9 +26,9 @@ This is a sample project showcasing the use new technologies and apis within the
 
 ### Todo:
 
-* Finish crud usecases 
-* Add queries in Realm
-* Tablet support
+* Edit, Add, Delete & SearchView UI
+* Finish crud use cases 
+* Add queries in Realm  
 * Login use case (Google and Facebook login) with Fire base
 * Fire base
 * User items use case
