@@ -220,6 +220,36 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         });
     }
 
+    @Override
+    public void evictCollection(Collection collection, Class dataClass) {
+        mRealm = Realm.getDefaultInstance();
+        mRealm.asObservable().map(aVoid -> {
+            for (Object realObject : collection)
+                ((RealmObject) realObject).removeFromRealm();
+            return null;
+        }).subscribe(new Subscriber<Object>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onNext(Object o) {
+                Log.d(TAG, dataClass.getSimpleName() + " deleted!");
+            }
+        });
+    }
+
+    @Override
+    public Context getContext() {
+        return mContext;
+    }
+
     /**
      * Write a value to a user preferences file.
      *

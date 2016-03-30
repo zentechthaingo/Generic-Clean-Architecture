@@ -4,7 +4,6 @@ import com.zeyad.cleanarchitecture.domain.models.User;
 
 import java.util.Collection;
 
-import io.realm.RealmObject;
 import rx.Observable;
 
 /**
@@ -19,17 +18,17 @@ public interface Repository {
     /**
      * Get an {@link rx.Observable} which will emit an Item.
      *
-     * @param itemId The user id used to retrieve item data.
+     * @param itemId The user id used to retrieve getById data.
      */
-    Observable<?> item(final int itemId, Class presentationClass, Class domainClass, Class dataClass);
+    Observable<?> getById(final int itemId, Class presentationClass, Class domainClass, Class dataClass);
 
-    Observable<?> putAll(final int itemId, Class clazz);
+    Observable<?> put(final Object object, Class domainClass, Class dataClass);
 
-    Observable<?> put(final int itemId, Class clazz);
+    Observable<?> delete(final long itemId, Class clazz);
 
-    Observable<?> delete(final int itemId, Class clazz);
+    Observable<?> delete(final Object realmObject, Class clazz);
 
-    Observable<?> delete(final RealmObject realmObject, Class clazz);
+    Observable<?> deleteCollection(final Collection collection, Class clazz);
 
-    Observable<?> evictAll(Class clazz);
+    Observable<?> search();
 }

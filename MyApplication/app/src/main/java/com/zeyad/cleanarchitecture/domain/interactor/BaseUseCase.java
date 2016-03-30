@@ -3,6 +3,8 @@ package com.zeyad.cleanarchitecture.domain.interactor;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 
+import java.util.Collection;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -15,7 +17,7 @@ import rx.subscriptions.Subscriptions;
  * in the application should implement this contract).
  * <p>
  * By convention each BaseUseCase implementation will return the result using a {@link rx.Subscriber}
- * that will execute its job in a background thread and will post the result in the UI thread.
+ * that will executeDetail its job in a background thread and will post the result in the UI thread.
  */
 public abstract class BaseUseCase {
 
@@ -34,9 +36,26 @@ public abstract class BaseUseCase {
      */
     protected abstract Observable buildUseCaseObservable();
 
-    protected abstract Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass);
+    protected abstract Observable buildUseCaseObservableList(Class presentationClass, Class domainClass,
+                                                             Class dataClass);
 
-    protected abstract Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass);
+    protected abstract Observable buildUseCaseObservableDetail(int itemId, Class presentationClass,
+                                                               Class domainClass, Class dataClass);
+
+    protected abstract Observable buildUseCaseObservablePut(Object object, Class presentationClass,
+                                                            Class domainClass, Class dataClass);
+
+    protected abstract Observable buildUseCaseObservableDelete(Object object, Class presentationClass,
+                                                               Class domainClass, Class dataClass);
+
+    protected abstract Observable buildUseCaseObservableDelete(long itemId, Class presentationClass,
+                                                               Class domainClass, Class dataClass);
+
+    protected abstract Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass,
+                                                                       Class domainClass, Class dataClass);
+
+    protected abstract Observable buildUseCaseObservableQuery(Object object, Class presentationClass,
+                                                              Class domainClass, Class dataClass);
 
     /**
      * Executes the current use case.
@@ -67,7 +86,7 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void execute(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass) {
+    public void executeList(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass) {
         subscription = buildUseCaseObservableList(presentationClass, domainClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
@@ -80,8 +99,64 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void execute(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass, int id) {
+    public void executeDetail(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass, int id) {
         subscription = buildUseCaseObservableDetail(id, presentationClass, domainClass, dataClass)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public void executePut(Subscriber UseCaseSubscriber, Object object, Class presentationClass, Class domainClass,
+                        Class dataClass) {
+        subscription = buildUseCaseObservablePut(object, presentationClass, domainClass, dataClass)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public void executeDelete(Subscriber UseCaseSubscriber, Object object, Class presentationClass, Class domainClass,
+                        Class dataClass) {
+        subscription = buildUseCaseObservableDelete(object, presentationClass, domainClass, dataClass)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public void executeDeleteById(Subscriber UseCaseSubscriber, int id, Class presentationClass, Class domainClass,
+                              Class dataClass) {
+        subscription = buildUseCaseObservableDelete(id, presentationClass, domainClass, dataClass)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public void executeDeleteCollection(Subscriber UseCaseSubscriber, Collection collection, Class presentationClass, Class domainClass,
+                                  Class dataClass) {
+        subscription = buildUseCaseObservableDeleteMultiple(collection, presentationClass, domainClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);

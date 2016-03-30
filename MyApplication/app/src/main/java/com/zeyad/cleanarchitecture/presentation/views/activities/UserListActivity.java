@@ -1,12 +1,15 @@
 package com.zeyad.cleanarchitecture.presentation.views.activities;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,13 +18,16 @@ import android.widget.RelativeLayout;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.zeyad.cleanarchitecture.R;
+import com.zeyad.cleanarchitecture.presentation.annimations.DetailsTransition;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.model.UserModel;
-import com.zeyad.cleanarchitecture.presentation.presenters.GeneralListPresenter;
+import com.zeyad.cleanarchitecture.presentation.presenters.GenericListPresenter;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
 import com.zeyad.cleanarchitecture.presentation.views.adapters.UsersAdapter;
+import com.zeyad.cleanarchitecture.presentation.views.fragments.UserDetailsFragment;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +37,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscription;
 
 /**
  * Activity that shows a list of Users.
@@ -46,7 +53,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     private int mScrollPosition = -1;
     private static final String STATE_SCROLL = "scrollPosition";
     @Inject
-    GeneralListPresenter userListPresenter;
+    GenericListPresenter userListPresenter;
     @Bind(R.id.rv_users)
     RecyclerView rv_users;
     @Bind(R.id.rl_progress)
@@ -57,6 +64,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     Button bt_retry;
     @Bind(R.id.fab_add)
     FloatingActionButton addFab;
+    private Subscription fabSubscription;
     private UsersAdapter usersAdapter;
     private UsersAdapter.OnItemClickListener onItemClickListener =
             userModel -> {
@@ -112,6 +120,10 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         super.onDestroy();
         ButterKnife.unbind(this);
         userListPresenter.destroy();
+        if (!fabSubscription.isUnsubscribed())
+            fabSubscription.unsubscribe();
+        if (!usersAdapter.getItemSubscription().isUnsubscribed())
+            usersAdapter.getItemSubscription().unsubscribe();
     }
 
     private void initializeInjector() {
@@ -141,8 +153,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         usersAdapter = new UsersAdapter(this, new ArrayList<>());
         usersAdapter.setOnItemClickListener(onItemClickListener);
         rv_users.setAdapter(usersAdapter);
-        RxView.clicks(addFab).subscribe(aVoid -> {
-
+        fabSubscription = RxView.clicks(addFab).subscribe(aVoid -> {
         });
     }
 
@@ -178,20 +189,28 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     public void viewUser(UserModel userModel) {
         if (mTwoPane) {
-//            Bundle arguments = new Bundle();
-//            arguments.putString(ProductDetailFragment.ARG_ITEM_ID, holder.mProduct.getProduct_id());
-//            arguments.putString(ProductDetailFragment.ARG_ITEM_IMAGE, holder.mProduct.getImage());
-//            arguments.putString(ProductDetailFragment.ARG_ITEM_NAME, holder.mProduct.getName()
-//                    .toLowerCase());
-//            ProductDetailFragment fragment = new ProductDetailFragment();
-//            fragment.setArguments(arguments);
-//            mContext.getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.detail_container, fragment).commit();
+            UserDetailsFragment fragment = new UserDetailsFragment();
+            if (Utils.hasLollipop()) {
+                fragment.setSharedElementEnterTransition(new DetailsTransition());
+                fragment.setEnterTransition(new Fade());
+                fragment.setExitTransition(new Fade());
+                fragment.setSharedElementReturnTransition(new DetailsTransition());
+            }
+            Bundle arguments = new Bundle();
+            arguments.putInt(UserDetailsFragment.ARG_ITEM_ID, userModel.getUserId());
+            arguments.putString(UserDetailsFragment.ARG_ITEM_IMAGE, userModel.getCoverUrl());
+            arguments.putString(UserDetailsFragment.ARG_ITEM_NAME, userModel.getFullName());
+            fragment.setArguments(arguments);
+            getSupportFragmentManager()
+                    .beginTransaction()
+//                    .addSharedElement(holder.image, "sharedImage")
+                    .replace(R.id.detail_container, fragment)
+                    .commit();
         } else {
-//            Intent intent = new Intent(mContext, ProductDetailActivity.class);
-//            intent.putExtra(ProductDetailFragment.ARG_ITEM_ID, holder.mProduct.getProduct_id());
-//            intent.putExtra(ProductDetailFragment.ARG_ITEM_IMAGE, holder.mProduct.getImage());
-//            intent.putExtra(ProductDetailFragment.ARG_ITEM_NAME, holder.mProduct.getName()
+//            Intent intent = new Intent(mContext, UserDetailsFragment.class);
+//            intent.putExtra(UserDetailsFragment.ARG_ITEM_ID, holder.mProduct.getProduct_id());
+//            intent.putExtra(UserDetailsFragment.ARG_ITEM_IMAGE, holder.mProduct.getImage());
+//            intent.putExtra(UserDetailsFragment.ARG_ITEM_NAME, holder.mProduct.getName()
 //                    .toLowerCase());
 //            if (Utils.hasLollipop()) {
 //                Pair<View, String> pair = new Pair<>(holder.mImageView, holder.mImageView.getTransitionName());
@@ -227,6 +246,9 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.list_menu, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         return super.onCreateOptionsMenu(menu);
     }
 

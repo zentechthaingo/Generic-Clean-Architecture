@@ -2,6 +2,7 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
 import java.util.Collection;
 
+import io.realm.RealmObject;
 import rx.Observable;
 // TODO: 3/20/16 Add all crud operations!
 
@@ -24,4 +25,20 @@ public interface DataStore {
     Observable<?> entityDetailsFromDisk(final int itemId, Class clazz);
 
     Observable<?> entityDetailsFromCloud(final int itemId, Class domainClass, Class dataClass);
+
+    Observable<?> postToCloud(Object object);
+
+    Observable<?> putToDisk(RealmObject object);
+
+    Observable<?> deleteFromDisk(final int itemId, Class clazz);
+
+    Observable<?> deleteFromCloud(final int itemId, Class clazz);
+
+    Observable<?> deleteFromDisk(final Object realmObject, Class clazz);
+
+    Observable<?> deleteFromCloud(final Object realmObject, Class clazz);
+
+    Observable<?> deleteCollectionFromCloud(final Collection collection, Class clazz);
+
+    Observable<?> deleteCollectionFromDisk(final Collection collection, Class clazz);
 }

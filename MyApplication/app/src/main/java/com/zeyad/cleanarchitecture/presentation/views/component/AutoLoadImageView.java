@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.presentation.views.services.ImageDownloadIntentService;
+import com.zeyad.cleanarchitecture.domain.services.ImageDownloadIntentService;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.io.File;

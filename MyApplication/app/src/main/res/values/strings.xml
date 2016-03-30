@@ -42,4 +42,5 @@
     <string name="transition_photo">Photo Transition</string>
     <string name="transition_text">Photo Text</string>
     <string name="delete">Delete</string>
+    <string name="search_list">search list</string>
 </resources>

@@ -6,7 +6,7 @@ import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecture.domain.exceptions.ErrorBundle;
 import com.zeyad.cleanarchitecture.domain.interactor.DefaultSubscriber;
-import com.zeyad.cleanarchitecture.domain.interactor.GeneralizedUseCase;
+import com.zeyad.cleanarchitecture.domain.interactor.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
@@ -20,13 +20,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 @PerActivity
-public class GeneralListPresenter implements BasePresenter {
+public class GenericListPresenter implements BasePresenter {
 
     private UserListView viewListView;
-    private GeneralizedUseCase getGeneralListUseCase;
+    private GenericUseCase getGeneralListUseCase;
 
     @Inject
-    public GeneralListPresenter(@Named("generalizedUseCase") GeneralizedUseCase getUserListUserCase) {
+    public GenericListPresenter(@Named("generalizedUseCase") GenericUseCase getUserListUserCase) {
         getGeneralListUseCase = getUserListUserCase;
     }
 
@@ -94,7 +94,7 @@ public class GeneralListPresenter implements BasePresenter {
     }
 
     private void getUserList() {
-        getGeneralListUseCase.execute(new UserListSubscriber(), UserModel.class, User.class, UserRealmModel.class);
+        getGeneralListUseCase.executeList(new UserListSubscriber(), UserModel.class, User.class, UserRealmModel.class);
     }
 
     private final class UserListSubscriber extends DefaultSubscriber<List<UserModel>> {

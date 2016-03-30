@@ -3,7 +3,7 @@ package com.zeyad.cleanarchitecture.presentation.internal.di.modules;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.interactor.BaseUseCase;
-import com.zeyad.cleanarchitecture.domain.interactor.GeneralizedUseCase;
+import com.zeyad.cleanarchitecture.domain.interactor.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.interactor.GetUserDetails;
 import com.zeyad.cleanarchitecture.domain.interactor.GetUserList;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
@@ -50,8 +50,8 @@ public class UserModule {
     @Provides
     @PerActivity
     @Named("generalizedDetailUseCase")
-    GeneralizedUseCase provideGetGeneralListUseCase(Repository repository, ThreadExecutor threadExecutor,
+    GenericUseCase provideGetGeneralListUseCase(Repository repository, ThreadExecutor threadExecutor,
                                                     PostExecutionThread postExecutionThread) {
-        return new GeneralizedUseCase(repository, threadExecutor, postExecutionThread);
+        return new GenericUseCase(repository, threadExecutor, postExecutionThread);
     }
 }

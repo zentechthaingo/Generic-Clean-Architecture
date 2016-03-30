@@ -6,6 +6,7 @@ import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.Collection;
 
@@ -29,7 +30,7 @@ public class DataStoreFactory {
     /**
      * Create {@link UserDataStore} from a user id.
      */
-    public DataStore createById(int id, EntityDataMapper entityDataMapper, Class dataClass) {
+    public DataStore getById(int id, EntityDataMapper entityDataMapper, Class dataClass) {
 //        if (mRealmManager.isItemValid(id, dataClass) || !Utils.isNetworkAvailable(mContext))
 //            return new DiskDataStore(mRealmManager);
 //        else
@@ -39,7 +40,7 @@ public class DataStoreFactory {
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
-    public DataStore createAll(EntityDataMapper entityDataMapper, Class dataClass) {
+    public DataStore getAll(EntityDataMapper entityDataMapper, Class dataClass) {
 //        if (mRealmManager.areItemsValid(dataClass) || !Utils.isNetworkAvailable(mContext))
 //            return new DiskDataStore(mRealmManager);
 //        else
@@ -49,8 +50,31 @@ public class DataStoreFactory {
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud.
      */
-    public DataStore createCloudDataStore(EntityDataMapper userEntityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, userEntityDataMapper);
+    public DataStore createCloudDataStore(EntityDataMapper entityDataMapper) {
+        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
+    }
+
+    public DataStore put(EntityDataMapper entityDataMapper) {
+        return createOutwardsDataStore(entityDataMapper);
+    }
+
+    public DataStore delete(EntityDataMapper entityDataMapper) {
+        return createOutwardsDataStore(entityDataMapper);
+    }
+
+    public DataStore search(EntityDataMapper entityDataMapper) {
+        return createOutwardsDataStore(entityDataMapper);
+    }
+
+    public DataStore deleteCollection(EntityDataMapper entityDataMapper) {
+        return createOutwardsDataStore(entityDataMapper);
+    }
+
+    private DataStore createOutwardsDataStore(EntityDataMapper entityDataMapper) {
+        if (Utils.isNetworkAvailable(mContext))
+            return createCloudDataStore(entityDataMapper);
+        else
+            return new DiskDataStore(mRealmManager);
     }
 
     //----------------------------------Get Simultaneously----------------------------------------//

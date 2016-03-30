@@ -35,8 +35,8 @@ public class DataRepository implements Repository {
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
     public Observable<Collection> Collection(Class presentationClass, Class domainClass, Class dataClass) {
-        return dataStoreFactory.createAll(entityDataMapper, dataClass)
-                .collectionFromCloud(domainClass, dataClass)//;
+        return dataStoreFactory.getAll(entityDataMapper, dataClass)
+                .collectionFromCloud(domainClass, dataClass)
                 .map(realmModels -> entityDataMapper.transformAllToPresentation(realmModels, presentationClass));
         // TODO: 3/2/16 Test!
 //        return userDataStoreFactory.getAllUsersFromAllSources(userDataStoreFactory
@@ -47,9 +47,9 @@ public class DataRepository implements Repository {
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
-    public Observable<?> item(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
-        return dataStoreFactory.createById(itemId, entityDataMapper, dataClass)
-                .entityDetailsFromCloud(itemId, domainClass, dataClass)//;
+    public Observable<?> getById(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
+        return dataStoreFactory.getById(itemId, entityDataMapper, dataClass)
+                .entityDetailsFromCloud(itemId, domainClass, dataClass)
                 .map(realmModel -> entityDataMapper.transformToPresentation(realmModel, presentationClass));
         // TODO: 3/2/16 Test!
 //        return userDataStoreFactory.getUserFromAllSources(userDataStoreFactory
@@ -58,28 +58,55 @@ public class DataRepository implements Repository {
 //                .userEntityDetails(userId)).map(userEntity -> entityDataMapper.transformToDomain(userEntity));
     }
 
+    // TODO: 3/29/16 Add transformations!
     @Override
-    public Observable<?> putAll(int itemId, Class clazz) {
-        return null;
+    public Observable<?> put(Object object, Class domainClass, Class dataClass) {
+        return Observable
+                .merge(dataStoreFactory
+                                .put(entityDataMapper)
+                                .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
+                        dataStoreFactory
+                                .put(entityDataMapper)
+                                .postToCloud(object));
     }
 
     @Override
-    public Observable<?> put(int itemId, Class clazz) {
-        return null;
+    public Observable<?> delete(long itemId, Class clazz) {
+        return Observable
+                .merge(dataStoreFactory
+                                .delete(entityDataMapper)
+                                .deleteFromCloud(itemId, clazz),
+                        dataStoreFactory
+                                .delete(entityDataMapper)
+                                .deleteFromDisk(itemId, clazz));
+    }
+
+    // TODO: 3/29/16 Add transformations!
+    @Override
+    public Observable<?> delete(Object realmObject, Class clazz) {
+        return Observable
+                .merge(dataStoreFactory
+                                .delete(entityDataMapper)
+                                .deleteFromCloud(realmObject, clazz),
+                        dataStoreFactory
+                                .delete(entityDataMapper)
+                                .deleteFromDisk(realmObject, clazz));
+    }
+
+    // TODO: 3/29/16 Add transformations!
+    @Override
+    public Observable<?> deleteCollection(Collection collection, Class clazz) {
+        return Observable
+                .merge(dataStoreFactory
+                                .deleteCollection(entityDataMapper)
+                                .deleteCollectionFromCloud(collection, clazz),
+                        dataStoreFactory
+                                .deleteCollection(entityDataMapper)
+                                .deleteCollectionFromDisk(collection, clazz));
     }
 
     @Override
-    public Observable<?> delete(int itemId, Class clazz) {
-        return null;
-    }
-
-    @Override
-    public Observable<?> delete(RealmObject realmObject, Class clazz) {
-        return null;
-    }
-
-    @Override
-    public Observable<?> evictAll(Class clazz) {
+    public Observable<?> search() {
         return null;
     }
 }

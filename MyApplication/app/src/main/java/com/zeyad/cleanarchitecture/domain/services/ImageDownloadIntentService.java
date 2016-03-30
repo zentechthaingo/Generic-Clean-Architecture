@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.views.services;
+package com.zeyad.cleanarchitecture.domain.services;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -36,8 +36,9 @@ public class ImageDownloadIntentService extends IntentService {
             EXTENDED_DATA_KEY = "KEY",
             EXTENDED_DATA_STATUS_COMPLETED = "COMPLETED",
             EXTENDED_DATA_STATUS_FAILED = "FAILED",
-            WIDTH = "WIDTH",
-            HEIGHT = "HEIGHT";
+            WIDTH = "WIDTH", HEIGHT = "HEIGHT",
+            POST_OBJECT = "POST_OBJECT",
+            DELETE_OBJECT = "DELETE_OBJECT", DELETE_COLLECTION = "DELETE_COLLECTION";
     public static String CACHE_DIR;
     private final Set<String> downloadedKeys = new HashSet<>();
     private final Map<String, List<String>> categorizedKeys = new Hashtable<>();

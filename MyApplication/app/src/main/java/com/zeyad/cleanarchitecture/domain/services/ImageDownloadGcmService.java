@@ -1,7 +1,10 @@
-package com.zeyad.cleanarchitecture.presentation.views.services;
+package com.zeyad.cleanarchitecture.domain.services;
 
 import android.graphics.BitmapFactory;
 import android.util.Log;
+
+import com.google.android.gms.gcm.GcmTaskService;
+import com.google.android.gms.gcm.TaskParams;
 
 import java.io.File;
 import java.util.HashSet;
@@ -10,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ImageDownloadGcmService  //extends GcmTaskService
-{
+// TODO: 3/30/16 Finish!
+public class ImageDownloadGcmService extends GcmTaskService {
 
     public static final String TAG = ImageDownloadIntentService.class.getSimpleName(),
             EXTRA_PRODUCTS = "products",
@@ -145,5 +148,10 @@ public class ImageDownloadGcmService  //extends GcmTaskService
 //            e.printStackTrace();
 //            Log.e(TAG, e.getMessage());
 //        }
+    }
+
+    @Override
+    public int onRunTask(TaskParams taskParams) {
+        return 0;
     }
 }

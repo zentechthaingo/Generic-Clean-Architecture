@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
-import com.zeyad.cleanarchitecture.presentation.presenters.GeneralListPresenter;
 
 import dagger.Component;
 

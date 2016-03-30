@@ -5,6 +5,8 @@ import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 
+import java.util.Collection;
+
 import javax.inject.Inject;
 
 import rx.Observable;
@@ -33,11 +35,36 @@ public class GetUserDetails extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass) {
-        return null;
+        return Observable.error(new Exception("cant get list from GetUserDetails"));
     }
 
     @Override
     protected Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
-        return null;
+        return Observable.error(new Exception("cant get detail from GetUserDetails"));
+    }
+
+    @Override
+    protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant put object from GetUserDetails"));
+    }
+
+    @Override
+    protected Observable buildUseCaseObservableDelete(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant delete object from GetUserDetails"));
+    }
+
+    @Override
+    protected Observable buildUseCaseObservableDelete(long itemId, Class presentationClass, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant delete object from GetUserDetails"));
+    }
+
+    @Override
+    protected Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant delete collection from GetUserDetails"));
+    }
+
+    @Override
+    protected Observable buildUseCaseObservableQuery(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant search object from GetUserDetails"));
     }
 }

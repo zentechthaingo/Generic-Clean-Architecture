@@ -27,6 +27,9 @@ public class CloudDataStore implements DataStore {
         realmObjectCollection.addAll((Collection) entityDataMapper.transformAllToRealm(collection, dataClass));
         realmManager.putAll(realmObjectCollection);
     };
+    private final Action1<Object> deleteGenericToCacheAction = object -> realmManager.evict((RealmObject) entityDataMapper.transformToRealm(object, dataClass), dataClass);
+    private final Action1<Integer> deleteByIdGenericToCacheAction = integer -> realmManager.evictById(integer, dataClass);
+    private final Action1<Collection> deleteCollectionGenericToCacheAction = collection -> realmManager.evictCollection(collection, dataClass);
 
     /**
      * Construct a {@link UserDataStore} based on connections to the api (Cloud).
@@ -42,12 +45,7 @@ public class CloudDataStore implements DataStore {
 
     @Override
     public Observable<Collection> entityListFromDisk(Class clazz) {
-        try {
-            throw new Exception("cant get from disk in cloud data store");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        return Observable.error(new Exception("cant get from disk in cloud data store"));
     }
 
     @Override
@@ -67,16 +65,6 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> entityDetailsFromDisk(int itemId, Class clazz) {
-        try {
-            throw new Exception("cant get from disk in cloud data store");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Override
     public Observable<?> entityDetailsFromCloud(final int itemId, Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
         return restApi.objectById(itemId)
@@ -90,5 +78,71 @@ public class CloudDataStore implements DataStore {
                 .doOnNext(saveGenericToCacheAction)
                 .map(entities -> entityDataMapper.transformToDomain(entities, domainClass));
 //                .compose(Utils.logSource(TAG, realmManager));
+    }
+
+    @Override
+    public Observable<?> postToCloud(Object object) {
+        return Observable.create(subscriber -> {
+//            restApi.postItem(object);
+            saveGenericToCacheAction.call(object);
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onNext(true);
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+    @Override
+    public Observable<?> deleteFromCloud(int itemId, Class clazz) {
+        return Observable.create(subscriber -> {
+//            restApi.deleteItem(itemId);
+            deleteByIdGenericToCacheAction.call(itemId);
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onNext(true);
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+    @Override
+    public Observable<?> deleteFromCloud(Object realmObject, Class clazz) {
+        return Observable.create(subscriber -> {
+//            restApi.deleteItem(object);
+            deleteGenericToCacheAction.call(realmObject);
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onNext(true);
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+    @Override
+    public Observable<?> deleteCollectionFromCloud(Collection collection, Class clazz) {
+        return null;
+    }
+
+    @Override
+    public Observable<?> entityDetailsFromDisk(int itemId, Class clazz) {
+        return Observable.error(new Exception("cant get from disk in cloud data store"));
+    }
+
+    @Override
+    public Observable<?> putToDisk(RealmObject object) {
+        return Observable.error(new Exception("cant get from disk in cloud data store"));
+    }
+
+    @Override
+    public Observable<?> deleteFromDisk(int itemId, Class clazz) {
+        return Observable.error(new Exception("cant get from disk in cloud data store"));
+    }
+
+    @Override
+    public Observable<?> deleteFromDisk(Object realmObject, Class clazz) {
+        return Observable.error(new Exception("cant get from disk in cloud data store"));
+    }
+
+    @Override
+    public Observable<?> deleteCollectionFromDisk(Collection collection, Class clazz) {
+        return Observable.error(new Exception("cant get from disk in cloud data store"));
     }
 }

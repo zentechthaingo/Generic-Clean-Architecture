@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecture.domain.interactor.GeneralizedUseCase;
+import com.zeyad.cleanarchitecture.domain.interactor.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.navigation.Navigator;
@@ -37,9 +37,9 @@ public class ActivityModule {
     @Provides
     @PerActivity
     @Named("generalizedUseCase")
-    GeneralizedUseCase providesGetGeneralListUseCase(Repository repository, ThreadExecutor threadExecutor,
+    GenericUseCase providesGetGeneralListUseCase(Repository repository, ThreadExecutor threadExecutor,
                                                      PostExecutionThread postExecutionThread) {
-        return new GeneralizedUseCase(repository, threadExecutor, postExecutionThread);
+        return new GenericUseCase(repository, threadExecutor, postExecutionThread);
     }
 
     @Provides

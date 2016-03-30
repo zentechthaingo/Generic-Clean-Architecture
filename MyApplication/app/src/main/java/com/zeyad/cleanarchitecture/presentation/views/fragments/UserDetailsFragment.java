@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.model.UserModel;
-import com.zeyad.cleanarchitecture.presentation.presenters.GeneralDetailPresenter;
+import com.zeyad.cleanarchitecture.presentation.presenters.GenericDetailPresenter;
 import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
 import com.zeyad.cleanarchitecture.presentation.views.activities.UserDetailsActivity;
 
@@ -32,7 +32,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
             ARG_ITEM_IMAGE = "item_image", ARG_ITEM_NAME = "item_name";
     private int userId;
     @Inject
-    GeneralDetailPresenter userDetailsPresenter;
+    GenericDetailPresenter userDetailsPresenter;
     @Bind(R.id.tv_fullname)
     TextView tv_fullName;
     @Bind(R.id.tv_email)

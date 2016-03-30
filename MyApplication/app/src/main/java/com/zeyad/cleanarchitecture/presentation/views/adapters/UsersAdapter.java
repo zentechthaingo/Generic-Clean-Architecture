@@ -13,6 +13,8 @@ import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 import java.util.Collection;
 import java.util.List;
 
+import rx.Subscription;
+
 /**
  * Adapter that manages a collection of {@link UserModel}.
  */
@@ -25,11 +27,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private List<UserModel> usersCollection;
     private final LayoutInflater layoutInflater;
     private OnItemClickListener onItemClickListener;
+    private Subscription itemSubscription;
 
     public UsersAdapter(Context context, Collection<UserModel> usersCollection) {
         validateUsersCollection(usersCollection);
-        layoutInflater =
-                (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        layoutInflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.usersCollection = (List<UserModel>) usersCollection;
     }
 
@@ -47,7 +50,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     public void onBindViewHolder(UserViewHolder holder, final int position) {
         final UserModel userModel = usersCollection.get(position);
         holder.getTextViewTitle().setText(userModel.getFullName());
-        RxView.clicks(holder.itemView).subscribe(aVoid -> {
+        itemSubscription = RxView.clicks(holder.itemView).subscribe(aVoid -> {
             if (onItemClickListener != null)
                 onItemClickListener.onUserItemClicked(userModel);
         });
@@ -71,5 +74,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private void validateUsersCollection(Collection<UserModel> usersCollection) {
         if (usersCollection == null)
             throw new IllegalArgumentException("The list cannot be null");
+    }
+
+    public Subscription getItemSubscription() {
+        return itemSubscription;
+    }
+
+    public void setItemSubscription(Subscription itemSubscription) {
+        this.itemSubscription = itemSubscription;
     }
 }

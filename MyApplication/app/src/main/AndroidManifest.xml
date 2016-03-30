@@ -32,7 +32,17 @@
         <activity
             android:name="com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity"
             android:label="@string/activity_title_user_list"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity android:name="com.zeyad.cleanarchitecture.presentation.views.activities.SearchResultsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name="com.zeyad.cleanarchitecture.presentation.views.activities.UserDetailsActivity"
             android:label="@string/activity_title_user_details"
@@ -46,7 +56,7 @@
         <!--</intent-filter>-->
         <!--</service>-->
         <service
-            android:name="com.zeyad.cleanarchitecture.presentation.views.services.ImageDownloadIntentService"
+            android:name=".domain.services.ImageDownloadIntentService"
             android:enabled="true" />
     </application>
 </manifest>

@@ -1,5 +1,7 @@
 package com.zeyad.cleanarchitecture.data.db.generalize;
 
+import android.content.Context;
+
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
 import java.util.Collection;
@@ -14,7 +16,6 @@ public interface GeneralRealmManager {
      *
      * @param userId The user id to retrieve data.
      */
-    // TODO: 3/23/16 Generalize!
     Observable<?> get(final int userId, Class clazz);
 
     /**
@@ -27,8 +28,6 @@ public interface GeneralRealmManager {
      *
      * @param realmModel Element to insert in the cache.
      */
-//    void put(JSONObject realmModel, Class clazz);
-
     void put(RealmObject realmModel);
 
     /**
@@ -36,8 +35,6 @@ public interface GeneralRealmManager {
      *
      * @param realmModels Element to insert in the cache.
      */
-//    void putAll(JSONArray realmModels, Class clazz);
-
     void putAll(Collection<RealmObject> realmModels);
 
     /**
@@ -65,4 +62,8 @@ public interface GeneralRealmManager {
     void evictById(final int itemId, Class clazz);
 
     void evict(final RealmObject realmModel, Class clazz);
+
+    void evictCollection(Collection collection, Class dataClass);
+
+    Context getContext();
 }

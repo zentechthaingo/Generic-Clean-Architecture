@@ -6,7 +6,7 @@ import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecture.domain.exceptions.ErrorBundle;
 import com.zeyad.cleanarchitecture.domain.interactor.DefaultSubscriber;
-import com.zeyad.cleanarchitecture.domain.interactor.GeneralizedUseCase;
+import com.zeyad.cleanarchitecture.domain.interactor.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
@@ -17,18 +17,18 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 @PerActivity
-public class GeneralDetailPresenter implements BasePresenter {
+public class GenericDetailPresenter implements BasePresenter {
 
     /**
      * id used to retrieve user details
      */
     private int userId;
     private UserDetailsView viewDetailsView;
-    private final GeneralizedUseCase getUserDetailsBaseUseCase;
+    private final GenericUseCase getUserDetailsBaseUseCase;
 
     @Inject
-    public GeneralDetailPresenter(@Named("generalizedDetailUseCase") GeneralizedUseCase generalizedUseCase) {
-        this.getUserDetailsBaseUseCase = generalizedUseCase;
+    public GenericDetailPresenter(@Named("generalizedDetailUseCase") GenericUseCase genericUseCase) {
+        this.getUserDetailsBaseUseCase = genericUseCase;
     }
 
     public void setView(@NonNull UserDetailsView view) {
@@ -91,7 +91,7 @@ public class GeneralDetailPresenter implements BasePresenter {
     }
 
     private void getUserDetails() {
-        getUserDetailsBaseUseCase.execute(new UserDetailsSubscriber(), UserModel.class, User.class,
+        getUserDetailsBaseUseCase.executeDetail(new UserDetailsSubscriber(), UserModel.class, User.class,
                 UserRealmModel.class, userId);
     }
 

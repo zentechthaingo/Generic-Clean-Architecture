@@ -8,11 +8,11 @@
         android:title="@string/delete"
         app:showAsAction="ifRoom" />
 
-    <!--<item-->
-        <!--android:id="@+id/search"-->
-        <!--android:actionViewClass="android.widget.SearchView"-->
-        <!--android:icon="@drawable/ic_search"-->
-        <!--android:showAsAction="collapseActionView|ifRoom"-->
-        <!--android:title="@string/search_title" />-->
+    <item
+        android:id="@+id/menu_search"
+        android:actionViewClass="android.widget.SearchView"
+        android:title="@string/search_list" />
+    <!--android:showAsAction="collapseActionView|ifRoom" />-->
+    <!--android:icon="@drawable/ic_search"-->
 
 </menu>
