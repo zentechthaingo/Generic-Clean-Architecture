@@ -1,6 +1,6 @@
 package com.zeyad.cleanarchetecture.data.entity.mapper;
 
-import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
+import com.zeyad.cleanarchetecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.domain.models.User;

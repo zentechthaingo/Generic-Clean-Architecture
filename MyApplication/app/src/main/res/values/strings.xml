@@ -43,4 +43,9 @@
     <string name="transition_text">Photo Text</string>
     <string name="delete">Delete</string>
     <string name="search_list">search list</string>
+    <string name="edit">Edit</string>
+    <string name="et_email">Email</string>
+    <string name="et_full_name">Full Name</string>
+    <string name="et_followers">Followers</string>
+    <string name="et_description">Description</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.zeyad.cleanarchetecture.data.exception;
 
-import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
+import com.zeyad.cleanarchetecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.exceptions.RepositoryErrorBundle;
 
 import org.junit.Before;

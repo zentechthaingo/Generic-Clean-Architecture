@@ -20,7 +20,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     // FIXME: 3/27/16 Fix DI!
     //    @Inject
     Navigator navigator;
-    public static final int MSG_SERVICE_OBJ = 37;
+//    public static final int MSG_SERVICE_OBJ = 37;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +38,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void addFragment(int containerViewId, Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
+//                    .addSharedElement(holder.image, "sharedImage")
                 .add(containerViewId, fragment)
                 .commit();
     }
@@ -77,9 +78,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Service object to interact scheduled jobs.
-     */
+//    /**
+//     * Service object to interact scheduled jobs.
+//     */
 //    ImageDownloadJobService mImageDownloadJobService;
 
     //    Handler mHandler = new Handler(/* default looper */) {

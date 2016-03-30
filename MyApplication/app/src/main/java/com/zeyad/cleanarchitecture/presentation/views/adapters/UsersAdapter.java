@@ -79,8 +79,4 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     public Subscription getItemSubscription() {
         return itemSubscription;
     }
-
-    public void setItemSubscription(Subscription itemSubscription) {
-        this.itemSubscription = itemSubscription;
-    }
 }

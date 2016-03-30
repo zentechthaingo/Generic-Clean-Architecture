@@ -23,6 +23,7 @@ public class GenericDetailPresenter implements BasePresenter {
      * id used to retrieve user details
      */
     private int userId;
+    private UserModel userModel;
     private UserDetailsView viewDetailsView;
     private final GenericUseCase getUserDetailsBaseUseCase;
 
@@ -41,11 +42,11 @@ public class GenericDetailPresenter implements BasePresenter {
 
     @Override
     public void pause() {
+        getUserDetailsBaseUseCase.unsubscribe();
     }
 
     @Override
     public void destroy() {
-        getUserDetailsBaseUseCase.unsubscribe();
     }
 
     /**
@@ -87,12 +88,23 @@ public class GenericDetailPresenter implements BasePresenter {
     }
 
     private void showUserDetailsInView(UserModel userModel) {
-        viewDetailsView.renderUser(userModel);
+        this.userModel = userModel;
+        viewDetailsView.renderUser(this.userModel);
     }
 
     private void getUserDetails() {
         getUserDetailsBaseUseCase.executeDetail(new UserDetailsSubscriber(), UserModel.class, User.class,
                 UserRealmModel.class, userId);
+    }
+
+    public void setupEdit() {
+        viewDetailsView.editUser(userModel);
+    }
+
+    public void submitEdit() {
+        getUserDetailsBaseUseCase.executePut(new UserDetailsSubscriber(), viewDetailsView.getValidatedUser(),
+                UserModel.class, User.class, UserRealmModel.class);
+        viewDetailsView.editUserSubmit();
     }
 
     private final class UserDetailsSubscriber extends DefaultSubscriber<UserModel> {

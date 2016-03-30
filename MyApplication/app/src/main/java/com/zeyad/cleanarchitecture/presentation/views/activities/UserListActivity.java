@@ -113,6 +113,8 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     public void onPause() {
         super.onPause();
         userListPresenter.pause();
+        Utils.unsubscribeIfNotNull(fabSubscription);
+        Utils.unsubscribeIfNotNull(usersAdapter.getItemSubscription());
     }
 
     @Override
@@ -120,10 +122,6 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         super.onDestroy();
         ButterKnife.unbind(this);
         userListPresenter.destroy();
-        if (!fabSubscription.isUnsubscribed())
-            fabSubscription.unsubscribe();
-        if (!usersAdapter.getItemSubscription().isUnsubscribed())
-            usersAdapter.getItemSubscription().unsubscribe();
     }
 
     private void initializeInjector() {
@@ -154,6 +152,19 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         usersAdapter.setOnItemClickListener(onItemClickListener);
         rv_users.setAdapter(usersAdapter);
         fabSubscription = RxView.clicks(addFab).subscribe(aVoid -> {
+            if (mTwoPane) {
+                UserDetailsFragment fragment = UserDetailsFragment.newInstance(-1);
+                if (Utils.hasLollipop()) {
+                    fragment.setSharedElementEnterTransition(new DetailsTransition());
+                    fragment.setEnterTransition(new Fade());
+                    fragment.setExitTransition(new Fade());
+                    fragment.setSharedElementReturnTransition(new DetailsTransition());
+                }
+                Bundle arguments = new Bundle();
+                arguments.putBoolean(UserDetailsFragment.ADD_NEW_ITEM, true);
+                fragment.setArguments(arguments);
+                addFragment(R.id.detail_container, fragment);
+            }
         });
     }
 
@@ -201,11 +212,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
             arguments.putString(UserDetailsFragment.ARG_ITEM_IMAGE, userModel.getCoverUrl());
             arguments.putString(UserDetailsFragment.ARG_ITEM_NAME, userModel.getFullName());
             fragment.setArguments(arguments);
-            getSupportFragmentManager()
-                    .beginTransaction()
-//                    .addSharedElement(holder.image, "sharedImage")
-                    .replace(R.id.detail_container, fragment)
-                    .commit();
+            addFragment(R.id.detail_container, fragment);
         } else {
 //            Intent intent = new Intent(mContext, UserDetailsFragment.class);
 //            intent.putExtra(UserDetailsFragment.ARG_ITEM_ID, holder.mProduct.getProduct_id());

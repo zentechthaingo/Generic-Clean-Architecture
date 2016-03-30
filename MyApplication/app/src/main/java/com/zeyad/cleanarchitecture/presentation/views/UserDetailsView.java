@@ -10,7 +10,24 @@ public interface UserDetailsView extends LoadDataView {
     /**
      * Render a user in the UI.
      *
-     * @param user The {@link UserModel} that will be shown.
+     * @param userModel The {@link UserModel} that will be shown.
      */
-    void renderUser(UserModel user);
+    void renderUser(UserModel userModel);
+
+    /**
+     * Show user edit form
+     */
+    void editUser(UserModel userModel);
+
+    /**
+     * Submit a user to be edited.
+     */
+    void editUserSubmit();
+
+    /**
+     * Retrieves the validated user to be submitted
+     *
+     * @return {@link UserModel}
+     */
+    UserModel getValidatedUser();
 }

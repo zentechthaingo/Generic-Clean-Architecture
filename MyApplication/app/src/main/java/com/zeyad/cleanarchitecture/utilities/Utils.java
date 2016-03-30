@@ -1,8 +1,5 @@
 package com.zeyad.cleanarchitecture.utilities;
 
-import android.annotation.TargetApi;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -22,6 +19,8 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
 
 public class Utils {
 
@@ -96,12 +95,18 @@ public class Utils {
         });
     }
 
-    // TODO: 1/5/16 Test!
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static void scheduleJob(Context context, JobInfo jobInfo) {
-        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        if (scheduler.schedule(jobInfo) == 1)
-            Log.d("JobScheduler", "Job scheduled successfully!");
+    public static void unsubscribeIfNotNull(Subscription subscription) {
+        if (subscription != null) {
+            subscription.unsubscribe();
+        }
+    }
+
+    public static CompositeSubscription getNewCompositeSubIfUnsubscribed(CompositeSubscription subscription) {
+        if (subscription == null || subscription.isUnsubscribed()) {
+            return new CompositeSubscription();
+        }
+
+        return subscription;
     }
 
     public static boolean isNetworkAvailable(Context context) {

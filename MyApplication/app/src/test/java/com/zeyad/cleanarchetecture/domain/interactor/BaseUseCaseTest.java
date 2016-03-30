@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Collection;
+
 import rx.Observable;
 import rx.Subscriber;
 import rx.observers.TestSubscriber;
@@ -70,6 +72,31 @@ public class BaseUseCaseTest {
 
         @Override
         protected Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
+            return null;
+        }
+
+        @Override
+        protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+            return null;
+        }
+
+        @Override
+        protected Observable buildUseCaseObservableDelete(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+            return null;
+        }
+
+        @Override
+        protected Observable buildUseCaseObservableDelete(long itemId, Class presentationClass, Class domainClass, Class dataClass) {
+            return null;
+        }
+
+        @Override
+        protected Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass, Class domainClass, Class dataClass) {
+            return null;
+        }
+
+        @Override
+        protected Observable buildUseCaseObservableQuery(Object object, Class presentationClass, Class domainClass, Class dataClass) {
             return null;
         }
 
