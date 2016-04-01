@@ -54,8 +54,12 @@ public class DataStoreFactory {
         return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
-    public DataStore put(EntityDataMapper entityDataMapper) {
-        return createOutwardsDataStore(entityDataMapper);
+    public DataStore putToDisk() {
+        return new DiskDataStore(mRealmManager);
+    }
+
+    public DataStore putToCloud(EntityDataMapper entityDataMapper) {
+        return createCloudDataStore(entityDataMapper);
     }
 
     public DataStore delete(EntityDataMapper entityDataMapper) {

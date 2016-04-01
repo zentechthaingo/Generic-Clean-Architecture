@@ -134,20 +134,22 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
         getComponent(UserComponent.class).inject(this);
         userDetailsPresenter.setView(this);
         userId = getArguments().getInt(ARGUMENT_KEY_USER_ID);
-        if (userId == -1)
+        if (userId == -1) {
+            ((UserDetailsActivity) getActivity()).getEditDetailsFab().setImageResource(R.drawable.ic_done);
             userDetailsPresenter.setupEdit();
-        else
+        } else
             userDetailsPresenter.initialize(userId);
     }
 
     @Override
     public void renderUser(UserModel user) {
         if (user != null) {
-            UserDetailsActivity detailsActivity = ((UserDetailsActivity) getActivity());
-            detailsActivity.mDetailImage.setImageUrl(user.getCoverUrl())
-                    .setImagePlaceHolder(R.drawable.placer_holder_img)
-                    .setImageFallBackResourceId(R.drawable.placer_holder_img)
-                    .setImageOnErrorResourceId(R.drawable.placer_holder_img);
+            if (user.getCoverUrl() != null)
+                ((UserDetailsActivity) getActivity()).mDetailImage
+                        .setImageUrl(user.getCoverUrl())
+                        .setImagePlaceHolder(R.drawable.placer_holder_img)
+                        .setImageFallBackResourceId(R.drawable.placer_holder_img)
+                        .setImageOnErrorResourceId(R.drawable.placer_holder_img);
             tv_fullName.setText(user.getFullName());
             tv_email.setText(user.getEmail());
             tv_followers.setText(String.valueOf(user.getFollowers()));
@@ -156,19 +158,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
                     findViewById(R.id.toolbar_layout);
             if (appBarLayout != null)
                 appBarLayout.setTitle(user.getFullName());
-//            if (Utils.hasM())
-//                Palette.from(detailsActivity.mDetailImage.getBitmap()).
-//                        generate(palette -> {
-//                            detailsActivity.mCoordinatorLayout.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-//                                if (v.getHeight() == scrollX) {
-//                                    detailsActivity.mToolbar.setTitleTextColor(palette.getLightVibrantColor(Color.TRANSPARENT));
-//                                    detailsActivity.mToolbar.setBackground(new ColorDrawable(palette.getLightVibrantColor(Color.TRANSPARENT)));
-//                                } else if (scrollY == 0) {
-//                                    detailsActivity.mToolbar.setTitleTextColor(0);
-//                                    detailsActivity.mToolbar.setBackground(null);
-//                                }
-//                            });
-//                        });
+//            applyPalette();
         }
     }
 
@@ -190,19 +180,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
                     findViewById(R.id.toolbar_layout);
             if (appBarLayout != null)
                 appBarLayout.setTitle(userModel.getFullName());
-//            if (Utils.hasM())
-//                Palette.from(detailsActivity.mDetailImage.getBitmap()).
-//                        generate(palette -> {
-//                            detailsActivity.mCoordinatorLayout.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-//                                if (v.getHeight() == scrollX) {
-//                                    detailsActivity.mToolbar.setTitleTextColor(palette.getLightVibrantColor(Color.TRANSPARENT));
-//                                    detailsActivity.mToolbar.setBackground(new ColorDrawable(palette.getLightVibrantColor(Color.TRANSPARENT)));
-//                                } else if (scrollY == 0) {
-//                                    detailsActivity.mToolbar.setTitleTextColor(0);
-//                                    detailsActivity.mToolbar.setBackground(null);
-//                                }
-//                            });
-//                        });
+//                applyPalette();
         }
     }
 
@@ -309,4 +287,20 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
                     }
                 });
     }
+
+//    private void applyPalette() {
+//            if (Utils.hasM())
+//        Palette.from(detailsActivity.mDetailImage.getBitmap()).
+//                        generate(palette -> {
+//                            detailsActivity.mCoordinatorLayout.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+//                                if (v.getHeight() == scrollX) {
+//                                    detailsActivity.mToolbar.setTitleTextColor(palette.getLightVibrantColor(Color.TRANSPARENT));
+//                                    detailsActivity.mToolbar.setBackground(new ColorDrawable(palette.getLightVibrantColor(Color.TRANSPARENT)));
+//                                } else if (scrollY == 0) {
+//                                    detailsActivity.mToolbar.setTitleTextColor(0);
+//                                    detailsActivity.mToolbar.setBackground(null);
+//                                }
+//                            });
+//                        });
+//    }
 }

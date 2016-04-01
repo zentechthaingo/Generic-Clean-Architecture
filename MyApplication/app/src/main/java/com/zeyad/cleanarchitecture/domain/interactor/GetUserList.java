@@ -44,7 +44,7 @@ public class GetUserList extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+    protected Observable buildUseCaseObservablePut(Object object, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant put object from GetUserDetails"));
     }
 

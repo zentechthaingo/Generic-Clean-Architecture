@@ -35,6 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param containerViewId The container view to where add the fragment.
      * @param fragment        The fragment to be added.
      */
+    // TODO: 3/30/16 Add shared element!
     protected void addFragment(int containerViewId, Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()

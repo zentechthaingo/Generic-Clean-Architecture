@@ -42,8 +42,7 @@ public abstract class BaseUseCase {
     protected abstract Observable buildUseCaseObservableDetail(int itemId, Class presentationClass,
                                                                Class domainClass, Class dataClass);
 
-    protected abstract Observable buildUseCaseObservablePut(Object object, Class presentationClass,
-                                                            Class domainClass, Class dataClass);
+    protected abstract Observable buildUseCaseObservablePut(Object object, Class domainClass, Class dataClass);
 
     protected abstract Observable buildUseCaseObservableDelete(Object object, Class presentationClass,
                                                                Class domainClass, Class dataClass);
@@ -112,9 +111,8 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void executePut(Subscriber UseCaseSubscriber, Object object, Class presentationClass, Class domainClass,
-                        Class dataClass) {
-        subscription = buildUseCaseObservablePut(object, presentationClass, domainClass, dataClass)
+    public void executePut(Subscriber UseCaseSubscriber, Object object, Class domainClass, Class dataClass) {
+        subscription = buildUseCaseObservablePut(object, domainClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);
@@ -127,7 +125,7 @@ public abstract class BaseUseCase {
      */
     @SuppressWarnings("unchecked")
     public void executeDelete(Subscriber UseCaseSubscriber, Object object, Class presentationClass, Class domainClass,
-                        Class dataClass) {
+                              Class dataClass) {
         subscription = buildUseCaseObservableDelete(object, presentationClass, domainClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
@@ -141,7 +139,7 @@ public abstract class BaseUseCase {
      */
     @SuppressWarnings("unchecked")
     public void executeDeleteById(Subscriber UseCaseSubscriber, int id, Class presentationClass, Class domainClass,
-                              Class dataClass) {
+                                  Class dataClass) {
         subscription = buildUseCaseObservableDelete(id, presentationClass, domainClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
@@ -155,7 +153,7 @@ public abstract class BaseUseCase {
      */
     @SuppressWarnings("unchecked")
     public void executeDeleteCollection(Subscriber UseCaseSubscriber, Collection collection, Class presentationClass, Class domainClass,
-                                  Class dataClass) {
+                                        Class dataClass) {
         subscription = buildUseCaseObservableDeleteMultiple(collection, presentationClass, domainClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())

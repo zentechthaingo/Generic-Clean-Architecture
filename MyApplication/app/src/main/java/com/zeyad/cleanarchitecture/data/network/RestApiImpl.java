@@ -38,6 +38,26 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
+    public Observable<Object> deleteItemById(@Path("id") int userId) {
+        return ApiConnection.deleteItemById(userId);
+    }
+
+    @Override
+    public Observable<Object> deleteItem(@Path("object") Object object) {
+        return ApiConnection.deleteItem(object);
+    }
+
+    @Override
+    public Observable<Object> deleteCollection(@Path("collection") Collection collection) {
+        return ApiConnection.deleteCollection(collection);
+    }
+
+    @Override
+    public Observable<Object> postItem(@Path("id") Object object) {
+        return ApiConnection.postItem(object);
+    }
+
+    @Override
     public Observable<Response> getStream(@Path("index") String index) {
         return ApiConnection.getStream(index);
     }

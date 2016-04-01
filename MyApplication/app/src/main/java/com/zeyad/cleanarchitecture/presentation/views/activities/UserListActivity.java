@@ -164,7 +164,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 arguments.putBoolean(UserDetailsFragment.ADD_NEW_ITEM, true);
                 fragment.setArguments(arguments);
                 addFragment(R.id.detail_container, fragment);
-            }
+            } else navigator.navigateToUserDetails(this, -1, null);
         });
     }
 

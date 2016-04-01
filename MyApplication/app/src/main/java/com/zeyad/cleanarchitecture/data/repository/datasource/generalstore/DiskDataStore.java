@@ -1,76 +1,20 @@
 package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
-import android.os.Bundle;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.gcm.GcmNetworkManager;
-import com.google.android.gms.gcm.OneoffTask;
-import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
-import com.zeyad.cleanarchitecture.domain.services.ImageDownloadGcmService;
-import com.zeyad.cleanarchitecture.domain.services.ImageDownloadIntentService;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.Collection;
 
 import io.realm.RealmObject;
 import rx.Observable;
-import rx.functions.Action1;
 
 public class DiskDataStore implements DataStore {
 
     private GeneralRealmManager realmManager;
     //    private RealmRepository realmRepository;
-    public final String TAG = "DiskUserDataStore", POST_TAG = "postObject", DELETE_TAG = "delete",
-            DELETE_BY_ID_TAG = "deleteById";
-    private Action1<Object> queuePost = object -> {
-        if (Utils.hasLollipop()) {
-            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
-                    == ConnectionResult.SUCCESS) {
-                Bundle extras = new Bundle();
-                extras.putString(ImageDownloadIntentService.POST_OBJECT, new Gson().toJson(object));
-                GcmNetworkManager.getInstance(realmManager.getContext()).schedule(new OneoffTask.Builder()
-                        .setService(ImageDownloadGcmService.class)
-                        .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
-                        .setExtras(extras)
-                        .setTag(POST_TAG)
-                        .build()); // gcm service
-            }
-        }
-    };
-    private final Action1<Integer> queueDeleteById = integer -> {
-        if (Utils.hasLollipop()) {
-            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
-                    == ConnectionResult.SUCCESS) {
-                Bundle extras = new Bundle();
-                extras.putInt(ImageDownloadIntentService.DELETE_OBJECT, integer);
-                GcmNetworkManager.getInstance(realmManager.getContext()).schedule(new OneoffTask.Builder()
-                        .setService(ImageDownloadGcmService.class)
-                        .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
-                        .setExtras(extras)
-                        .setTag(DELETE_BY_ID_TAG)
-                        .build()); // gcm service
-            }
-        }
-    };
-    private final Action1<Object> queueDelete = object -> {
-        if (Utils.hasLollipop()) {
-            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
-                    == ConnectionResult.SUCCESS) {
-                Bundle extras = new Bundle();
-                extras.putString(ImageDownloadIntentService.POST_OBJECT, new Gson().toJson(object));
-                GcmNetworkManager.getInstance(realmManager.getContext()).schedule(new OneoffTask.Builder()
-                        .setService(ImageDownloadGcmService.class)
-                        .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
-                        .setExtras(extras)
-                        .setTag(DELETE_TAG)
-                        .build()); // gcm service
-            }
-        }
-    };
+    public final String TAG = "DiskUserDataStore";
 
     /**
      * Construct a {@link UserDataStore} based file system data store.
@@ -95,7 +39,6 @@ public class DiskDataStore implements DataStore {
     public Observable<?> putToDisk(RealmObject object) {
         return Observable.create(subscriber -> {
             realmManager.put(object);
-            queuePost.call(object);
             if (!subscriber.isUnsubscribed()) {
                 subscriber.onNext(true);
                 subscriber.onCompleted();
@@ -107,7 +50,6 @@ public class DiskDataStore implements DataStore {
     public Observable<?> deleteFromDisk(int itemId, Class clazz) {
         return Observable.create(subscriber -> {
             realmManager.evictById(itemId, clazz);
-            queueDeleteById.call(itemId);
             if (!subscriber.isUnsubscribed()) {
                 subscriber.onNext(true);
                 subscriber.onCompleted();
@@ -119,7 +61,6 @@ public class DiskDataStore implements DataStore {
     public Observable<?> deleteFromDisk(Object realmObject, Class clazz) {
         return Observable.create(subscriber -> {
             realmManager.evict(((RealmObject) realmObject), clazz);
-            queueDelete.call(realmObject);
             if (!subscriber.isUnsubscribed()) {
                 subscriber.onNext(true);
                 subscriber.onCompleted();
@@ -131,8 +72,6 @@ public class DiskDataStore implements DataStore {
     public Observable<?> deleteCollectionFromDisk(Collection collection, Class clazz) {
         return Observable.create(subscriber -> {
             realmManager.evictCollection(collection, clazz);
-            for (Object object : collection)
-                queueDelete.call(object);
             if (!subscriber.isUnsubscribed()) {
                 subscriber.onNext(true);
                 subscriber.onCompleted();

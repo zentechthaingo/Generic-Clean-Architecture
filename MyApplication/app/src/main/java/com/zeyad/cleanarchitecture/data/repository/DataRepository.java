@@ -39,7 +39,7 @@ public class DataRepository implements Repository {
                 .collectionFromCloud(domainClass, dataClass)
                 .map(realmModels -> entityDataMapper.transformAllToPresentation(realmModels, presentationClass));
         // TODO: 3/2/16 Test!
-//        return userDataStoreFactory.getAllUsersFromAllSources(userDataStoreFactory
+//        return dataStoreFactory.getAllUsersFromAllSources(userDataStoreFactory
 //                .createAllFromCloud(entityDataMapper)
 //                .userEntityList(), userDataStoreFactory.createAllFromDisk(entityDataMapper)
 //                .userEntityList()).map(userEntities -> entityDataMapper.transformToDomain(userEntities));
@@ -52,7 +52,7 @@ public class DataRepository implements Repository {
                 .entityDetailsFromCloud(itemId, domainClass, dataClass)
                 .map(realmModel -> entityDataMapper.transformToPresentation(realmModel, presentationClass));
         // TODO: 3/2/16 Test!
-//        return userDataStoreFactory.getUserFromAllSources(userDataStoreFactory
+//        return dataStoreFactory.getUserFromAllSources(userDataStoreFactory
 //                .createByIdFromCloud(entityDataMapper)
 //                .userEntityDetails(userId), userDataStoreFactory.createByIdFromDisk(entityDataMapper)
 //                .userEntityDetails(userId)).map(userEntity -> entityDataMapper.transformToDomain(userEntity));
@@ -63,10 +63,10 @@ public class DataRepository implements Repository {
     public Observable<?> put(Object object, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
-                                .put(entityDataMapper)
+                                .putToDisk()
                                 .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
                         dataStoreFactory
-                                .put(entityDataMapper)
+                                .putToCloud(entityDataMapper)
                                 .postToCloud(object));
     }
 

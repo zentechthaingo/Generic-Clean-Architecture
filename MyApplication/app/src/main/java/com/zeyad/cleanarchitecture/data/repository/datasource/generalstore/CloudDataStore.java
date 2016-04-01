@@ -1,10 +1,19 @@
 package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
+import android.os.Bundle;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.gcm.GcmNetworkManager;
+import com.google.android.gms.gcm.OneoffTask;
+import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
+import com.zeyad.cleanarchitecture.domain.services.ImageDownloadGcmService;
+import com.zeyad.cleanarchitecture.domain.services.ImageDownloadIntentService;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
@@ -19,7 +28,8 @@ public class CloudDataStore implements DataStore {
     private final RestApi restApi;
     private GeneralRealmManager realmManager;
     private EntityDataMapper entityDataMapper;
-    private static final String TAG = "CloudDataStore";
+    private static final String TAG = "CloudDataStore", POST_TAG = "postObject", DELETE_TAG = "delete",
+            DELETE_BY_ID_TAG = "deleteById";
     private Class dataClass;
     private final Action1<Object> saveGenericToCacheAction = object -> realmManager.put((RealmObject) entityDataMapper.transformToRealm(object, dataClass));
     private final Action1<Collection> saveAllGenericsToCacheAction = collection -> {
@@ -27,9 +37,51 @@ public class CloudDataStore implements DataStore {
         realmObjectCollection.addAll((Collection) entityDataMapper.transformAllToRealm(collection, dataClass));
         realmManager.putAll(realmObjectCollection);
     };
-    private final Action1<Object> deleteGenericToCacheAction = object -> realmManager.evict((RealmObject) entityDataMapper.transformToRealm(object, dataClass), dataClass);
-    private final Action1<Integer> deleteByIdGenericToCacheAction = integer -> realmManager.evictById(integer, dataClass);
-    private final Action1<Collection> deleteCollectionGenericToCacheAction = collection -> realmManager.evictCollection(collection, dataClass);
+    private Action1<Object> queuePost = object -> {
+        if (Utils.hasLollipop()) {
+            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
+                    == ConnectionResult.SUCCESS) {
+                Bundle extras = new Bundle();
+                extras.putString(ImageDownloadIntentService.POST_OBJECT, new Gson().toJson(object));
+                GcmNetworkManager.getInstance(realmManager.getContext()).schedule(new OneoffTask.Builder()
+                        .setService(ImageDownloadGcmService.class)
+                        .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
+                        .setExtras(extras)
+                        .setTag(POST_TAG)
+                        .build()); // gcm service
+            }
+        }
+    };
+    private final Action1<Integer> queueDeleteById = integer -> {
+        if (Utils.hasLollipop()) {
+            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
+                    == ConnectionResult.SUCCESS) {
+                Bundle extras = new Bundle();
+                extras.putInt(ImageDownloadIntentService.DELETE_OBJECT, integer);
+                GcmNetworkManager.getInstance(realmManager.getContext()).schedule(new OneoffTask.Builder()
+                        .setService(ImageDownloadGcmService.class)
+                        .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
+                        .setExtras(extras)
+                        .setTag(DELETE_BY_ID_TAG)
+                        .build()); // gcm service
+            }
+        }
+    };
+    private final Action1<Object> queueDelete = object -> {
+        if (Utils.hasLollipop()) {
+            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
+                    == ConnectionResult.SUCCESS) {
+                Bundle extras = new Bundle();
+                extras.putString(ImageDownloadIntentService.POST_OBJECT, new Gson().toJson(object));
+                GcmNetworkManager.getInstance(realmManager.getContext()).schedule(new OneoffTask.Builder()
+                        .setService(ImageDownloadGcmService.class)
+                        .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
+                        .setExtras(extras)
+                        .setTag(DELETE_TAG)
+                        .build()); // gcm service
+            }
+        }
+    };
 
     /**
      * Construct a {@link UserDataStore} based on connections to the api (Cloud).
@@ -83,11 +135,17 @@ public class CloudDataStore implements DataStore {
     @Override
     public Observable<?> postToCloud(Object object) {
         return Observable.create(subscriber -> {
-//            restApi.postItem(object);
-            saveGenericToCacheAction.call(object);
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(true);
-                subscriber.onCompleted();
+            if (Utils.isNetworkAvailable(realmManager.getContext())) {
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(restApi.postItem(object));
+                    subscriber.onCompleted();
+                }
+            } else {
+                queuePost.call(object);
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(object);
+                    subscriber.onCompleted();
+                }
             }
         });
     }
@@ -95,30 +153,56 @@ public class CloudDataStore implements DataStore {
     @Override
     public Observable<?> deleteFromCloud(int itemId, Class clazz) {
         return Observable.create(subscriber -> {
-//            restApi.deleteItem(itemId);
-            deleteByIdGenericToCacheAction.call(itemId);
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(true);
-                subscriber.onCompleted();
+            if (Utils.isNetworkAvailable(realmManager.getContext())) {
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(restApi.deleteItemById(itemId));
+                    subscriber.onCompleted();
+                }
+            } else {
+                queueDeleteById.call(itemId);
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(false);
+                    subscriber.onCompleted();
+                }
             }
         });
     }
 
     @Override
-    public Observable<?> deleteFromCloud(Object realmObject, Class clazz) {
+    public Observable<?> deleteFromCloud(Object object, Class clazz) {
         return Observable.create(subscriber -> {
-//            restApi.deleteItem(object);
-            deleteGenericToCacheAction.call(realmObject);
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(true);
-                subscriber.onCompleted();
+            if (Utils.isNetworkAvailable(realmManager.getContext())) {
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(restApi.deleteItem(object));
+                    subscriber.onCompleted();
+                }
+            } else {
+                queueDelete.call(object);
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(false);
+                    subscriber.onCompleted();
+                }
             }
         });
     }
 
     @Override
     public Observable<?> deleteCollectionFromCloud(Collection collection, Class clazz) {
-        return null;
+        return Observable.create(subscriber -> {
+            if (Utils.isNetworkAvailable(realmManager.getContext())) {
+                if (!subscriber.isUnsubscribed()) {
+                    subscriber.onNext(restApi.deleteCollection(collection));
+                    subscriber.onCompleted();
+                }
+            } else {
+                for (Object object : collection) {
+                    queueDelete.call(object);
+                    if (!subscriber.isUnsubscribed())
+                        subscriber.onNext(false);
+                }
+                subscriber.onCompleted();
+            }
+        });
     }
 
     @Override

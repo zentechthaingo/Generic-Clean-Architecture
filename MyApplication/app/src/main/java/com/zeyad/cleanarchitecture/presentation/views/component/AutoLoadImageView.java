@@ -51,7 +51,7 @@ public class AutoLoadImageView extends ImageView {
         if (imageUrl != null) {
             this.imageUrl = imageUrl;
             loadImageFromUrl(imageUrl);
-        } else throw new NullPointerException();
+        } else return this;
         imagePlaceHolderResourceId = imageOnErrorResourceId = imageFallBackResourceId = R.drawable.placer_holder_img;
         return this;
     }

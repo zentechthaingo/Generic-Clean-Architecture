@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Streaming;
 import rx.Observable;
@@ -36,6 +37,19 @@ public interface RestApi {
 
     @GET("user_{id}.json")
     Observable<Object> objectById(@Path("id") final int userId);
+
+    //------------------------------------------------------------------------------------//
+    @POST("user_{id}.json")
+    Observable<Object> deleteItemById(@Path("id") final int userId);
+
+    @POST("user_{id}.json")
+    Observable<Object> deleteItem(@Path("object") final Object object);
+
+    @POST("user_{id}.json")
+    Observable<Object> deleteCollection(@Path("collection") final Collection collection);
+
+    @POST("user_{id}.json")
+    Observable<Object> postItem(@Path("id") final Object object);
 
     @Streaming
     @GET("/images/{index}.jpg")

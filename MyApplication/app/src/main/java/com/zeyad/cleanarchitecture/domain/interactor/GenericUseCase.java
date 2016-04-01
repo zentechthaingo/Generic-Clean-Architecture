@@ -43,7 +43,7 @@ public class GenericUseCase extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+    protected Observable buildUseCaseObservablePut(Object object, Class domainClass, Class dataClass) {
         return repository.put(object, domainClass, dataClass);
     }
 

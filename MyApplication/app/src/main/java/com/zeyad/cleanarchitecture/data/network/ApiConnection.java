@@ -112,4 +112,20 @@ public class ApiConnection {
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).getStream(userId);
     }
+
+    public static Observable<Object> postItem(Object object) {
+        return null;
+    }
+
+    public static Observable<Object> deleteCollection(Collection collection) {
+        return null;
+    }
+
+    public static Observable<Object> deleteItem(Object object) {
+        return null;
+    }
+
+    public static Observable<Object> deleteItemById(int userId) {
+        return null;
+    }
 }
