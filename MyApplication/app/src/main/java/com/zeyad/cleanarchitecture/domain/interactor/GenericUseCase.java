@@ -4,8 +4,11 @@ import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
+import com.zeyad.cleanarchitecture.presentation.model.UserModel;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -43,28 +46,39 @@ public class GenericUseCase extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservablePut(Object object, Class domainClass, Class dataClass) {
-        return repository.put(object, domainClass, dataClass);
+    protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+        return repository.put(object, presentationClass, domainClass, dataClass);
     }
 
     @Override
     protected Observable buildUseCaseObservableDelete(Object object, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.delete(object, dataClass);
+        return repository.delete(object, domainClass, dataClass);
     }
 
     @Override
     protected Observable buildUseCaseObservableDelete(long itemId, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.delete(itemId, dataClass);
+        return repository.delete(itemId, domainClass, dataClass);
     }
 
     @Override
     protected Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass,
                                                               Class domainClass, Class dataClass) {
-        return repository.deleteCollection(collection, dataClass);
+        return repository.deleteCollection(collection, presentationClass, domainClass, dataClass);
     }
 
     @Override
-    protected Observable buildUseCaseObservableQuery(Object object, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.search();
+    protected Observable buildUseCaseObservableQuery(String query, Class presentationClass, Class domainClass, Class dataClass) {
+        return repository.search(query, presentationClass, domainClass, dataClass);
+    }
+
+    private List<UserModel> filter(List<UserModel> models, String query) {
+        query = query.toLowerCase();
+        final List<UserModel> filteredModelList = new ArrayList<>();
+        for (UserModel model : models) {
+            final String text = model.getFullName().toLowerCase();
+            if (text.contains(query))
+                filteredModelList.add(model);
+        }
+        return filteredModelList;
     }
 }

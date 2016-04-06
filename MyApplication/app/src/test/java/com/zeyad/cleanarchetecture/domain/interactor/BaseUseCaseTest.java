@@ -96,7 +96,7 @@ public class BaseUseCaseTest {
         }
 
         @Override
-        protected Observable buildUseCaseObservableQuery(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+        protected Observable buildUseCaseObservableQuery(String query, Class presentationClass, Class domainClass, Class dataClass) {
             return null;
         }
 

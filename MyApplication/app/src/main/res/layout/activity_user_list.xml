@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".MainActivity">
+    tools:context=".presentation.views.activities.UserListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -16,7 +16,11 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:background="?attr/colorPrimary"
+            android:elevation="@dimen/toolbar_elevation"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        <!--app:popupTheme="@style/AppTheme.PopupOverlay"/>-->
 
     </android.support.design.widget.AppBarLayout>
 
@@ -30,9 +34,9 @@
     </FrameLayout>
 
     <!--<fragment-->
-        <!--android:id="@+id/fragmentUserList"-->
-        <!--android:name="com.zeyad.cleanarchitecture.presentation.views.fragments.UserListFragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
+    <!--android:id="@+id/fragmentUserList"-->
+    <!--android:name="com.zeyad.cleanarchitecture.presentation.views.fragments.UserListFragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent" />-->
 
 </android.support.design.widget.CoordinatorLayout>

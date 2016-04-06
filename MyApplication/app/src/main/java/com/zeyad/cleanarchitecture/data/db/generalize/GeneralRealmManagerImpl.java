@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.zeyad.cleanarchitecture.data.db.RealmQueryableCollection;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -12,9 +14,13 @@ import javax.inject.Singleton;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import rx.subjects.BehaviorSubject;
 // TODO: 3/10/16 Test and add queries!
 
 /**
@@ -249,6 +255,35 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     public Context getContext() {
         return mContext;
     }
+
+    @Override
+    public Collection getWhere(String query, Class clazz) {
+        return null;
+    }
+
+    // --------------------------------------------//
+//    @Override
+    public Collection getWhere(Func1<RealmQuery, RealmQuery> predicate, Class clazz) {
+        mRealm = Realm.getDefaultInstance();
+
+        return null;
+    }
+
+    RealmQueryableCollection realmQueryCollection;
+
+    public <T> Observable<T> get(Class clazz, Func1<RealmQuery, RealmQuery> predicate) {
+        BehaviorSubject<T> behaviorSubject = BehaviorSubject.create((T) getInner(clazz, predicate));
+        realmQueryCollection.add(clazz, predicate, behaviorSubject);
+        return behaviorSubject;
+    }
+
+    public <T extends RealmObject> RealmResults<T> getInner(Class clazz, Func1<RealmQuery, RealmQuery> predicate) {
+        RealmQuery query = getRealm().where(clazz);
+        if (predicate != null)
+            query = predicate.call(query);
+        return query.findAllAsync();
+    }
+    // -------------------------------------------
 
     /**
      * Write a value to a user preferences file.

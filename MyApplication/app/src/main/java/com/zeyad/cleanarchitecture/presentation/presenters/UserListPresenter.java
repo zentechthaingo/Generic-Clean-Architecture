@@ -12,6 +12,7 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.model.UserModel;
 import com.zeyad.cleanarchitecture.presentation.model.mapper.UserModelDataMapper;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
+import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 
 import java.util.Collection;
 import java.util.List;
@@ -70,8 +71,8 @@ public class UserListPresenter implements BasePresenter {
         getUserList();
     }
 
-    public void onUserClicked(UserModel userModel) {
-        viewListView.viewUser(userModel);
+    public void onUserClicked(UserModel userModel, UserViewHolder holder) {
+        viewListView.viewUser(userModel, holder);
     }
 
     private void showViewLoading() {

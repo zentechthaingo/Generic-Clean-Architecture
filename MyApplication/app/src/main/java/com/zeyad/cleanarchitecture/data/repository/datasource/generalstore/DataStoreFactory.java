@@ -16,7 +16,7 @@ import rx.Observable;
 
 public class DataStoreFactory {
 
-    private final GeneralRealmManager mRealmManager;
+    private GeneralRealmManager mRealmManager;
     private final Context mContext;
 
     @Inject
@@ -62,11 +62,15 @@ public class DataStoreFactory {
         return createCloudDataStore(entityDataMapper);
     }
 
-    public DataStore delete(EntityDataMapper entityDataMapper) {
+    public DataStore searchCloud(EntityDataMapper entityDataMapper) {
         return createOutwardsDataStore(entityDataMapper);
     }
 
-    public DataStore search(EntityDataMapper entityDataMapper) {
+    public DataStore searchDisk() {
+        return new DiskDataStore(mRealmManager);
+    }
+
+    public DataStore delete(EntityDataMapper entityDataMapper) {
         return createOutwardsDataStore(entityDataMapper);
     }
 

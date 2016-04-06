@@ -7,6 +7,7 @@ import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -58,55 +59,72 @@ public class DataRepository implements Repository {
 //                .userEntityDetails(userId)).map(userEntity -> entityDataMapper.transformToDomain(userEntity));
     }
 
-    // TODO: 3/29/16 Add transformations!
     @Override
-    public Observable<?> put(Object object, Class domainClass, Class dataClass) {
+    public Observable<?> put(Object object, Class presentationClass, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
                                 .putToDisk()
-                                .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
+                                .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass))
+                                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)),
                         dataStoreFactory
                                 .putToCloud(entityDataMapper)
-                                .postToCloud(object));
+                                .postToCloud(object, domainClass, dataClass)
+                                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)));
     }
 
     @Override
-    public Observable<?> delete(long itemId, Class clazz) {
+    public Observable<?> delete(long itemId, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
                                 .delete(entityDataMapper)
-                                .deleteFromCloud(itemId, clazz),
+                                .deleteFromCloud(itemId, domainClass, dataClass),
                         dataStoreFactory
                                 .delete(entityDataMapper)
-                                .deleteFromDisk(itemId, clazz));
+                                .deleteFromDisk(itemId, dataClass));
     }
 
-    // TODO: 3/29/16 Add transformations!
     @Override
-    public Observable<?> delete(Object realmObject, Class clazz) {
+    public Observable<?> delete(Object realmObject, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
                                 .delete(entityDataMapper)
-                                .deleteFromCloud(realmObject, clazz),
+                                .deleteFromCloud(realmObject, domainClass, dataClass),
                         dataStoreFactory
                                 .delete(entityDataMapper)
-                                .deleteFromDisk(realmObject, clazz));
+                                .deleteFromDisk(realmObject, dataClass));
     }
 
-    // TODO: 3/29/16 Add transformations!
     @Override
-    public Observable<?> deleteCollection(Collection collection, Class clazz) {
+    public Observable<?> deleteCollection(Collection collection, Class presentationClass, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
                                 .deleteCollection(entityDataMapper)
-                                .deleteCollectionFromCloud(collection, clazz),
+                                .deleteCollectionFromCloud(collection, domainClass, dataClass),
                         dataStoreFactory
                                 .deleteCollection(entityDataMapper)
-                                .deleteCollectionFromDisk(collection, clazz));
+                                .deleteCollectionFromDisk(collection, dataClass));
     }
 
     @Override
-    public Observable<?> search() {
-        return null;
+    public Observable<?> search(String query, Class presentationClass, Class domainClass, Class dataClass) {
+//        return Observable
+//                .merge(dataStoreFactory
+//                                .searchCloud(entityDataMapper)
+//                                .searchCloud(query, domainClass, dataClass)
+//                                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)),
+//                        dataStoreFactory
+//                                .searchDisk()
+//                                .searchDisk(query, dataClass)
+//                                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)));
+        return dataStoreFactory
+                .searchCloud(entityDataMapper)
+                .searchCloud(query, domainClass, dataClass)
+                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass))
+                .mergeWith(dataStoreFactory
+                        .searchDisk()
+                        .searchDisk(query, dataClass)
+                        .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)))
+                .collect(HashSet::new, HashSet::add)
+                .flatMap(Observable::from);
     }
 }

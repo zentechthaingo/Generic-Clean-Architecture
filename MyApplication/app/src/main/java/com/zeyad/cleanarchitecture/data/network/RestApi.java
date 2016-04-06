@@ -54,4 +54,7 @@ public interface RestApi {
     @Streaming
     @GET("/images/{index}.jpg")
     Observable<Response> getStream(@Path("index") String index);
+
+    @GET("user_{id}.json")
+    Observable<Collection> search(@Path("query") String query);
 }

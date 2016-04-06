@@ -21,5 +21,5 @@ public interface UserListView extends LoadDataView {
      *
      * @param userModel The user that will be shown.
      */
-    void viewUser(UserModel userModel);
+    void viewUser(UserModel userModel, UserViewHolder holder);
 }

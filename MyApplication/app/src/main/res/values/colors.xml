@@ -7,4 +7,6 @@
     <color name="cards_background">#F9F9F9</color>
     <color name="fab_color">#FFC107</color>
     <color name="fab_color_pressed">#FFA000</color>
+    <color name="secondary_text_material_light">#FFA000</color>
+    <color name="selected_overlay">#3F51B5</color>
 </resources>

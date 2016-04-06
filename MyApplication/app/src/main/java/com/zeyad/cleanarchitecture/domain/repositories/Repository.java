@@ -22,13 +22,14 @@ public interface Repository {
      */
     Observable<?> getById(final int itemId, Class presentationClass, Class domainClass, Class dataClass);
 
-    Observable<?> put(final Object object, Class domainClass, Class dataClass);
+    Observable<?> put(final Object object, Class presentationClass, Class domainClass, Class dataClass);
 
-    Observable<?> delete(final long itemId, Class clazz);
+    Observable<?> delete(final long itemId, Class domainClass, Class dataClass);
 
-    Observable<?> delete(final Object realmObject, Class clazz);
+    Observable<?> delete(final Object realmObject, Class domainClass, Class dataClass);
 
-    Observable<?> deleteCollection(final Collection collection, Class clazz);
+    Observable<?> deleteCollection(final Collection collection, Class presentationClass,
+                                   Class domainClass, Class dataClass);
 
-    Observable<?> search();
+    Observable<?> search(String query, Class presentationClass, Class domainClass, Class dataClass);
 }

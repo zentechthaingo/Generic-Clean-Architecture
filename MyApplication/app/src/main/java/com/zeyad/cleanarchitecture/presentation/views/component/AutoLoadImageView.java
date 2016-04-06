@@ -117,7 +117,7 @@ public class AutoLoadImageView extends ImageView {
                     .placeholder(imagePlaceHolderResourceId)
                     .fallback(imageFallBackResourceId)
                     .error(imageOnErrorResourceId)
-                    .override(getWidth(), getHeight())
+//                    .override(getWidth(), getHeight())
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .into(this);
         else if (channel.equalsIgnoreCase(DISK))
@@ -149,9 +149,9 @@ public class AutoLoadImageView extends ImageView {
             if (bitmapDrawable.getBitmap() != null)
                 return bitmapDrawable.getBitmap();
         }
-        if (getWidth() <= 0 || getHeight() <= 0) {
+        if (getWidth() <= 0 || getHeight() <= 0)
             bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
-        } else
+        else
             bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
         drawable.setBounds(0, 0, getWidth(), getHeight());

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".views.activities.ProductDetailActivity"
+    tools:context="com.zeyad.cleanarchitecture.presentation.views.activities.UserDetailsActivity"
     tools:ignore="MergeRootFrame">
 
     <android.support.design.widget.AppBarLayout
@@ -37,6 +37,9 @@
                 android:id="@+id/detail_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:elevation="@dimen/toolbar_elevation"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -58,5 +61,5 @@
         android:clickable="true"
         android:src="@drawable/ic_edit"
         app:layout_anchor="@id/user_detail_container"
-        app:layout_anchorGravity="bottom|right|end" />
+        app:layout_anchorGravity="right|end" />
 </android.support.design.widget.CoordinatorLayout>

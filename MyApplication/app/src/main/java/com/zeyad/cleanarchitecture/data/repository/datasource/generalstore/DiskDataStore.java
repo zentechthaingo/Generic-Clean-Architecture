@@ -40,7 +40,7 @@ public class DiskDataStore implements DataStore {
         return Observable.create(subscriber -> {
             realmManager.put(object);
             if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(true);
+                subscriber.onNext(object);
                 subscriber.onCompleted();
             }
         });
@@ -80,6 +80,33 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
+    public Observable<Collection> searchDisk(String query, Class clazz) {
+        return Observable.create(subscriber -> {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onNext(realmManager.getWhere(query, clazz));
+                subscriber.onCompleted();
+            }
+        });
+    }
+
+//    @Override
+//    public Observable<Object> searchDisk(String query, Class clazz) {
+//        return Observable.create(subscriber -> {
+//            for (Object userRealmModel :
+//                    realmManager.getWhere(query, clazz))
+//                if (!subscriber.isUnsubscribed())
+//                    subscriber.onNext(userRealmModel);
+//            if (!subscriber.isUnsubscribed())
+//                subscriber.onCompleted();
+//        });
+//    }
+
+    @Override
+    public Observable<Collection> searchCloud(String query, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant get from cloud in disk data store"));
+    }
+
+    @Override
     public Observable<Collection> collectionFromCloud(Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant get from cloud in disk data store"));
     }
@@ -91,22 +118,22 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> postToCloud(Object object) {
+    public Observable<?> postToCloud(Object object, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant get from cloud in disk data store"));
     }
 
     @Override
-    public Observable<?> deleteFromCloud(Object realmObject, Class clazz) {
+    public Observable<?> deleteFromCloud(Object realmObject, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant get from cloud in disk data store"));
     }
 
     @Override
-    public Observable<?> deleteCollectionFromCloud(Collection collection, Class clazz) {
+    public Observable<?> deleteCollectionFromCloud(Collection collection, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant get from cloud in disk data store"));
     }
 
     @Override
-    public Observable<?> deleteFromCloud(int itemId, Class clazz) {
+    public Observable<?> deleteFromCloud(int itemId, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant get from cloud in disk data store"));
     }
     //--------------------------------------------------------------------------------------------//

@@ -7,16 +7,13 @@ import android.os.Bundle;
 import com.zeyad.cleanarchitecture.presentation.views.activities.UserDetailsActivity;
 import com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 /**
  * Class used to navigate through the application.
  */
 //@Singleton
 public class Navigator {
 
-//    @Inject
+    //    @Inject
     public Navigator() {
         //empty
     }
@@ -27,10 +24,8 @@ public class Navigator {
      * @param context A Context needed to open the destiny activity.
      */
     public void navigateToUserList(Context context) {
-        if (context != null) {
-            Intent intentToLaunch = UserListActivity.getCallingIntent(context);
-            context.startActivity(intentToLaunch);
-        }
+        if (context != null)
+            context.startActivity(UserListActivity.getCallingIntent(context));
     }
 
     /**

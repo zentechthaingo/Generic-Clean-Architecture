@@ -8,14 +8,15 @@
     android:padding="@dimen/lv_row_padding"
     tools:ignore="UseCompoundDrawables">
 
-    <ImageView
+    <com.zeyad.cleanarchitecture.presentation.views.component.AutoLoadImageView
         android:id="@+id/avatar"
         android:layout_width="@dimen/lv_row_icon_width"
         android:layout_height="@dimen/lv_row_icon_width"
         android:contentDescription="@string/string_content_description"
         android:paddingLeft="@dimen/lv_row_icon_padding"
         android:paddingRight="@dimen/lv_row_icon_padding"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/ic_launcher"
+        android:transitionName="@string/transition_photo" />
 
     <TextView
         android:id="@+id/title"
@@ -24,6 +25,14 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:singleLine="true"
-        android:textSize="@dimen/lv_row_text_size" />
+        android:textSize="@dimen/lv_row_text_size"
+        android:transitionName="@string/transition_text" />
+
+    <View
+        android:id="@+id/selected_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/selected_overlay"
+        android:visibility="invisible" />
 
 </LinearLayout>

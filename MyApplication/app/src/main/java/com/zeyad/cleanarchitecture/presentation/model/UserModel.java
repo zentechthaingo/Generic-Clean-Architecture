@@ -19,6 +19,7 @@ public class UserModel {
     private String email;
     private String description;
     private int followers;
+    private boolean checked;
 
     public int getUserId() {
         return userId;
@@ -62,5 +63,13 @@ public class UserModel {
 
     public void setFollowers(int followers) {
         this.followers = followers;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 }

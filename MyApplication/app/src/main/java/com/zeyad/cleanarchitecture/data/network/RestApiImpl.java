@@ -21,7 +21,6 @@ public class RestApiImpl implements RestApi {
         return ApiConnection.userCollection();
     }
 
-
     @Override
     public Observable<Collection<UserRealmModel>> userRealmModelCollection() {
         return ApiConnection.userRealmCollection();
@@ -55,6 +54,11 @@ public class RestApiImpl implements RestApi {
     @Override
     public Observable<Object> postItem(@Path("id") Object object) {
         return ApiConnection.postItem(object);
+    }
+
+    @Override
+    public Observable<Collection> search(@Path("query") String query) {
+        return null;
     }
 
     @Override

@@ -26,19 +26,23 @@ public interface DataStore {
 
     Observable<?> entityDetailsFromCloud(final int itemId, Class domainClass, Class dataClass);
 
-    Observable<?> postToCloud(Object object);
+    Observable<?> postToCloud(Object object, Class domainClass, Class dataClass);
 
     Observable<?> putToDisk(RealmObject object);
 
     Observable<?> deleteFromDisk(final int itemId, Class clazz);
 
-    Observable<?> deleteFromCloud(final int itemId, Class clazz);
+    Observable<?> deleteFromCloud(final int itemId, Class domainClass, Class dataClass);
 
     Observable<?> deleteFromDisk(final Object realmObject, Class clazz);
 
-    Observable<?> deleteFromCloud(final Object realmObject, Class clazz);
+    Observable<?> deleteFromCloud(final Object realmObject, Class domainClass, Class dataClass);
 
-    Observable<?> deleteCollectionFromCloud(final Collection collection, Class clazz);
+    Observable<?> deleteCollectionFromCloud(final Collection collection, Class domainClass, Class dataClass);
 
     Observable<?> deleteCollectionFromDisk(final Collection collection, Class clazz);
+
+    Observable<Collection> searchCloud(String query, Class domainClass, Class dataClass);
+
+    Observable<Collection> searchDisk(String query, Class clazz);
 }

@@ -139,13 +139,21 @@ public class ImageDownloadIntentService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
+    // FIXME: 4/3/16 Fix Dimensions !
     private void download(final File target, String imageUrl) {
         try {
             FileOutputStream fOut = new FileOutputStream(target);
+            int width, height;
+            width = intent.getIntExtra(WIDTH, 100);
+            height = intent.getIntExtra(HEIGHT, 100);
+            if (width == 0)
+                width = 100;
+            if (height == 0)
+                height = 100;
             Glide.with(getApplicationContext())
                     .load(imageUrl)
                     .asBitmap()
-                    .into(intent.getIntExtra(WIDTH, 100), intent.getIntExtra(HEIGHT, 100))
+                    .into(width, height)
                     .get()
                     .compress(Bitmap.CompressFormat.PNG, 85, fOut);
             fOut.flush();

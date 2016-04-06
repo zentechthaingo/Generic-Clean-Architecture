@@ -66,4 +66,6 @@ public interface GeneralRealmManager {
     void evictCollection(Collection collection, Class dataClass);
 
     Context getContext();
+
+    Collection getWhere(String query, Class clazz);
 }

@@ -82,6 +82,25 @@ public class CloudDataStore implements DataStore {
             }
         }
     };
+    private final Action1<Collection> queueDeleteCollection = collection -> {
+        if (Utils.hasLollipop()) {
+            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
+                    == ConnectionResult.SUCCESS) {
+                GcmNetworkManager gcmNetworkManager = GcmNetworkManager.getInstance(realmManager.getContext());
+                Bundle extras = new Bundle();
+                for (Object object : collection) {
+                    extras.putString(ImageDownloadIntentService.POST_OBJECT, new Gson().toJson(object));
+                    gcmNetworkManager.schedule(new OneoffTask.Builder()
+                            .setService(ImageDownloadGcmService.class)
+                            .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
+                            .setExtras(extras)
+                            .setTag(DELETE_TAG)
+                            .build()); // gcm service
+                    extras.clear();
+                }
+            }
+        }
+    };
 
     /**
      * Construct a {@link UserDataStore} based on connections to the api (Cloud).
@@ -93,11 +112,6 @@ public class CloudDataStore implements DataStore {
         this.restApi = restApi;
         this.entityDataMapper = entityDataMapper;
         this.realmManager = realmManager;
-    }
-
-    @Override
-    public Observable<Collection> entityListFromDisk(Class clazz) {
-        return Observable.error(new Exception("cant get from disk in cloud data store"));
     }
 
     @Override
@@ -133,76 +147,36 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> postToCloud(Object object) {
-        return Observable.create(subscriber -> {
-            if (Utils.isNetworkAvailable(realmManager.getContext())) {
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onNext(restApi.postItem(object));
-                    subscriber.onCompleted();
-                }
-            } else {
-                queuePost.call(object);
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onNext(object);
-                    subscriber.onCompleted();
-                }
-            }
-        });
+    public Observable<?> postToCloud(Object object, Class domainClass, Class dataClass) {
+        return restApi.postItem(object)
+                .doOnNext(saveGenericToCacheAction)
+                .doOnError(throwable -> queuePost.call(object))
+                .map(realmModel -> entityDataMapper.transformToDomain(realmModel, domainClass));
     }
 
     @Override
-    public Observable<?> deleteFromCloud(int itemId, Class clazz) {
-        return Observable.create(subscriber -> {
-            if (Utils.isNetworkAvailable(realmManager.getContext())) {
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onNext(restApi.deleteItemById(itemId));
-                    subscriber.onCompleted();
-                }
-            } else {
-                queueDeleteById.call(itemId);
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onNext(false);
-                    subscriber.onCompleted();
-                }
-            }
-        });
+    public Observable<Collection> searchCloud(String query, Class domainClass, Class dataClass) {
+        return restApi.search(query).map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
     }
 
     @Override
-    public Observable<?> deleteFromCloud(Object object, Class clazz) {
-        return Observable.create(subscriber -> {
-            if (Utils.isNetworkAvailable(realmManager.getContext())) {
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onNext(restApi.deleteItem(object));
-                    subscriber.onCompleted();
-                }
-            } else {
-                queueDelete.call(object);
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onNext(false);
-                    subscriber.onCompleted();
-                }
-            }
-        });
+    public Observable<?> deleteFromCloud(int itemId, Class domainClass, Class dataClass) {
+        return restApi.deleteItemById(itemId).doOnError(throwable -> queueDeleteById.call(itemId));
     }
 
     @Override
-    public Observable<?> deleteCollectionFromCloud(Collection collection, Class clazz) {
-        return Observable.create(subscriber -> {
-            if (Utils.isNetworkAvailable(realmManager.getContext())) {
-                if (!subscriber.isUnsubscribed()) {
-                    subscriber.onNext(restApi.deleteCollection(collection));
-                    subscriber.onCompleted();
-                }
-            } else {
-                for (Object object : collection) {
-                    queueDelete.call(object);
-                    if (!subscriber.isUnsubscribed())
-                        subscriber.onNext(false);
-                }
-                subscriber.onCompleted();
-            }
-        });
+    public Observable<?> deleteFromCloud(Object object, Class domainClass, Class dataClass) {
+        return restApi.deleteItem(object).doOnError(throwable -> queueDelete.call(object));
+    }
+
+    @Override
+    public Observable<?> deleteCollectionFromCloud(Collection collection, Class domainClass, Class dataClass) {
+        return restApi.deleteCollection(collection).doOnError(throwable -> queueDeleteCollection.call(collection));
+    }
+
+    @Override
+    public Observable<Collection> entityListFromDisk(Class clazz) {
+        return Observable.error(new Exception("cant get from disk in cloud data store"));
     }
 
     @Override
@@ -227,6 +201,11 @@ public class CloudDataStore implements DataStore {
 
     @Override
     public Observable<?> deleteCollectionFromDisk(Collection collection, Class clazz) {
+        return Observable.error(new Exception("cant get from disk in cloud data store"));
+    }
+
+    @Override
+    public Observable<Collection> searchDisk(String query, Class clazz) {
         return Observable.error(new Exception("cant get from disk in cloud data store"));
     }
 }

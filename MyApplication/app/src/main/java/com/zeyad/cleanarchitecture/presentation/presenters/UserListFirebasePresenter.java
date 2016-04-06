@@ -95,7 +95,7 @@ public class UserListFirebasePresenter implements BasePresenter {
                 userViewHolder.getTextViewTitle().setText(userModel.getFullName());
                 userViewHolder.itemView.setOnClickListener(v -> {
                     if (context instanceof UserListActivity)
-                        ((UserListActivity) context).viewUser(userModel);
+                        ((UserListActivity) context).viewUser(userModel, userViewHolder);
                 });
             }
         });

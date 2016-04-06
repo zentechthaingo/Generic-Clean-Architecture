@@ -38,15 +38,19 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name="com.zeyad.cleanarchitecture.presentation.views.activities.SearchResultsActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchableActivity" />
         </activity>
         <activity
             android:name="com.zeyad.cleanarchitecture.presentation.views.activities.UserDetailsActivity"
             android:label="@string/activity_title_user_details"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:parentActivityName="com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity" />
+        </activity>
         <!--<service-->
         <!--android:name="com.zeyad.cleanarchitecturet.presentation.view.services.ImageDownloadGcmService"-->
         <!--android:exported="true"-->

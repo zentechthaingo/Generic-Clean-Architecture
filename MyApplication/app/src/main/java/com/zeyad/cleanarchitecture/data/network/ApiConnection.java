@@ -40,12 +40,12 @@ public class ApiConnection {
     private static Retrofit createRetro2Client() {
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .cache(new Cache(new File(Constants.CACHE_DIR, "http"), 10485760))
-                .connectionSpecs(Collections.singletonList(new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                        .tlsVersions(TlsVersion.TLS_1_2)
-                        .cipherSuites(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                                CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256)
-                        .build()))
+//                .connectionSpecs(Collections.singletonList(new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+//                        .tlsVersions(TlsVersion.TLS_1_2)
+//                        .cipherSuites(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+//                                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+//                                CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256)
+//                        .build()))
                 .addNetworkInterceptor(chain -> {
                     Request request = chain.request();
                     Log.d("OkHttp REQUEST", request.toString());

@@ -1,18 +1,26 @@
 package com.zeyad.cleanarchitecture.presentation.views.activities;
 
+import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
@@ -25,12 +33,14 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserCompo
 import com.zeyad.cleanarchitecture.presentation.model.UserModel;
 import com.zeyad.cleanarchitecture.presentation.presenters.GenericListPresenter;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
+import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 import com.zeyad.cleanarchitecture.presentation.views.adapters.UsersAdapter;
 import com.zeyad.cleanarchitecture.presentation.views.fragments.UserDetailsFragment;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -50,7 +60,6 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     //--------------- Migration stuff --------------------------//
-    private int mScrollPosition = -1;
     private static final String STATE_SCROLL = "scrollPosition";
     @Inject
     GenericListPresenter userListPresenter;
@@ -64,13 +73,30 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     Button bt_retry;
     @Bind(R.id.fab_add)
     FloatingActionButton addFab;
-    private Subscription fabSubscription;
+    private SearchView searchView;
+    private Subscription fabSubscription = null;
     private UsersAdapter usersAdapter;
-    private UsersAdapter.OnItemClickListener onItemClickListener =
-            userModel -> {
-                if (userListPresenter != null && userModel != null)
-                    userListPresenter.onUserClicked(userModel);
-            };
+    private UsersAdapter.OnItemClickListener onItemClickListener = new UsersAdapter.OnItemClickListener() {
+        @Override
+        public void onUserItemClicked(UserModel userModel, UserViewHolder holder) {
+            if (userListPresenter != null && userModel != null)
+                userListPresenter.onUserClicked(userModel, holder);
+        }
+
+        @Override
+        public void onUserItemClicked(int position) {
+            if (actionMode != null)
+                toggleSelection(position);
+        }
+
+        @Override
+        public boolean onItemLongClicked(int position) {
+            if (actionMode == null)
+                actionMode = startSupportActionMode(actionModeCallback);
+            toggleSelection(position);
+            return true;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +106,8 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         initialize();
         setupUI();
         loadUserList();
-        if (savedInstanceState != null) {
-            mScrollPosition = savedInstanceState.getInt(STATE_SCROLL);
-            rv_users.scrollToPosition(mScrollPosition);
-        }
+        if (savedInstanceState != null)
+            rv_users.scrollToPosition(savedInstanceState.getInt(STATE_SCROLL));
     }
 
     @Override
@@ -103,10 +127,26 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    // TODO: 4/3/16 Add fab shared elements!
     @Override
     public void onResume() {
         super.onResume();
         userListPresenter.resume();
+        fabSubscription = RxView.clicks(addFab).subscribe(aVoid -> {
+            if (mTwoPane) {
+                UserDetailsFragment fragment = UserDetailsFragment.newInstance(-1);
+                if (Utils.hasLollipop()) {
+                    fragment.setSharedElementEnterTransition(new DetailsTransition());
+                    fragment.setEnterTransition(new Fade());
+                    fragment.setExitTransition(new Fade());
+                    fragment.setSharedElementReturnTransition(new DetailsTransition());
+                }
+                Bundle arguments = new Bundle();
+                arguments.putBoolean(UserDetailsFragment.ADD_NEW_ITEM, true);
+                fragment.setArguments(arguments);
+                addFragment(R.id.detail_container, fragment);
+            } else navigator.navigateToUserDetails(this, -1, null);
+        });
     }
 
     @Override
@@ -131,7 +171,6 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 .build();
     }
 
-    // FIXME: 3/26/16 Test!
     private void initialize() {
         getComponent(UserComponent.class).inject(this);
         userListPresenter.setView(this);
@@ -143,6 +182,13 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
     private void setupUI() {
         ButterKnife.bind(this);
+//        onSearchRequested();
+        Window window = this.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//            window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
+        }
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getTitle());
         if (findViewById(R.id.detail_container) != null) // Two pane for tablets(res/values-w900dp).
@@ -151,21 +197,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         usersAdapter = new UsersAdapter(this, new ArrayList<>());
         usersAdapter.setOnItemClickListener(onItemClickListener);
         rv_users.setAdapter(usersAdapter);
-        fabSubscription = RxView.clicks(addFab).subscribe(aVoid -> {
-            if (mTwoPane) {
-                UserDetailsFragment fragment = UserDetailsFragment.newInstance(-1);
-                if (Utils.hasLollipop()) {
-                    fragment.setSharedElementEnterTransition(new DetailsTransition());
-                    fragment.setEnterTransition(new Fade());
-                    fragment.setExitTransition(new Fade());
-                    fragment.setSharedElementReturnTransition(new DetailsTransition());
-                }
-                Bundle arguments = new Bundle();
-                arguments.putBoolean(UserDetailsFragment.ADD_NEW_ITEM, true);
-                fragment.setArguments(arguments);
-                addFragment(R.id.detail_container, fragment);
-            } else navigator.navigateToUserDetails(this, -1, null);
-        });
+        rv_users.setItemAnimator(new DefaultItemAnimator());
     }
 
     @Override
@@ -192,13 +224,16 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
     @Override
     public void renderUserList(Collection<UserModel> userModelCollection) {
-        if (userModelCollection != null)
+        if (userModelCollection != null) {
             usersAdapter.setUsersCollection(userModelCollection);
+            usersAdapter.animateTo((List<UserModel>) userModelCollection);
+            rv_users.scrollToPosition(0);
+        }
     }
 
     // TODO: 3/27/16 Add Animation!
     @Override
-    public void viewUser(UserModel userModel) {
+    public void viewUser(UserModel userModel, UserViewHolder holder) {
         if (mTwoPane) {
             UserDetailsFragment fragment = new UserDetailsFragment();
             if (Utils.hasLollipop()) {
@@ -214,17 +249,14 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
             fragment.setArguments(arguments);
             addFragment(R.id.detail_container, fragment);
         } else {
-//            Intent intent = new Intent(mContext, UserDetailsFragment.class);
-//            intent.putExtra(UserDetailsFragment.ARG_ITEM_ID, holder.mProduct.getProduct_id());
-//            intent.putExtra(UserDetailsFragment.ARG_ITEM_IMAGE, holder.mProduct.getImage());
-//            intent.putExtra(UserDetailsFragment.ARG_ITEM_NAME, holder.mProduct.getName()
-//                    .toLowerCase());
-//            if (Utils.hasLollipop()) {
-//                Pair<View, String> pair = new Pair<>(holder.mImageView, holder.mImageView.getTransitionName());
-//                Pair<View, String> secondPair = new Pair<>(holder.mPriceView, holder.mPriceView.getTransitionName());
-//                navigator.navigateToUserDetails(this, userModel.getUserId(), ActivityOptions.makeSceneTransitionAnimation(this, pair, secondPair).toBundle());
-//            } else
-            navigator.navigateToUserDetails(this, userModel.getUserId(), null);
+            if (Utils.hasLollipop()) {
+                Pair<View, String> pair = new Pair<>(holder.getmAvatar(), holder.getmAvatar().getTransitionName());
+                Pair<View, String> secondPair = new Pair<>(holder.getTextViewTitle(),
+                        holder.getTextViewTitle().getTransitionName());
+                navigator.navigateToUserDetails(this, userModel.getUserId(),
+                        ActivityOptions.makeSceneTransitionAnimation(this, pair, secondPair).toBundle());
+            } else
+                navigator.navigateToUserDetails(this, userModel.getUserId(), null);
         }
     }
 
@@ -254,24 +286,103 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.list_menu, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        // Define the listener
+        MenuItemCompat.OnActionExpandListener expandListener = new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // Do something when action item collapses
+                return true;  // Return true to collapse action view
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Do something when expanded
+                return true;  // Return true to expand action view
+            }
+        };
+        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), expandListener);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.delete_icon).setVisible(false).setEnabled(false);
+        menu.findItem(R.id.menu_search).setVisible(true).setEnabled(true);
+        menu.findItem(R.id.delete_item).setVisible(false).setEnabled(false);
         return false;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.delete_icon:
+            case R.id.delete_item:
+                usersAdapter.removeItems(usersAdapter.getSelectedItems());
+                return true;
+            case R.id.menu_search:
+                userListPresenter.search(searchView);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //---------------------------------------------------------//
+
+    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private ActionMode actionMode;
+
+    /**
+     * Toggle the selection state of an item.
+     * <p>
+     * If the item was the last one in the selection and is unselected, the selection is stopped.
+     * Note that the selection must already be started (actionMode must not be null).
+     *
+     * @param position Position of the item to toggle the selection state
+     */
+    private void toggleSelection(int position) {
+        usersAdapter.toggleSelection(position);
+        int count = usersAdapter.getSelectedItemCount();
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+        }
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @SuppressWarnings("unused")
+        private final String TAG = ActionModeCallback.class.getSimpleName();
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.list_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.delete_item:
+                    usersAdapter.removeItems(usersAdapter.getSelectedItems());
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            usersAdapter.clearSelection();
+            actionMode = null;
         }
     }
 }

@@ -1,7 +1,10 @@
 package com.zeyad.cleanarchitecture.presentation.presenters;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 
+import com.jakewharton.rxbinding.support.v7.widget.RxSearchView;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecture.domain.exceptions.ErrorBundle;
@@ -12,12 +15,19 @@ import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.model.UserModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
+import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 @PerActivity
 public class GenericListPresenter implements BasePresenter {
@@ -55,6 +65,29 @@ public class GenericListPresenter implements BasePresenter {
         loadUserList();
     }
 
+    public void onUserClicked(UserModel userModel, UserViewHolder holder) {
+        viewListView.viewUser(userModel, holder);
+    }
+
+    public Observable search(CharSequence charSequence) {
+        return getGeneralListUseCase.executeSearch(charSequence, new UserListSubscriber(), UserModel.class,
+                User.class, UserRealmModel.class);
+    }
+
+    public void search(SearchView searchView) {
+        RxSearchView.queryTextChanges(searchView)
+                .filter(charSequence -> !TextUtils.isEmpty(charSequence))
+                .throttleLast(100, TimeUnit.MILLISECONDS)
+                .debounce(200, TimeUnit.MILLISECONDS)
+                .onBackpressureLatest()
+                .flatMap(charSequence -> search(charSequence))
+//                        .distinct()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .onErrorResumeNext(Observable.empty())
+                .subscribe(new SearchSubscriber());
+    }
+
     /**
      * Loads all users.
      */
@@ -62,10 +95,6 @@ public class GenericListPresenter implements BasePresenter {
         hideViewRetry();
         showViewLoading();
         getUserList();
-    }
-
-    public void onUserClicked(UserModel userModel) {
-        viewListView.viewUser(userModel);
     }
 
     private void showViewLoading() {
@@ -94,7 +123,12 @@ public class GenericListPresenter implements BasePresenter {
     }
 
     private void getUserList() {
-        getGeneralListUseCase.executeList(new UserListSubscriber(), UserModel.class, User.class, UserRealmModel.class);
+        getGeneralListUseCase.executeList(new UserListSubscriber(), UserModel.class, User.class,
+                UserRealmModel.class);
+    }
+
+    public void showSearchResult(Set<UserModel> response) {
+        showUsersCollectionInView(response);
     }
 
     private final class UserListSubscriber extends DefaultSubscriber<List<UserModel>> {
@@ -114,6 +148,23 @@ public class GenericListPresenter implements BasePresenter {
         @Override
         public void onNext(List<UserModel> users) {
             showUsersCollectionInView(users);
+        }
+    }
+
+    private final class SearchSubscriber extends DefaultSubscriber<Set<UserModel>> {
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+
+        @Override
+        public void onNext(Set<UserModel> response) {
+            showSearchResult(response);
         }
     }
 }

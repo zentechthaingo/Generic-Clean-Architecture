@@ -55,25 +55,6 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
         setContentView(R.layout.activity_user_details);
         initializeActivity(savedInstanceState);
         initializeInjector();
-        editDetailsFab.setTag(FAB_EDIT_TAG);
-        fabSubscription = RxView.clicks(editDetailsFab)
-                .subscribe(aVoid -> {
-                    if (editDetailsFab.getTag().equals(FAB_EDIT_TAG)) {
-                        editDetailsFab.setTag(FAB_ADD_TAG);
-                        editDetailsFab.setImageResource(R.drawable.ic_done);
-                        ((UserDetailsFragment) getSupportFragmentManager()
-                                .findFragmentById(R.id.user_detail_container))
-                                .getUserDetailsPresenter()
-                                .setupEdit();
-                    } else {
-                        editDetailsFab.setTag(FAB_EDIT_TAG);
-                        editDetailsFab.setImageResource(R.drawable.ic_edit);
-                        ((UserDetailsFragment) getSupportFragmentManager()
-                                .findFragmentById(R.id.user_detail_container))
-                                .getUserDetailsPresenter()
-                                .submitEdit();
-                    }
-                });
     }
 
     @Override
@@ -103,16 +84,32 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
         else
             userId = savedInstanceState.getInt(INSTANCE_STATE_PARAM_USER_ID);
         ButterKnife.bind(this);
-//        setSupportActionBar(mToolbar);
-//        mToolbar.setTitle(getTitle());
         // Show the Up button in the action bar.
+//        setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        }
+        if (actionBar != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null)
             addFragment(R.id.user_detail_container, UserDetailsFragment.newInstance(userId));
+        editDetailsFab.setTag(FAB_EDIT_TAG);
+        fabSubscription = RxView.clicks(editDetailsFab)
+                .subscribe(aVoid -> {
+                    if (editDetailsFab.getTag().equals(FAB_EDIT_TAG)) {
+                        editDetailsFab.setTag(FAB_ADD_TAG);
+                        editDetailsFab.setImageResource(R.drawable.ic_done);
+                        ((UserDetailsFragment) getSupportFragmentManager()
+                                .findFragmentById(R.id.user_detail_container))
+                                .getUserDetailsPresenter()
+                                .setupEdit();
+                    } else {
+                        editDetailsFab.setTag(FAB_EDIT_TAG);
+                        editDetailsFab.setImageResource(R.drawable.ic_edit);
+                        ((UserDetailsFragment) getSupportFragmentManager()
+                                .findFragmentById(R.id.user_detail_container))
+                                .getUserDetailsPresenter()
+                                .submitEdit();
+                    }
+                });
     }
 
     private void initializeInjector() {

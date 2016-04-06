@@ -148,7 +148,7 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
     }
 
     @Override
-    public void viewUser(UserModel userModel) {
+    public void viewUser(UserModel userModel, UserViewHolder holder) {
         if (userListListener != null)
             userListListener.onUserClicked(userModel);
     }

@@ -44,8 +44,8 @@ public class GetUserList extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservablePut(Object object, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant put object from GetUserDetails"));
+    protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant get detail from GetUserDetails"));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class GetUserList extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservableQuery(Object object, Class presentationClass, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant search object from GetUserDetails"));
+    protected Observable buildUseCaseObservableQuery(String query, Class presentationClass, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant get detail from GetUserDetails"));
     }
 }

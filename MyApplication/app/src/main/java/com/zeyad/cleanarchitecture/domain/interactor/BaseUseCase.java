@@ -42,7 +42,7 @@ public abstract class BaseUseCase {
     protected abstract Observable buildUseCaseObservableDetail(int itemId, Class presentationClass,
                                                                Class domainClass, Class dataClass);
 
-    protected abstract Observable buildUseCaseObservablePut(Object object, Class domainClass, Class dataClass);
+    protected abstract Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass);
 
     protected abstract Observable buildUseCaseObservableDelete(Object object, Class presentationClass,
                                                                Class domainClass, Class dataClass);
@@ -53,7 +53,7 @@ public abstract class BaseUseCase {
     protected abstract Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass,
                                                                        Class domainClass, Class dataClass);
 
-    protected abstract Observable buildUseCaseObservableQuery(Object object, Class presentationClass,
+    protected abstract Observable buildUseCaseObservableQuery(String query, Class presentationClass,
                                                               Class domainClass, Class dataClass);
 
     /**
@@ -111,11 +111,28 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void executePut(Subscriber UseCaseSubscriber, Object object, Class domainClass, Class dataClass) {
-        subscription = buildUseCaseObservablePut(object, domainClass, dataClass)
+    public void executePut(Subscriber UseCaseSubscriber, Object object, Class presentationClass, Class domainClass, Class dataClass) {
+        subscription = buildUseCaseObservablePut(object, presentationClass, domainClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param charSequence
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public Observable executeSearch(CharSequence charSequence, Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass) {
+        return buildUseCaseObservableQuery(charSequence.toString(), presentationClass, domainClass, dataClass)
+                .compose(applySchedulers())
+                .compose(getLifecycle());
+//        subscription = buildUseCaseObservableQuery(charSequence.toString(), presentationClass, domainClass, dataClass)
+//                .compose(applySchedulers())
+//                .compose(getLifecycle())
+//                .subscribe(UseCaseSubscriber);
     }
 
     /**

@@ -90,6 +90,7 @@ public class GenericDetailPresenter implements BasePresenter {
     private void showUserDetailsInView(UserModel userModel) {
         this.userModel = userModel;
         viewDetailsView.renderUser(this.userModel);
+//        viewDetailsView.editUserSubmit();
     }
 
     private void getUserDetails() {
@@ -103,8 +104,7 @@ public class GenericDetailPresenter implements BasePresenter {
 
     public void submitEdit() {
         getUserDetailsBaseUseCase.executePut(new UserDetailsSubscriber(), viewDetailsView.getValidatedUser(),
-                User.class, UserRealmModel.class);
-        viewDetailsView.editUserSubmit();
+                UserModel.class, User.class, UserRealmModel.class);
     }
 
     private final class UserDetailsSubscriber extends DefaultSubscriber<UserModel> {
