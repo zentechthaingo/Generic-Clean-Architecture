@@ -25,18 +25,16 @@ This is a sample project showcasing the use new technologies and apis within the
 * Other guidelines
 
 ### Todo:
-
-* Edit, Add, Delete & SearchView UI
-* Finish crud use cases 
-* Add queries in Realm  
+ 
+* Add queries in Realm (In progress)
+* Data binding  
+* Generic Adapter
 * Login use case (Google and Facebook login) with Fire base
 * Fire base
 * User items use case
-* Animations
 * Strict Mode
 * GCM push notifications
 * Analytics
-* Data binding (when stable)
 
 ### Who do I talk to? ###
 
