@@ -6,6 +6,8 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class UserRealmModel extends RealmObject {
+
+    public final static String FULL_NAME_COLUMN = "full_name";
     @PrimaryKey
     @SerializedName("id")
     private int userId;
@@ -13,7 +15,7 @@ public class UserRealmModel extends RealmObject {
     @SerializedName("cover_url")
     private String coverUrl;
 
-    @SerializedName("full_name")
+    @SerializedName(FULL_NAME_COLUMN)
     private String fullName;
 
     @SerializedName("description")

@@ -7,8 +7,10 @@ import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import java.util.Collection;
 
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
+import rx.functions.Func1;
 
 public interface GeneralRealmManager {
     /**
@@ -63,9 +65,9 @@ public interface GeneralRealmManager {
 
     void evict(final RealmObject realmModel, Class clazz);
 
-    void evictCollection(Collection collection, Class dataClass);
+    void evictCollection(Collection<Integer> collection, Class dataClass);
 
     Context getContext();
 
-    Collection getWhere(String query, Class clazz);
+    Observable<Collection> getWhere(Class clazz, Func1<RealmQuery, RealmQuery> predicate);
 }

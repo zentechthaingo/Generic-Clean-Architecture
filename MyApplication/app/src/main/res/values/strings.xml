@@ -48,4 +48,7 @@
     <string name="et_full_name">Full Name</string>
     <string name="et_followers">Followers</string>
     <string name="et_description">Description</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">item Detail</string>
+    <string name="fab_transition">fab transition</string>
 </resources>

@@ -5,9 +5,14 @@ import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
 import java.util.Collection;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Streaming;
 import rx.Observable;
@@ -51,10 +56,15 @@ public interface RestApi {
     @POST("user_{id}.json")
     Observable<Object> postItem(@Path("id") final Object object);
 
-    @Streaming
-    @GET("/images/{index}.jpg")
-    Observable<Response> getStream(@Path("index") String index);
-
     @GET("user_{id}.json")
     Observable<Collection> search(@Path("query") String query);
+
+    @Streaming
+    @GET("/images/{index}.jpg")
+    Observable<Response> download(@Path("index") String index);
+
+    @Multipart
+    @POST("upload")
+    Observable<ResponseBody> upload(@Part("description") RequestBody description, @Part MultipartBody.Part file);
+
 }

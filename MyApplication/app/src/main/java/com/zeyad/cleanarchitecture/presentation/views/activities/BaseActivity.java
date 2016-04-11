@@ -1,10 +1,13 @@
 package com.zeyad.cleanarchitecture.presentation.views.activities;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.content.ComponentCallbacks2;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Pair;
+import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -12,6 +15,8 @@ import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.ApplicationComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
 import com.zeyad.cleanarchitecture.presentation.navigation.Navigator;
+
+import java.util.List;
 
 /**
  * Base {@link Activity} class for every Activity in this application.
@@ -35,13 +40,12 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param containerViewId The container view to where add the fragment.
      * @param fragment        The fragment to be added.
      */
-    // TODO: 3/30/16 Add shared element!
-    protected void addFragment(int containerViewId, Fragment fragment) {
-        getSupportFragmentManager()
-                .beginTransaction()
-//                    .addSharedElement(holder.image, "sharedImage")
-                .add(containerViewId, fragment)
-                .commit();
+    protected void addFragment(int containerViewId, Fragment fragment, List<Pair<View, String>> sharedElements) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager()
+                .beginTransaction();
+        for (Pair<View, String> pair : sharedElements)
+            fragmentTransaction.addSharedElement(pair.first, pair.second);
+        fragmentTransaction.add(containerViewId, fragment).commit();
     }
 
     /**

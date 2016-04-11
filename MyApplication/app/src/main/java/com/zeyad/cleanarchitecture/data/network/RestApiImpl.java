@@ -4,7 +4,11 @@ import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
 import java.util.Collection;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import rx.Observable;
 
@@ -62,7 +66,12 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public Observable<Response> getStream(@Path("index") String index) {
-        return ApiConnection.getStream(index);
+    public Observable<Response> download(@Path("index") String index) {
+        return ApiConnection.download(index);
+    }
+
+    @Override
+    public Observable<ResponseBody> upload(@Part("description") RequestBody description, @Part MultipartBody.Part file) {
+        return ApiConnection.upload(file, description);
     }
 }

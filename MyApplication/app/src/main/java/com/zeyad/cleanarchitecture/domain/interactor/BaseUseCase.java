@@ -42,18 +42,13 @@ public abstract class BaseUseCase {
     protected abstract Observable buildUseCaseObservableDetail(int itemId, Class presentationClass,
                                                                Class domainClass, Class dataClass);
 
-    protected abstract Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass);
-
-    protected abstract Observable buildUseCaseObservableDelete(Object object, Class presentationClass,
-                                                               Class domainClass, Class dataClass);
-
-    protected abstract Observable buildUseCaseObservableDelete(long itemId, Class presentationClass,
-                                                               Class domainClass, Class dataClass);
+    protected abstract Observable buildUseCaseObservablePut(Object object, Class presentationClass,
+                                                            Class domainClass, Class dataClass);
 
     protected abstract Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass,
                                                                        Class domainClass, Class dataClass);
 
-    protected abstract Observable buildUseCaseObservableQuery(String query, Class presentationClass,
+    protected abstract Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass,
                                                               Class domainClass, Class dataClass);
 
     /**
@@ -121,43 +116,16 @@ public abstract class BaseUseCase {
     /**
      * Executes the current use case.
      *
-     * @param charSequence
-     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     * @param query
      */
     @SuppressWarnings("unchecked")
-    public Observable executeSearch(CharSequence charSequence, Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass) {
-        return buildUseCaseObservableQuery(charSequence.toString(), presentationClass, domainClass, dataClass)
-                .compose(applySchedulers())
-                .compose(getLifecycle());
-//        subscription = buildUseCaseObservableQuery(charSequence.toString(), presentationClass, domainClass, dataClass)
+    public void executeSearch(String query, String column, Subscriber UseCaseSubscriber,
+                              Class presentationClass, Class domainClass, Class dataClass) {
+//        return buildUseCaseObservableQuery(query, column, presentationClass,
+//                domainClass, dataClass)
 //                .compose(applySchedulers())
-//                .compose(getLifecycle())
-//                .subscribe(UseCaseSubscriber);
-    }
-
-    /**
-     * Executes the current use case.
-     *
-     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
-     */
-    @SuppressWarnings("unchecked")
-    public void executeDelete(Subscriber UseCaseSubscriber, Object object, Class presentationClass, Class domainClass,
-                              Class dataClass) {
-        subscription = buildUseCaseObservableDelete(object, presentationClass, domainClass, dataClass)
-                .compose(applySchedulers())
-                .compose(getLifecycle())
-                .subscribe(UseCaseSubscriber);
-    }
-
-    /**
-     * Executes the current use case.
-     *
-     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
-     */
-    @SuppressWarnings("unchecked")
-    public void executeDeleteById(Subscriber UseCaseSubscriber, int id, Class presentationClass, Class domainClass,
-                                  Class dataClass) {
-        subscription = buildUseCaseObservableDelete(id, presentationClass, domainClass, dataClass)
+//                .compose(getLifecycle());
+        subscription = buildUseCaseObservableQuery(query, column, presentationClass, domainClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);

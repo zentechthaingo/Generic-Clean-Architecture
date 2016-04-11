@@ -65,7 +65,7 @@ public class ImageDownloadGcmService extends GcmTaskService {
 //        String targetPath;
 //        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
 //        for (Product product : products.getProducts()) {
-//            url = product.getImage();
+//            url = product.download();
 //            name = product.getName().toLowerCase() + ".jpg";
 //            cat = taskParams.getExtras().getString(EXTRA_CATEGORY);
 //            filter = taskParams.getExtras().getString(EXTRA_FILTER_SCHEME);

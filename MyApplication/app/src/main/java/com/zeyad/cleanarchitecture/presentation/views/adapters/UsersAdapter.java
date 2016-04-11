@@ -1,10 +1,10 @@
 package com.zeyad.cleanarchitecture.presentation.views.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.jakewharton.rxbinding.view.RxView;
@@ -17,7 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
+// TODO: 4/10/16 Generalize!
 
 /**
  * Adapter that manages a collection of {@link UserModel}.
@@ -25,9 +26,7 @@ import rx.Subscription;
 public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     public interface OnItemClickListener {
-        void onUserItemClicked(UserModel userModel, UserViewHolder holder);
-
-        void onUserItemClicked(int position);
+        void onUserItemClicked(int position, UserModel userModel, UserViewHolder holder);
 
         boolean onItemLongClicked(int position);
     }
@@ -35,7 +34,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private List<UserModel> usersCollection;
     private final LayoutInflater layoutInflater;
     private OnItemClickListener onItemClickListener;
-    private Subscription itemSubscription;
+    private CompositeSubscription mCompositeSubscription;
+    private SparseBooleanArray selectedItems;
 
     public UsersAdapter(Context context, Collection<UserModel> usersCollection) {
         validateUsersCollection(usersCollection);
@@ -43,6 +43,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.usersCollection = (List<UserModel>) usersCollection;
         selectedItems = new SparseBooleanArray();
+        mCompositeSubscription = new CompositeSubscription();
     }
 
     @Override
@@ -59,17 +60,27 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     public void onBindViewHolder(UserViewHolder holder, final int position) {
         final UserModel userModel = usersCollection.get(position);
         holder.getTextViewTitle().setText(userModel.getFullName());
-        // Highlight the item if it's selected
-        holder.getmSelectedOverlay().setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
-        itemSubscription = RxView.clicks(holder.itemView).subscribe(aVoid -> {
-            if (onItemClickListener != null)
-                onItemClickListener.onUserItemClicked(userModel, holder);
-        });
+        holder.getRl_row_user().setBackgroundColor(isSelected(position) ? Color.RED : Color.WHITE);
+        mCompositeSubscription.add(
+                RxView.clicks(holder.itemView).subscribe(aVoid -> {
+                    if (onItemClickListener != null)
+                        onItemClickListener.onUserItemClicked(position, userModel, holder);
+                }));
+        mCompositeSubscription.add(RxView.longClicks(holder.itemView).subscribe(aVoid -> {
+            if (onItemClickListener != null) {
+                holder.getRl_row_user().setBackgroundColor(Color.RED);
+                onItemClickListener.onItemLongClicked(usersCollection.indexOf(userModel));
+            }
+        }));
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return usersCollection.get(position).getUserId();
+    }
+
+    public List<UserModel> getUsersCollection() {
+        return usersCollection;
     }
 
     public void setUsersCollection(Collection<UserModel> usersCollection) {
@@ -82,18 +93,18 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
         this.onItemClickListener = onItemClickListener;
     }
 
+    public Collection<Integer> getSelectedItemsIds() {
+        return null;
+    }
+
     private void validateUsersCollection(Collection<UserModel> usersCollection) {
         if (usersCollection == null)
             throw new IllegalArgumentException("The list cannot be null");
     }
 
-    public Subscription getItemSubscription() {
-        return itemSubscription;
+    public CompositeSubscription getmCompositeSubscription() {
+        return mCompositeSubscription;
     }
-
-    //-------------------Selections------------------------//
-
-    private SparseBooleanArray selectedItems;
 
     /**
      * Indicates if the item at position position is selected
@@ -149,7 +160,6 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
         }
         return items;
     }
-    //-----------------deletions----------------------------//
 
     public void removeItems(List<Integer> positions) {
         // Reverse-sort the list

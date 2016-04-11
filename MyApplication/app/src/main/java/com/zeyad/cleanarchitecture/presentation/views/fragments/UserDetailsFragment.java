@@ -1,8 +1,11 @@
 package com.zeyad.cleanarchitecture.presentation.views.fragments;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.graphics.Palette;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -180,7 +183,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
                     findViewById(R.id.toolbar_layout);
             if (appBarLayout != null)
                 appBarLayout.setTitle(userModel.getFullName());
-//                applyPalette();
+//            applyPalette();
         }
     }
 
@@ -288,19 +291,19 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
                 });
     }
 
-//    private void applyPalette() {
-//            if (Utils.hasM())
-//        Palette.from(detailsActivity.mDetailImage.getBitmap()).
-//                        generate(palette -> {
-//                            detailsActivity.mCoordinatorLayout.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-//                                if (v.getHeight() == scrollX) {
-//                                    detailsActivity.mToolbar.setTitleTextColor(palette.getLightVibrantColor(Color.TRANSPARENT));
-//                                    detailsActivity.mToolbar.setBackground(new ColorDrawable(palette.getLightVibrantColor(Color.TRANSPARENT)));
-//                                } else if (scrollY == 0) {
-//                                    detailsActivity.mToolbar.setTitleTextColor(0);
-//                                    detailsActivity.mToolbar.setBackground(null);
-//                                }
-//                            });
-//                        });
-//    }
+    private void applyPalette() {
+        if (Utils.hasM())
+            Palette.from(((UserDetailsActivity) getActivity()).mDetailImage.getBitmap()).
+                    generate(palette -> {
+                        ((UserDetailsActivity) getActivity()).mCoordinatorLayout.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                            if (v.getHeight() == scrollX) {
+                                ((UserDetailsActivity) getActivity()).mToolbar.setTitleTextColor(palette.getLightVibrantColor(Color.TRANSPARENT));
+                                ((UserDetailsActivity) getActivity()).mToolbar.setBackground(new ColorDrawable(palette.getLightVibrantColor(Color.TRANSPARENT)));
+                            } else if (scrollY == 0) {
+                                ((UserDetailsActivity) getActivity()).mToolbar.setTitleTextColor(0);
+                                ((UserDetailsActivity) getActivity()).mToolbar.setBackground(null);
+                            }
+                        });
+                    });
+    }
 }

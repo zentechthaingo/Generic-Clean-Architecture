@@ -40,9 +40,10 @@
             android:layout_gravity="bottom|end"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_content_add"/>
-            <!--fab:fab_colorNormal="@color/fab_color"-->
-            <!--fab:fab_colorPressed="@color/fab_color_pressed" />-->
+            android:src="@drawable/ic_content_add"
+            android:transitionName="@string/fab_transition" />
+        <!--fab:fab_colorNormal="@color/fab_color"-->
+        <!--fab:fab_colorPressed="@color/fab_color_pressed" />-->
 
     </RelativeLayout>
 

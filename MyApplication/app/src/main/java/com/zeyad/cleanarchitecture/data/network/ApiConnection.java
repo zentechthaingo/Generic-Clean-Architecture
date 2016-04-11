@@ -11,18 +11,17 @@ import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import io.realm.RealmObject;
 import okhttp3.Cache;
-import okhttp3.CipherSuite;
-import okhttp3.ConnectionSpec;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.TlsVersion;
+import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -106,26 +105,41 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).objectById(id);
     }
 
-    // TODO: 3/6/16 Test!
-    public static Observable<retrofit2.Response> getStream(String userId) {
+    public static Observable<Object> postItem(Object object) {
         if (retrofit == null)
             retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).getStream(userId);
-    }
-
-    public static Observable<Object> postItem(Object object) {
-        return null;
+        return retrofit.create(RestApi.class).postItem(object);
     }
 
     public static Observable<Object> deleteCollection(Collection collection) {
-        return null;
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).deleteCollection(collection);
     }
 
     public static Observable<Object> deleteItem(Object object) {
-        return null;
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).deleteItem(object);
     }
 
     public static Observable<Object> deleteItemById(int userId) {
-        return null;
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).deleteItemById(userId);
+    }
+
+    // TODO: 3/6/16 Test!
+    public static Observable<retrofit2.Response> download(String userId) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).download(userId);
+    }
+
+    // TODO: 4/6/16 Test!
+    public static Observable<ResponseBody> upload(MultipartBody.Part file, RequestBody description) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).upload(description, file);
     }
 }

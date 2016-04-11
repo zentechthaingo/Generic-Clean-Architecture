@@ -19,6 +19,8 @@ import com.zeyad.cleanarchitecture.presentation.views.component.AutoLoadImageVie
 import com.zeyad.cleanarchitecture.presentation.views.fragments.UserDetailsFragment;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
+import java.util.ArrayList;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Subscription;
@@ -66,8 +68,7 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             supportFinishAfterTransition(); // exit animation
             navigateUpTo(new Intent(this, UserListActivity.class));
             return true;
@@ -90,7 +91,7 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
         if (actionBar != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null)
-            addFragment(R.id.user_detail_container, UserDetailsFragment.newInstance(userId));
+            addFragment(R.id.user_detail_container, UserDetailsFragment.newInstance(userId), new ArrayList<>());
         editDetailsFab.setTag(FAB_EDIT_TAG);
         fabSubscription = RxView.clicks(editDetailsFab)
                 .subscribe(aVoid -> {
@@ -123,13 +124,13 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
     @Override
     protected void onPause() {
         super.onPause();
-        Utils.unsubscribeIfNotNull(fabSubscription);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+        Utils.unsubscribeIfNotNull(fabSubscription);
     }
 
     @Override

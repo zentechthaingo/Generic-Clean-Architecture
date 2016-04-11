@@ -37,33 +37,23 @@ public class DataRepository implements Repository {
     @Override
     public Observable<Collection> Collection(Class presentationClass, Class domainClass, Class dataClass) {
         return dataStoreFactory.getAll(entityDataMapper, dataClass)
-                .collectionFromCloud(domainClass, dataClass)
+                .collection(domainClass, dataClass)
                 .map(realmModels -> entityDataMapper.transformAllToPresentation(realmModels, presentationClass));
-        // TODO: 3/2/16 Test!
-//        return dataStoreFactory.getAllUsersFromAllSources(userDataStoreFactory
-//                .createAllFromCloud(entityDataMapper)
-//                .userEntityList(), userDataStoreFactory.createAllFromDisk(entityDataMapper)
-//                .userEntityList()).map(userEntities -> entityDataMapper.transformToDomain(userEntities));
     }
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
     public Observable<?> getById(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
         return dataStoreFactory.getById(itemId, entityDataMapper, dataClass)
-                .entityDetailsFromCloud(itemId, domainClass, dataClass)
+                .entityDetails(itemId, domainClass, dataClass)
                 .map(realmModel -> entityDataMapper.transformToPresentation(realmModel, presentationClass));
-        // TODO: 3/2/16 Test!
-//        return dataStoreFactory.getUserFromAllSources(userDataStoreFactory
-//                .createByIdFromCloud(entityDataMapper)
-//                .userEntityDetails(userId), userDataStoreFactory.createByIdFromDisk(entityDataMapper)
-//                .userEntityDetails(userId)).map(userEntity -> entityDataMapper.transformToDomain(userEntity));
     }
 
     @Override
     public Observable<?> put(Object object, Class presentationClass, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
-                                .putToDisk()
+                                .putToDisk(entityDataMapper)
                                 .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass))
                                 .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)),
                         dataStoreFactory
@@ -73,56 +63,25 @@ public class DataRepository implements Repository {
     }
 
     @Override
-    public Observable<?> delete(long itemId, Class domainClass, Class dataClass) {
-        return Observable
-                .merge(dataStoreFactory
-                                .delete(entityDataMapper)
-                                .deleteFromCloud(itemId, domainClass, dataClass),
-                        dataStoreFactory
-                                .delete(entityDataMapper)
-                                .deleteFromDisk(itemId, dataClass));
-    }
-
-    @Override
-    public Observable<?> delete(Object realmObject, Class domainClass, Class dataClass) {
-        return Observable
-                .merge(dataStoreFactory
-                                .delete(entityDataMapper)
-                                .deleteFromCloud(realmObject, domainClass, dataClass),
-                        dataStoreFactory
-                                .delete(entityDataMapper)
-                                .deleteFromDisk(realmObject, dataClass));
-    }
-
-    @Override
     public Observable<?> deleteCollection(Collection collection, Class presentationClass, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
-                                .deleteCollection(entityDataMapper)
+                                .deleteCollectionInCloud(entityDataMapper)
                                 .deleteCollectionFromCloud(collection, domainClass, dataClass),
                         dataStoreFactory
-                                .deleteCollection(entityDataMapper)
+                                .deleteCollectionInDisk(entityDataMapper) //from disk
                                 .deleteCollectionFromDisk(collection, dataClass));
     }
 
     @Override
-    public Observable<?> search(String query, Class presentationClass, Class domainClass, Class dataClass) {
-//        return Observable
-//                .merge(dataStoreFactory
-//                                .searchCloud(entityDataMapper)
-//                                .searchCloud(query, domainClass, dataClass)
-//                                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)),
-//                        dataStoreFactory
-//                                .searchDisk()
-//                                .searchDisk(query, dataClass)
-//                                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)));
+    public Observable<?> search(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
         return dataStoreFactory
                 .searchCloud(entityDataMapper)
                 .searchCloud(query, domainClass, dataClass)
                 .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass))
                 .mergeWith(dataStoreFactory
-                        .searchDisk()
-                        .searchDisk(query, dataClass)
+                        .searchDisk(entityDataMapper)
+                        .searchDisk(query, column, domainClass, dataClass)
                         .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)))
                 .collect(HashSet::new, HashSet::add)
                 .flatMap(Observable::from);

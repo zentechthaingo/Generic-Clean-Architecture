@@ -31,58 +31,44 @@ public class DataStoreFactory {
      * Create {@link UserDataStore} from a user id.
      */
     public DataStore getById(int id, EntityDataMapper entityDataMapper, Class dataClass) {
-//        if (mRealmManager.isItemValid(id, dataClass) || !Utils.isNetworkAvailable(mContext))
-//            return new DiskDataStore(mRealmManager);
-//        else
-        return createCloudDataStore(entityDataMapper);
+        if (mRealmManager.isItemValid(id, dataClass) || !Utils.isNetworkAvailable(mContext))
+            return new DiskDataStore(mRealmManager, entityDataMapper);
+        else
+            return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
     public DataStore getAll(EntityDataMapper entityDataMapper, Class dataClass) {
-//        if (mRealmManager.areItemsValid(dataClass) || !Utils.isNetworkAvailable(mContext))
-//            return new DiskDataStore(mRealmManager);
-//        else
-        return createCloudDataStore(entityDataMapper);
+        if (mRealmManager.areItemsValid(dataClass) || !Utils.isNetworkAvailable(mContext))
+            return new DiskDataStore(mRealmManager, entityDataMapper);
+        else
+            return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
-    /**
-     * Create {@link UserDataStore} to retrieve data from the Cloud.
-     */
-    public DataStore createCloudDataStore(EntityDataMapper entityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
-    }
-
-    public DataStore putToDisk() {
-        return new DiskDataStore(mRealmManager);
+    public DataStore putToDisk(EntityDataMapper entityDataMapper) {
+        return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
     public DataStore putToCloud(EntityDataMapper entityDataMapper) {
-        return createCloudDataStore(entityDataMapper);
+        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
     public DataStore searchCloud(EntityDataMapper entityDataMapper) {
-        return createOutwardsDataStore(entityDataMapper);
+        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
-    public DataStore searchDisk() {
-        return new DiskDataStore(mRealmManager);
+    public DataStore searchDisk(EntityDataMapper entityDataMapper) {
+        return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
-    public DataStore delete(EntityDataMapper entityDataMapper) {
-        return createOutwardsDataStore(entityDataMapper);
+    public DataStore deleteCollectionInCloud(EntityDataMapper entityDataMapper) {
+        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
-    public DataStore deleteCollection(EntityDataMapper entityDataMapper) {
-        return createOutwardsDataStore(entityDataMapper);
-    }
-
-    private DataStore createOutwardsDataStore(EntityDataMapper entityDataMapper) {
-        if (Utils.isNetworkAvailable(mContext))
-            return createCloudDataStore(entityDataMapper);
-        else
-            return new DiskDataStore(mRealmManager);
+    public DataStore deleteCollectionInDisk(EntityDataMapper entityDataMapper) {
+        return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
     //----------------------------------Get Simultaneously----------------------------------------//
@@ -90,29 +76,29 @@ public class DataStoreFactory {
     /**
      * Create {@link UserDataStore} from a user id.
      */
-    public DataStore createByIdFromDisk() {
-        return new DiskDataStore(mRealmManager);
+    public DataStore createByIdFromDisk(EntityDataMapper entityDataMapper) {
+        return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
     /**
      * Create {@link UserDataStore} from a user id.
      */
     public DataStore createByIdFromCloud(EntityDataMapper entityDataMapper) {
-        return createCloudDataStore(entityDataMapper);
+        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
-    public DataStore createAllFromDisk() {
-        return new DiskDataStore(mRealmManager);
+    public DataStore createAllFromDisk(EntityDataMapper entityDataMapper) {
+        return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
     public DataStore createAllFromCloud(EntityDataMapper entityDataMapper) {
-        return createCloudDataStore(entityDataMapper);
+        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
     public Observable<Collection> getAllUsersFromAllSources(Observable<Collection> cloud,

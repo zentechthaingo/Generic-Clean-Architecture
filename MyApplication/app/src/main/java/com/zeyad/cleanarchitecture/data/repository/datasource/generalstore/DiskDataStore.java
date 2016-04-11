@@ -2,6 +2,7 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
+import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
@@ -12,8 +13,8 @@ import rx.Observable;
 
 public class DiskDataStore implements DataStore {
 
-    private GeneralRealmManager realmManager;
-    //    private RealmRepository realmRepository;
+    private GeneralRealmManager mRealmManager;
+    private EntityDataMapper mEntityDataMapper;
     public final String TAG = "DiskUserDataStore";
 
     /**
@@ -21,99 +22,49 @@ public class DiskDataStore implements DataStore {
      *
      * @param realmManager A {@link RealmManager} to cache data retrieved from the api.
      */
-    public DiskDataStore(GeneralRealmManager realmManager) {
-        this.realmManager = realmManager;
+    public DiskDataStore(GeneralRealmManager realmManager, EntityDataMapper entityDataMapper) {
+        mRealmManager = realmManager;
+        mEntityDataMapper = entityDataMapper;
     }
 
     @Override
-    public Observable<Collection> entityListFromDisk(Class clazz) {
-        return realmManager.getAll(clazz).compose(Utils.logSources(TAG, realmManager));
+    public Observable<Collection> collection(Class domainClass, Class dataClass) {
+        return mRealmManager.getAll(dataClass)
+                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels, domainClass))
+                .compose(Utils.logSources(TAG, mRealmManager));
     }
 
     @Override
-    public Observable<?> entityDetailsFromDisk(final int itemId, Class clazz) {
-        return realmManager.get(itemId, clazz).compose(Utils.logSource(TAG, realmManager));
+    public Observable<?> entityDetails(final int itemId, Class domainClass, Class dataClass) {
+        return mRealmManager.get(itemId, dataClass)
+                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass))
+                .compose(Utils.logSource(TAG, mRealmManager));
+    }
+
+    @Override
+    public Observable<Collection> searchDisk(String query, String column, Class domainClass, Class dataClass) {
+        return mRealmManager.getWhere(dataClass, predicate -> predicate.equalTo(column, query))
+                .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel, domainClass));
     }
 
     @Override
     public Observable<?> putToDisk(RealmObject object) {
-        return Observable.create(subscriber -> {
-            realmManager.put(object);
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(object);
-                subscriber.onCompleted();
-            }
+        return Observable.defer(() -> {
+            mRealmManager.put(object);
+            return Observable.just(object);
         });
     }
 
     @Override
-    public Observable<?> deleteFromDisk(int itemId, Class clazz) {
-        return Observable.create(subscriber -> {
-            realmManager.evictById(itemId, clazz);
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(true);
-                subscriber.onCompleted();
-            }
+    public Observable<?> deleteCollectionFromDisk(Collection<Integer> collection, Class clazz) {
+        return Observable.defer(() -> {
+            mRealmManager.evictCollection(collection, clazz);
+            return Observable.just(true);
         });
     }
-
-    @Override
-    public Observable<?> deleteFromDisk(Object realmObject, Class clazz) {
-        return Observable.create(subscriber -> {
-            realmManager.evict(((RealmObject) realmObject), clazz);
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(true);
-                subscriber.onCompleted();
-            }
-        });
-    }
-
-    @Override
-    public Observable<?> deleteCollectionFromDisk(Collection collection, Class clazz) {
-        return Observable.create(subscriber -> {
-            realmManager.evictCollection(collection, clazz);
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(true);
-                subscriber.onCompleted();
-            }
-        });
-    }
-
-    @Override
-    public Observable<Collection> searchDisk(String query, Class clazz) {
-        return Observable.create(subscriber -> {
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onNext(realmManager.getWhere(query, clazz));
-                subscriber.onCompleted();
-            }
-        });
-    }
-
-//    @Override
-//    public Observable<Object> searchDisk(String query, Class clazz) {
-//        return Observable.create(subscriber -> {
-//            for (Object userRealmModel :
-//                    realmManager.getWhere(query, clazz))
-//                if (!subscriber.isUnsubscribed())
-//                    subscriber.onNext(userRealmModel);
-//            if (!subscriber.isUnsubscribed())
-//                subscriber.onCompleted();
-//        });
-//    }
 
     @Override
     public Observable<Collection> searchCloud(String query, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant get from cloud in disk data store"));
-    }
-
-    @Override
-    public Observable<Collection> collectionFromCloud(Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant get from cloud in disk data store"));
-    }
-
-    @Override
-    public Observable<?> entityDetailsFromCloud(int itemId, Class domainClass, Class
-            dataClass) {
         return Observable.error(new Exception("cant get from cloud in disk data store"));
     }
 
@@ -123,32 +74,7 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> deleteFromCloud(Object realmObject, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant get from cloud in disk data store"));
-    }
-
-    @Override
     public Observable<?> deleteCollectionFromCloud(Collection collection, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant get from cloud in disk data store"));
     }
-
-    @Override
-    public Observable<?> deleteFromCloud(int itemId, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant get from cloud in disk data store"));
-    }
-    //--------------------------------------------------------------------------------------------//
-
-//    public Observable store(Class clazz, Object object) {
-//        try {
-//            realmRepository.storeObject(clazz, new JSONObject(new Gson().toJson(object, clazz)));
-//            return Observable.empty();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            return Observable.error(e);
-//        }
-//    }
-//
-//    public Observable<?> getById(Class clazz, String column, final int id) {
-//        return realmRepository.get(clazz, predicate -> predicate.equalTo(column, id));
-//    }
 }

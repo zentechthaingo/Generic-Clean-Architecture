@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -52,17 +51,16 @@ import rx.Subscription;
 /**
  * Activity that shows a list of Users.
  */
-public class UserListActivity extends BaseActivity implements HasComponent<UserComponent>, UserListView {
+public class UserListActivity extends BaseActivity implements HasComponent<UserComponent>, UserListView,
+        ActionMode.Callback {
 
-    // Whether or not the activity is in two-pane mode, i.e. running on a tablet device.
+    private static final String STATE_SCROLL = "scrollPosition";
     private boolean mTwoPane;
     private UserComponent userComponent;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
-    //--------------- Migration stuff --------------------------//
-    private static final String STATE_SCROLL = "scrollPosition";
     @Inject
-    GenericListPresenter userListPresenter;
+    GenericListPresenter mUserListPresenter;
     @Bind(R.id.rv_users)
     RecyclerView rv_users;
     @Bind(R.id.rl_progress)
@@ -72,27 +70,22 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Bind(R.id.bt_retry)
     Button bt_retry;
     @Bind(R.id.fab_add)
-    FloatingActionButton addFab;
-    private SearchView searchView;
-    private Subscription fabSubscription = null;
-    private UsersAdapter usersAdapter;
+    FloatingActionButton mAddFab;
+    private Subscription mFabSubscription = null;
+    private UsersAdapter mUsersAdapter;
+    private List<Pair<View, String>> mSharedElements;
+    private ActionMode actionMode;
     private UsersAdapter.OnItemClickListener onItemClickListener = new UsersAdapter.OnItemClickListener() {
         @Override
-        public void onUserItemClicked(UserModel userModel, UserViewHolder holder) {
-            if (userListPresenter != null && userModel != null)
-                userListPresenter.onUserClicked(userModel, holder);
-        }
-
-        @Override
-        public void onUserItemClicked(int position) {
-            if (actionMode != null)
-                toggleSelection(position);
+        public void onUserItemClicked(int position, UserModel userModel, UserViewHolder holder) {
+            if (mUserListPresenter != null && userModel != null && actionMode == null)
+                mUserListPresenter.onUserClicked(userModel, holder);
+            else toggleSelection(position);
         }
 
         @Override
         public boolean onItemLongClicked(int position) {
-            if (actionMode == null)
-                actionMode = startSupportActionMode(actionModeCallback);
+            actionMode = startSupportActionMode(UserListActivity.this);
             toggleSelection(position);
             return true;
         }
@@ -101,7 +94,6 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_list);
         initializeInjector();
         initialize();
         setupUI();
@@ -127,12 +119,16 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    // TODO: 4/3/16 Add fab shared elements!
     @Override
     public void onResume() {
         super.onResume();
-        userListPresenter.resume();
-        fabSubscription = RxView.clicks(addFab).subscribe(aVoid -> {
+        mUserListPresenter.resume();
+        mFabSubscription = RxView.clicks(mAddFab).subscribe(aVoid -> {
+            Pair<View, String> pair = null;
+            if (Utils.hasLollipop())
+                pair = new Pair<>(mAddFab, mAddFab.getTransitionName());
+            mSharedElements = new ArrayList<>();
+            mSharedElements.add(pair);
             if (mTwoPane) {
                 UserDetailsFragment fragment = UserDetailsFragment.newInstance(-1);
                 if (Utils.hasLollipop()) {
@@ -144,7 +140,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 Bundle arguments = new Bundle();
                 arguments.putBoolean(UserDetailsFragment.ADD_NEW_ITEM, true);
                 fragment.setArguments(arguments);
-                addFragment(R.id.detail_container, fragment);
+                addFragment(R.id.detail_container, fragment, mSharedElements);
             } else navigator.navigateToUserDetails(this, -1, null);
         });
     }
@@ -152,16 +148,16 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     public void onPause() {
         super.onPause();
-        userListPresenter.pause();
-        Utils.unsubscribeIfNotNull(fabSubscription);
-        Utils.unsubscribeIfNotNull(usersAdapter.getItemSubscription());
+        mUserListPresenter.pause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
-        userListPresenter.destroy();
+        mUserListPresenter.destroy();
+        Utils.unsubscribeIfNotNull(mFabSubscription);
+        Utils.unsubscribeIfNotNull(mUsersAdapter.getmCompositeSubscription());
     }
 
     private void initializeInjector() {
@@ -173,7 +169,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
     private void initialize() {
         getComponent(UserComponent.class).inject(this);
-        userListPresenter.setView(this);
+        mUserListPresenter.setView(this);
     }
 
     protected <C> C getComponent(Class<C> componentType) {
@@ -181,6 +177,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     }
 
     private void setupUI() {
+        setContentView(R.layout.activity_user_list);
         ButterKnife.bind(this);
 //        onSearchRequested();
         Window window = this.getWindow();
@@ -194,9 +191,9 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         if (findViewById(R.id.detail_container) != null) // Two pane for tablets(res/values-w900dp).
             mTwoPane = true;
         rv_users.setLayoutManager(new LinearLayoutManager(this));
-        usersAdapter = new UsersAdapter(this, new ArrayList<>());
-        usersAdapter.setOnItemClickListener(onItemClickListener);
-        rv_users.setAdapter(usersAdapter);
+        mUsersAdapter = new UsersAdapter(this, new ArrayList<>());
+        mUsersAdapter.setOnItemClickListener(onItemClickListener);
+        rv_users.setAdapter(mUsersAdapter);
         rv_users.setItemAnimator(new DefaultItemAnimator());
     }
 
@@ -225,15 +222,26 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     public void renderUserList(Collection<UserModel> userModelCollection) {
         if (userModelCollection != null) {
-            usersAdapter.setUsersCollection(userModelCollection);
-            usersAdapter.animateTo((List<UserModel>) userModelCollection);
+            mUsersAdapter.setUsersCollection(userModelCollection);
+            mUsersAdapter.animateTo((List<UserModel>) userModelCollection);
             rv_users.scrollToPosition(0);
         }
     }
 
-    // TODO: 3/27/16 Add Animation!
+    // TODO: 4/6/16 Reorganize!
     @Override
     public void viewUser(UserModel userModel, UserViewHolder holder) {
+        Pair<View, String> firstPair = null;
+        Pair<View, String> secondPair = null;
+        Pair<View, String> thirdPair = null;
+        if (Utils.hasLollipop()) {
+            firstPair = new Pair<>(holder.getmAvatar(), holder.getmAvatar()
+                    .getTransitionName());
+            secondPair = new Pair<>(holder.getTextViewTitle(),
+                    holder.getTextViewTitle().getTransitionName());
+            thirdPair = new Pair<>(mAddFab, mAddFab.getTransitionName());
+        }
+        mSharedElements = new ArrayList<>();
         if (mTwoPane) {
             UserDetailsFragment fragment = new UserDetailsFragment();
             if (Utils.hasLollipop()) {
@@ -241,23 +249,22 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 fragment.setEnterTransition(new Fade());
                 fragment.setExitTransition(new Fade());
                 fragment.setSharedElementReturnTransition(new DetailsTransition());
+                mSharedElements.add(firstPair);
+                mSharedElements.add(secondPair);
+                mSharedElements.add(thirdPair);
             }
             Bundle arguments = new Bundle();
             arguments.putInt(UserDetailsFragment.ARG_ITEM_ID, userModel.getUserId());
             arguments.putString(UserDetailsFragment.ARG_ITEM_IMAGE, userModel.getCoverUrl());
             arguments.putString(UserDetailsFragment.ARG_ITEM_NAME, userModel.getFullName());
             fragment.setArguments(arguments);
-            addFragment(R.id.detail_container, fragment);
-        } else {
-            if (Utils.hasLollipop()) {
-                Pair<View, String> pair = new Pair<>(holder.getmAvatar(), holder.getmAvatar().getTransitionName());
-                Pair<View, String> secondPair = new Pair<>(holder.getTextViewTitle(),
-                        holder.getTextViewTitle().getTransitionName());
-                navigator.navigateToUserDetails(this, userModel.getUserId(),
-                        ActivityOptions.makeSceneTransitionAnimation(this, pair, secondPair).toBundle());
-            } else
-                navigator.navigateToUserDetails(this, userModel.getUserId(), null);
-        }
+
+            addFragment(R.id.detail_container, fragment, mSharedElements);
+        } else if (Utils.hasLollipop())
+            navigator.navigateToUserDetails(this, userModel.getUserId(),
+                    ActivityOptions.makeSceneTransitionAnimation(this, firstPair, secondPair, thirdPair).toBundle());
+        else
+            navigator.navigateToUserDetails(this, userModel.getUserId(), null);
     }
 
     @Override
@@ -274,7 +281,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
      * Loads all users.
      */
     private void loadUserList() {
-        userListPresenter.initialize();
+        mUserListPresenter.initialize();
     }
 
     @OnClick(R.id.bt_retry)
@@ -286,51 +293,23 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.list_menu, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        // Define the listener
-        MenuItemCompat.OnActionExpandListener expandListener = new MenuItemCompat.OnActionExpandListener() {
+        SearchView mSearchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                // Do something when action item collapses
-                return true;  // Return true to collapse action view
+            public boolean onQueryTextSubmit(String query) {
+                mUserListPresenter.search(mUsersAdapter.getUsersCollection(), query);
+                return true;
             }
 
             @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                // Do something when expanded
-                return true;  // Return true to expand action view
+            public boolean onQueryTextChange(String newText) {
+                mUserListPresenter.search(mUsersAdapter.getUsersCollection(), newText);
+                return true;
             }
-        };
-        MenuItemCompat.setOnActionExpandListener(menu.findItem(R.id.menu_search), expandListener);
+        });
         return super.onCreateOptionsMenu(menu);
     }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.menu_search).setVisible(true).setEnabled(true);
-        menu.findItem(R.id.delete_item).setVisible(false).setEnabled(false);
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.delete_item:
-                usersAdapter.removeItems(usersAdapter.getSelectedItems());
-                return true;
-            case R.id.menu_search:
-                userListPresenter.search(searchView);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    //---------------------------------------------------------//
-
-    private ActionModeCallback actionModeCallback = new ActionModeCallback();
-    private ActionMode actionMode;
 
     /**
      * Toggle the selection state of an item.
@@ -341,8 +320,8 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
      * @param position Position of the item to toggle the selection state
      */
     private void toggleSelection(int position) {
-        usersAdapter.toggleSelection(position);
-        int count = usersAdapter.getSelectedItemCount();
+        mUsersAdapter.toggleSelection(position);
+        int count = mUsersAdapter.getSelectedItemCount();
         if (count == 0) {
             actionMode.finish();
         } else {
@@ -351,38 +330,35 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         }
     }
 
-    private class ActionModeCallback implements ActionMode.Callback {
-        @SuppressWarnings("unused")
-        private final String TAG = ActionModeCallback.class.getSimpleName();
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        mode.getMenuInflater().inflate(R.menu.selected_list_menu, menu);
+        return true;
+    }
 
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            mode.getMenuInflater().inflate(R.menu.list_menu, menu);
-            return true;
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        menu.findItem(R.id.delete_item).setVisible(true).setEnabled(true);
+        mToolbar.setVisibility(View.GONE);
+        return true;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete_item:
+                mUserListPresenter.deleteCollection(mUsersAdapter.getSelectedItemsIds());
+                mode.finish();
+                return true;
+            default:
+                return false;
         }
+    }
 
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.delete_item:
-                    usersAdapter.removeItems(usersAdapter.getSelectedItems());
-                    mode.finish();
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            usersAdapter.clearSelection();
-            actionMode = null;
-        }
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        mUsersAdapter.clearSelection();
+        actionMode = null;
+        mToolbar.setVisibility(View.VISIBLE);
     }
 }

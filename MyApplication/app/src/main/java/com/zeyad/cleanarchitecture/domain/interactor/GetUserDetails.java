@@ -49,22 +49,12 @@ public class GetUserDetails extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservableDelete(Object object, Class presentationClass, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant delete object from GetUserDetails"));
-    }
-
-    @Override
-    protected Observable buildUseCaseObservableDelete(long itemId, Class presentationClass, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant delete object from GetUserDetails"));
-    }
-
-    @Override
     protected Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant delete collection from GetUserDetails"));
     }
 
     @Override
-    protected Observable buildUseCaseObservableQuery(String query, Class presentationClass, Class domainClass, Class dataClass) {
+    protected Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant search object from GetUserDetails"));
     }
 }

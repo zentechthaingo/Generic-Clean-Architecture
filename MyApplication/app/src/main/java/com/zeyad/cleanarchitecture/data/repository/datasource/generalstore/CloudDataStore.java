@@ -115,7 +115,7 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<Collection> collectionFromCloud(Class domainClass, Class dataClass) {
+    public Observable<Collection> collection(Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
         return restApi.userCollection()
 //                .retryWhen(observable -> {
@@ -131,7 +131,7 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> entityDetailsFromCloud(final int itemId, Class domainClass, Class dataClass) {
+    public Observable<?> entityDetails(final int itemId, Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
         return restApi.objectById(itemId)
 //                .retryWhen(observable -> {
@@ -156,46 +156,18 @@ public class CloudDataStore implements DataStore {
 
     @Override
     public Observable<Collection> searchCloud(String query, Class domainClass, Class dataClass) {
-        return restApi.search(query).map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
-    }
-
-    @Override
-    public Observable<?> deleteFromCloud(int itemId, Class domainClass, Class dataClass) {
-        return restApi.deleteItemById(itemId).doOnError(throwable -> queueDeleteById.call(itemId));
-    }
-
-    @Override
-    public Observable<?> deleteFromCloud(Object object, Class domainClass, Class dataClass) {
-        return restApi.deleteItem(object).doOnError(throwable -> queueDelete.call(object));
+//        return restApi.search(query).map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
+        return Observable.empty();
     }
 
     @Override
     public Observable<?> deleteCollectionFromCloud(Collection collection, Class domainClass, Class dataClass) {
-        return restApi.deleteCollection(collection).doOnError(throwable -> queueDeleteCollection.call(collection));
-    }
-
-    @Override
-    public Observable<Collection> entityListFromDisk(Class clazz) {
-        return Observable.error(new Exception("cant get from disk in cloud data store"));
-    }
-
-    @Override
-    public Observable<?> entityDetailsFromDisk(int itemId, Class clazz) {
-        return Observable.error(new Exception("cant get from disk in cloud data store"));
+//        return restApi.deleteCollection(collection).doOnError(throwable -> queueDeleteCollection.call(collection));
+        return Observable.just(true);
     }
 
     @Override
     public Observable<?> putToDisk(RealmObject object) {
-        return Observable.error(new Exception("cant get from disk in cloud data store"));
-    }
-
-    @Override
-    public Observable<?> deleteFromDisk(int itemId, Class clazz) {
-        return Observable.error(new Exception("cant get from disk in cloud data store"));
-    }
-
-    @Override
-    public Observable<?> deleteFromDisk(Object realmObject, Class clazz) {
         return Observable.error(new Exception("cant get from disk in cloud data store"));
     }
 
@@ -205,7 +177,7 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<Collection> searchDisk(String query, Class clazz) {
+    public Observable<Collection> searchDisk(String query, String column, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant get from disk in cloud data store"));
     }
 }

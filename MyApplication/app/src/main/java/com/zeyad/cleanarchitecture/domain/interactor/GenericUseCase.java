@@ -51,24 +51,14 @@ public class GenericUseCase extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservableDelete(Object object, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.delete(object, domainClass, dataClass);
-    }
-
-    @Override
-    protected Observable buildUseCaseObservableDelete(long itemId, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.delete(itemId, domainClass, dataClass);
-    }
-
-    @Override
     protected Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass,
                                                               Class domainClass, Class dataClass) {
         return repository.deleteCollection(collection, presentationClass, domainClass, dataClass);
     }
 
     @Override
-    protected Observable buildUseCaseObservableQuery(String query, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.search(query, presentationClass, domainClass, dataClass);
+    protected Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
+        return repository.search(query, column, presentationClass, domainClass, dataClass);
     }
 
     private List<UserModel> filter(List<UserModel> models, String query) {

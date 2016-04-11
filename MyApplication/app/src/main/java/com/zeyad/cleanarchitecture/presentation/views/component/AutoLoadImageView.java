@@ -1,11 +1,8 @@
 package com.zeyad.cleanarchitecture.presentation.views.component;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -13,7 +10,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.domain.services.ImageDownloadIntentService;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.io.File;
@@ -97,11 +93,11 @@ public class AutoLoadImageView extends ImageView {
             loadBitmap(DISK);
         else {
             loadBitmap(CLOUD);
-            Intent intent = new Intent(getContext(), ImageDownloadIntentService.class);
-            getContext().startService(intent.putExtra(ImageDownloadIntentService.EXTRA_REMOTE_PATH, imageUrl)
-                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(imageUrl))
-                    .putExtra(ImageDownloadIntentService.WIDTH, getWidth())
-                    .putExtra(ImageDownloadIntentService.HEIGHT, getHeight()));
+//            getContext().startService(new Intent(getContext(), ImageDownloadIntentService.class)
+//                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_PATH, imageUrl)
+//                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(imageUrl))
+//                    .putExtra(ImageDownloadIntentService.WIDTH, getWidth())
+//                    .putExtra(ImageDownloadIntentService.HEIGHT, getHeight()));
         }
     }
 
@@ -142,20 +138,23 @@ public class AutoLoadImageView extends ImageView {
 
     // TODO: 3/24/16 Find more efficient way!
     public Bitmap getBitmap() {
-        Bitmap bitmap;
-        Drawable drawable = getDrawable();
-        if (drawable instanceof BitmapDrawable) {
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-            if (bitmapDrawable.getBitmap() != null)
-                return bitmapDrawable.getBitmap();
-        }
-        if (getWidth() <= 0 || getHeight() <= 0)
-            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
-        else
-            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, getWidth(), getHeight());
-        drawable.draw(canvas);
-        return bitmap;
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) getDrawable();
+        return (bitmapDrawable.getBitmap() != null) ? bitmapDrawable.getBitmap() : null;
+
+//        Bitmap bitmap;
+//        Drawable drawable = getDrawable();
+//        if (drawable instanceof BitmapDrawable) {
+//            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+//            if (bitmapDrawable.getBitmap() != null)
+//                return bitmapDrawable.getBitmap();
+//        }
+//        if (getWidth() <= 0 || getHeight() <= 0)
+//            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+//        else
+//            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(bitmap);
+//        drawable.setBounds(0, 0, getWidth(), getHeight());
+//        drawable.draw(canvas);
+//        return bitmap;
     }
 }
