@@ -8,13 +8,13 @@ import java.util.Collection;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Streaming;
+import retrofit2.http.Url;
 import rx.Observable;
 
 /**
@@ -35,7 +35,7 @@ public interface RestApi {
     /**
      * Retrieves an {@link rx.Observable} which will emit a {@link UserEntity}.
      *
-     * @param userId The user id used to get user data.
+     * @param userId The user id used to getById user data.
      */
     @GET("user_{id}.json")
     Observable<UserRealmModel> userRealmById(@Path("id") final int userId);
@@ -61,7 +61,11 @@ public interface RestApi {
 
     @Streaming
     @GET("/images/{index}.jpg")
-    Observable<Response> download(@Path("index") String index);
+    Observable<ResponseBody> download(@Path("index") String index);
+
+    @Streaming
+    @GET
+    Observable<ResponseBody> dynamicDownload(@Url String fileUrl);
 
     @Multipart
     @POST("upload")

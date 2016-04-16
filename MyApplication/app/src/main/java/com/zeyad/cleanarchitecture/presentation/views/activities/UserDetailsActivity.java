@@ -86,7 +86,7 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
             userId = savedInstanceState.getInt(INSTANCE_STATE_PARAM_USER_ID);
         ButterKnife.bind(this);
         // Show the Up button in the action bar.
-//        setSupportActionBar(mToolbar);
+        setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

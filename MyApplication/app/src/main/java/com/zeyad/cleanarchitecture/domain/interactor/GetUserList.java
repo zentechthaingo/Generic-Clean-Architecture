@@ -35,17 +35,17 @@ public class GetUserList extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant get list from GetUserDetails"));
+        return Observable.error(new Exception("cant getById list from GetUserDetails"));
     }
 
     @Override
     protected Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant get detail from GetUserDetails"));
+        return Observable.error(new Exception("cant getById detail from GetUserDetails"));
     }
 
     @Override
     protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant get detail from GetUserDetails"));
+        return Observable.error(new Exception("cant getById detail from GetUserDetails"));
     }
 
     @Override
@@ -55,6 +55,6 @@ public class GetUserList extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant get detail from GetUserDetails"));
+        return Observable.error(new Exception("cant getById detail from GetUserDetails"));
     }
 }

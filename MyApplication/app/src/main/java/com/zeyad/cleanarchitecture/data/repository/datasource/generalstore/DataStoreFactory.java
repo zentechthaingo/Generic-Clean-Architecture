@@ -3,6 +3,7 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 import android.content.Context;
 
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
+import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
@@ -40,8 +41,8 @@ public class DataStoreFactory {
     /**
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
-    public DataStore getAll(EntityDataMapper entityDataMapper, Class dataClass) {
-        if (mRealmManager.areItemsValid(dataClass) || !Utils.isNetworkAvailable(mContext))
+    public DataStore getAll(EntityDataMapper entityDataMapper) {
+        if (mRealmManager.areItemsValid(GeneralRealmManagerImpl.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE) || !Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);
         else
             return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
@@ -63,11 +64,11 @@ public class DataStoreFactory {
         return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
-    public DataStore deleteCollectionInCloud(EntityDataMapper entityDataMapper) {
+    public DataStore deleteCollectionFromCloud(EntityDataMapper entityDataMapper) {
         return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
-    public DataStore deleteCollectionInDisk(EntityDataMapper entityDataMapper) {
+    public DataStore deleteCollectionFromDisk(EntityDataMapper entityDataMapper) {
         return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
@@ -104,11 +105,11 @@ public class DataStoreFactory {
     public Observable<Collection> getAllUsersFromAllSources(Observable<Collection> cloud,
                                                             Observable<Collection> disk) {
         return Observable.concat(disk, cloud)
-                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(null));
+                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(GeneralRealmManagerImpl.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE));
     }
 
     public Observable getUserFromAllSources(Observable cloud, Observable disk) {
         return Observable.concat(disk, cloud)
-                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(null));
+                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(GeneralRealmManagerImpl.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE));
     }
 }

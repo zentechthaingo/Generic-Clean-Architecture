@@ -60,7 +60,7 @@ public class AndroidApplication extends Application {
 //        Stetho.initialize(Stetho.newInitializerBuilder(this)
 //                .enableDumpapp(new DumperPluginsProvider() {
 //                    @Override
-//                    public Iterable<DumperPlugin> get() {
+//                    public Iterable<DumperPlugin> getById() {
 //                        return new Stetho.DefaultDumperPluginsBuilder(this)
 //                                .provide(new MyDumperPlugin())
 //                                .finish();

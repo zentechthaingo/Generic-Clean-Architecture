@@ -129,11 +129,16 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).deleteItemById(userId);
     }
 
-    // TODO: 3/6/16 Test!
-    public static Observable<retrofit2.Response> download(String userId) {
+    public static Observable<ResponseBody> download(String userId) {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).download(userId);
+    }
+
+    public static Observable<ResponseBody> dynamicDwnload(String url) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicDownload(url);
     }
 
     // TODO: 4/6/16 Test!

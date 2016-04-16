@@ -3,6 +3,7 @@ package com.zeyad.cleanarchitecture.domain.interactor;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.models.User;
+import com.zeyad.cleanarchitecture.domain.models.mapper.ModelDataMapper;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 import com.zeyad.cleanarchitecture.presentation.model.UserModel;
 
@@ -18,16 +19,17 @@ import rx.Observable;
  * This class is a general implementation of {@link BaseUseCase} that represents a use case for
  * retrieving data related to an specific {@link User}.
  */
-// FIXME: 3/28/16 Test!
 public class GenericUseCase extends BaseUseCase {
 
     private final Repository repository;
+    private final ModelDataMapper modelDataMapper;
 
     @Inject
     public GenericUseCase(Repository repository, ThreadExecutor threadExecutor,
                           PostExecutionThread postExecutionThread) {
         super(threadExecutor, postExecutionThread);
         this.repository = repository;
+        this.modelDataMapper = new ModelDataMapper();
     }
 
     @Override
@@ -37,12 +39,14 @@ public class GenericUseCase extends BaseUseCase {
 
     @Override
     public Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.Collection(presentationClass, domainClass, dataClass);
+        return repository.Collection(presentationClass, domainClass, dataClass)
+                .map(collection -> modelDataMapper.transformAllToPresentation(collection, presentationClass));
     }
 
     @Override
     public Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.getById(itemId, presentationClass, domainClass, dataClass);
+        return repository.getById(itemId, presentationClass, domainClass, dataClass)
+                .map(item -> modelDataMapper.transformToPresentation(item, presentationClass));
     }
 
     @Override
@@ -58,17 +62,19 @@ public class GenericUseCase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.search(query, column, presentationClass, domainClass, dataClass);
+        return repository.search(query, column, presentationClass, domainClass, dataClass)
+                .map(collection -> modelDataMapper.transformAllToPresentation((Collection) collection, presentationClass));
     }
 
-    private List<UserModel> filter(List<UserModel> models, String query) {
+    private Observable filter(List<UserModel> models, String query) {
         query = query.toLowerCase();
         final List<UserModel> filteredModelList = new ArrayList<>();
+        String text;
         for (UserModel model : models) {
-            final String text = model.getFullName().toLowerCase();
+            text = model.getFullName().toLowerCase();
             if (text.contains(query))
                 filteredModelList.add(model);
         }
-        return filteredModelList;
+        return Observable.from(filteredModelList);
     }
 }

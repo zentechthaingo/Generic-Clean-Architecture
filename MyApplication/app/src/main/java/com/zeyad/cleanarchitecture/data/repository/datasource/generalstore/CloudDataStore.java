@@ -126,8 +126,7 @@ public class CloudDataStore implements DataStore {
 //                    return observable.compose(Utils.zipWithFlatMap(TAG));
 //                })
                 .doOnNext(saveAllGenericsToCacheAction)
-                .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass))
-                .compose(Utils.logSources(TAG, realmManager));
+                .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
     }
 
     @Override
@@ -143,15 +142,15 @@ public class CloudDataStore implements DataStore {
 //                })
                 .doOnNext(saveGenericToCacheAction)
                 .map(entities -> entityDataMapper.transformToDomain(entities, domainClass));
-//                .compose(Utils.logSource(TAG, realmManager));
     }
 
     @Override
     public Observable<?> postToCloud(Object object, Class domainClass, Class dataClass) {
-        return restApi.postItem(object)
-                .doOnNext(saveGenericToCacheAction)
-                .doOnError(throwable -> queuePost.call(object))
-                .map(realmModel -> entityDataMapper.transformToDomain(realmModel, domainClass));
+//        return restApi.postItem(object)
+//                .doOnNext(saveGenericToCacheAction)
+//                .doOnError(throwable -> queuePost.call(object))
+//                .map(realmModel -> entityDataMapper.transformToDomain(realmModel, domainClass));
+        return Observable.just(true);
     }
 
     @Override
@@ -168,16 +167,16 @@ public class CloudDataStore implements DataStore {
 
     @Override
     public Observable<?> putToDisk(RealmObject object) {
-        return Observable.error(new Exception("cant get from disk in cloud data store"));
+        return Observable.error(new Exception("cant getById from disk in cloud data store"));
     }
 
     @Override
     public Observable<?> deleteCollectionFromDisk(Collection collection, Class clazz) {
-        return Observable.error(new Exception("cant get from disk in cloud data store"));
+        return Observable.error(new Exception("cant getById from disk in cloud data store"));
     }
 
     @Override
     public Observable<Collection> searchDisk(String query, String column, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant get from disk in cloud data store"));
+        return Observable.error(new Exception("cant getById from disk in cloud data store"));
     }
 }

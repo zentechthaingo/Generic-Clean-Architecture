@@ -1,5 +1,6 @@
 package com.zeyad.cleanarchitecture.data.repository;
 
+import com.fernandocejas.frodo.annotation.RxLogObservable;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.DataStoreFactory;
@@ -14,6 +15,7 @@ import javax.inject.Singleton;
 
 import io.realm.RealmObject;
 import rx.Observable;
+import rx.functions.Func1;
 
 @Singleton
 public class DataRepository implements Repository {
@@ -35,55 +37,63 @@ public class DataRepository implements Repository {
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
+//    @RxLogObservable
     public Observable<Collection> Collection(Class presentationClass, Class domainClass, Class dataClass) {
-        return dataStoreFactory.getAll(entityDataMapper, dataClass)
-                .collection(domainClass, dataClass)
-                .map(realmModels -> entityDataMapper.transformAllToPresentation(realmModels, presentationClass));
+        return dataStoreFactory.getAll(entityDataMapper)
+                .collection(domainClass, dataClass);
     }
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
+//    @RxLogObservable
     public Observable<?> getById(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
         return dataStoreFactory.getById(itemId, entityDataMapper, dataClass)
-                .entityDetails(itemId, domainClass, dataClass)
-                .map(realmModel -> entityDataMapper.transformToPresentation(realmModel, presentationClass));
+                .entityDetails(itemId, domainClass, dataClass);
     }
 
     @Override
+    @RxLogObservable
     public Observable<?> put(Object object, Class presentationClass, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
                                 .putToDisk(entityDataMapper)
-                                .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass))
-                                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)),
+                                .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
                         dataStoreFactory
                                 .putToCloud(entityDataMapper)
-                                .postToCloud(object, domainClass, dataClass)
-                                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)));
+                                .postToCloud(object, domainClass, dataClass))
+                .first();
+//                .collect(HashSet::new, HashSet::add)
+//                .map(hashSet -> hashSet.iterator().next());
     }
 
     @Override
+    @RxLogObservable
     public Observable<?> deleteCollection(Collection collection, Class presentationClass, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
-                                .deleteCollectionInCloud(entityDataMapper)
+                                .deleteCollectionFromCloud(entityDataMapper)
                                 .deleteCollectionFromCloud(collection, domainClass, dataClass),
                         dataStoreFactory
-                                .deleteCollectionInDisk(entityDataMapper) //from disk
-                                .deleteCollectionFromDisk(collection, dataClass));
+                                .deleteCollectionFromDisk(entityDataMapper)
+                                .deleteCollectionFromDisk(collection, dataClass))
+                .first();
+//                .distinct()
+////                .collect(HashSet::new, HashSet::add)
+//                .flatMap(Observable::from);
     }
 
     @Override
+    @RxLogObservable
     public Observable<?> search(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
         return dataStoreFactory
                 .searchCloud(entityDataMapper)
                 .searchCloud(query, domainClass, dataClass)
-                .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass))
                 .mergeWith(dataStoreFactory
                         .searchDisk(entityDataMapper)
                         .searchDisk(query, column, domainClass, dataClass)
-                        .map(object1 -> entityDataMapper.transformToPresentation(object1, presentationClass)))
-                .collect(HashSet::new, HashSet::add)
-                .flatMap(Observable::from);
+                        .collect(HashSet::new, HashSet::add)
+                        .flatMap((Func1<HashSet<Object>, Observable<Collection>>)
+                                objects -> Observable.from((Collection) objects)))
+                .first();
     }
 }

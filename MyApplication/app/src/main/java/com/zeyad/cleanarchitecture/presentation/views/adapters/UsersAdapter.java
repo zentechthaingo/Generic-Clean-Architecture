@@ -60,7 +60,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     public void onBindViewHolder(UserViewHolder holder, final int position) {
         final UserModel userModel = usersCollection.get(position);
         holder.getTextViewTitle().setText(userModel.getFullName());
-        holder.getRl_row_user().setBackgroundColor(isSelected(position) ? Color.RED : Color.WHITE);
+        holder.getRl_row_user().setBackgroundColor(isSelected(position) ? Color.GRAY : Color.WHITE);
         mCompositeSubscription.add(
                 RxView.clicks(holder.itemView).subscribe(aVoid -> {
                     if (onItemClickListener != null)

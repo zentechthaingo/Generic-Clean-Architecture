@@ -35,7 +35,7 @@ import rx.Subscription;
 
 import static android.text.TextUtils.isEmpty;
 import static android.util.Patterns.EMAIL_ADDRESS;
-
+// TODO: 4/15/16 Add image upload!
 /**
  * Fragment that shows details of a certain user.
  */
@@ -294,16 +294,18 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     private void applyPalette() {
         if (Utils.hasM())
             Palette.from(((UserDetailsActivity) getActivity()).mDetailImage.getBitmap()).
-                    generate(palette -> {
-                        ((UserDetailsActivity) getActivity()).mCoordinatorLayout.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                            if (v.getHeight() == scrollX) {
-                                ((UserDetailsActivity) getActivity()).mToolbar.setTitleTextColor(palette.getLightVibrantColor(Color.TRANSPARENT));
-                                ((UserDetailsActivity) getActivity()).mToolbar.setBackground(new ColorDrawable(palette.getLightVibrantColor(Color.TRANSPARENT)));
-                            } else if (scrollY == 0) {
-                                ((UserDetailsActivity) getActivity()).mToolbar.setTitleTextColor(0);
-                                ((UserDetailsActivity) getActivity()).mToolbar.setBackground(null);
-                            }
-                        });
-                    });
+                    generate(palette -> ((UserDetailsActivity) getActivity()).mCoordinatorLayout
+                            .setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                                if (v.getHeight() == scrollX) {
+                                    ((UserDetailsActivity) getActivity()).mToolbar
+                                            .setTitleTextColor(palette.getLightVibrantColor(Color.TRANSPARENT));
+                                    ((UserDetailsActivity) getActivity()).mToolbar.
+                                            setBackground(new ColorDrawable(palette
+                                                    .getLightVibrantColor(Color.TRANSPARENT)));
+                                } else if (scrollY == 0) {
+                                    ((UserDetailsActivity) getActivity()).mToolbar.setTitleTextColor(0);
+                                    ((UserDetailsActivity) getActivity()).mToolbar.setBackground(null);
+                                }
+                            }));
     }
 }

@@ -101,7 +101,7 @@ public class ImageDownloadGcmService extends GcmTaskService {
 //                        if (cat != null && !cat.isEmpty()) {
 //                            if (!categorizedKeys.containsKey(cat))
 //                                categorizedKeys.put(cat, new ArrayList<String>());
-//                            categorizedKeys.get(cat).add(url);
+//                            categorizedKeys.getById(cat).add(url);
 //                        }
 //                        localIntent.putExtra(EXTENDED_DATA_STATUS, EXTENDED_DATA_STATUS_COMPLETED)
 //                                .putExtra(EXTENDED_DATA_FILE_PATH, targetPath);
@@ -136,11 +136,11 @@ public class ImageDownloadGcmService extends GcmTaskService {
     private void download(final File target, String index) {
 //        try {
 //            FileOutputStream fOut = new FileOutputStream(target);
-//            Glide.with(get())
+//            Glide.with(getById())
 //                    .load(imageUrl)
 //                    .asBitmap()
 //                    .into(intent.getIntExtra(WIDTH, 100), intent.getIntExtra(HEIGHT, 100))
-//                    .get()
+//                    .getById()
 //                    .compress(Bitmap.CompressFormat.PNG, 85, fOut);
 //            fOut.flush();
 //            fOut.close();

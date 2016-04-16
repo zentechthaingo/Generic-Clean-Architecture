@@ -37,11 +37,6 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".presentation.views.activities.SearchResultsActivity">
-            <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".SearchableActivity" />
-        </activity>
         <activity
             android:name=".presentation.views.activities.UserDetailsActivity"
             android:label="@string/activity_title_user_details"

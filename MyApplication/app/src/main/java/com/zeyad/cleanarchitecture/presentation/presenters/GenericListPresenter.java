@@ -15,7 +15,6 @@ import com.zeyad.cleanarchitecture.presentation.model.UserModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -82,15 +81,6 @@ public class GenericListPresenter implements BasePresenter {
 //        showUsersCollectionInView(filter(userModels, query));
         getGeneralListUseCase.executeSearch(query, "fullName", new SearchSubscriber(),
                 UserModel.class, User.class, UserRealmModel.class);
-    }
-
-    private List<UserModel> filter(List<UserModel> models, String query) {
-        query = query.toLowerCase();
-        final List<UserModel> filteredModelList = new ArrayList<>();
-        for (UserModel model : models)
-            if (model.getFullName().toLowerCase().contains(query))
-                filteredModelList.add(model);
-        return filteredModelList;
     }
 
     public void deleteCollection(Collection<Integer> ids) {
@@ -193,10 +183,11 @@ public class GenericListPresenter implements BasePresenter {
 
         @Override
         public void onNext(Boolean success) {
-            if (success)
+            if (success) {
+                getUserList();
 //                mUsersAdapter.removeItems(mUsersAdapter.getSelectedItems());
                 Log.d("OnDelete", "Success!");
-            else Log.d("OnDelete", "Fail!");
+            } else Log.d("OnDelete", "Fail!");
         }
     }
 }

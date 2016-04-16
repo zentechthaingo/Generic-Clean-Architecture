@@ -18,7 +18,7 @@ public interface GeneralRealmManager {
      *
      * @param userId The user id to retrieve data.
      */
-    Observable<?> get(final int userId, Class clazz);
+    Observable<?> getById(final int userId, Class clazz);
 
     /**
      * Gets an {@link Observable} which will emit a {@link RealmResults <UserRealmModel>}.
@@ -30,7 +30,7 @@ public interface GeneralRealmManager {
      *
      * @param realmModel Element to insert in the cache.
      */
-    void put(RealmObject realmModel);
+    Observable<?> put(RealmObject realmModel);
 
     /**
      * Puts and element into the cache.
@@ -54,7 +54,7 @@ public interface GeneralRealmManager {
      */
     boolean isItemValid(final int itemId, Class clazz);
 
-    boolean areItemsValid(Class clazz);
+    boolean areItemsValid(String destination);
 
     /**
      * Evict all elements of the cache.
@@ -65,7 +65,7 @@ public interface GeneralRealmManager {
 
     void evict(final RealmObject realmModel, Class clazz);
 
-    void evictCollection(Collection<Integer> collection, Class dataClass);
+    Observable<?> evictCollection(Collection<Integer> collection, Class dataClass);
 
     Context getContext();
 
