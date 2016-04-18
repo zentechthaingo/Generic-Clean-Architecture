@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.domain.interactor;
+package com.zeyad.cleanarchitecture.domain.interactors;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;

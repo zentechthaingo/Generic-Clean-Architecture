@@ -99,8 +99,8 @@ public class EntityDataMapper {
      */
     public Collection<User> transformAllToDomain(Collection userRealmModels, Class domainClass) {
         Collection<User> users = new ArrayList<>();
-        for (int i = 0; i < userRealmModels.size(); i++)
-            users.add(transformToDomain(userRealmModels.toArray()[i], domainClass));
+        for (Object realmObject : userRealmModels)
+            users.add(transformToDomain(realmObject, domainClass));
         return users;
     }
 

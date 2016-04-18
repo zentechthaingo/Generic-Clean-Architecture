@@ -4,8 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.zeyad.cleanarchitecture.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecture.domain.exceptions.ErrorBundle;
-import com.zeyad.cleanarchitecture.domain.interactor.BaseUseCase;
-import com.zeyad.cleanarchitecture.domain.interactor.DefaultSubscriber;
+import com.zeyad.cleanarchitecture.domain.interactors.BaseUseCase;
+import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;

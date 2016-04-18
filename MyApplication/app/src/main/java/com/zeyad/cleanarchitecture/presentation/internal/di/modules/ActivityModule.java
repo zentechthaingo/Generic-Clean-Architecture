@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecture.domain.interactor.GenericUseCase;
+import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.navigation.Navigator;

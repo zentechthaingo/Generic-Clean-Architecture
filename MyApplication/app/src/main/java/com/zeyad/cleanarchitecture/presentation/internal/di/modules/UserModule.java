@@ -2,10 +2,10 @@ package com.zeyad.cleanarchitecture.presentation.internal.di.modules;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecture.domain.interactor.BaseUseCase;
-import com.zeyad.cleanarchitecture.domain.interactor.GenericUseCase;
-import com.zeyad.cleanarchitecture.domain.interactor.GetUserDetails;
-import com.zeyad.cleanarchitecture.domain.interactor.GetUserList;
+import com.zeyad.cleanarchitecture.domain.interactors.BaseUseCase;
+import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
+import com.zeyad.cleanarchitecture.domain.interactors.GetUserDetails;
+import com.zeyad.cleanarchitecture.domain.interactors.GetUserList;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;

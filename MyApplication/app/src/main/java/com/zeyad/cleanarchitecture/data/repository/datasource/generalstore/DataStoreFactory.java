@@ -42,7 +42,8 @@ public class DataStoreFactory {
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
     public DataStore getAll(EntityDataMapper entityDataMapper) {
-        if (mRealmManager.areItemsValid(GeneralRealmManagerImpl.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE) || !Utils.isNetworkAvailable(mContext))
+        if (mRealmManager.areItemsValid(GeneralRealmManagerImpl.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE)
+                || !Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);
         else
             return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);

@@ -2,7 +2,7 @@ package com.zeyad.cleanarchetecture.domain.interactor;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecture.domain.interactor.BaseUseCase;
+import com.zeyad.cleanarchitecture.domain.interactors.BaseUseCase;
 
 import org.junit.Before;
 import org.junit.Test;

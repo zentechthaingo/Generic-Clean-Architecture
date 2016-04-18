@@ -37,15 +37,14 @@ public class DataRepository implements Repository {
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
-//    @RxLogObservable
+    @RxLogObservable
     public Observable<Collection> Collection(Class presentationClass, Class domainClass, Class dataClass) {
-        return dataStoreFactory.getAll(entityDataMapper)
-                .collection(domainClass, dataClass);
+        return dataStoreFactory.getAll(entityDataMapper).collection(domainClass, dataClass);
     }
 
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
-//    @RxLogObservable
+    @RxLogObservable
     public Observable<?> getById(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
         return dataStoreFactory.getById(itemId, entityDataMapper, dataClass)
                 .entityDetails(itemId, domainClass, dataClass);
@@ -55,7 +54,7 @@ public class DataRepository implements Repository {
     @RxLogObservable
     public Observable<?> put(Object object, Class presentationClass, Class domainClass, Class dataClass) {
         return Observable
-                .merge(dataStoreFactory
+                .concat(dataStoreFactory
                                 .putToDisk(entityDataMapper)
                                 .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
                         dataStoreFactory
@@ -75,8 +74,8 @@ public class DataRepository implements Repository {
                                 .deleteCollectionFromCloud(collection, domainClass, dataClass),
                         dataStoreFactory
                                 .deleteCollectionFromDisk(entityDataMapper)
-                                .deleteCollectionFromDisk(collection, dataClass))
-                .first();
+                                .deleteCollectionFromDisk(collection, dataClass));
+//                .first();
 //                .distinct()
 ////                .collect(HashSet::new, HashSet::add)
 //                .flatMap(Observable::from);

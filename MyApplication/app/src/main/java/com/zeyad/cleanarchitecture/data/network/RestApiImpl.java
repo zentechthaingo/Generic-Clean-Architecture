@@ -66,7 +66,7 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public Observable<ResponseBody> download(@Path("index") String index) {
+    public Observable<ResponseBody> download(@Path("index") int index) {
         return ApiConnection.download(index);
     }
 

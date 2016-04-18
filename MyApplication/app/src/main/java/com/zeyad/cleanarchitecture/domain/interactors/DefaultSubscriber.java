@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.domain.interactor;
+package com.zeyad.cleanarchitecture.domain.interactors;
 
 /**
  * Default subscriber base class to be used whenever you want default error handling.

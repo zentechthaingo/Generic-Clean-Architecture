@@ -1,5 +1,9 @@
 package com.zeyad.cleanarchitecture.data.entities.mapper;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.models.User;
@@ -11,11 +15,25 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.realm.RealmObject;
+
 @Singleton
-public class UserEntityDataMapper {
+public class UserEntityDataMapper extends EntityDataMapper {
+    private Gson gson;
 
     @Inject
     public UserEntityDataMapper() {
+        gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
+            @Override
+            public boolean shouldSkipField(FieldAttributes f) {
+                return f.getDeclaringClass().equals(RealmObject.class);
+            }
+
+            @Override
+            public boolean shouldSkipClass(Class<?> clazz) {
+                return false;
+            }
+        }).create();
     }
 
     /**
@@ -138,5 +156,37 @@ public class UserEntityDataMapper {
                 userList.add(user);
         }
         return userList;
+    }
+
+    /**
+     * Transform a {@link User} into an {@link User}.
+     *
+     * @param userRealmModel Object to be transformed.
+     * @return {@link User} if valid {@link User} otherwise null.
+     */
+    public User transformToDomain(UserRealmModel userRealmModel) {
+        if (userRealmModel != null) {
+            User user = new User(userRealmModel.getUserId());
+            user.setCoverUrl(userRealmModel.getCoverUrl());
+            user.setFullName(userRealmModel.getFullName());
+            user.setDescription(userRealmModel.getDescription());
+            user.setFollowers(userRealmModel.getFollowers());
+            user.setEmail(userRealmModel.getEmail());
+            return user;
+        }
+        return null;
+    }
+
+    /**
+     * Transform a {@link UserRealmModel} into an {@link User}.
+     *
+     * @param userRealmModels Objects to be transformed.
+     * @return {@link User} if valid {@link UserRealmModel} otherwise null.
+     */
+    public Collection<User> transformAllToDomain(Collection<UserRealmModel> userRealmModels) {
+        Collection<User> users = new ArrayList<>();
+        for (UserRealmModel realmObject : userRealmModels)
+            users.add(transformToDomain(realmObject));
+        return users;
     }
 }

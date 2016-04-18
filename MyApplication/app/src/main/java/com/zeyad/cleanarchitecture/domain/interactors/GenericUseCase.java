@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.domain.interactor;
+package com.zeyad.cleanarchitecture.domain.interactors;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
@@ -51,7 +51,8 @@ public class GenericUseCase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.put(object, presentationClass, domainClass, dataClass);
+        return repository.put(object, presentationClass, domainClass, dataClass)
+                .map(item -> modelDataMapper.transformToPresentation(item, presentationClass));
     }
 
     @Override

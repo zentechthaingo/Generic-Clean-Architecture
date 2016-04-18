@@ -15,7 +15,7 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.UserModule;
-import com.zeyad.cleanarchitecture.presentation.views.component.AutoLoadImageView;
+import com.zeyad.cleanarchitecture.presentation.views.components.AutoLoadImageView;
 import com.zeyad.cleanarchitecture.presentation.views.fragments.UserDetailsFragment;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 

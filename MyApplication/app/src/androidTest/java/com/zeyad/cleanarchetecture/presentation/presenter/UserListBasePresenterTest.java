@@ -3,7 +3,7 @@ package com.zeyad.cleanarchetecture.presentation.presenter;
 import android.content.Context;
 import android.test.AndroidTestCase;
 
-import com.zeyad.cleanarchitecture.domain.interactor.GetUserList;
+import com.zeyad.cleanarchitecture.domain.interactors.GetUserList;
 import com.zeyad.cleanarchitecture.presentation.model.mapper.UserModelDataMapper;
 import com.zeyad.cleanarchitecture.presentation.presenters.UserListPresenter;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;

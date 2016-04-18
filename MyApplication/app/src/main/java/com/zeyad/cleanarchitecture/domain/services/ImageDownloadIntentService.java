@@ -8,20 +8,24 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.bumptech.glide.Glide;
+import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
+
+import okhttp3.ResponseBody;
+import rx.Subscriber;
 
 public class ImageDownloadIntentService extends IntentService {
 
@@ -44,7 +48,7 @@ public class ImageDownloadIntentService extends IntentService {
     private final Map<String, List<String>> categorizedKeys = new Hashtable<>();
     private File dir;
     private BitmapFactory.Options bmOptions;
-    private Intent intent;
+    //    private Intent intent;
 
     public ImageDownloadIntentService() {
         super("ImageDownloadIntentService");
@@ -88,7 +92,7 @@ public class ImageDownloadIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        this.intent = intent;
+//        this.intent = intent;
         String url = intent.getStringExtra(EXTRA_REMOTE_PATH);
         String name = Utils.getFileNameFromUrl(url);
         String cat = intent.getStringExtra(EXTRA_CATEGORY);
@@ -116,7 +120,7 @@ public class ImageDownloadIntentService extends IntentService {
             } else {
                 Log.d(TAG, "Downloading " + url + " into " + targetPath);
                 try {
-                    download(target, url);
+                    download(target, Integer.parseInt(url.charAt(url.lastIndexOf("_") + 1) + ""));
                     downloadedKeys.add(url);
                     if (cat != null && !cat.isEmpty()) {
                         if (!categorizedKeys.containsKey(cat))
@@ -139,28 +143,52 @@ public class ImageDownloadIntentService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
-    // FIXME: 4/3/16 Fix Dimensions !
-    private void download(final File target, String imageUrl) {
-        try {
-            FileOutputStream fOut = new FileOutputStream(target);
-            int width, height;
-            width = intent.getIntExtra(WIDTH, 100);
-            height = intent.getIntExtra(HEIGHT, 100);
-            if (width == 0)
-                width = 100;
-            if (height == 0)
-                height = 100;
-            Glide.with(getApplicationContext())
-                    .load(imageUrl)
-                    .asBitmap()
-                    .into(width, height)
-                    .get()
-                    .compress(Bitmap.CompressFormat.PNG, 85, fOut);
-            fOut.flush();
-            fOut.close();
-        } catch (InterruptedException | ExecutionException | IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, e.getMessage());
-        }
+    // TODO: 4/16/16 Test!
+    private void download(final File target, int index) {
+        RestApiImpl restApi = new RestApiImpl();
+        restApi.download(index).subscribe(new Subscriber<ResponseBody>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onNext(ResponseBody responseBody) {
+                try {
+                    InputStream inputStream = null;
+                    OutputStream outputStream = null;
+                    try {
+                        byte[] fileReader = new byte[4096];
+                        long fileSize = responseBody.contentLength();
+                        long fileSizeDownloaded = 0;
+                        inputStream = responseBody.byteStream();
+                        outputStream = new FileOutputStream(target);
+                        while (true) {
+                            int read = inputStream.read(fileReader);
+                            if (read == -1)
+                                break;
+                            outputStream.write(fileReader, 0, read);
+                            fileSizeDownloaded += read;
+                            Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+                        }
+                        outputStream.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (inputStream != null)
+                            inputStream.close();
+                        if (outputStream != null)
+                            outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

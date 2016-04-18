@@ -60,8 +60,8 @@ public interface RestApi {
     Observable<Collection> search(@Path("query") String query);
 
     @Streaming
-    @GET("/images/{index}.jpg")
-    Observable<ResponseBody> download(@Path("index") String index);
+    @GET("cover_{index}.jpg")
+    Observable<ResponseBody> download(@Path("index") int index);
 
     @Streaming
     @GET

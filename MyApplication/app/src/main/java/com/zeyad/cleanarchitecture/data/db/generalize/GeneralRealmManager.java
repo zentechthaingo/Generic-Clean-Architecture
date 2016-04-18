@@ -61,9 +61,9 @@ public interface GeneralRealmManager {
      */
     void evictAll(Class clazz);
 
-    void evictById(final int itemId, Class clazz);
-
     void evict(final RealmObject realmModel, Class clazz);
+
+    boolean evictById(final int itemId, Class clazz);
 
     Observable<?> evictCollection(Collection<Integer> collection, Class dataClass);
 

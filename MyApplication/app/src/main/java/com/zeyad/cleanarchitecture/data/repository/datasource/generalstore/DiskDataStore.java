@@ -1,9 +1,10 @@
 package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
-import com.fernandocejas.frodo.annotation.RxLogObservable;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
+import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
@@ -15,7 +16,7 @@ import rx.Observable;
 public class DiskDataStore implements DataStore {
 
     private GeneralRealmManager mRealmManager;
-    private EntityDataMapper mEntityDataMapper;
+    private UserEntityDataMapper mEntityDataMapper;
     public final String TAG = "DiskUserDataStore";
 
     /**
@@ -25,45 +26,38 @@ public class DiskDataStore implements DataStore {
      */
     public DiskDataStore(GeneralRealmManager realmManager, EntityDataMapper entityDataMapper) {
         mRealmManager = realmManager;
-        mEntityDataMapper = entityDataMapper;
+        mEntityDataMapper = new UserEntityDataMapper();
     }
 
     @Override
-    @RxLogObservable
     public Observable<Collection> collection(Class domainClass, Class dataClass) {
         return mRealmManager.getAll(dataClass)
-                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels, domainClass))
+                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels))
                 .compose(Utils.logSources(TAG, mRealmManager));
     }
 
     @Override
-    @RxLogObservable
     public Observable<?> entityDetails(final int itemId, Class domainClass, Class dataClass) {
         return mRealmManager.getById(itemId, dataClass)
-                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass))
+                .map(realmModel -> mEntityDataMapper.transformToDomain((UserRealmModel) realmModel))
                 .compose(Utils.logSource(TAG, mRealmManager));
     }
 
     @Override
     public Observable<Collection> searchDisk(String query, String column, Class domainClass, Class dataClass) {
         return mRealmManager.getWhere(dataClass, predicate -> predicate.equalTo(column, query))
-                .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel, domainClass));
+                .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel));
     }
 
     @Override
     public Observable<?> putToDisk(RealmObject object) {
-        return Observable.defer(() -> {
-            mRealmManager.put(object);
-            return Observable.just(object);
-        });
+        return Observable.defer(() -> mRealmManager.put(object))
+                .map(realmModel -> mEntityDataMapper.transformToDomain((UserRealmModel) realmModel));
     }
 
     @Override
     public Observable<?> deleteCollectionFromDisk(Collection<Integer> collection, Class clazz) {
-        return Observable.defer(() -> {
-            mRealmManager.evictCollection(collection, clazz);
-            return Observable.just(true);
-        });
+        return Observable.defer(() -> mRealmManager.evictCollection(collection, clazz));
     }
 
     @Override

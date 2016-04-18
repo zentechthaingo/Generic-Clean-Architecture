@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.GsonBuilder;
+import com.zeyad.cleanarchitecture.BuildConfig;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.data.executor.JobExecutor;
 import com.zeyad.cleanarchitecture.utilities.Constants;
@@ -37,7 +38,33 @@ public class ApiConnection {
     private static Retrofit retrofit;
 
     private static Retrofit createRetro2Client() {
-        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
+        final OkHttpClient okHttpClient;
+        if (BuildConfig.DEBUG)
+            okHttpClient = new OkHttpClient.Builder()
+                    .cache(new Cache(new File(Constants.CACHE_DIR, "http"), 10485760))
+//                .connectionSpecs(Collections.singletonList(new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+//                        .tlsVersions(TlsVersion.TLS_1_2)
+//                        .cipherSuites(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+//                                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+//                                CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256)
+//                        .build()))
+                    .addNetworkInterceptor(chain -> {
+                        Request request = chain.request();
+                        Log.d("OkHttp REQUEST", request.toString());
+                        Log.d("OkHttp REQUEST Headers", request.headers().toString());
+                        Response response = chain.proceed(request);
+                        response = response.newBuilder()
+                                .header("Cache-Control", String.format("public, max-age=%d, max-stale=%d",
+                                        60, 2419200)).build();
+                        Log.d("OkHttp RESPONSE", response.toString());
+                        Log.d("OkHttp RESPONSE Headers", response.headers().toString());
+                        return response;
+                    })
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .build();
+        else okHttpClient = new OkHttpClient.Builder()
                 .cache(new Cache(new File(Constants.CACHE_DIR, "http"), 10485760))
 //                .connectionSpecs(Collections.singletonList(new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
 //                        .tlsVersions(TlsVersion.TLS_1_2)
@@ -45,18 +72,6 @@ public class ApiConnection {
 //                                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 //                                CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256)
 //                        .build()))
-                .addNetworkInterceptor(chain -> {
-                    Request request = chain.request();
-                    Log.d("OkHttp REQUEST", request.toString());
-                    Log.d("OkHttp REQUEST Headers", request.headers().toString());
-                    Response response = chain.proceed(request);
-                    response = response.newBuilder()
-                            .header("Cache-Control", String.format("public, max-age=%d, max-stale=%d",
-                                    60, 2419200)).build();
-                    Log.d("OkHttp RESPONSE", response.toString());
-                    Log.d("OkHttp RESPONSE Headers", response.headers().toString());
-                    return response;
-                })
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
@@ -129,10 +144,10 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).deleteItemById(userId);
     }
 
-    public static Observable<ResponseBody> download(String userId) {
+    public static Observable<ResponseBody> download(int index) {
         if (retrofit == null)
             retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).download(userId);
+        return retrofit.create(RestApi.class).download(index);
     }
 
     public static Observable<ResponseBody> dynamicDwnload(String url) {

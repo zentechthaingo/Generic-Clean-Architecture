@@ -304,7 +304,10 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                mUserListPresenter.search(mUsersAdapter.getUsersCollection(), newText);
+                if (newText.isEmpty())
+                    mUserListPresenter.showUsersCollectionInView(mUserListPresenter.getmUserModels());
+                else
+                    mUserListPresenter.search(mUsersAdapter.getUsersCollection(), newText);
                 return true;
             }
         });

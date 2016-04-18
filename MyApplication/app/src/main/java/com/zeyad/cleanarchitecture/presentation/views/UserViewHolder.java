@@ -6,7 +6,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.presentation.views.component.AutoLoadImageView;
+import com.zeyad.cleanarchitecture.presentation.views.components.AutoLoadImageView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

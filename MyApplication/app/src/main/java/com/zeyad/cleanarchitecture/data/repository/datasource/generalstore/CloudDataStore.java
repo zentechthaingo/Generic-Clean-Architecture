@@ -1,6 +1,7 @@
 package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -21,7 +22,9 @@ import java.util.Collection;
 
 import io.realm.RealmObject;
 import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class CloudDataStore implements DataStore {
 
@@ -31,7 +34,25 @@ public class CloudDataStore implements DataStore {
     private static final String TAG = "CloudDataStore", POST_TAG = "postObject", DELETE_TAG = "delete",
             DELETE_BY_ID_TAG = "deleteById";
     private Class dataClass;
-    private final Action1<Object> saveGenericToCacheAction = object -> realmManager.put((RealmObject) entityDataMapper.transformToRealm(object, dataClass));
+    private final Action1<Object> saveGenericToCacheAction =
+            object -> realmManager.put((RealmObject) entityDataMapper.transformToRealm(object, dataClass))
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new Subscriber<Object>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onNext(Object o) {
+                            Log.d(TAG, object.getClass().getName() + " added!");
+                        }
+                    });
+    ;
     private final Action1<Collection> saveAllGenericsToCacheAction = collection -> {
         Collection<RealmObject> realmObjectCollection = new ArrayList<>();
         realmObjectCollection.addAll((Collection) entityDataMapper.transformAllToRealm(collection, dataClass));
@@ -39,54 +60,60 @@ public class CloudDataStore implements DataStore {
     };
     private Action1<Object> queuePost = object -> {
         if (Utils.hasLollipop()) {
-            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
+            if (GoogleApiAvailability.getInstance()
+                    .isGooglePlayServicesAvailable(realmManager.getContext().getApplicationContext())
                     == ConnectionResult.SUCCESS) {
                 Bundle extras = new Bundle();
                 extras.putString(ImageDownloadIntentService.POST_OBJECT, new Gson().toJson(object));
-                GcmNetworkManager.getInstance(realmManager.getContext()).schedule(new OneoffTask.Builder()
-                        .setService(ImageDownloadGcmService.class)
-                        .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
-                        .setExtras(extras)
-                        .setTag(POST_TAG)
-                        .build()); // gcm service
+                GcmNetworkManager.getInstance(realmManager.getContext().getApplicationContext().getApplicationContext())
+                        .schedule(new OneoffTask.Builder()
+                                .setService(ImageDownloadGcmService.class)
+                                .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
+                                .setExtras(extras)
+                                .setTag(POST_TAG)
+                                .build()); // gcm service
             }
         }
     };
     private final Action1<Integer> queueDeleteById = integer -> {
         if (Utils.hasLollipop()) {
-            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
+            if (GoogleApiAvailability.getInstance()
+                    .isGooglePlayServicesAvailable(realmManager.getContext().getApplicationContext())
                     == ConnectionResult.SUCCESS) {
                 Bundle extras = new Bundle();
                 extras.putInt(ImageDownloadIntentService.DELETE_OBJECT, integer);
-                GcmNetworkManager.getInstance(realmManager.getContext()).schedule(new OneoffTask.Builder()
-                        .setService(ImageDownloadGcmService.class)
-                        .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
-                        .setExtras(extras)
-                        .setTag(DELETE_BY_ID_TAG)
-                        .build()); // gcm service
+                GcmNetworkManager.getInstance(realmManager.getContext().getApplicationContext())
+                        .schedule(new OneoffTask.Builder()
+                                .setService(ImageDownloadGcmService.class)
+                                .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
+                                .setExtras(extras)
+                                .setTag(DELETE_BY_ID_TAG)
+                                .build()); // gcm service
             }
         }
     };
     private final Action1<Object> queueDelete = object -> {
         if (Utils.hasLollipop()) {
-            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
+            if (GoogleApiAvailability.getInstance()
+                    .isGooglePlayServicesAvailable(realmManager.getContext().getApplicationContext())
                     == ConnectionResult.SUCCESS) {
                 Bundle extras = new Bundle();
                 extras.putString(ImageDownloadIntentService.POST_OBJECT, new Gson().toJson(object));
-                GcmNetworkManager.getInstance(realmManager.getContext()).schedule(new OneoffTask.Builder()
-                        .setService(ImageDownloadGcmService.class)
-                        .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
-                        .setExtras(extras)
-                        .setTag(DELETE_TAG)
-                        .build()); // gcm service
+                GcmNetworkManager.getInstance(realmManager.getContext().getApplicationContext())
+                        .schedule(new OneoffTask.Builder()
+                                .setService(ImageDownloadGcmService.class)
+                                .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
+                                .setExtras(extras)
+                                .setTag(DELETE_TAG)
+                                .build()); // gcm service
             }
         }
     };
     private final Action1<Collection> queueDeleteCollection = collection -> {
         if (Utils.hasLollipop()) {
-            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext())
+            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager.getContext().getApplicationContext())
                     == ConnectionResult.SUCCESS) {
-                GcmNetworkManager gcmNetworkManager = GcmNetworkManager.getInstance(realmManager.getContext());
+                GcmNetworkManager gcmNetworkManager = GcmNetworkManager.getInstance(realmManager.getContext().getApplicationContext());
                 Bundle extras = new Bundle();
                 for (Object object : collection) {
                     extras.putString(ImageDownloadIntentService.POST_OBJECT, new Gson().toJson(object));

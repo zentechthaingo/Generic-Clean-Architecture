@@ -94,7 +94,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     }
 
     public Collection<Integer> getSelectedItemsIds() {
-        return null;
+        ArrayList<Integer> integers = new ArrayList<>();
+        for (UserModel userModel : usersCollection)
+            if (userModel.isChecked())
+                integers.add(userModel.getUserId());
+        return integers;
     }
 
     private void validateUsersCollection(Collection<UserModel> usersCollection) {
@@ -122,10 +126,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
      * @param position Position of the item to toggle the selection status for
      */
     public void toggleSelection(int position) {
-        if (selectedItems.get(position, false))
+        if (selectedItems.get(position, false)) {
             selectedItems.delete(position);
-        else
+            usersCollection.get(position).setChecked(false);
+        } else {
             selectedItems.put(position, true);
+            usersCollection.get(position).setChecked(true);
+        }
         notifyItemChanged(position);
     }
 
@@ -135,8 +142,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     public void clearSelection() {
         List<Integer> selection = getSelectedItems();
         selectedItems.clear();
-        for (Integer i : selection)
+        for (Integer i : selection) {
+            usersCollection.get(i).setChecked(false);
             notifyItemChanged(i);
+        }
     }
 
     /**
@@ -155,9 +164,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
      */
     public List<Integer> getSelectedItems() {
         List<Integer> items = new ArrayList<>(selectedItems.size());
-        for (int i = 0; i < selectedItems.size(); ++i) {
+        for (int i = 0; i < selectedItems.size(); ++i)
             items.add(selectedItems.keyAt(i));
-        }
         return items;
     }
 

@@ -1,6 +1,6 @@
 package com.zeyad.cleanarchitecture.domain.executors;
 
-import com.zeyad.cleanarchitecture.domain.interactor.BaseUseCase;
+import com.zeyad.cleanarchitecture.domain.interactors.BaseUseCase;
 
 import java.util.concurrent.Executor;
 

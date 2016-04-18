@@ -2,7 +2,7 @@ package com.zeyad.cleanarchetecture.domain.interactor;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecture.domain.interactor.GetUserDetails;
+import com.zeyad.cleanarchitecture.domain.interactors.GetUserDetails;
 import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.views.component;
+package com.zeyad.cleanarchitecture.presentation.views.components;
 
 import android.content.Context;
 import android.graphics.Bitmap;

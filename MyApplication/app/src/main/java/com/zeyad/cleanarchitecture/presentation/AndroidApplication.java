@@ -10,6 +10,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.Logger;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.zeyad.cleanarchitecture.BuildConfig;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.ApplicationComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerApplicationComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule;
@@ -40,8 +41,9 @@ public class AndroidApplication extends Application {
         initializeRealm();
         initializeFirebase();
         initializeInjector();
-        initializeStetho();
         initializeLeakCanary();
+        if (BuildConfig.DEBUG)
+            initializeStetho();
     }
 
     private void initializeLeakCanary() {
@@ -57,24 +59,16 @@ public class AndroidApplication extends Application {
         new OkHttpClient.Builder()
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
-//        Stetho.initialize(Stetho.newInitializerBuilder(this)
-//                .enableDumpapp(new DumperPluginsProvider() {
-//                    @Override
-//                    public Iterable<DumperPlugin> getById() {
-//                        return new Stetho.DefaultDumperPluginsBuilder(this)
-//                                .provide(new MyDumperPlugin())
-//                                .finish();
-//                    }
-//                })
-//                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-//                .build());
+        Stetho.initialize(Stetho.newInitializerBuilder(this)
+                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                .build());
     }
 
     private void initializeRealm() {
         RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .rxFactory(new RealmObservableFactory())
                 .build();
-        Realm.deleteRealm(config);
         Realm.setDefaultConfiguration(config);
     }
 

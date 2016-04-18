@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -13,6 +15,7 @@ import javax.inject.Singleton;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
+import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Func1;
@@ -40,18 +43,14 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
     @Override
     public Observable<?> getById(final int itemId, Class clazz) {
-        return Observable.defer(() -> Observable.just(Realm.getDefaultInstance()
-                .where(clazz).equalTo("userId", itemId).findFirst()));
-//        return Realm.getDefaultInstance().asObservable()
-//                .map(realm -> realm.where(clazz)
-//                        .equalTo("itemId", itemId)
-//                        .findFirstAsync())
-//                .asObservable();
+        return Observable.defer(() ->
+                Observable.just(Realm.getDefaultInstance()
+                        .where(clazz).equalTo("userId", itemId).findFirst()));
     }
 
     @Override
     public Observable<Collection> getAll(Class clazz) {
-        return Observable.defer(() -> Observable.from(Arrays.asList(Realm.getDefaultInstance().where(clazz).findAll())));
+        return Observable.defer(() -> Observable.from(Arrays.asList(Realm.getDefaultInstance().allObjects(clazz))));
     }
 
     @Override
@@ -74,16 +73,6 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                 query = predicate.call(query);
             return Observable.from(Arrays.asList(query.findAll()));
         });
-//        return Realm.getDefaultInstance()
-//                .asObservable()
-//                .map(realm -> {
-//                    RealmQuery query = realm.where(clazz);
-//                    if (predicate != null)
-//                        query = predicate.call(query);
-//                    return Arrays.asList(query.findAllAsync().toArray());
-//                })
-//                .asObservable()
-//                .map(userRealmModels -> Arrays.asList(userRealmModels.toArray()));
     }
 
     @Override
@@ -132,8 +121,11 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     public boolean isCached(int itemId, Class clazz) {
         mRealm = Realm.getDefaultInstance();
         mRealm.beginTransaction();
-        boolean isCached = mRealm.where(clazz).equalTo("userId", itemId).findFirst() != null;
+        UserRealmModel realmObject = mRealm.where(UserRealmModel.class).equalTo("userId", itemId).findFirst();
+        boolean isCached = realmObject != null;
+        isCached = isCached && realmObject.getCoverUrl() != null;
         mRealm.commitTransaction();
+        mRealm.close();
         return isCached;
     }
 
@@ -147,18 +139,16 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         return (System.currentTimeMillis() - getFromPreferences(destination)) <= EXPIRATION_TIME;
     }
 
-    // FIXME: 3/5/16 access from the same thread!
     @Override
     public void evictAll(Class clazz) {
         Observable.defer(() -> {
-            Realm.getDefaultInstance().where(clazz).findAll().clear();
-            return Observable.just(true);
-        })
-//        Realm.getDefaultInstance().asObservable().map(realm -> {
-//            mRealm.where(clazz).findAll().clear();
-//            return true;
-//        })
-                .subscribeOn(Schedulers.io())
+            mRealm = Realm.getDefaultInstance();
+            RealmResults results = mRealm.where(clazz).findAll();
+            mRealm.beginTransaction();
+            results.clear();
+            mRealm.commitTransaction();
+            return Observable.just(results.isValid());
+        }).subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Object>() {
                     @Override
                     public void onCompleted() {
@@ -176,18 +166,16 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                 });
     }
 
+
     @Override
-    public void evictById(final int itemId, Class clazz) {
+    public void evict(final RealmObject realmModel, Class clazz) {
         Observable.defer(() -> {
-            Realm.getDefaultInstance().where(clazz).equalTo("userId", itemId).findFirst().removeFromRealm();
-            return Observable.just(true);
-        })
-//        mRealm = Realm.getDefaultInstance();
-//        mRealm.asObservable().map(realm -> {
-//            mRealm.where(clazz).equalTo("userId", itemId).findFirst().removeFromRealm();
-//            return true;
-//        })
-                .subscribeOn(Schedulers.io())
+            mRealm = Realm.getDefaultInstance();
+            mRealm.beginTransaction();
+            realmModel.removeFromRealm();
+            mRealm.commitTransaction();
+            return Observable.just(realmModel.isValid());
+        }).subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Object>() {
                     @Override
                     public void onCompleted() {
@@ -206,46 +194,43 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     }
 
     @Override
-    public void evict(final RealmObject realmModel, Class clazz) {
-        Observable.defer(() -> {
-            realmModel.removeFromRealm();
-            return Observable.just(true);
-        })
-//        mRealm = Realm.getDefaultInstance();
-//        mRealm.asObservable().map(aVoid -> {
-//            realmModel.removeFromRealm();
-//            return true;
-//        })
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<Object>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+    public boolean evictById(final int itemId, Class clazz) {
+        mRealm = Realm.getDefaultInstance();
+        RealmObject toDelete = mRealm.where(clazz).equalTo("userId", itemId).findFirst();
+        if (toDelete != null) {
+            mRealm.beginTransaction();
+            toDelete.removeFromRealm();
+            mRealm.commitTransaction();
+            mRealm.close();
+            return toDelete.isValid();
+        } else return true;
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-                        Log.d(TAG, clazz.getSimpleName() + " deleted!");
-                    }
-                });
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(new Subscriber<Object>() {
+//                    @Override
+//                    public void onCompleted() {
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    @Override
+//                    public void onNext(Object o) {
+//                        Log.d(TAG, clazz.getSimpleName() + " deleted!");
+//                    }
+//                });
     }
 
     @Override
     public Observable<?> evictCollection(Collection<Integer> collection, Class dataClass) {
         return Observable.defer(() -> {
-            for (Integer id : collection)
-                evictById(id, dataClass);
-            return Observable.just(true);
+            boolean isDeleted = true;
+            for (int i = 0; i < collection.size(); i++)
+                isDeleted = isDeleted && !evictById(collection.iterator().next(), dataClass);
+            return Observable.just(isDeleted);
         });
-//        return Realm.getDefaultInstance().asObservable().map(aVoid -> {
-//            for (Integer id : collection)
-//                evictById(id, dataClass);
-//            return Observable.just(true);
-//        });
     }
 
     @Override
@@ -263,7 +248,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                 Context.MODE_PRIVATE).edit();
         editor.putLong(destination, value);
         editor.apply();
-        Log.d(TAG, "writeToPreferences: " + value);
+        Log.d(TAG, "writeToPreferencesTo " + destination + ": " + value);
     }
 
     /**
