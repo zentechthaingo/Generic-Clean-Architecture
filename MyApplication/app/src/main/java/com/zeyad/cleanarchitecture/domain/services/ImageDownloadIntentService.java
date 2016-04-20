@@ -27,6 +27,7 @@ import java.util.Set;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 
+// TODO: 4/19/16 Inject data layer
 public class ImageDownloadIntentService extends IntentService {
 
     public static final String TAG = ImageDownloadIntentService.class.getSimpleName(),
@@ -92,7 +93,6 @@ public class ImageDownloadIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-//        this.intent = intent;
         String url = intent.getStringExtra(EXTRA_REMOTE_PATH);
         String name = Utils.getFileNameFromUrl(url);
         String cat = intent.getStringExtra(EXTRA_CATEGORY);
@@ -103,9 +103,9 @@ public class ImageDownloadIntentService extends IntentService {
                 downloadedKeys.add(url);
                 localCopy = true;
             }
-        Intent localIntent = new Intent(DOWNLOAD_STATUS_CHANGED + "-" + filter).putExtra(EXTENDED_DATA_KEY,
-                url);
-        File target = Utils.buildFileFromFilename(Utils.getFileNameFromUrl(url));
+        Intent localIntent = new Intent(DOWNLOAD_STATUS_CHANGED + "-" + filter)
+                .putExtra(EXTENDED_DATA_KEY, url);
+        File target = Utils.buildFileFromFilename(name);
         String targetPath = target.getAbsolutePath();
         if (downloadedKeys.contains(url)) {
             if (localCopy)
@@ -131,10 +131,8 @@ public class ImageDownloadIntentService extends IntentService {
                             .putExtra(EXTENDED_DATA_FILE_PATH, targetPath);
                 } catch (Exception e) {
                     target = new File(targetPath);
-                    if (target.exists()) {
-                        target.delete();
-                        Log.e(TAG, "Delete corrupted file");
-                    }
+                    if (target.exists())
+                        Log.e(TAG, "Delete corrupted file: " + target.delete());
                     e.printStackTrace();
                     localIntent.putExtra(EXTENDED_DATA_STATUS, EXTENDED_DATA_STATUS_FAILED);
                 }
@@ -143,7 +141,6 @@ public class ImageDownloadIntentService extends IntentService {
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
-    // TODO: 4/16/16 Test!
     private void download(final File target, int index) {
         RestApiImpl restApi = new RestApiImpl();
         restApi.download(index).subscribe(new Subscriber<ResponseBody>() {

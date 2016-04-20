@@ -31,71 +31,69 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
         boolean onItemLongClicked(int position);
     }
 
-    private List<UserModel> usersCollection;
-    private final LayoutInflater layoutInflater;
-    private OnItemClickListener onItemClickListener;
+    private List<UserModel> mUsersCollection;
+    private final LayoutInflater mLayoutInflater;
+    private OnItemClickListener mOnItemClickListener;
     private CompositeSubscription mCompositeSubscription;
-    private SparseBooleanArray selectedItems;
+    private SparseBooleanArray mSelectedItems;
 
     public UsersAdapter(Context context, Collection<UserModel> usersCollection) {
         validateUsersCollection(usersCollection);
-        layoutInflater = (LayoutInflater) context
+        mLayoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.usersCollection = (List<UserModel>) usersCollection;
-        selectedItems = new SparseBooleanArray();
+        this.mUsersCollection = (List<UserModel>) usersCollection;
+        mSelectedItems = new SparseBooleanArray();
         mCompositeSubscription = new CompositeSubscription();
     }
 
     @Override
     public int getItemCount() {
-        return (usersCollection != null) ? usersCollection.size() : 0;
+        return (mUsersCollection != null) ? mUsersCollection.size() : 0;
     }
 
     @Override
     public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new UserViewHolder(layoutInflater.inflate(R.layout.row_user, parent, false));
+        return new UserViewHolder(mLayoutInflater.inflate(R.layout.row_user, parent, false));
     }
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, final int position) {
-        final UserModel userModel = usersCollection.get(position);
+        final UserModel userModel = mUsersCollection.get(position);
         holder.getTextViewTitle().setText(userModel.getFullName());
         holder.getRl_row_user().setBackgroundColor(isSelected(position) ? Color.GRAY : Color.WHITE);
         mCompositeSubscription.add(
                 RxView.clicks(holder.itemView).subscribe(aVoid -> {
-                    if (onItemClickListener != null)
-                        onItemClickListener.onUserItemClicked(position, userModel, holder);
+                    if (mOnItemClickListener != null)
+                        mOnItemClickListener.onUserItemClicked(position, userModel, holder);
                 }));
         mCompositeSubscription.add(RxView.longClicks(holder.itemView).subscribe(aVoid -> {
-            if (onItemClickListener != null) {
-                holder.getRl_row_user().setBackgroundColor(Color.RED);
-                onItemClickListener.onItemLongClicked(usersCollection.indexOf(userModel));
-            }
+            if (mOnItemClickListener != null)
+                mOnItemClickListener.onItemLongClicked(mUsersCollection.indexOf(userModel));
         }));
     }
 
     @Override
     public long getItemId(int position) {
-        return usersCollection.get(position).getUserId();
+        return mUsersCollection.get(position).getUserId();
     }
 
-    public List<UserModel> getUsersCollection() {
-        return usersCollection;
+    public List<UserModel> getmUsersCollection() {
+        return mUsersCollection;
     }
 
-    public void setUsersCollection(Collection<UserModel> usersCollection) {
-        validateUsersCollection(usersCollection);
-        this.usersCollection = (List<UserModel>) usersCollection;
+    public void setmUsersCollection(Collection<UserModel> mUsersCollection) {
+        validateUsersCollection(mUsersCollection);
+        this.mUsersCollection = (List<UserModel>) mUsersCollection;
         notifyDataSetChanged();
     }
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+    public void setmOnItemClickListener(OnItemClickListener mOnItemClickListener) {
+        this.mOnItemClickListener = mOnItemClickListener;
     }
 
     public Collection<Integer> getSelectedItemsIds() {
         ArrayList<Integer> integers = new ArrayList<>();
-        for (UserModel userModel : usersCollection)
+        for (UserModel userModel : mUsersCollection)
             if (userModel.isChecked())
                 integers.add(userModel.getUserId());
         return integers;
@@ -117,7 +115,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
      * @return true if the item is selected, false otherwise
      */
     public boolean isSelected(int position) {
-        return getSelectedItems().contains(position);
+        return getmSelectedItems().contains(position);
     }
 
     /**
@@ -126,12 +124,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
      * @param position Position of the item to toggle the selection status for
      */
     public void toggleSelection(int position) {
-        if (selectedItems.get(position, false)) {
-            selectedItems.delete(position);
-            usersCollection.get(position).setChecked(false);
+        if (mSelectedItems.get(position, false)) {
+            mSelectedItems.delete(position);
+            mUsersCollection.get(position).setChecked(false);
         } else {
-            selectedItems.put(position, true);
-            usersCollection.get(position).setChecked(true);
+            mSelectedItems.put(position, true);
+            mUsersCollection.get(position).setChecked(true);
         }
         notifyItemChanged(position);
     }
@@ -140,10 +138,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
      * Clear the selection status for all items
      */
     public void clearSelection() {
-        List<Integer> selection = getSelectedItems();
-        selectedItems.clear();
+        List<Integer> selection = getmSelectedItems();
+        mSelectedItems.clear();
         for (Integer i : selection) {
-            usersCollection.get(i).setChecked(false);
+            mUsersCollection.get(i).setChecked(false);
             notifyItemChanged(i);
         }
     }
@@ -154,7 +152,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
      * @return Selected items count
      */
     public int getSelectedItemCount() {
-        return selectedItems.size();
+        return mSelectedItems.size();
     }
 
     /**
@@ -162,10 +160,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
      *
      * @return List of selected items ids
      */
-    public List<Integer> getSelectedItems() {
-        List<Integer> items = new ArrayList<>(selectedItems.size());
-        for (int i = 0; i < selectedItems.size(); ++i)
-            items.add(selectedItems.keyAt(i));
+    public List<Integer> getmSelectedItems() {
+        List<Integer> items = new ArrayList<>(mSelectedItems.size());
+        for (int i = 0; i < mSelectedItems.size(); ++i)
+            items.add(mSelectedItems.keyAt(i));
         return items;
     }
 
@@ -192,7 +190,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     private void removeRange(int positionStart, int itemCount) {
         for (int i = 0; i < itemCount; ++i)
-            usersCollection.remove(positionStart);
+            mUsersCollection.remove(positionStart);
         notifyItemRangeRemoved(positionStart, itemCount);
     }
 
@@ -205,8 +203,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     }
 
     private void applyAndAnimateRemovals(List<UserModel> newModels) {
-        for (int i = usersCollection.size() - 1; i >= 0; i--) {
-            final UserModel model = usersCollection.get(i);
+        for (int i = mUsersCollection.size() - 1; i >= 0; i--) {
+            final UserModel model = mUsersCollection.get(i);
             if (!newModels.contains(model))
                 removeItem(i);
         }
@@ -215,7 +213,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private void applyAndAnimateAdditions(List<UserModel> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
             final UserModel model = newModels.get(i);
-            if (!usersCollection.contains(model))
+            if (!mUsersCollection.contains(model))
                 addItem(i, model);
         }
     }
@@ -223,7 +221,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
     private void applyAndAnimateMovedItems(List<UserModel> newModels) {
         for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
             final UserModel model = newModels.get(toPosition);
-            final int fromPosition = usersCollection.indexOf(model);
+            final int fromPosition = mUsersCollection.indexOf(model);
             if (fromPosition >= 0 && fromPosition != toPosition)
                 moveItem(fromPosition, toPosition);
         }
@@ -231,18 +229,18 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     public UserModel removeItem(int position) {
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position, usersCollection.size());
-        return usersCollection.remove(position);
+        notifyItemRangeChanged(position, mUsersCollection.size());
+        return mUsersCollection.remove(position);
     }
 
     public void addItem(int position, UserModel model) {
-        usersCollection.add(position, model);
+        mUsersCollection.add(position, model);
         notifyItemInserted(position);
-        notifyItemChanged(position, usersCollection.size());
+        notifyItemChanged(position, mUsersCollection.size());
     }
 
     public void moveItem(int fromPosition, int toPosition) {
-        usersCollection.add(toPosition, usersCollection.remove(fromPosition));
+        mUsersCollection.add(toPosition, mUsersCollection.remove(fromPosition));
         notifyItemMoved(fromPosition, toPosition);
     }
 }

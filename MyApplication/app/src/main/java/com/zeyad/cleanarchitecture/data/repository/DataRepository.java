@@ -59,8 +59,8 @@ public class DataRepository implements Repository {
                                 .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
                         dataStoreFactory
                                 .putToCloud(entityDataMapper)
-                                .postToCloud(object, domainClass, dataClass))
-                .first();
+                                .postToCloud(object, domainClass, dataClass));
+//                .first();
 //                .collect(HashSet::new, HashSet::add)
 //                .map(hashSet -> hashSet.iterator().next());
     }
@@ -92,7 +92,7 @@ public class DataRepository implements Repository {
                         .searchDisk(query, column, domainClass, dataClass)
                         .collect(HashSet::new, HashSet::add)
                         .flatMap((Func1<HashSet<Object>, Observable<Collection>>)
-                                objects -> Observable.from((Collection) objects)))
-                .first();
+                                objects -> Observable.from((Collection) objects)));
+//                .first();
     }
 }

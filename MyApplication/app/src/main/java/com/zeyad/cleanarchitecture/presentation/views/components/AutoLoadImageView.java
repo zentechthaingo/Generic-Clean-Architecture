@@ -1,6 +1,7 @@
 package com.zeyad.cleanarchitecture.presentation.views.components;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zeyad.cleanarchitecture.R;
+import com.zeyad.cleanarchitecture.domain.services.ImageDownloadIntentService;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.io.File;
@@ -93,11 +95,11 @@ public class AutoLoadImageView extends ImageView {
             loadBitmap(DISK);
         else {
             loadBitmap(CLOUD);
-//            getContext().startService(new Intent(getContext(), ImageDownloadIntentService.class)
-//                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_PATH, imageUrl)
-//                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(imageUrl))
-//                    .putExtra(ImageDownloadIntentService.WIDTH, getWidth())
-//                    .putExtra(ImageDownloadIntentService.HEIGHT, getHeight()));
+            getContext().startService(new Intent(getContext(), ImageDownloadIntentService.class)
+                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_PATH, imageUrl)
+                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(imageUrl))
+                    .putExtra(ImageDownloadIntentService.WIDTH, getWidth())
+                    .putExtra(ImageDownloadIntentService.HEIGHT, getHeight()));
         }
     }
 

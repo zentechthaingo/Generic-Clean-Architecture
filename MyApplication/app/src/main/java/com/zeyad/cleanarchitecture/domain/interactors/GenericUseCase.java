@@ -14,7 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import rx.Observable;
-
+// TODO: 4/19/16 remove data mapper
 /**
  * This class is a general implementation of {@link BaseUseCase} that represents a use case for
  * retrieving data related to an specific {@link User}.

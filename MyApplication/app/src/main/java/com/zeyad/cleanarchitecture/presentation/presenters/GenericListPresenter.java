@@ -186,7 +186,7 @@ public class GenericListPresenter implements BasePresenter {
         public void onNext(Boolean success) {
             if (success) {
                 getUserList();
-//                mUsersAdapter.removeItems(mUsersAdapter.getSelectedItems());
+//                mUsersAdapter.removeItems(mUsersAdapter.getmSelectedItems());
                 Log.d("OnDelete", "Success!");
             } else Log.d("OnDelete", "Fail!");
         }
