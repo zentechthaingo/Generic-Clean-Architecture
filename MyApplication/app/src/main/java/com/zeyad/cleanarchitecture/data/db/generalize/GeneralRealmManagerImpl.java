@@ -8,17 +8,17 @@ import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmObject;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -49,30 +49,16 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     }
 
     @Override
-    public Observable<Collection> getAll(Class clazz) {
+    public Observable<List> getAll(Class clazz) {
         return Observable.defer(() -> Observable.from(Arrays.asList(Realm.getDefaultInstance().allObjects(clazz))));
     }
 
     @Override
-    public Observable<Collection> getWhere(Class clazz, Func1<RealmQuery, RealmQuery> predicate) {
-//        BehaviorSubject behaviorSubject = BehaviorSubject.create(getInner(clazz, predicate));
-//        realmQueryCollection.add(clazz, predicate, behaviorSubject);
-//        return Observable.from(realmQueryCollection.getQuerables(clazz))
-//                .subscribe(realmQuerable -> {
-//                    if (!realmQuerable.getSubject().hasObservers()) {
-//                        realmQueryCollection.getQueryables().remove(realmQuerable);
-//                    } else {
-//                        RealmResults realmResults = getInner(clazz, realmQuerable.getPredicate());
-//                        realmResults.load();
-//                        realmQuerable.getSubject().onNext(realmResults);
-//                    }
-//                });
-        return Observable.defer(() -> {
-            RealmQuery query = Realm.getDefaultInstance().where(clazz);
-            if (predicate != null)
-                query = predicate.call(query);
-            return Observable.from(Arrays.asList(query.findAll()));
-        });
+    public Observable<List> getWhere(Class clazz, String query, String filterKey) {
+        return Observable.defer(() -> Observable.from(Arrays.asList(Realm.getDefaultInstance()
+                .where(clazz)
+                .beginsWith(filterKey, query, Case.INSENSITIVE)
+                .findAll())));
     }
 
     @Override
@@ -91,7 +77,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     }
 
     @Override
-    public void putAll(Collection<RealmObject> realmModels) {
+    public void putAll(List<RealmObject> realmModels) {
         Observable.defer(() -> {
             mRealm = Realm.getDefaultInstance();
             mRealm.beginTransaction();
@@ -264,34 +250,4 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     public Realm getRealm() {
         return mRealm;
     }
-
-    //    // TODO: 3/14/16 Check it out!
-//    RealmQueryableCollection realmQueryCollection;
-
-    //
-//    public <T> Observable<T> getById(Class clazz, Func1<RealmQuery, RealmQuery> predicate) {
-//        BehaviorSubject<T> behaviorSubject = BehaviorSubject.create((T) getInner(clazz, predicate));
-//        realmQueryCollection.add(clazz, predicate, behaviorSubject);
-//        return behaviorSubject;
-//    }
-//
-//    public <T extends RealmObject> RealmResults<T> getInner(Class clazz, Func1<RealmQuery, RealmQuery> predicate) {
-//        RealmQuery query = mRealm.where(clazz);
-//        if (predicate != null)
-//            query = predicate.call(query);
-//        return query.findAllAsync();
-//    }
-//
-//    private void notifyObservers(Class clazz) {
-//        Observable.from(realmQueryCollection.getQuerables(clazz))
-//                .subscribe(realmQuerable -> {
-//                    if (!realmQuerable.getSubject().hasObservers()) {
-//                        realmQueryCollection.getQueryables().remove(realmQuerable);
-//                    } else {
-//                        RealmResults realmResults = getInner(clazz, realmQuerable.getPredicate());
-//                        realmResults.load();
-//                        realmQuerable.getSubject().onNext(realmResults);
-//                    }
-//                });
-//    }
 }

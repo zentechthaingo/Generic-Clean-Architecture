@@ -5,12 +5,11 @@ import android.content.Context;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
 import java.util.Collection;
+import java.util.List;
 
 import io.realm.RealmObject;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
-import rx.functions.Func1;
 
 public interface GeneralRealmManager {
     /**
@@ -23,7 +22,7 @@ public interface GeneralRealmManager {
     /**
      * Gets an {@link Observable} which will emit a {@link RealmResults <UserRealmModel>}.
      */
-    Observable<Collection> getAll(Class clazz);
+    Observable<List> getAll(Class clazz);
 
     /**
      * Puts and element into the cache.
@@ -37,7 +36,7 @@ public interface GeneralRealmManager {
      *
      * @param realmModels Element to insert in the cache.
      */
-    void putAll(Collection<RealmObject> realmModels);
+    void putAll(List<RealmObject> realmModels);
 
     /**
      * Checks if an element (User) exists in the cache.
@@ -69,5 +68,5 @@ public interface GeneralRealmManager {
 
     Context getContext();
 
-    Observable<Collection> getWhere(Class clazz, Func1<RealmQuery, RealmQuery> predicate);
+    Observable<List> getWhere(Class clazz, String query, String filterKey);
 }

@@ -19,6 +19,7 @@ import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import io.realm.RealmObject;
 import rx.Observable;
@@ -52,10 +53,9 @@ public class CloudDataStore implements DataStore {
                             Log.d(TAG, object.getClass().getName() + " added!");
                         }
                     });
-    ;
-    private final Action1<Collection> saveAllGenericsToCacheAction = collection -> {
-        Collection<RealmObject> realmObjectCollection = new ArrayList<>();
-        realmObjectCollection.addAll((Collection) entityDataMapper.transformAllToRealm(collection, dataClass));
+    private final Action1<List> saveAllGenericsToCacheAction = collection -> {
+        List<RealmObject> realmObjectCollection = new ArrayList<>();
+        realmObjectCollection.addAll((List) entityDataMapper.transformAllToRealm(collection, dataClass));
         realmManager.putAll(realmObjectCollection);
     };
     private Action1<Object> queuePost = object -> {
@@ -142,7 +142,7 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<Collection> collection(Class domainClass, Class dataClass) {
+    public Observable<List> collection(Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
         return restApi.userCollection()
 //                .retryWhen(observable -> {
@@ -181,7 +181,7 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<Collection> searchCloud(String query, Class domainClass, Class dataClass) {
+    public Observable<List> searchCloud(String query, Class domainClass, Class dataClass) {
 //        return restApi.search(query).map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
         return Observable.empty();
     }
@@ -203,7 +203,7 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<Collection> searchDisk(String query, String column, Class domainClass, Class dataClass) {
+    public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant getById from disk in cloud data store"));
     }
 }

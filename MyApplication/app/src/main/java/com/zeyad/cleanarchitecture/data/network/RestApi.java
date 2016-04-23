@@ -4,6 +4,7 @@ import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
 import java.util.Collection;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -27,10 +28,10 @@ public interface RestApi {
      * Retrieves an {@link rx.Observable} which will emit a Collection of {@link UserEntity}.
      */
     @GET("users.json")
-    Observable<Collection> userCollection();
+    Observable<List> userCollection();
 
     @GET("users.json")
-    Observable<Collection<UserRealmModel>> userRealmModelCollection();
+    Observable<List<UserRealmModel>> userRealmModelCollection();
 
     /**
      * Retrieves an {@link rx.Observable} which will emit a {@link UserEntity}.
@@ -57,7 +58,7 @@ public interface RestApi {
     Observable<Object> postItem(@Path("id") final Object object);
 
     @GET("user_{id}.json")
-    Observable<Collection> search(@Path("query") String query);
+    Observable<List> search(@Path("query") String query);
 
     @Streaming
     @GET("cover_{index}.jpg")

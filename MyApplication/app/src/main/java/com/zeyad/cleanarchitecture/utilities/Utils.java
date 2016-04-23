@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -52,8 +53,8 @@ public class Utils {
     }
 
     // Simple logging to let us know what each source is returning
-    public static Observable.Transformer<Collection, Collection> logSources(final String source,
-                                                                            GeneralRealmManager realmManager) {
+    public static Observable.Transformer<List, List> logSources(final String source,
+                                                                      GeneralRealmManager realmManager) {
         return observable -> observable.doOnNext(entities -> {
             if (entities == null)
                 System.out.println(source + " does not have any data.");

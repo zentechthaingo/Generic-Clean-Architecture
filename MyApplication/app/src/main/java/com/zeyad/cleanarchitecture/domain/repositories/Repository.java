@@ -3,6 +3,7 @@ package com.zeyad.cleanarchitecture.domain.repositories;
 import com.zeyad.cleanarchitecture.domain.models.User;
 
 import java.util.Collection;
+import java.util.List;
 
 import rx.Observable;
 
@@ -13,7 +14,7 @@ public interface Repository {
     /**
      * Get an {@link rx.Observable} which will emit a Collection of Items.
      */
-    Observable<Collection> Collection(Class presentationClass, Class domainClass, Class dataClass);
+    Observable<List> Collection(Class presentationClass, Class domainClass, Class dataClass);
 
     /**
      * Get an {@link rx.Observable} which will emit an Item.

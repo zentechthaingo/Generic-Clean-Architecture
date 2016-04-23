@@ -192,7 +192,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
             mTwoPane = true;
         rv_users.setLayoutManager(new LinearLayoutManager(this));
         mUsersAdapter = new UsersAdapter(this, new ArrayList<>());
-        mUsersAdapter.setmOnItemClickListener(onItemClickListener);
+        mUsersAdapter.setOnItemClickListener(onItemClickListener);
         rv_users.setAdapter(mUsersAdapter);
         rv_users.setItemAnimator(new DefaultItemAnimator());
     }
@@ -222,7 +222,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     public void renderUserList(Collection<UserModel> userModelCollection) {
         if (userModelCollection != null) {
-            mUsersAdapter.setmUsersCollection(userModelCollection);
+            mUsersAdapter.setUsersCollection(userModelCollection);
             mUsersAdapter.animateTo((List<UserModel>) userModelCollection);
             rv_users.scrollToPosition(0);
         }

@@ -1,6 +1,7 @@
 package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
 import java.util.Collection;
+import java.util.List;
 
 import io.realm.RealmObject;
 import rx.Observable;
@@ -12,7 +13,7 @@ public interface DataStore {
     /**
      * Get an {@link rx.Observable} which will emit a Collection of ?.
      */
-    Observable<Collection> collection(Class domainClass, Class dataClass);
+    Observable<List> collection(Class domainClass, Class dataClass);
 
     /**
      * Get an {@link rx.Observable} which will emit a ? by its id.
@@ -29,7 +30,7 @@ public interface DataStore {
 
     Observable<?> deleteCollectionFromDisk(final Collection<Integer> collection, Class clazz);
 
-    Observable<Collection> searchCloud(String query, Class domainClass, Class dataClass);
+    Observable<List> searchCloud(String query, Class domainClass, Class dataClass);
 
-    Observable<Collection> searchDisk(String query, String column, Class domainClass, Class dataClass);
+    Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass);
 }

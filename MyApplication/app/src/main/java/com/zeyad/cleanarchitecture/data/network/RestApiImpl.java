@@ -3,6 +3,7 @@ package com.zeyad.cleanarchitecture.data.network;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
 import java.util.Collection;
+import java.util.List;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -21,12 +22,12 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public Observable<Collection> userCollection() {
+    public Observable<List> userCollection() {
         return ApiConnection.userCollection();
     }
 
     @Override
-    public Observable<Collection<UserRealmModel>> userRealmModelCollection() {
+    public Observable<List<UserRealmModel>> userRealmModelCollection() {
         return ApiConnection.userRealmCollection();
     }
 
@@ -61,7 +62,7 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public Observable<Collection> search(@Path("query") String query) {
+    public Observable<List> search(@Path("query") String query) {
         return null;
     }
 
@@ -72,7 +73,7 @@ public class RestApiImpl implements RestApi {
 
     @Override
     public Observable<ResponseBody> dynamicDownload(@Url String url) {
-        return ApiConnection.dynamicDwnload(url);
+        return ApiConnection.dynamicDownload(url);
     }
 
     @Override

@@ -183,8 +183,8 @@ public class UserEntityDataMapper extends EntityDataMapper {
      * @param userRealmModels Objects to be transformed.
      * @return {@link User} if valid {@link UserRealmModel} otherwise null.
      */
-    public Collection<User> transformAllToDomain(Collection<UserRealmModel> userRealmModels) {
-        Collection<User> users = new ArrayList<>();
+    public List<User> transformAllToDomain(Collection<UserRealmModel> userRealmModels) {
+        List<User> users = new ArrayList<>();
         for (UserRealmModel realmObject : userRealmModels)
             users.add(transformToDomain(realmObject));
         return users;

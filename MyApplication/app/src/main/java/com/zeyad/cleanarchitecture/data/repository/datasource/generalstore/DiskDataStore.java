@@ -9,6 +9,7 @@ import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserData
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.Collection;
+import java.util.List;
 
 import io.realm.RealmObject;
 import rx.Observable;
@@ -30,7 +31,7 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<Collection> collection(Class domainClass, Class dataClass) {
+    public Observable<List> collection(Class domainClass, Class dataClass) {
         return mRealmManager.getAll(dataClass)
                 .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels))
                 .compose(Utils.logSources(TAG, mRealmManager));
@@ -44,8 +45,8 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<Collection> searchDisk(String query, String column, Class domainClass, Class dataClass) {
-        return mRealmManager.getWhere(dataClass, predicate -> predicate.equalTo(column, query))
+    public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
+        return mRealmManager.getWhere(dataClass, query, column)
                 .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel));
     }
 
@@ -61,7 +62,7 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<Collection> searchCloud(String query, Class domainClass, Class dataClass) {
+    public Observable<List> searchCloud(String query, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant getById from cloud in disk data store"));
     }
 

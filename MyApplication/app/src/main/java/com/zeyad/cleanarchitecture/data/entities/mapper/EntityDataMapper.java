@@ -9,9 +9,6 @@ import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.model.UserModel;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -100,8 +97,8 @@ public class EntityDataMapper {
      * @param userRealmModels Objects to be transformed.
      * @return {@link User} if valid {@link UserRealmModel} otherwise null.
      */
-    public Collection<User> transformAllToDomain(Collection userRealmModels, Class domainClass) {
-        Collection<User> users = new ArrayList<>();
+    public List<User> transformAllToDomain(Collection userRealmModels, Class domainClass) {
+        List<User> users = new ArrayList<>();
         for (Object realmObject : userRealmModels)
             users.add(transformToDomain(realmObject, domainClass));
         return users;
@@ -115,17 +112,18 @@ public class EntityDataMapper {
      */
     public Object transformToRealm(Object item, Class dataClass) {
         if (item != null) {
-            UserRealmModel userRealmModel = new UserRealmModel();
-            try {
-                JSONObject jsonObject = new JSONObject(gson.toJson(item));
-                userRealmModel.setFullName(jsonObject.getString("fullName"));
-                userRealmModel.setDescription(jsonObject.getString("Description"));
-                userRealmModel.setEmail(jsonObject.getString("email"));
-                userRealmModel.setFollowers(jsonObject.getInt("followers"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return userRealmModel;
+            return gson.fromJson(gson.toJson(item), dataClass);
+//            UserRealmModel userRealmModel = new UserRealmModel();
+//            try {
+//                JSONObject jsonObject = new JSONObject(gson.toJson(item));
+//                userRealmModel.setFullName(jsonObject.getString("fullName"));
+//                userRealmModel.setDescription(jsonObject.getString("Description"));
+//                userRealmModel.setEmail(jsonObject.getString("email"));
+//                userRealmModel.setFollowers(jsonObject.getInt("followers"));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//            return userRealmModel;
         }
         return null;
     }

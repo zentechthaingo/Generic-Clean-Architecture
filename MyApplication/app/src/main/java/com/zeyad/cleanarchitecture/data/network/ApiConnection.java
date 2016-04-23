@@ -12,6 +12,7 @@ import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -96,13 +97,13 @@ public class ApiConnection {
                 .build();
     }
 
-    public static Observable<Collection<UserRealmModel>> userRealmCollection() {
+    public static Observable<List<UserRealmModel>> userRealmCollection() {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userRealmModelCollection();
     }
 
-    public static Observable<Collection> userCollection() {
+    public static Observable<List> userCollection() {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userCollection();
@@ -150,7 +151,7 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).download(index);
     }
 
-    public static Observable<ResponseBody> dynamicDwnload(String url) {
+    public static Observable<ResponseBody> dynamicDownload(String url) {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).dynamicDownload(url);

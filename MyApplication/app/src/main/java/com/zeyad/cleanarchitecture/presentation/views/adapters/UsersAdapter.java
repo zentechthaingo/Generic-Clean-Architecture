@@ -81,13 +81,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
         return mUsersCollection;
     }
 
-    public void setmUsersCollection(Collection<UserModel> mUsersCollection) {
+    public void setUsersCollection(Collection<UserModel> mUsersCollection) {
         validateUsersCollection(mUsersCollection);
         this.mUsersCollection = (List<UserModel>) mUsersCollection;
         notifyDataSetChanged();
     }
 
-    public void setmOnItemClickListener(OnItemClickListener mOnItemClickListener) {
+    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
         this.mOnItemClickListener = mOnItemClickListener;
     }
 

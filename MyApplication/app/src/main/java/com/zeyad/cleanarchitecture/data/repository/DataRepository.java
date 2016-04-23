@@ -9,6 +9,7 @@ import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -38,7 +39,7 @@ public class DataRepository implements Repository {
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
     @RxLogObservable
-    public Observable<Collection> Collection(Class presentationClass, Class domainClass, Class dataClass) {
+    public Observable<List> Collection(Class presentationClass, Class domainClass, Class dataClass) {
         return dataStoreFactory.getAll(entityDataMapper).collection(domainClass, dataClass);
     }
 
@@ -59,10 +60,9 @@ public class DataRepository implements Repository {
                                 .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
                         dataStoreFactory
                                 .putToCloud(entityDataMapper)
-                                .postToCloud(object, domainClass, dataClass));
-//                .first();
-//                .collect(HashSet::new, HashSet::add)
-//                .map(hashSet -> hashSet.iterator().next());
+                                .postToCloud(object, domainClass, dataClass))
+                .collect(HashSet::new, HashSet::add)
+                .flatMap(Observable::from);
     }
 
     @Override
@@ -75,9 +75,7 @@ public class DataRepository implements Repository {
                         dataStoreFactory
                                 .deleteCollectionFromDisk(entityDataMapper)
                                 .deleteCollectionFromDisk(collection, dataClass));
-//                .first();
-//                .distinct()
-////                .collect(HashSet::new, HashSet::add)
+//                .collect(HashSet::new, HashSet::add)
 //                .flatMap(Observable::from);
     }
 
@@ -91,8 +89,7 @@ public class DataRepository implements Repository {
                         .searchDisk(entityDataMapper)
                         .searchDisk(query, column, domainClass, dataClass)
                         .collect(HashSet::new, HashSet::add)
-                        .flatMap((Func1<HashSet<Object>, Observable<Collection>>)
+                        .flatMap((Func1<HashSet<Object>, Observable<List>>)
                                 objects -> Observable.from((Collection) objects)));
-//                .first();
     }
 }
