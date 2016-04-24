@@ -67,10 +67,10 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
             return Observable.defer(() -> {
                 mRealm = Realm.getDefaultInstance();
                 mRealm.beginTransaction();
-                mRealm.copyToRealmOrUpdate(realmObject);
+                Observable observable = Observable.just(mRealm.copyToRealmOrUpdate(realmObject));
                 mRealm.commitTransaction();
                 writeToPreferences(System.currentTimeMillis(), DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
-                return Observable.just(realmObject);
+                return observable;
             });
         }
         return Observable.empty();
@@ -109,7 +109,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         mRealm.beginTransaction();
         UserRealmModel realmObject = mRealm.where(UserRealmModel.class).equalTo("userId", itemId).findFirst();
         boolean isCached = realmObject != null;
-        isCached = isCached && realmObject.getCoverUrl() != null;
+        isCached = isCached && realmObject.getDescription() != null;
         mRealm.commitTransaction();
         mRealm.close();
         return isCached;

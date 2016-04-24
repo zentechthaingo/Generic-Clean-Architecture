@@ -25,6 +25,10 @@ public class UserModel {
         return userId;
     }
 
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     public String getCoverUrl() {
         return coverUrl;
     }

@@ -16,7 +16,6 @@ import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-// TODO: 4/17/16 Finish put!
 @PerActivity
 public class GenericDetailPresenter implements BasePresenter {
 

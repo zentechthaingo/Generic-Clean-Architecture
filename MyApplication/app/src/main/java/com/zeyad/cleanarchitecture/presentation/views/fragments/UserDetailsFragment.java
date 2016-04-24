@@ -36,6 +36,7 @@ import rx.Subscription;
 import static android.text.TextUtils.isEmpty;
 import static android.util.Patterns.EMAIL_ADDRESS;
 // TODO: 4/15/16 Add image upload!
+
 /**
  * Fragment that shows details of a certain user.
  */
@@ -195,6 +196,8 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
 
     @Override
     public UserModel getValidatedUser() {
+        if (userModel != null)
+                userModel.setUserId(userModel.getUserId());
         if (userModel == null)
             userModel = new UserModel();
         userModel.setFullName(et_fullName.getText().toString());

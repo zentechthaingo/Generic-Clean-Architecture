@@ -112,9 +112,18 @@ public class EntityDataMapper {
      */
     public Object transformToRealm(Object item, Class dataClass) {
         if (item != null) {
-            return gson.fromJson(gson.toJson(item), dataClass);
-//            UserRealmModel userRealmModel = new UserRealmModel();
-//            try {
+//            return gson.fromJson(gson.toJson(item), dataClass);
+            UserRealmModel userRealmModel = new UserRealmModel();
+            UserRealmModel cast = (UserRealmModel) gson.fromJson(gson.toJson(item), dataClass);
+            userRealmModel.setFollowers(cast.getFollowers());
+            userRealmModel.setDescription(cast.getDescription());
+            userRealmModel.setEmail(cast.getEmail());
+            userRealmModel.setCoverUrl(cast.getCoverUrl());
+            userRealmModel.setFullName(cast.getFullName());
+            if (cast.getUserId() != 0)
+                userRealmModel.setUserId(cast.getUserId());
+            return userRealmModel;
+            //            try {
 //                JSONObject jsonObject = new JSONObject(gson.toJson(item));
 //                userRealmModel.setFullName(jsonObject.getString("fullName"));
 //                userRealmModel.setDescription(jsonObject.getString("Description"));
