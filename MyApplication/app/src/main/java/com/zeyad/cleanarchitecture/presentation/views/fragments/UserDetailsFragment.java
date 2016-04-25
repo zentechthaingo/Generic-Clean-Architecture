@@ -73,7 +73,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     LinearLayout ll_item_details;
     @Bind(R.id.bt_retry)
     Button bt_retry;
-    private UserModel userModel;
+    private UserModel mUserModel;
     private Observable<CharSequence> fullNameChangeObservable;
     private Observable<CharSequence> emailChangeObservable;
     private Observable<CharSequence> followersChangeObservable;
@@ -175,7 +175,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
         followersChangeObservable = RxTextView.textChanges(et_followers).skip(1);
         validateForm();
         if (userModel != null) {
-            this.userModel = userModel;
+            mUserModel = userModel;
             et_fullName.setText(userModel.getFullName());
             et_email.setText(userModel.getEmail());
             et_followers.setText(String.valueOf(userModel.getFollowers()));
@@ -185,26 +185,28 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
             if (appBarLayout != null)
                 appBarLayout.setTitle(userModel.getFullName());
 //            applyPalette();
-        }
+        } else mUserModel = null;
     }
 
     @Override
-    public void editUserSubmit() {
+    public void putUserSuccess(UserModel userModel) {
+        mUserModel = userModel;
         ll_edit.setVisibility(View.GONE);
+        ll_item_details.setVisibility(View.VISIBLE);
         renderUser(userModel);
     }
 
     @Override
     public UserModel getValidatedUser() {
-        if (userModel != null)
-                userModel.setUserId(userModel.getUserId());
-        if (userModel == null)
-            userModel = new UserModel();
-        userModel.setFullName(et_fullName.getText().toString());
-        userModel.setEmail(et_email.getText().toString());
-        userModel.setFollowers(Integer.parseInt(et_followers.getText().toString()));
-        userModel.setDescription(et_description.getText().toString());
-        return userModel;
+        if (mUserModel != null)
+            mUserModel.setUserId(mUserModel.getUserId());
+        if (mUserModel == null)
+            mUserModel = new UserModel();
+        mUserModel.setFullName(et_fullName.getText().toString());
+        mUserModel.setEmail(et_email.getText().toString());
+        mUserModel.setFollowers(Integer.parseInt(et_followers.getText().toString()));
+        mUserModel.setDescription(et_description.getText().toString());
+        return mUserModel;
     }
 
     @Override

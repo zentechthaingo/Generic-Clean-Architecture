@@ -68,6 +68,7 @@ public class AndroidApplication extends Application {
     private void initializeRealm() {
         RealmConfiguration config = new RealmConfiguration.Builder(this)
                 .rxFactory(new RealmObservableFactory())
+                .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
     }

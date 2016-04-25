@@ -22,7 +22,7 @@ public interface UserDetailsView extends LoadDataView {
     /**
      * Submit a user to be edited.
      */
-    void editUserSubmit();
+    void putUserSuccess(UserModel userModel);
 
     /**
      * Retrieves the validated user to be submitted

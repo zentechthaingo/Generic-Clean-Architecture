@@ -88,14 +88,18 @@ public class GenericDetailPresenter implements BasePresenter {
     }
 
     private void showUserDetailsInView(UserModel userModel) {
-        this.mUserModel = userModel;
+        mUserModel = userModel;
         mViewDetailsView.renderUser(this.mUserModel);
-//        mViewDetailsView.editUserSubmit();
+    }
+
+    private void showUserPutSuccess(UserModel userModel) {
+        mUserModel = userModel;
+        mViewDetailsView.putUserSuccess(mUserModel);
     }
 
     private void getUserDetails() {
-        mGetUserDetailsBaseUseCase.executeDetail(new UserDetailsSubscriber(), UserModel.class, User.class,
-                UserRealmModel.class, mUserId);
+        mGetUserDetailsBaseUseCase.executeDetail(new UserDetailsSubscriber(), UserModel.class,
+                User.class, UserRealmModel.class, mUserId);
     }
 
     public void setupEdit() {
@@ -103,7 +107,7 @@ public class GenericDetailPresenter implements BasePresenter {
     }
 
     public void submitEdit() {
-        mGetUserDetailsBaseUseCase.executePut(new UserDetailsSubscriber(), mViewDetailsView.getValidatedUser(),
+        mGetUserDetailsBaseUseCase.executePut(new SearchDetailsSubscriber(), mViewDetailsView.getValidatedUser(),
                 UserModel.class, User.class, UserRealmModel.class);
     }
 
@@ -124,6 +128,26 @@ public class GenericDetailPresenter implements BasePresenter {
         @Override
         public void onNext(UserModel userModel) {
             showUserDetailsInView(userModel);
+        }
+    }
+
+    private final class SearchDetailsSubscriber extends DefaultSubscriber<UserModel> {
+        @Override
+        public void onCompleted() {
+            hideViewLoading();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            hideViewLoading();
+            showErrorMessage(new DefaultErrorBundle((Exception) e));
+            showViewRetry();
+            e.printStackTrace();
+        }
+
+        @Override
+        public void onNext(UserModel userModel) {
+            showUserPutSuccess(userModel);
         }
     }
 }

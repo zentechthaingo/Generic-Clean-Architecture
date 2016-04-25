@@ -79,7 +79,7 @@ public class GenericListPresenter implements BasePresenter {
     public void search(List<UserModel> userModels, String query) {
         mUserModels = userModels;
 //        showUsersCollectionInView(filter(userModels, query));
-        getGeneralListUseCase.executeSearch(query, "fullName", new SearchSubscriber(),
+        getGeneralListUseCase.executeSearch(query, "full_name", new SearchSubscriber(),
                 UserModel.class, User.class, UserRealmModel.class);
     }
 

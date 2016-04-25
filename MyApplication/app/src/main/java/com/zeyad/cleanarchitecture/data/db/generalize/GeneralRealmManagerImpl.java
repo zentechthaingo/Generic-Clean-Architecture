@@ -6,8 +6,8 @@ import android.util.Log;
 
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -15,6 +15,7 @@ import javax.inject.Singleton;
 
 import io.realm.Case;
 import io.realm.Realm;
+import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import rx.Observable;
@@ -31,7 +32,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
             SETTINGS_FILE_NAME = "com.zeyad.cleanarchitecture.SETTINGS",
             COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE = "collection_last_cache_update",
             DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE = "detail_last_cache_update";
-    private static final long EXPIRATION_TIME = 60 * 10 * 1000;
+    private static final long EXPIRATION_TIME = 600000;
     private Realm mRealm;
     private Context mContext;
 
@@ -50,15 +51,19 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
     @Override
     public Observable<List> getAll(Class clazz) {
-        return Observable.defer(() -> Observable.from(Arrays.asList(Realm.getDefaultInstance().allObjects(clazz))));
+        return Observable.defer(() -> Observable.from(Collections
+                .singletonList(Realm.getDefaultInstance()
+                        .where(clazz)
+                        .findAll())));
     }
 
     @Override
     public Observable<List> getWhere(Class clazz, String query, String filterKey) {
-        return Observable.defer(() -> Observable.from(Arrays.asList(Realm.getDefaultInstance()
-                .where(clazz)
-                .beginsWith(filterKey, query, Case.INSENSITIVE)
-                .findAll())));
+        return Observable.defer(() -> Observable.from(Collections
+                .singletonList(Realm.getDefaultInstance()
+                        .where(clazz)
+                        .beginsWith(filterKey, query, Case.INSENSITIVE)
+                        .findAll())));
     }
 
     @Override
@@ -131,7 +136,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
             mRealm = Realm.getDefaultInstance();
             RealmResults results = mRealm.where(clazz).findAll();
             mRealm.beginTransaction();
-            results.clear();
+            results.deleteAllFromRealm();
             mRealm.commitTransaction();
             return Observable.just(results.isValid());
         }).subscribeOn(Schedulers.io())
@@ -158,7 +163,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         Observable.defer(() -> {
             mRealm = Realm.getDefaultInstance();
             mRealm.beginTransaction();
-            realmModel.removeFromRealm();
+            realmModel.deleteFromRealm();
             mRealm.commitTransaction();
             return Observable.just(realmModel.isValid());
         }).subscribeOn(Schedulers.io())
@@ -182,15 +187,14 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     @Override
     public boolean evictById(final int itemId, Class clazz) {
         mRealm = Realm.getDefaultInstance();
-        RealmObject toDelete = mRealm.where(clazz).equalTo("userId", itemId).findFirst();
+        RealmModel toDelete = mRealm.where(clazz).equalTo("userId", itemId).findFirst();
         if (toDelete != null) {
             mRealm.beginTransaction();
-            toDelete.removeFromRealm();
+            RealmObject.deleteFromRealm(toDelete);
             mRealm.commitTransaction();
             mRealm.close();
-            return toDelete.isValid();
+            return RealmObject.isValid(toDelete);
         } else return true;
-
 //                .subscribeOn(Schedulers.io())
 //                .subscribe(new Subscriber<Object>() {
 //                    @Override

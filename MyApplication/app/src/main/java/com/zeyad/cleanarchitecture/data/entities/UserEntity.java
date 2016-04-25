@@ -11,7 +11,7 @@ public class UserEntity {
     @SerializedName("cover_url")
     private String coverUrl;
     @SerializedName("full_name")
-    private String fullName;
+    private String full_name;
     @SerializedName("description")
     private String description;
     @SerializedName("followers")
@@ -41,11 +41,11 @@ public class UserEntity {
     }
 
     public String getFullName() {
-        return fullName;
+        return full_name;
     }
 
     public void setFullName(String fullName) {
-        this.fullName = fullName;
+        this.full_name = fullName;
     }
 
     public String getDescription() {

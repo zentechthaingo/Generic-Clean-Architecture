@@ -12,7 +12,7 @@ public class User {
     }
 
     private String coverUrl;
-    private String fullName;
+    private String full_name;
     private String email;
     private String description;
     private int followers;
@@ -30,11 +30,11 @@ public class User {
     }
 
     public String getFullName() {
-        return fullName;
+        return full_name;
     }
 
     public void setFullName(String fullName) {
-        this.fullName = fullName;
+        this.full_name = fullName;
     }
 
     public String getEmail() {
