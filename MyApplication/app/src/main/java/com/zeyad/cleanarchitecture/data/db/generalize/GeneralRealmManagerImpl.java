@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -214,11 +213,11 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     }
 
     @Override
-    public Observable<?> evictCollection(Collection<Integer> collection, Class dataClass) {
+    public Observable<?> evictCollection(List<Integer> list, Class dataClass) {
         return Observable.defer(() -> {
             boolean isDeleted = true;
-            for (int i = 0; i < collection.size(); i++)
-                isDeleted = isDeleted && !evictById(collection.iterator().next(), dataClass);
+            for (int i = 0; i < list.size(); i++)
+                isDeleted = isDeleted && !evictById(list.get(i), dataClass);
             return Observable.just(isDeleted);
         });
     }

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
-import java.util.Collection;
 import java.util.List;
 
 import io.realm.RealmObject;
@@ -64,7 +63,7 @@ public interface GeneralRealmManager {
 
     boolean evictById(final int itemId, Class clazz);
 
-    Observable<?> evictCollection(Collection<Integer> collection, Class dataClass);
+    Observable<?> evictCollection(List<Integer> list, Class dataClass);
 
     Context getContext();
 

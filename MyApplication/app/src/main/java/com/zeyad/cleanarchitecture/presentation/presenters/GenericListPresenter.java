@@ -83,9 +83,8 @@ public class GenericListPresenter implements BasePresenter {
                 UserModel.class, User.class, UserRealmModel.class);
     }
 
-    public void deleteCollection(Collection<Integer> ids) {
-        getGeneralListUseCase.executeDeleteCollection(new DeleteSubscriber(), ids, UserModel.class,
-                User.class, UserRealmModel.class);
+    public void deleteCollection(List<Integer> ids) {
+        getGeneralListUseCase.executeDeleteCollection(new DeleteSubscriber(), ids, User.class, UserRealmModel.class);
     }
 
     /**

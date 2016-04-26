@@ -8,7 +8,6 @@ import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
-import java.util.Collection;
 import java.util.List;
 
 import io.realm.RealmObject;
@@ -57,8 +56,8 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> deleteCollectionFromDisk(Collection<Integer> collection, Class clazz) {
-        return Observable.defer(() -> mRealmManager.evictCollection(collection, clazz));
+    public Observable<?> deleteCollectionFromDisk(List<Integer> list, Class clazz) {
+        return Observable.defer(() -> mRealmManager.evictCollection(list, clazz));
     }
 
     @Override
@@ -72,7 +71,7 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> deleteCollectionFromCloud(Collection collection, Class domainClass, Class dataClass) {
+    public Observable<?> deleteCollectionFromCloud(List list, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant getById from cloud in disk data store"));
     }
 }

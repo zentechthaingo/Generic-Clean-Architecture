@@ -2,7 +2,6 @@ package com.zeyad.cleanarchitecture.domain.repositories;
 
 import com.zeyad.cleanarchitecture.domain.models.User;
 
-import java.util.Collection;
 import java.util.List;
 
 import rx.Observable;
@@ -25,8 +24,7 @@ public interface Repository {
 
     Observable<?> put(final Object object, Class presentationClass, Class domainClass, Class dataClass);
 
-    Observable<Boolean> deleteCollection(final Collection<Integer> collection, Class presentationClass,
-                                         Class domainClass, Class dataClass);
+    Observable<Boolean> deleteCollection(final List<Integer> list, Class domainClass, Class dataClass);
 
     Observable<?> search(String query, String column, Class presentationClass, Class domainClass, Class dataClass);
 }

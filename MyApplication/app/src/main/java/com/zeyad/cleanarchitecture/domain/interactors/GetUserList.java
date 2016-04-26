@@ -5,7 +5,7 @@ import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -49,7 +49,7 @@ public class GetUserList extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass, Class domainClass, Class dataClass) {
+    protected Observable buildUseCaseObservableDeleteMultiple(List list, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant delete collection from GetUserDetails"));
     }
 

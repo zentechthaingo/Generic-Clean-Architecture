@@ -7,6 +7,7 @@ import com.zeyad.cleanarchitecture.domain.models.mapper.ModelDataMapper;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -53,9 +54,8 @@ public class GenericUseCase extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass,
-                                                              Class domainClass, Class dataClass) {
-        return repository.deleteCollection(collection, presentationClass, domainClass, dataClass);
+    protected Observable buildUseCaseObservableDeleteMultiple(List list, Class domainClass, Class dataClass) {
+        return repository.deleteCollection(list, domainClass, dataClass);
     }
 
     @Override

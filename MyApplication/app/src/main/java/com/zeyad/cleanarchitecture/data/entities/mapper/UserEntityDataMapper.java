@@ -131,7 +131,8 @@ public class UserEntityDataMapper extends EntityDataMapper {
         UserRealmModel userRealmModel = null;
         if (userEntity != null) {
             userRealmModel = new UserRealmModel();
-            userRealmModel.setUserId(userEntity.getUserId());
+            if (userEntity.getUserId() != 0)
+                userRealmModel.setUserId(userEntity.getUserId());
             userRealmModel.setCoverUrl(userEntity.getCoverUrl());
             userRealmModel.setFullName(userEntity.getFullName());
             userRealmModel.setDescription(userEntity.getDescription());

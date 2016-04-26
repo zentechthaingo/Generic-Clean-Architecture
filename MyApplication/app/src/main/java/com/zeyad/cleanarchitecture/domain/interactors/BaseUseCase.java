@@ -3,7 +3,7 @@ package com.zeyad.cleanarchitecture.domain.interactors;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 
-import java.util.Collection;
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -45,8 +45,8 @@ public abstract class BaseUseCase {
     protected abstract Observable buildUseCaseObservablePut(Object object, Class presentationClass,
                                                             Class domainClass, Class dataClass);
 
-    protected abstract Observable buildUseCaseObservableDeleteMultiple(Collection collection, Class presentationClass,
-                                                                       Class domainClass, Class dataClass);
+    protected abstract Observable buildUseCaseObservableDeleteMultiple(List list, Class domainClass,
+                                                                       Class dataClass);
 
     protected abstract Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass,
                                                               Class domainClass, Class dataClass);
@@ -137,9 +137,9 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void executeDeleteCollection(Subscriber UseCaseSubscriber, Collection collection, Class presentationClass, Class domainClass,
+    public void executeDeleteCollection(Subscriber UseCaseSubscriber, List list, Class domainClass,
                                         Class dataClass) {
-        subscription = buildUseCaseObservableDeleteMultiple(collection, presentationClass, domainClass, dataClass)
+        subscription = buildUseCaseObservableDeleteMultiple(list, domainClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);

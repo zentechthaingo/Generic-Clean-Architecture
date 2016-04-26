@@ -92,7 +92,7 @@ public class GenericDetailPresenter implements BasePresenter {
         mViewDetailsView.renderUser(this.mUserModel);
     }
 
-    private void showUserPutSuccess(UserModel userModel) {
+    private void showUserPutSuccess(@NonNull UserModel userModel) {
         mUserModel = userModel;
         mViewDetailsView.putUserSuccess(mUserModel);
     }

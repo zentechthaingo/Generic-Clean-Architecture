@@ -1,6 +1,5 @@
 package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
-import java.util.Collection;
 import java.util.List;
 
 import io.realm.RealmObject;
@@ -26,9 +25,9 @@ public interface DataStore {
 
     Observable<?> putToDisk(RealmObject object);
 
-    Observable<?> deleteCollectionFromCloud(final Collection collection, Class domainClass, Class dataClass);
+    Observable<?> deleteCollectionFromCloud(final List list, Class domainClass, Class dataClass);
 
-    Observable<?> deleteCollectionFromDisk(final Collection<Integer> collection, Class clazz);
+    Observable<?> deleteCollectionFromDisk(final List<Integer> list, Class clazz);
 
     Observable<List> searchCloud(String query, Class domainClass, Class dataClass);
 

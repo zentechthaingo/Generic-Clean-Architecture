@@ -91,7 +91,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
         this.mOnItemClickListener = mOnItemClickListener;
     }
 
-    public Collection<Integer> getSelectedItemsIds() {
+    public List<Integer> getSelectedItemsIds() {
         ArrayList<Integer> integers = new ArrayList<>();
         for (UserModel userModel : mUsersCollection)
             if (userModel.isChecked())

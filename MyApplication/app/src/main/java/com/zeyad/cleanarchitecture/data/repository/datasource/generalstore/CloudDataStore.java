@@ -187,8 +187,8 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> deleteCollectionFromCloud(Collection collection, Class domainClass, Class dataClass) {
-//        return restApi.deleteCollection(collection).doOnError(throwable -> queueDeleteCollection.call(collection));
+    public Observable<?> deleteCollectionFromCloud(List list, Class domainClass, Class dataClass) {
+//        return restApi.deleteCollection(collection).doOnError(throwable -> queueDeleteCollection.call(list));
         return Observable.just(true);
     }
 
@@ -198,7 +198,7 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> deleteCollectionFromDisk(Collection collection, Class clazz) {
+    public Observable<?> deleteCollectionFromDisk(List list, Class clazz) {
         return Observable.error(new Exception("cant getById from disk in cloud data store"));
     }
 

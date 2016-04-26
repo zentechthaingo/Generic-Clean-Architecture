@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey;
 
 public class UserRealmModel extends RealmObject {
 
-    public final static String FULL_NAME_COLUMN = "full_name";
+    public final static String FULL_NAME_COLUMN = "full_name", ID_COLUMN = "userId";
     @PrimaryKey
     @SerializedName("id")
     private int userId;
@@ -28,7 +28,7 @@ public class UserRealmModel extends RealmObject {
     private String email;
 
     public UserRealmModel() {
-        //empty
+
     }
 
     public int getUserId() {

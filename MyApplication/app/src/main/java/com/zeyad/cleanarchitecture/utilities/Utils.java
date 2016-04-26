@@ -1,5 +1,8 @@
 package com.zeyad.cleanarchitecture.utilities;
 
+import android.annotation.TargetApi;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -20,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.realm.Realm;
 import rx.Observable;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
@@ -39,6 +43,13 @@ public class Utils {
         });
     }
 
+    public static int getNextId(Class clazz, String column) {
+        Number currentMax = Realm.getDefaultInstance().where(clazz).max(column);
+        if (currentMax != null)
+            return currentMax.intValue() + 1;
+        else return 1;
+    }
+
     // Simple logging to let us know what each source is returning
     public static Observable.Transformer<Collection<UserEntity>, Collection<UserEntity>>
     logUsersSources(final String source, RealmManager realmManager) {
@@ -54,7 +65,7 @@ public class Utils {
 
     // Simple logging to let us know what each source is returning
     public static Observable.Transformer<List, List> logSources(final String source,
-                                                                      GeneralRealmManager realmManager) {
+                                                                GeneralRealmManager realmManager) {
         return observable -> observable.doOnNext(entities -> {
             if (entities == null)
                 System.out.println(source + " does not have any data.");
@@ -135,6 +146,14 @@ public class Utils {
         if (hash.startsWith("-"))
             hash = hash.substring(1);
         return Constants.BASE_IMAGE_NAME_CACHED + hash + Constants.IMAGE_EXTENSION;
+    }
+
+    // TODO: 1/5/16 Test!
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static void scheduleJob(Context context, JobInfo jobInfo) {
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        if (scheduler.schedule(jobInfo) == 1)
+            Log.d("JobScheduler", "Job scheduled successfully!");
     }
 
     /**
