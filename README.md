@@ -1,8 +1,4 @@
-# README #
-
-What is this repository for?
-
-* Quick summary
+# Generic Clean Architecture #
 
 This is a sample project showcasing the use new technologies and apis within the clean architecture pattern. Its a generic
 implementation of Fernando Cejas Android Clean Architecture repo : https://github.com/android10/Android-CleanArchitecture
@@ -29,7 +25,7 @@ The project's first version is almost done, just a couple of minor bugs and some
 * Fix delete multiple
 * GCM job scheduler / android priority queue
 * Update Tests
-* CI with infer
+* CI with infer -- verion 1 ends here!
 * Migrate to native java 8
 * StorIO / SqlBrite
 * Data binding
@@ -39,4 +35,4 @@ The project's first version is almost done, just a couple of minor bugs and some
 
 ### Who do I talk to? ###
 
-* Zeyad.Gasser@gmail.com
+Zeyad.Gasser@gmail.com
