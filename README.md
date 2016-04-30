@@ -4,10 +4,13 @@ What is this repository for?
 
 * Quick summary
 
-This is a sample project showcasing the use new technologies and apis within the clean architecture pattern.
+This is a sample project showcasing the use new technologies and apis within the clean architecture pattern. Its a generic
+implementation of Fernando Cejas Android Clean Architecture repo : https://github.com/android10/Android-CleanArchitecture
+
+The project's first version is almost done, just a couple of minor bugs and some tests.
 
 * Version
-* 0.1 (https://bitbucket.org/tutorials/markdowndemo)
+* 0.1
 
 ### How do I get set up? ###
 
@@ -25,16 +28,18 @@ This is a sample project showcasing the use new technologies and apis within the
 * Other guidelines
 
 ### Todo:
- 
-* Add queries in Realm (In progress)
-* Data binding  
-* Generic Adapter
-* Login use case (Google and Facebook login) with Fire base
-* Fire base
-* User items use case
-* Strict Mode
+
+* Fix put (edit use case)
+* Fix delete multiple
+* GCM job scheduler / android priority queue
+* Update Tests
+* CI with infer
+* Migrate to native java 8
+* StorIO / SqlBrite
+* Data binding
+* Generic adapter (RealmAdapter! https://github.com/thorbenprimke/realm-recyclerview)
+* Add Strict Mode
 * GCM push notifications
-* Analytics
 
 ### Who do I talk to? ###
 
