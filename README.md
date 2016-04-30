@@ -14,18 +14,14 @@ The project's first version is almost done, just a couple of minor bugs and some
 
 ### How do I get set up? ###
 
+* JDK 1.8
 * Clone and sync and run
 * Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
 
 ### Contribution guidelines ###
 
 * Writing tests
 * Code review
-* Other guidelines
 
 ### Todo:
 
@@ -43,5 +39,4 @@ The project's first version is almost done, just a couple of minor bugs and some
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+* Zeyad.Gasser@gmail.com
