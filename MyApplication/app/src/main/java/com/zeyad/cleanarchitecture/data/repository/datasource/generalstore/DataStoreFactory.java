@@ -3,10 +3,10 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 import android.content.Context;
 
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
+import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.Collection;
@@ -42,7 +42,7 @@ public class DataStoreFactory {
      * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
      */
     public DataStore getAll(EntityDataMapper entityDataMapper) {
-        if (mRealmManager.areItemsValid(GeneralRealmManagerImpl.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE)
+        if (mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE)
                 || !Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);
         else
@@ -106,11 +106,11 @@ public class DataStoreFactory {
     public Observable<Collection> getAllUsersFromAllSources(Observable<Collection> cloud,
                                                             Observable<Collection> disk) {
         return Observable.concat(disk, cloud)
-                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(GeneralRealmManagerImpl.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE));
+                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE));
     }
 
     public Observable getUserFromAllSources(Observable cloud, Observable disk) {
         return Observable.concat(disk, cloud)
-                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(GeneralRealmManagerImpl.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE));
+                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE));
     }
 }

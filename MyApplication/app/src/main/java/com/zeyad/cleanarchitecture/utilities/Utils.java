@@ -12,7 +12,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 
 import org.json.JSONException;
@@ -69,7 +68,7 @@ public class Utils {
         return observable -> observable.doOnNext(entities -> {
             if (entities == null)
                 System.out.println(source + " does not have any data.");
-            else if (!realmManager.areItemsValid(GeneralRealmManagerImpl.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE))
+            else if (!realmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE))
                 System.out.println(source + " has stale data.");
             else
                 System.out.println(source + " has the data you are looking for!");
@@ -109,16 +108,13 @@ public class Utils {
     }
 
     public static void unsubscribeIfNotNull(Subscription subscription) {
-        if (subscription != null) {
+        if (subscription != null)
             subscription.unsubscribe();
-        }
     }
 
     public static CompositeSubscription getNewCompositeSubIfUnsubscribed(CompositeSubscription subscription) {
-        if (subscription == null || subscription.isUnsubscribed()) {
+        if (subscription == null || subscription.isUnsubscribed())
             return new CompositeSubscription();
-        }
-
         return subscription;
     }
 

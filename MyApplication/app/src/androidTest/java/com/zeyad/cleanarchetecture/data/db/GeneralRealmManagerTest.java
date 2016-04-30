@@ -5,6 +5,7 @@ import android.test.AndroidTestCase;
 
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
+import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import org.junit.After;
 import org.junit.Before;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import io.realm.Realm;
@@ -22,7 +24,7 @@ import rx.Subscriber;
 
 import static org.mockito.Mockito.verify;
 
-public class GeneralRealmManager extends AndroidTestCase {
+public class GeneralRealmManagerTest extends AndroidTestCase {
 
     @Mock
     Context context;
@@ -52,7 +54,7 @@ public class GeneralRealmManager extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        verify(realmManager).getById(FAKE_USER_ID);
+        verify(realmManager).getById(FAKE_USER_ID, UserRealmModel.class);
     }
 
     @Test
@@ -67,7 +69,7 @@ public class GeneralRealmManager extends AndroidTestCase {
             userRealmModel.setFullName("Fake Name");
             realmManager.put(userRealmModel);
         }
-        verify(realmManager).getAll();
+        verify(realmManager).getAll(UserRealmModel.class);
     }
 
     @Test
@@ -80,7 +82,7 @@ public class GeneralRealmManager extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         verify(realmManager).put(userRealmModel);
-        verify(realmManager).getById(FAKE_USER_ID);
+        verify(realmManager).getById(FAKE_USER_ID, UserRealmModel.class);
     }
 
     @Test
@@ -99,7 +101,7 @@ public class GeneralRealmManager extends AndroidTestCase {
         }
         verify(realmManager).putAll(userRealmModels);
         for (int i = 0; i < 10; i++)
-            verify(realmManager).getById(FAKE_USER_ID + i);
+            verify(realmManager).getById(FAKE_USER_ID + i, UserRealmModel.class);
     }
 
     @Test
@@ -112,7 +114,7 @@ public class GeneralRealmManager extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.isCached(FAKE_USER_ID));
+        assertTrue(realmManager.isCached(FAKE_USER_ID, UserRealmModel.class));
     }
 
     @Test
@@ -125,7 +127,7 @@ public class GeneralRealmManager extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.isItemValid(FAKE_USER_ID));
+        assertTrue(realmManager.isItemValid(FAKE_USER_ID, UserRealmModel.class));
     }
 
     @Test
@@ -138,7 +140,7 @@ public class GeneralRealmManager extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.areItemsValid());
+        assertTrue(realmManager.areItemsValid(Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE));
     }
 
     @Test
@@ -153,8 +155,8 @@ public class GeneralRealmManager extends AndroidTestCase {
             userRealmModel.setFullName("Fake Name");
             realmManager.put(userRealmModel);
         }
-        realmManager.evictAll();
-        realmManager.getAll().asObservable().subscribe(new Subscriber<RealmResults<UserRealmModel>>() {
+        realmManager.evictAll(UserRealmModel.class);
+        realmManager.getAll(UserRealmModel.class).subscribe(new Subscriber<Collection>() {
             @Override
             public void onCompleted() {
             }
@@ -165,7 +167,7 @@ public class GeneralRealmManager extends AndroidTestCase {
             }
 
             @Override
-            public void onNext(RealmResults<UserRealmModel> userRealmModels) {
+            public void onNext(Collection userRealmModels) {
                 assertEquals(userRealmModels.size(), 0);
             }
         });
@@ -181,8 +183,8 @@ public class GeneralRealmManager extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        realmManager.evictById(FAKE_USER_ID);
-        realmManager.getById(FAKE_USER_ID).asObservable().subscribe(new Subscriber<UserRealmModel>() {
+        realmManager.evictById(FAKE_USER_ID, UserRealmModel.class);
+        realmManager.getById(FAKE_USER_ID, UserRealmModel.class).subscribe(new Subscriber<Object>() {
             @Override
             public void onCompleted() {
 
@@ -194,7 +196,7 @@ public class GeneralRealmManager extends AndroidTestCase {
             }
 
             @Override
-            public void onNext(UserRealmModel userRealmModel) {
+            public void onNext(Object userRealmModel) {
                 assertNull(userRealmModel);
             }
         });
@@ -210,8 +212,8 @@ public class GeneralRealmManager extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        realmManager.evict(userRealmModel);
-        realmManager.getById(FAKE_USER_ID).asObservable().subscribe(new Subscriber<UserRealmModel>() {
+        realmManager.evict(userRealmModel, UserRealmModel.class);
+        realmManager.getById(FAKE_USER_ID, UserRealmModel.class).subscribe(new Subscriber<Object>() {
             @Override
             public void onCompleted() {
 
@@ -223,7 +225,7 @@ public class GeneralRealmManager extends AndroidTestCase {
             }
 
             @Override
-            public void onNext(UserRealmModel userRealmModel) {
+            public void onNext(Object userRealmModel) {
                 assertNull(userRealmModel);
             }
         });

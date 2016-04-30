@@ -13,11 +13,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
 import rx.Subscriber;
 
 import static org.mockito.Mockito.verify;
@@ -125,7 +125,7 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.isItemValid(FAKE_USER_ID));
+        assertTrue(realmManager.isUserValid(FAKE_USER_ID));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.areItemsValid());
+        assertTrue(realmManager.areUsersValid());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class RealmManagerTest extends AndroidTestCase {
             realmManager.put(userRealmModel);
         }
         realmManager.evictAll();
-        realmManager.getAll().asObservable().subscribe(new Subscriber<RealmResults<UserRealmModel>>() {
+        realmManager.getAll().subscribe(new Subscriber<Collection<UserRealmModel>>() {
             @Override
             public void onCompleted() {
             }
@@ -165,7 +165,7 @@ public class RealmManagerTest extends AndroidTestCase {
             }
 
             @Override
-            public void onNext(RealmResults<UserRealmModel> userRealmModels) {
+            public void onNext(Collection<UserRealmModel> userRealmModels) {
                 assertEquals(userRealmModels.size(), 0);
             }
         });
@@ -182,7 +182,7 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
         realmManager.evictById(FAKE_USER_ID);
-        realmManager.get(FAKE_USER_ID).asObservable().subscribe(new Subscriber<UserRealmModel>() {
+        realmManager.get(FAKE_USER_ID).subscribe(new Subscriber<UserRealmModel>() {
             @Override
             public void onCompleted() {
 
@@ -211,7 +211,7 @@ public class RealmManagerTest extends AndroidTestCase {
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
         realmManager.evict(userRealmModel);
-        realmManager.get(FAKE_USER_ID).asObservable().subscribe(new Subscriber<UserRealmModel>() {
+        realmManager.get(FAKE_USER_ID).subscribe(new Subscriber<UserRealmModel>() {
             @Override
             public void onCompleted() {
 

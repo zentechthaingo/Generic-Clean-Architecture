@@ -55,11 +55,10 @@
         android:id="@+id/edit_details_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
         android:src="@drawable/ic_edit"
         android:transitionName="@string/fab_transition"
         app:layout_anchor="@id/user_detail_container"
         app:layout_anchorGravity="right|end" />
 </android.support.design.widget.CoordinatorLayout>
-

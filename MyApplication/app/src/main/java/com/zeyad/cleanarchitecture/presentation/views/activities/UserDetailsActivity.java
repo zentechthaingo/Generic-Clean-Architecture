@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Activity that shows details of a certain user.
@@ -94,6 +96,8 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
             addFragment(R.id.user_detail_container, UserDetailsFragment.newInstance(userId), new ArrayList<>());
         editDetailsFab.setTag(FAB_EDIT_TAG);
         fabSubscription = RxView.clicks(editDetailsFab)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
                     if (editDetailsFab.getTag().equals(FAB_EDIT_TAG)) {
                         editDetailsFab.setTag(FAB_ADD_TAG);

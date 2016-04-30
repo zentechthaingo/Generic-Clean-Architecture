@@ -78,7 +78,7 @@ public class ApiConnection {
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
         return new Retrofit.Builder()
-                .baseUrl(RestApi.API_BASE_URL)
+                .baseUrl(Constants.API_BASE_URL)
                 .client(okHttpClient)
                 .callbackExecutor(new JobExecutor())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()

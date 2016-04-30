@@ -35,8 +35,9 @@ public class UserRealmModel extends RealmObject {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public UserRealmModel setUserId(int userId) {
         this.userId = userId;
+        return this;
     }
 
     public String getCoverUrl() {

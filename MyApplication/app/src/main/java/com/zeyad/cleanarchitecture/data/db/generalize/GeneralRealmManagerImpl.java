@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
+import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,11 +28,7 @@ import rx.schedulers.Schedulers;
 @Singleton
 public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
-    public static final String TAG = "GeneralRealmManagerImpl",
-            SETTINGS_FILE_NAME = "com.zeyad.cleanarchitecture.SETTINGS",
-            COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE = "collection_last_cache_update",
-            DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE = "detail_last_cache_update";
-    private static final long EXPIRATION_TIME = 600000;
+    public final String TAG = "GeneralRealmManagerImpl";
     private Realm mRealm;
     private Context mContext;
 
@@ -73,7 +70,8 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                 mRealm.beginTransaction();
                 Observable observable = Observable.just(mRealm.copyToRealmOrUpdate(realmObject));
                 mRealm.commitTransaction();
-                writeToPreferences(System.currentTimeMillis(), DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
+                writeToPreferences(System.currentTimeMillis(), Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
+                mRealm.close();
                 return observable;
             });
         }
@@ -87,7 +85,8 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
             mRealm.beginTransaction();
             mRealm.copyToRealmOrUpdate(realmModels);
             mRealm.commitTransaction();
-            writeToPreferences(System.currentTimeMillis(), COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
+            mRealm.close();
+            writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
             return Observable.from(realmModels);
         }).subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Object>() {
@@ -110,23 +109,23 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     @Override
     public boolean isCached(int itemId, Class clazz) {
         mRealm = Realm.getDefaultInstance();
-        mRealm.beginTransaction();
+//        mRealm.beginTransaction();
         UserRealmModel realmObject = mRealm.where(UserRealmModel.class).equalTo("userId", itemId).findFirst();
         boolean isCached = realmObject != null;
         isCached = isCached && realmObject.getDescription() != null;
-        mRealm.commitTransaction();
-        mRealm.close();
+//        mRealm.commitTransaction();
+//        mRealm.close();
         return isCached;
     }
 
     @Override
     public boolean isItemValid(int itemId, Class clazz) {
-        return isCached(itemId, clazz) && areItemsValid(DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
+        return isCached(itemId, clazz) && areItemsValid(Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
     }
 
     @Override
     public boolean areItemsValid(String destination) {
-        return (System.currentTimeMillis() - getFromPreferences(destination)) <= EXPIRATION_TIME;
+        return (System.currentTimeMillis() - getFromPreferences(destination)) <= Constants.EXPIRATION_TIME;
     }
 
     @Override
@@ -137,6 +136,8 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
             mRealm.beginTransaction();
             results.deleteAllFromRealm();
             mRealm.commitTransaction();
+            mRealm.close();
+            writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
             return Observable.just(results.isValid());
         }).subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Object>() {
@@ -164,6 +165,8 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
             mRealm.beginTransaction();
             realmModel.deleteFromRealm();
             mRealm.commitTransaction();
+            mRealm.close();
+            writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
             return Observable.just(realmModel.isValid());
         }).subscribeOn(Schedulers.io())
                 .subscribe(new Subscriber<Object>() {
@@ -187,29 +190,14 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     public boolean evictById(final int itemId, Class clazz) {
         mRealm = Realm.getDefaultInstance();
         RealmModel toDelete = mRealm.where(clazz).equalTo("userId", itemId).findFirst();
-        if (toDelete != null) {
+        if (toDelete != null && RealmObject.isValid(toDelete)) {
             mRealm.beginTransaction();
             RealmObject.deleteFromRealm(toDelete);
             mRealm.commitTransaction();
-            mRealm.close();
+//            mRealm.close();
+            writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
             return RealmObject.isValid(toDelete);
-        } else return true;
-//                .subscribeOn(Schedulers.io())
-//                .subscribe(new Subscriber<Object>() {
-//                    @Override
-//                    public void onCompleted() {
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    @Override
-//                    public void onNext(Object o) {
-//                        Log.d(TAG, clazz.getSimpleName() + " deleted!");
-//                    }
-//                });
+        } else return false;
     }
 
     @Override
@@ -233,7 +221,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
      * @param value A long representing the value to be inserted.
      */
     private void writeToPreferences(long value, String destination) {
-        SharedPreferences.Editor editor = mContext.getSharedPreferences(SETTINGS_FILE_NAME,
+        SharedPreferences.Editor editor = mContext.getSharedPreferences(Constants.SETTINGS_FILE_NAME,
                 Context.MODE_PRIVATE).edit();
         editor.putLong(destination, value);
         editor.apply();
@@ -246,7 +234,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
      * @return A long representing the value retrieved from the preferences file.
      */
     private long getFromPreferences(String destination) {
-        return mContext.getSharedPreferences(SETTINGS_FILE_NAME, Context.MODE_PRIVATE)
+        return mContext.getSharedPreferences(Constants.SETTINGS_FILE_NAME, Context.MODE_PRIVATE)
                 .getLong(destination, 0);
     }
 

@@ -22,8 +22,6 @@ import rx.Observable;
  * RestApi for retrieving data from the network.
  */
 public interface RestApi {
-    String API_BASE_URL = "http://www.android10.org/myapi/";
-
     /**
      * Retrieves an {@link rx.Observable} which will emit a Collection of {@link UserEntity}.
      */

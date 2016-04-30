@@ -47,6 +47,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Activity that shows a list of Users.
@@ -123,26 +125,29 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     public void onResume() {
         super.onResume();
         mUserListPresenter.resume();
-        mFabSubscription = RxView.clicks(mAddFab).subscribe(aVoid -> {
-            Pair<View, String> pair = null;
-            if (Utils.hasLollipop())
-                pair = new Pair<>(mAddFab, mAddFab.getTransitionName());
-            mSharedElements = new ArrayList<>();
-            mSharedElements.add(pair);
-            if (mTwoPane) {
-                UserDetailsFragment fragment = UserDetailsFragment.newInstance(-1);
-                if (Utils.hasLollipop()) {
-                    fragment.setSharedElementEnterTransition(new DetailsTransition());
-                    fragment.setEnterTransition(new Fade());
-                    fragment.setExitTransition(new Fade());
-                    fragment.setSharedElementReturnTransition(new DetailsTransition());
-                }
-                Bundle arguments = new Bundle();
-                arguments.putBoolean(UserDetailsFragment.ADD_NEW_ITEM, true);
-                fragment.setArguments(arguments);
-                addFragment(R.id.detail_container, fragment, mSharedElements);
-            } else navigator.navigateToUserDetails(this, -1, null);
-        });
+        mFabSubscription = RxView.clicks(mAddFab)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aVoid -> {
+                    Pair<View, String> pair = null;
+                    if (Utils.hasLollipop())
+                        pair = new Pair<>(mAddFab, mAddFab.getTransitionName());
+                    mSharedElements = new ArrayList<>();
+                    mSharedElements.add(pair);
+                    if (mTwoPane) {
+                        UserDetailsFragment fragment = UserDetailsFragment.newInstance(-1);
+                        if (Utils.hasLollipop()) {
+                            fragment.setSharedElementEnterTransition(new DetailsTransition());
+                            fragment.setEnterTransition(new Fade());
+                            fragment.setExitTransition(new Fade());
+                            fragment.setSharedElementReturnTransition(new DetailsTransition());
+                        }
+                        Bundle arguments = new Bundle();
+                        arguments.putBoolean(UserDetailsFragment.ADD_NEW_ITEM, true);
+                        fragment.setArguments(arguments);
+                        addFragment(R.id.detail_container, fragment, mSharedElements);
+                    } else navigator.navigateToUserDetails(this, -1, null);
+                });
     }
 
     @Override
@@ -179,7 +184,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     private void setupUI() {
         setContentView(R.layout.activity_user_list);
         ButterKnife.bind(this);
-//        onSearchRequested();
+        onSearchRequested();
         Window window = this.getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
