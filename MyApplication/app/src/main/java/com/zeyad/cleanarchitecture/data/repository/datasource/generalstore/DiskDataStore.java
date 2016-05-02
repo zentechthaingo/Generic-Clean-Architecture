@@ -37,7 +37,7 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> entityDetails(final int itemId, Class domainClass, Class dataClass) {
+    public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
         return mRealmManager.getById(itemId, dataClass)
                 .map(realmModel -> mEntityDataMapper.transformToDomain((UserRealmModel) realmModel))
                 .compose(Utils.logSource(TAG, mRealmManager));

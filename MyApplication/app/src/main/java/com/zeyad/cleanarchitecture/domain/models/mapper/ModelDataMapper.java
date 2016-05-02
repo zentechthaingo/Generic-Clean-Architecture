@@ -69,8 +69,8 @@ public class ModelDataMapper {
      * @param userRealmModels Objects to be transformed.
      * @return {@link User} if valid {@link UserRealmModel} otherwise null.
      */
-//    public Collection<UserModel> transformAllToPresentation(Collection userRealmModels, Class presentationClass) {
-//        Collection<UserModel> userModels = new ArrayList<>();
+//    public collection<UserModel> transformAllToPresentation(collection userRealmModels, Class presentationClass) {
+//        collection<UserModel> userModels = new ArrayList<>();
 //        for (int i = 0; i < userRealmModels.size(); i++)
 //            userModels.add(transformToPresentation(userRealmModels.toArray()[i], presentationClass));
 //        return userModels;
@@ -113,8 +113,8 @@ public class ModelDataMapper {
      * @param userRealmModels Objects to be transformed.
      * @return {@link User} if valid {@link UserRealmModel} otherwise null.
      */
-//    public Collection<User> transformAllToDomain(Collection userRealmModels, Class domainClass) {
-//        Collection<User> users = new ArrayList<>();
+//    public collection<User> transformAllToDomain(collection userRealmModels, Class domainClass) {
+//        collection<User> users = new ArrayList<>();
 //        for (int i = 0; i < userRealmModels.size(); i++)
 //            users.add(transformToDomain(userRealmModels.toArray()[i], domainClass));
 //        return users;

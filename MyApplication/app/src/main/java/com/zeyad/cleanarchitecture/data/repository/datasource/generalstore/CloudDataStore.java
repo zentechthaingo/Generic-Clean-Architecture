@@ -157,7 +157,7 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> entityDetails(final int itemId, Class domainClass, Class dataClass) {
+    public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
         return restApi.objectById(itemId)
 //                .retryWhen(observable -> {

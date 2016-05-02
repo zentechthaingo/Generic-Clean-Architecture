@@ -23,7 +23,7 @@ import rx.Observable;
  */
 public interface RestApi {
     /**
-     * Retrieves an {@link rx.Observable} which will emit a Collection of {@link UserEntity}.
+     * Retrieves an {@link rx.Observable} which will emit a collection of {@link UserEntity}.
      */
     @GET("users.json")
     Observable<List> userCollection();

@@ -40,7 +40,7 @@ public class UserModelDataMapper {
     }
 
     /**
-     * Transform a Collection of {@link User} into a Collection of {@link UserModel}.
+     * Transform a collection of {@link User} into a collection of {@link UserModel}.
      *
      * @param usersCollection Objects to be transformed.
      * @return List of {@link UserModel}.

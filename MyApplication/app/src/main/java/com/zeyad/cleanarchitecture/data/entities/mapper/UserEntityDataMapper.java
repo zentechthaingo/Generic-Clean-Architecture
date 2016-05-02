@@ -2,7 +2,6 @@ package com.zeyad.cleanarchitecture.data.entities.mapper;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
@@ -19,7 +18,6 @@ import io.realm.RealmObject;
 
 @Singleton
 public class UserEntityDataMapper extends EntityDataMapper {
-    private Gson gson;
 
     @Inject
     public UserEntityDataMapper() {
@@ -143,9 +141,9 @@ public class UserEntityDataMapper extends EntityDataMapper {
     }
 
     /**
-     * Transform a List of {@link UserEntity} into a Collection of {@link User}.
+     * Transform a List of {@link UserEntity} into a collection of {@link User}.
      *
-     * @param userEntityCollection Object Collection to be transformed.
+     * @param userEntityCollection Object collection to be transformed.
      * @return {@link User} if valid {@link UserEntity} otherwise null.
      */
     public List<User> transform(Collection<UserEntity> userEntityCollection) {

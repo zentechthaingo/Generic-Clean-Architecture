@@ -10,7 +10,7 @@ import rx.Observable;
  */
 public interface DataStore {
     /**
-     * Get an {@link rx.Observable} which will emit a Collection of ?.
+     * Get an {@link rx.Observable} which will emit a collection of ?.
      */
     Observable<List> collection(Class domainClass, Class dataClass);
 
@@ -19,7 +19,7 @@ public interface DataStore {
      *
      * @param itemId The id to retrieve user data.
      */
-    Observable<?> entityDetails(final int itemId, Class domainClass, Class dataClass);
+    Observable<?> getById(final int itemId, Class domainClass, Class dataClass);
 
     Observable<?> postToCloud(Object object, Class domainClass, Class dataClass);
 

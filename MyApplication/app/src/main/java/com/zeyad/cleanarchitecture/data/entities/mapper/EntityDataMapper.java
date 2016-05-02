@@ -22,7 +22,7 @@ import io.realm.RealmObject;
 // TODO: 3/24/16 Generalize!
 @Singleton
 public class EntityDataMapper {
-    private Gson gson;
+    protected Gson gson;
 
     @Inject
     public EntityDataMapper() {

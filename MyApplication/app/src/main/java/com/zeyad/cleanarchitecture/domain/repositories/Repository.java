@@ -11,9 +11,9 @@ import rx.Observable;
  */
 public interface Repository {
     /**
-     * Get an {@link rx.Observable} which will emit a Collection of Items.
+     * Get an {@link rx.Observable} which will emit a collection of Items.
      */
-    Observable<List> Collection(Class presentationClass, Class domainClass, Class dataClass);
+    Observable<List> collection(Class presentationClass, Class domainClass, Class dataClass);
 
     /**
      * Get an {@link rx.Observable} which will emit an Item.

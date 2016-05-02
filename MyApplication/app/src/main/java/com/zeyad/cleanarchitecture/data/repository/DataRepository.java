@@ -39,7 +39,7 @@ public class DataRepository implements Repository {
     //    @SuppressWarnings("Convert2MethodRef")
     @Override
     @RxLogObservable
-    public Observable<List> Collection(Class presentationClass, Class domainClass, Class dataClass) {
+    public Observable<List> collection(Class presentationClass, Class domainClass, Class dataClass) {
         return dataStoreFactory.getAll(entityDataMapper).collection(domainClass, dataClass);
     }
 
@@ -48,7 +48,7 @@ public class DataRepository implements Repository {
     @RxLogObservable
     public Observable<?> getById(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
         return dataStoreFactory.getById(itemId, entityDataMapper, dataClass)
-                .entityDetails(itemId, domainClass, dataClass);
+                .getById(itemId, domainClass, dataClass);
     }
 
     @Override

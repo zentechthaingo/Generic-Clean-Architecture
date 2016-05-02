@@ -37,7 +37,6 @@ public class Utils {
             return repeatAttempt;
         }).flatMap(repeatAttempt -> {
             Log.v(TAG, "flatMap, call, repeatAttempt " + repeatAttempt);
-            // increase the waiting time
             return Observable.timer(repeatAttempt * 5, TimeUnit.SECONDS);
         });
     }
@@ -130,6 +129,14 @@ public class Utils {
         return false;
     }
 
+    // TODO: 1/5/16 Test!
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static void scheduleJob(Context context, JobInfo jobInfo) {
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        if (scheduler.schedule(jobInfo) == 1)
+            Log.d("JobScheduler", "Job scheduled successfully!");
+    }
+
     /**
      * Creates a file name from an image url
      *
@@ -142,14 +149,6 @@ public class Utils {
         if (hash.startsWith("-"))
             hash = hash.substring(1);
         return Constants.BASE_IMAGE_NAME_CACHED + hash + Constants.IMAGE_EXTENSION;
-    }
-
-    // TODO: 1/5/16 Test!
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static void scheduleJob(Context context, JobInfo jobInfo) {
-        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        if (scheduler.schedule(jobInfo) == 1)
-            Log.d("JobScheduler", "Job scheduled successfully!");
     }
 
     /**

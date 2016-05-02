@@ -29,7 +29,7 @@ public class GetUserDetails extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservable() {
+    public Observable buildUseCaseObservable() {
         return userRepository.user(userId);
     }
 

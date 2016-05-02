@@ -37,7 +37,7 @@ public class GenericUseCase extends BaseUseCase {
 
     @Override
     public Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.Collection(presentationClass, domainClass, dataClass)
+        return repository.collection(presentationClass, domainClass, dataClass)
                 .map(collection -> modelDataMapper.transformAllToPresentation(collection, presentationClass));
     }
 
@@ -48,18 +48,18 @@ public class GenericUseCase extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+    public Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
         return repository.put(object, presentationClass, domainClass, dataClass)
                 .map(item -> modelDataMapper.transformToPresentation(item, presentationClass));
     }
 
     @Override
-    protected Observable buildUseCaseObservableDeleteMultiple(List list, Class domainClass, Class dataClass) {
+    public Observable buildUseCaseObservableDeleteMultiple(List list, Class domainClass, Class dataClass) {
         return repository.deleteCollection(list, domainClass, dataClass);
     }
 
     @Override
-    protected Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
+    public Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
         return repository.search(query, column, presentationClass, domainClass, dataClass)
                 .map(collection -> modelDataMapper.transformAllToPresentation((Collection) collection, presentationClass));
     }
