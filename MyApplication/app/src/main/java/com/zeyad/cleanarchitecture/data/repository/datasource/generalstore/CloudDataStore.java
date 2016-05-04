@@ -13,8 +13,8 @@ import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
-import com.zeyad.cleanarchitecture.domain.services.ImageDownloadGcmService;
-import com.zeyad.cleanarchitecture.domain.services.ImageDownloadIntentService;
+import com.zeyad.cleanarchitecture.presentation.services.ImageDownloadGcmService;
+import com.zeyad.cleanarchitecture.presentation.services.ImageDownloadIntentService;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;

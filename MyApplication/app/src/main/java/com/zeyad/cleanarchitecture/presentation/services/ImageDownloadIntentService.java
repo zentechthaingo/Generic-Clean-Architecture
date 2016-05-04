@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.domain.services;
+package com.zeyad.cleanarchitecture.presentation.services;
 
 import android.app.IntentService;
 import android.content.Intent;

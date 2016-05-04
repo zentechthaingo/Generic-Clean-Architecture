@@ -19,7 +19,6 @@ import javax.inject.Singleton;
 
 import io.realm.RealmObject;
 
-// TODO: 3/24/16 Generalize!
 @Singleton
 public class EntityDataMapper {
     protected Gson gson;
@@ -111,8 +110,6 @@ public class EntityDataMapper {
      * @param item Object to be transformed.
      * @return {@link UserRealmModel} if valid {@link User} otherwise null.
      */
-    // FIXME: 4/26/16 fix cover url mapping
-    // FIXME: 4/26/16 fix id on edit
     public Object transformToRealm(Object item, Class dataClass) {
         if (item != null) {
             UserRealmModel userRealmModel = new UserRealmModel();
@@ -124,27 +121,7 @@ public class EntityDataMapper {
             userRealmModel.setFullName(cast.getFullName());
             if (cast.getUserId() != 0) {
                 return userRealmModel.setUserId(cast.getUserId());
-//                return userRealmModel;
-            } else {
-                return userRealmModel.setUserId(Utils.getNextId(UserRealmModel.class,
-                        UserRealmModel.ID_COLUMN));
-//                return userRealmModel;
-            }
-        }
-        return null;
-    }
-
-    public UserRealmModel transformToRealm(User user) {
-        if (user != null) {
-            UserRealmModel userRealmModel = new UserRealmModel();
-            userRealmModel.setFollowers(user.getFollowers());
-            userRealmModel.setDescription(user.getDescription());
-            userRealmModel.setEmail(user.getEmail());
-            userRealmModel.setCover_url(user.getCoverUrl());
-            userRealmModel.setFullName(user.getFullName());
-            if (user.getUserId() != 0)
-                return userRealmModel.setUserId(user.getUserId());
-            else
+            } else
                 return userRealmModel.setUserId(Utils.getNextId(UserRealmModel.class,
                         UserRealmModel.ID_COLUMN));
         }

@@ -55,7 +55,7 @@
         <!-- </intent-filter> -->
         <!-- </service> -->
         <service
-            android:name=".domain.services.ImageDownloadIntentService"
+            android:name=".presentation.services.ImageDownloadIntentService"
             android:enabled="true" />
 
     </application>
