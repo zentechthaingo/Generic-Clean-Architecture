@@ -1,7 +1,6 @@
 package com.zeyad.cleanarchitecture.domain.services;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -27,7 +26,6 @@ import java.util.Set;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 
-// TODO: 4/19/16 Inject data layer
 public class ImageDownloadGcmService extends GcmTaskService {
 
     public static final String TAG = ImageDownloadIntentService.class.getSimpleName(),
@@ -45,11 +43,7 @@ public class ImageDownloadGcmService extends GcmTaskService {
     public static String CACHE_DIR;
     private final Set<String> downloadedKeys = new HashSet<>();
     private final Map<String, List<String>> categorizedKeys = new Hashtable<>();
-    // TODO: 1/6/16 Try v
-//    private final ArraySet<String> downloadedKeys = new ArraySet<>();
-//    private final ArrayMap<String, List<String>> categorizedKeys = new ArrayMap<>();
     private File dir;
-    private BitmapFactory.Options bmOptions;
     private final RestApiImpl restApi = new RestApiImpl();
 
     @Override

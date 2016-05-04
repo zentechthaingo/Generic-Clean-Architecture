@@ -2,16 +2,19 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
+import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
-import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.DiskUserDataStore;
+import com.zeyad.cleanarchitecture.domain.models.User;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.verify;
 
@@ -29,63 +32,65 @@ public class DiskDataStoreTest extends ApplicationTestCase {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    private Class domainClass, dataClass;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         diskDataStore = new DiskDataStore(mockRealmManager, entityDataMapper);
-    }
-
-    @After
-    public void tearDown() throws Exception {
+        domainClass = User.class;
+        dataClass = UserRealmModel.class;
 
     }
 
     @Test
     public void testCollection() throws Exception {
-        expectedException.expect(UnsupportedOperationException.class);
-        diskDataStore.collection();
+        diskDataStore.collection(domainClass, dataClass);
+        verify(mockRealmManager).getAll(dataClass);
     }
 
     @Test
     public void testGetById() throws Exception {
-        diskDataStore.getById(FAKE_USER_ID);
-        verify(mockRealmManager).getById(FAKE_USER_ID);
+        diskDataStore.getById(FAKE_USER_ID, domainClass, dataClass);
+        verify(mockRealmManager).getById(FAKE_USER_ID, dataClass);
     }
 
     @Test
     public void testSearchDisk() throws Exception {
-        diskDataStore.searchDisk(FAKE_USER_ID);
-        verify(mockRealmManager).getWhere(FAKE_USER_ID);
+        diskDataStore.searchDisk("", "", domainClass, dataClass);
+        verify(mockRealmManager).getWhere(dataClass, "", "");
     }
 
     @Test
     public void testPutToDisk() throws Exception {
-        diskDataStore.putToDisk(FAKE_USER_ID);
-        verify(mockRealmManager).put(FAKE_USER_ID);
+        UserRealmModel userRealmModel = new UserRealmModel();
+        diskDataStore.putToDisk(userRealmModel);
+        verify(mockRealmManager).put(userRealmModel);
     }
 
     @Test
     public void testDeleteCollectionFromDisk() throws Exception {
-        diskDataStore.deleteCollectionFromDisk(FAKE_USER_ID);
-        verify(mockRealmManager).evictCollection(\FAKE_USER_ID);
+        List<Integer> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel().getUserId());
+        diskDataStore.deleteCollectionFromDisk(usersList, dataClass);
+        verify(mockRealmManager).evictCollection(usersList, dataClass);
     }
 
     @Test
     public void testSearchCloud() throws Exception {
         expectedException.expect(UnsupportedOperationException.class);
-        diskDataStore.searchCloud();
+        diskDataStore.searchCloud("", domainClass, dataClass);
     }
 
     @Test
     public void testPostToCloud() throws Exception {
         expectedException.expect(UnsupportedOperationException.class);
-        diskDataStore.postToCloud();
+        diskDataStore.postToCloud(new UserRealmModel(), domainClass, dataClass);
     }
 
     @Test
     public void testDeleteCollectionFromCloud() throws Exception {
         expectedException.expect(UnsupportedOperationException.class);
-        diskDataStore.deleteCollectionFromCloud();
+        diskDataStore.deleteCollectionFromCloud(new ArrayList<>(), domainClass, dataClass);
     }
 }

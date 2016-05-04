@@ -9,6 +9,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
+import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
+import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
@@ -24,10 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 
-// TODO: 4/19/16 Inject data layer
 public class ImageDownloadIntentService extends IntentService {
 
     public static final String TAG = ImageDownloadIntentService.class.getSimpleName(),
@@ -48,8 +51,8 @@ public class ImageDownloadIntentService extends IntentService {
     private final Set<String> downloadedKeys = new HashSet<>();
     private final Map<String, List<String>> categorizedKeys = new Hashtable<>();
     private File dir;
-    private BitmapFactory.Options bmOptions;
-    //    private Intent intent;
+    @Inject
+    RxEventBus rxEventBus;
 
     public ImageDownloadIntentService() {
         super("ImageDownloadIntentService");
@@ -58,6 +61,7 @@ public class ImageDownloadIntentService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        ((AndroidApplication) getApplicationContext()).getApplicationComponent().inject(this);
         CACHE_DIR = Constants.CACHE_DIR = new File(String.valueOf(getCacheDir())).getAbsolutePath();
         dir = new File(CACHE_DIR);
         File lockSignature = new File(dir, "dl.lock");
@@ -68,7 +72,7 @@ public class ImageDownloadIntentService extends IntentService {
         } else {
             // TODO: generate signature
         }
-        bmOptions = new BitmapFactory.Options();
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565;
         addAllCachedFiles();
     }
@@ -174,6 +178,7 @@ public class ImageDownloadIntentService extends IntentService {
                             Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
                         }
                         outputStream.flush();
+                        rxEventBus.send("file Downloaded!");
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {

@@ -4,8 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.facebook.stetho.Stetho;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.firebase.client.Firebase;
 import com.firebase.client.Logger;
 import com.squareup.leakcanary.LeakCanary;
@@ -18,7 +16,6 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationM
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.rx.RealmObservableFactory;
-import okhttp3.OkHttpClient;
 
 /**
  * Android Main Application
@@ -55,14 +52,14 @@ public class AndroidApplication extends Application {
     }
 
     private void initializeStetho() {
-        Stetho.initializeWithDefaults(this);
-        new OkHttpClient.Builder()
-                .addNetworkInterceptor(new StethoInterceptor())
-                .build();
-        Stetho.initialize(Stetho.newInitializerBuilder(this)
-                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-                .build());
+//        Stetho.initializeWithDefaults(this);
+//        new OkHttpClient.Builder()
+//                .addNetworkInterceptor(new StethoInterceptor())
+//                .build();
+//        Stetho.initialize(Stetho.newInitializerBuilder(this)
+//                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+//                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+//                .build());
     }
 
     private void initializeRealm() {

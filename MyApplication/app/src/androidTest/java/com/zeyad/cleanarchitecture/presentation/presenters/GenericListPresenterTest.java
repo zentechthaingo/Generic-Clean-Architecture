@@ -1,19 +1,53 @@
 package com.zeyad.cleanarchitecture.presentation.presenters;
 
+import android.content.Context;
 import android.test.AndroidTestCase;
 
+import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
+import com.zeyad.cleanarchitecture.presentation.model.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchitecture.presentation.views.UserListView;
+
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import rx.Subscriber;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by ZIaDo on 4/30/16.
  */
 public class GenericListPresenterTest extends AndroidTestCase {
+    private GenericListPresenter userListPresenter;
+    @Mock
+    private Context mockContext;
+    @Mock
+    private UserListView mockUserListView;
+    @Mock
+    private GenericUseCase mockGetUserList;
+    @Mock
+    private UserModelDataMapper mockUserModelDataMapper;
 
-    @Before
-    public void setUp() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        MockitoAnnotations.initMocks(this);
+        userListPresenter = new GenericListPresenter(mockGetUserList);
+        userListPresenter.setView(mockUserListView);
+    }
 
+    public void testUserListPresenterInitialize() {
+        given(mockUserListView.getContext()).willReturn(mockContext);
+
+        userListPresenter.initialize();
+
+        verify(mockUserListView).hideRetry();
+        verify(mockUserListView).showLoading();
+        verify(mockGetUserList).execute(any(Subscriber.class));
     }
 
     @After

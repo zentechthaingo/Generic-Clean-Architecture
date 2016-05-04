@@ -104,7 +104,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
             throw new IllegalArgumentException("The list cannot be null");
     }
 
-    public CompositeSubscription getmCompositeSubscription() {
+    public CompositeSubscription getCompositeSubscription() {
         return mCompositeSubscription;
     }
 

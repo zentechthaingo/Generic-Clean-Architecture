@@ -1,19 +1,54 @@
 package com.zeyad.cleanarchitecture.presentation.presenters;
 
+import android.content.Context;
 import android.test.AndroidTestCase;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
+import com.zeyad.cleanarchitecture.presentation.model.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
 
-/**
- * Created by ZIaDo on 4/30/16.
- */
+import org.junit.After;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import rx.Subscriber;
+
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
+
 public class GenericDetailPresenterTest extends AndroidTestCase {
 
-    @Before
-    public void setUp() throws Exception {
+    private static final int FAKE_USER_ID = 123;
 
+    private UserDetailsPresenter userDetailsPresenter;
+
+    @Mock
+    private Context mockContext;
+    @Mock
+    private UserDetailsView mockUserDetailsView;
+    @Mock
+    private GenericUseCase mockGetUserDetails;
+    @Mock
+    private UserModelDataMapper mockUserModelDataMapper;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        MockitoAnnotations.initMocks(this);
+        userDetailsPresenter = new UserDetailsPresenter(mockGetUserDetails,
+                mockUserModelDataMapper);
+        userDetailsPresenter.setView(mockUserDetailsView);
+    }
+
+    public void testUserDetailsPresenterInitialize() {
+        given(mockUserDetailsView.getContext()).willReturn(mockContext);
+
+        userDetailsPresenter.initialize(FAKE_USER_ID);
+
+        verify(mockUserDetailsView).hideRetry();
+        verify(mockUserDetailsView).showLoading();
+        verify(mockGetUserDetails).execute(any(Subscriber.class));
     }
 
     @After
@@ -21,37 +56,30 @@ public class GenericDetailPresenterTest extends AndroidTestCase {
 
     }
 
-    @Test
     public void testSetView() throws Exception {
 
     }
 
-    @Test
     public void testResume() throws Exception {
 
     }
 
-    @Test
     public void testPause() throws Exception {
 
     }
 
-    @Test
     public void testDestroy() throws Exception {
 
     }
 
-    @Test
     public void testInitialize() throws Exception {
 
     }
 
-    @Test
     public void testSetupEdit() throws Exception {
 
     }
 
-    @Test
     public void testSubmitEdit() throws Exception {
 
     }

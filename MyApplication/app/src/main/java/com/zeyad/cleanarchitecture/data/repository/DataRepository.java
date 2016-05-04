@@ -7,7 +7,6 @@ import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.DataS
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,6 +15,7 @@ import javax.inject.Singleton;
 
 import io.realm.RealmObject;
 import rx.Observable;
+import rx.functions.Action2;
 import rx.functions.Func1;
 
 @Singleton
@@ -67,16 +67,27 @@ public class DataRepository implements Repository {
 
     @Override
     @RxLogObservable
-    public Observable<?> deleteCollection(List list, Class domainClass, Class dataClass) {
+    public Observable<Boolean> deleteCollection(List list, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
                                 .deleteCollectionFromCloud(entityDataMapper)
                                 .deleteCollectionFromCloud(list, domainClass, dataClass),
                         dataStoreFactory
                                 .deleteCollectionFromDisk(entityDataMapper)
-                                .deleteCollectionFromDisk(list, dataClass));
-//                .collect(HashSet::new, HashSet::add)
-//                .flatMap(Observable::from);
+                                .deleteCollectionFromDisk(list, dataClass))//;
+                .collect(HashSet::new, new Action2<HashSet<Boolean>, Object>() {
+                             @Override
+                             public void call(HashSet<Boolean> set, Object bool) {
+                                 set.add((boolean)bool);
+                             }
+                         }
+                )
+                .map(new Func1<HashSet<Boolean>, Boolean>() {
+                         @Override
+                         public Boolean call(HashSet<Boolean> set) {
+                             return set.size() == 1;
+                         }
+                     });
     }
 
     @Override
@@ -90,6 +101,6 @@ public class DataRepository implements Repository {
                         .searchDisk(query, column, domainClass, dataClass)
                         .collect(HashSet::new, HashSet::add)
                         .flatMap((Func1<HashSet<Object>, Observable<List>>)
-                                objects -> Observable.from((Collection) objects)));
+                                objects -> Observable.from((List) objects)));
     }
 }

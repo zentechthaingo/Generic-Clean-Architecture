@@ -11,12 +11,17 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.ApplicationComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
 import com.zeyad.cleanarchitecture.presentation.navigation.Navigator;
 
 import java.util.List;
+
+import javax.inject.Inject;
+
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Base {@link Activity} class for every Activity in this application.
@@ -25,13 +30,17 @@ public abstract class BaseActivity extends AppCompatActivity {
     // FIXME: 3/27/16 Fix DI!
     //    @Inject
     Navigator navigator;
-//    public static final int MSG_SERVICE_OBJ = 37;
+    //    public static final int MSG_SERVICE_OBJ = 37;
+    @Inject
+    RxEventBus rxEventBus;
+    public CompositeSubscription mCompositeSubscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getApplicationComponent().inject(this);
         navigator = new Navigator();
+        mCompositeSubscription = new CompositeSubscription();
     }
 
     /**

@@ -17,6 +17,7 @@ import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmModel;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
 import rx.Subscriber;
@@ -60,6 +61,11 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                         .where(clazz)
                         .beginsWith(filterKey, query, Case.INSENSITIVE)
                         .findAll())));
+    }
+
+    @Override
+    public Observable<List> getWhere(Class clazz, RealmQuery realmQuery) {
+        return null;
     }
 
     @Override

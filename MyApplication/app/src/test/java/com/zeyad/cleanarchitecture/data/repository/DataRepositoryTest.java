@@ -48,8 +48,7 @@ public class DataRepositoryTest extends ApplicationTestCase {
         presentationClass = UserModel.class;
         domainClass = User.class;
         dataClass = UserRealmModel.class;
-        userDataRepository = new DataRepository(mockUserDataStoreFactory,
-                mockUserEntityDataMapper);
+        userDataRepository = new DataRepository(mockUserDataStoreFactory, mockUserEntityDataMapper);
         given(mockUserDataStoreFactory.createByIdFromCloud(mockUserEntityDataMapper)).willReturn(mockUserDataStore);
         given(mockUserDataStoreFactory.createByIdFromDisk(mockUserEntityDataMapper)).willReturn(mockUserDataStore);
         given(mockUserDataStoreFactory.createAllFromCloud(mockUserEntityDataMapper)).willReturn(mockUserDataStore);

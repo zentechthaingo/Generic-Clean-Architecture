@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Fade;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,9 +47,6 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Activity that shows a list of Users.
@@ -56,7 +54,8 @@ import rx.schedulers.Schedulers;
 public class UserListActivity extends BaseActivity implements HasComponent<UserComponent>, UserListView,
         ActionMode.Callback {
 
-    private static final String STATE_SCROLL = "scrollPosition";
+    private static final String TAG = UserListActivity.class.getSimpleName(),
+            STATE_SCROLL = "scrollPosition";
     private boolean mTwoPane;
     private UserComponent userComponent;
     @Bind(R.id.toolbar)
@@ -73,7 +72,6 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     Button bt_retry;
     @Bind(R.id.fab_add)
     FloatingActionButton mAddFab;
-    private Subscription mFabSubscription = null;
     private UsersAdapter mUsersAdapter;
     private List<Pair<View, String>> mSharedElements;
     private ActionMode actionMode;
@@ -125,9 +123,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     public void onResume() {
         super.onResume();
         mUserListPresenter.resume();
-        mFabSubscription = RxView.clicks(mAddFab)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        mCompositeSubscription.add(RxView.clicks(mAddFab)
                 .subscribe(aVoid -> {
                     Pair<View, String> pair = null;
                     if (Utils.hasLollipop())
@@ -147,7 +143,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                         fragment.setArguments(arguments);
                         addFragment(R.id.detail_container, fragment, mSharedElements);
                     } else navigator.navigateToUserDetails(this, -1, null);
-                });
+                }));
     }
 
     @Override
@@ -161,8 +157,8 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         super.onDestroy();
         ButterKnife.unbind(this);
         mUserListPresenter.destroy();
-        Utils.unsubscribeIfNotNull(mFabSubscription);
-        Utils.unsubscribeIfNotNull(mUsersAdapter.getmCompositeSubscription());
+        Utils.unsubscribeIfNotNull(mCompositeSubscription);
+        Utils.unsubscribeIfNotNull(mUsersAdapter.getCompositeSubscription());
     }
 
     private void initializeInjector() {
@@ -175,6 +171,11 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     private void initialize() {
         getComponent(UserComponent.class).inject(this);
         mUserListPresenter.setView(this);
+        rxEventBus.toObserverable()
+                .subscribe(event -> {
+                    if (event instanceof String)
+                        Log.d(TAG, (String) event);
+                });
     }
 
     protected <C> C getComponent(Class<C> componentType) {
@@ -310,7 +311,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.isEmpty())
-                    mUserListPresenter.showUsersCollectionInView(mUserListPresenter.getmUserModels());
+                    mUserListPresenter.showUsersCollectionInView(mUserListPresenter.getUserModels());
                 else
                     mUserListPresenter.search(mUsersAdapter.getmUsersCollection(), newText);
                 return true;

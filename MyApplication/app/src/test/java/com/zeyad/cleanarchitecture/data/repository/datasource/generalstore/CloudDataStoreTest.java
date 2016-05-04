@@ -3,16 +3,20 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.UserEntity;
+import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
+import com.zeyad.cleanarchitecture.domain.models.User;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Observable;
 
@@ -34,21 +38,19 @@ public class CloudDataStoreTest extends ApplicationTestCase {
     private EntityDataMapper mockUserEntityDataMapper;
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    private Class domainClass, dataClass;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         cloudDataStore = new CloudDataStore(mockRestApi, mockRealmManager, mockUserEntityDataMapper);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
+        domainClass = User.class;
+        dataClass = UserRealmModel.class;
     }
 
     @Test
     public void testCollection() throws Exception {
-        cloudDataStore.collection();
+        cloudDataStore.collection(domainClass, dataClass);
         verify(mockRestApi).userCollection();
     }
 
@@ -57,7 +59,7 @@ public class CloudDataStoreTest extends ApplicationTestCase {
         UserEntity fakeUserEntity = new UserEntity();
         Observable<Object> fakeObservable = Observable.just(fakeUserEntity);
         given(mockRestApi.objectById(FAKE_USER_ID)).willReturn(fakeObservable);
-        cloudDataStore.getById(FAKE_USER_ID);
+        cloudDataStore.getById(FAKE_USER_ID, domainClass, dataClass);
         verify(mockRestApi).objectById(FAKE_USER_ID);
     }
 
@@ -66,37 +68,39 @@ public class CloudDataStoreTest extends ApplicationTestCase {
         UserEntity fakeUserEntity = new UserEntity();
         Observable<Object> fakeObservable = Observable.just(fakeUserEntity);
         given(mockRestApi.postItem(fakeUserEntity)).willReturn(fakeObservable);
-        cloudDataStore.postToCloud(fakeUserEntity);
+        cloudDataStore.postToCloud(fakeUserEntity, domainClass, dataClass);
         verify(mockRestApi).objectById(FAKE_USER_ID);
     }
 
     @Test
     public void testSearchCloud() throws Exception {
-        cloudDataStore.searchCloud();
-        verify(mockRestApi).search();
+        cloudDataStore.searchCloud("", domainClass, dataClass);
+        verify(mockRestApi).search("");
     }
 
     @Test
     public void testDeleteCollectionFromCloud() throws Exception {
-        cloudDataStore.deleteCollectionFromCloud();
-        verify(mockRestApi).deleteCollection();
+        List<Integer> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel().getUserId());
+        cloudDataStore.deleteCollectionFromCloud(usersList, domainClass, dataClass);
+        verify(mockRestApi).deleteCollection(usersList);
     }
 
     @Test
     public void testPutToDisk() throws Exception {
         expectedException.expect(UnsupportedOperationException.class);
-        verify(mockRestApi).postItem();
+        verify(mockRestApi).postItem(new UserEntity());
     }
 
     @Test
     public void testDeleteCollectionFromDisk() throws Exception {
         expectedException.expect(UnsupportedOperationException.class);
-        verify(mockRestApi).deleteCollection();
+        verify(mockRestApi).deleteCollection(new ArrayList<>());
     }
 
     @Test
     public void testSearchDisk() throws Exception {
         expectedException.expect(UnsupportedOperationException.class);
-        verify(mockRestApi).search();
+        verify(mockRestApi).search("");
     }
 }

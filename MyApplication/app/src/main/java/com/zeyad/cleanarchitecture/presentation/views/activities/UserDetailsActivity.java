@@ -23,9 +23,6 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Activity that shows details of a certain user.
@@ -43,7 +40,6 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
     public AutoLoadImageView mDetailImage;
     @Bind(R.id.edit_details_fab)
     FloatingActionButton editDetailsFab;
-    private Subscription fabSubscription;
     private int userId;
     private UserComponent userComponent;
 
@@ -95,9 +91,7 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
         if (savedInstanceState == null)
             addFragment(R.id.user_detail_container, UserDetailsFragment.newInstance(userId), new ArrayList<>());
         editDetailsFab.setTag(FAB_EDIT_TAG);
-        fabSubscription = RxView.clicks(editDetailsFab)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        mCompositeSubscription.add(RxView.clicks(editDetailsFab)
                 .subscribe(aVoid -> {
                     if (editDetailsFab.getTag().equals(FAB_EDIT_TAG)) {
                         editDetailsFab.setTag(FAB_ADD_TAG);
@@ -114,7 +108,7 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
                                 .getUserDetailsPresenter()
                                 .submitEdit();
                     }
-                });
+                }));
     }
 
     private void initializeInjector() {
@@ -134,7 +128,7 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
     public void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
-        Utils.unsubscribeIfNotNull(fabSubscription);
+        Utils.unsubscribeIfNotNull(mCompositeSubscription);
     }
 
     @Override

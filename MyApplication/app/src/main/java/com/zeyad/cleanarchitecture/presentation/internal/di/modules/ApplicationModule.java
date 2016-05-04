@@ -10,6 +10,7 @@ import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.executor.JobExecutor;
 import com.zeyad.cleanarchitecture.data.repository.DataRepository;
 import com.zeyad.cleanarchitecture.data.repository.UserDataRepository;
+import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
@@ -37,7 +38,7 @@ public class ApplicationModule {
     @Provides
     @Singleton
     Context provideApplicationContext() {
-        return this.application;
+        return application;
     }
 
     @Provides
@@ -81,5 +82,11 @@ public class ApplicationModule {
     @Singleton
     Firebase provideFirebase() {
         return new Firebase(Constants.FIREBASE_URL);
+    }
+
+    @Provides
+    @Singleton
+    RxEventBus provideRxEventBus() {
+        return new RxEventBus();
     }
 }

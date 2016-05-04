@@ -22,7 +22,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.zeyad.cleanarchetecture"
+        applicationId "com.zeyad.cleanarchitecture"
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
@@ -103,8 +103,8 @@ dependencies {
 //    // Guava
 //    compile 'com.google.guava:guava:19.0'
     // Stetho
-    debugCompile 'com.facebook.stetho:stetho:1.3.1'
-    debugCompile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
+//    debugCompile 'com.facebook.stetho:stetho:1.3.1'
+//    debugCompile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
     // Leak Canary
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.3.1'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1'
@@ -126,9 +126,9 @@ dependencies {
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-// Rx
+    // Rx
     compile 'io.reactivex:rxandroid:1.1.0'
-    compile 'io.reactivex:rxjava:1.1.2'
+    compile 'io.reactivex:rxjava:1.1.3'
     compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
     compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.4.0'
     // Injection

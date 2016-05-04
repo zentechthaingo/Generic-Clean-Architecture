@@ -191,7 +191,7 @@ public class GenericListPresenter implements BasePresenter {
         }
     }
 
-    public List<UserModel> getmUserModels() {
+    public List<UserModel> getUserModels() {
         return mUserModels;
     }
 }

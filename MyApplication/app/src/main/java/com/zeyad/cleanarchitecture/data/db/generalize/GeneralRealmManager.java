@@ -7,6 +7,7 @@ import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import java.util.List;
 
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import rx.Observable;
 
@@ -68,4 +69,6 @@ public interface GeneralRealmManager {
     Context getContext();
 
     Observable<List> getWhere(Class clazz, String query, String filterKey);
+
+    Observable<List> getWhere(Class clazz, RealmQuery realmQuery);
 }
