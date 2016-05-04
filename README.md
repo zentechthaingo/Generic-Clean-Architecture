@@ -21,7 +21,6 @@ The project's first version is almost done, just a couple of minor bugs and some
 
 ### Todo:
 
-* Fix put (edit use case)
 * Fix delete multiple
 * GCM job scheduler / android priority queue
 * Update Tests
