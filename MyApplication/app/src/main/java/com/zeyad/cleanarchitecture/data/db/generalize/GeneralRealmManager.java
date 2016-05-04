@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import io.realm.RealmObject;
@@ -30,6 +32,8 @@ public interface GeneralRealmManager {
      * @param realmModel Element to insert in the cache.
      */
     Observable<?> put(RealmObject realmModel);
+
+    Observable<?> put(JSONObject realmObject, Class dataClass);
 
     /**
      * Puts and element into the cache.

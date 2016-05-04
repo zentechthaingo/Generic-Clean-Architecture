@@ -13,7 +13,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import io.realm.RealmObject;
 import rx.Observable;
 import rx.functions.Action2;
 import rx.functions.Func1;
@@ -57,7 +56,8 @@ public class DataRepository implements Repository {
         return Observable
                 .concat(dataStoreFactory
                                 .putToDisk(entityDataMapper)
-                                .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
+                                .putToDisk(object, dataClass),
+//                                .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
                         dataStoreFactory
                                 .putToCloud(entityDataMapper)
                                 .postToCloud(object, domainClass, dataClass))
@@ -74,20 +74,13 @@ public class DataRepository implements Repository {
                                 .deleteCollectionFromCloud(list, domainClass, dataClass),
                         dataStoreFactory
                                 .deleteCollectionFromDisk(entityDataMapper)
-                                .deleteCollectionFromDisk(list, dataClass))//;
+                                .deleteCollectionFromDisk(list, dataClass))
                 .collect(HashSet::new, new Action2<HashSet<Boolean>, Object>() {
-                             @Override
-                             public void call(HashSet<Boolean> set, Object bool) {
-                                 set.add((boolean)bool);
-                             }
-                         }
-                )
-                .map(new Func1<HashSet<Boolean>, Boolean>() {
-                         @Override
-                         public Boolean call(HashSet<Boolean> set) {
-                             return set.size() == 1;
-                         }
-                     });
+                    @Override
+                    public void call(HashSet<Boolean> set, Object bool) {
+                        set.add((boolean) bool);
+                    }
+                }).map(set -> ((HashSet) set).size() == 1);
     }
 
     @Override

@@ -7,6 +7,8 @@ import android.util.Log;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 
+import org.json.JSONObject;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -63,6 +65,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                         .findAll())));
     }
 
+    // TODO: 5/4/16 Implement!
     @Override
     public Observable<List> getWhere(Class clazz, RealmQuery realmQuery) {
         return null;
@@ -75,6 +78,22 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                 mRealm = Realm.getDefaultInstance();
                 mRealm.beginTransaction();
                 Observable observable = Observable.just(mRealm.copyToRealmOrUpdate(realmObject));
+                mRealm.commitTransaction();
+                writeToPreferences(System.currentTimeMillis(), Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
+                mRealm.close();
+                return observable;
+            });
+        }
+        return Observable.empty();
+    }
+
+    @Override
+    public Observable<?> put(JSONObject realmObject, Class dataClass) {
+        if (realmObject != null) {
+            return Observable.defer(() -> {
+                mRealm = Realm.getDefaultInstance();
+                mRealm.beginTransaction();
+                Observable observable = Observable.just(mRealm.createOrUpdateObjectFromJson(dataClass, realmObject));
                 mRealm.commitTransaction();
                 writeToPreferences(System.currentTimeMillis(), Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
                 mRealm.close();

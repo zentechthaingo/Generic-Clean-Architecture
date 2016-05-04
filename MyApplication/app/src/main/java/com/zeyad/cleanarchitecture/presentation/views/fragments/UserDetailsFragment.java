@@ -186,7 +186,8 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
             if (appBarLayout != null)
                 appBarLayout.setTitle(userModel.getFullName());
 //            applyPalette();
-        } else mUserModel = null;
+        }
+//        else mUserModel = null;
     }
 
     @Override

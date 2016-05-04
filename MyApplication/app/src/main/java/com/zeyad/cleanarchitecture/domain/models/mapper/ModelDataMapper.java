@@ -92,7 +92,7 @@ public class ModelDataMapper {
 //        if (userRealmModel != null) {
 //            UserEntity cast = gson.fromJson(gson.toJson(userRealmModel), UserEntity.class);
 //            User user = new User(cast.getUserId());
-//            user.setCoverUrl(cast.getCoverUrl());
+//            user.setCover_url(cast.getCover_url());
 //            user.setFullName(cast.getFullName());
 //            user.setDescription(cast.getDescription());
 //            user.setFollowers(cast.getFollowers());

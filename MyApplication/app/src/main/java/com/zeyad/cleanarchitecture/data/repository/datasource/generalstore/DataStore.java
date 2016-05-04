@@ -25,6 +25,8 @@ public interface DataStore {
 
     Observable<?> putToDisk(RealmObject object);
 
+    Observable<?> putToDisk(Object object, Class dataClass);
+
     Observable<?> deleteCollectionFromCloud(final List list, Class domainClass, Class dataClass);
 
     Observable<?> deleteCollectionFromDisk(final List<Integer> list, Class clazz);

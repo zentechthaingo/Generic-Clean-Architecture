@@ -120,7 +120,7 @@ public class EntityDataMapper {
             userRealmModel.setFollowers(cast.getFollowers());
             userRealmModel.setDescription(cast.getDescription());
             userRealmModel.setEmail(cast.getEmail());
-            userRealmModel.setCoverUrl(cast.getCoverUrl());
+            userRealmModel.setCover_url(cast.getCover_url());
             userRealmModel.setFullName(cast.getFullName());
             if (cast.getUserId() != 0) {
                 return userRealmModel.setUserId(cast.getUserId());
@@ -140,7 +140,7 @@ public class EntityDataMapper {
             userRealmModel.setFollowers(user.getFollowers());
             userRealmModel.setDescription(user.getDescription());
             userRealmModel.setEmail(user.getEmail());
-            userRealmModel.setCoverUrl(user.getCoverUrl());
+            userRealmModel.setCover_url(user.getCoverUrl());
             userRealmModel.setFullName(user.getFullName());
             if (user.getUserId() != 0)
                 return userRealmModel.setUserId(user.getUserId());

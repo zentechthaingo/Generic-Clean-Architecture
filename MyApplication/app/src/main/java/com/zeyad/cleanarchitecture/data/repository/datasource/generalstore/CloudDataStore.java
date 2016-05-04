@@ -198,6 +198,11 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
+    public Observable<?> putToDisk(Object object, Class dataClass) {
+        return Observable.error(new Exception("cant getById from disk in cloud data store"));
+    }
+
+    @Override
     public Observable<?> deleteCollectionFromDisk(List list, Class clazz) {
         return Observable.error(new Exception("cant getById from disk in cloud data store"));
     }

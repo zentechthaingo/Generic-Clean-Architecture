@@ -45,7 +45,7 @@ public class RealmManagerTest extends AndroidTestCase {
     public void testGet() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
         userRealmModel.setUserId(FAKE_USER_ID);
-        userRealmModel.setCoverUrl("www.test.com");
+        userRealmModel.setCover_url("www.test.com");
         userRealmModel.setDescription("fake description");
         userRealmModel.setEmail("fake@email.com");
         userRealmModel.setFollowers(22);
@@ -59,7 +59,7 @@ public class RealmManagerTest extends AndroidTestCase {
         UserRealmModel userRealmModel = new UserRealmModel();
         for (int i = 0; i < 3; i++) {
             userRealmModel.setUserId(FAKE_USER_ID + i);
-            userRealmModel.setCoverUrl("www.test.com");
+            userRealmModel.setCover_url("www.test.com");
             userRealmModel.setDescription("fake description");
             userRealmModel.setEmail("fake@email.com");
             userRealmModel.setFollowers(22);
@@ -73,7 +73,7 @@ public class RealmManagerTest extends AndroidTestCase {
     public void testPut() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
         userRealmModel.setUserId(FAKE_USER_ID);
-        userRealmModel.setCoverUrl("www.test.com");
+        userRealmModel.setCover_url("www.test.com");
         userRealmModel.setDescription("fake description");
         userRealmModel.setEmail("fake@email.com");
         userRealmModel.setFollowers(22);
@@ -89,7 +89,7 @@ public class RealmManagerTest extends AndroidTestCase {
         for (int i = 0; i < 10; i++) {
             userRealmModel = new UserRealmModel();
             userRealmModel.setUserId(FAKE_USER_ID + i);
-            userRealmModel.setCoverUrl("www.test.com");
+            userRealmModel.setCover_url("www.test.com");
             userRealmModel.setDescription("fake description");
             userRealmModel.setEmail("fake@email.com");
             userRealmModel.setFollowers(22);
@@ -105,7 +105,7 @@ public class RealmManagerTest extends AndroidTestCase {
     public void testIsCached() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
         userRealmModel.setUserId(FAKE_USER_ID);
-        userRealmModel.setCoverUrl("www.test.com");
+        userRealmModel.setCover_url("www.test.com");
         userRealmModel.setDescription("fake description");
         userRealmModel.setEmail("fake@email.com");
         userRealmModel.setFollowers(22);
@@ -118,7 +118,7 @@ public class RealmManagerTest extends AndroidTestCase {
     public void testIsValid() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
         userRealmModel.setUserId(FAKE_USER_ID);
-        userRealmModel.setCoverUrl("www.test.com");
+        userRealmModel.setCover_url("www.test.com");
         userRealmModel.setDescription("fake description");
         userRealmModel.setEmail("fake@email.com");
         userRealmModel.setFollowers(22);
@@ -131,7 +131,7 @@ public class RealmManagerTest extends AndroidTestCase {
     public void testIsValid1() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
         userRealmModel.setUserId(FAKE_USER_ID);
-        userRealmModel.setCoverUrl("www.test.com");
+        userRealmModel.setCover_url("www.test.com");
         userRealmModel.setDescription("fake description");
         userRealmModel.setEmail("fake@email.com");
         userRealmModel.setFollowers(22);
@@ -145,7 +145,7 @@ public class RealmManagerTest extends AndroidTestCase {
         UserRealmModel userRealmModel = new UserRealmModel();
         for (int i = 0; i < 3; i++) {
             userRealmModel.setUserId(FAKE_USER_ID + i);
-            userRealmModel.setCoverUrl("www.test.com");
+            userRealmModel.setCover_url("www.test.com");
             userRealmModel.setDescription("fake description");
             userRealmModel.setEmail("fake@email.com");
             userRealmModel.setFollowers(22);
@@ -174,7 +174,7 @@ public class RealmManagerTest extends AndroidTestCase {
     public void testEvictById() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
         userRealmModel.setUserId(FAKE_USER_ID);
-        userRealmModel.setCoverUrl("www.test.com");
+        userRealmModel.setCover_url("www.test.com");
         userRealmModel.setDescription("fake description");
         userRealmModel.setEmail("fake@email.com");
         userRealmModel.setFollowers(22);
@@ -203,7 +203,7 @@ public class RealmManagerTest extends AndroidTestCase {
     public void testEvict() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
         userRealmModel.setUserId(FAKE_USER_ID);
-        userRealmModel.setCoverUrl("www.test.com");
+        userRealmModel.setCover_url("www.test.com");
         userRealmModel.setDescription("fake description");
         userRealmModel.setEmail("fake@email.com");
         userRealmModel.setFollowers(22);

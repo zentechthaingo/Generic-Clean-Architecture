@@ -107,7 +107,7 @@ public class GenericDetailPresenter implements BasePresenter {
     }
 
     public void submitEdit() {
-        mGetUserDetailsBaseUseCase.executePut(new SearchDetailsSubscriber(), mViewDetailsView.getValidatedUser(),
+        mGetUserDetailsBaseUseCase.executePut(new PutSubscriber(), mViewDetailsView.getValidatedUser(),
                 UserModel.class, User.class, UserRealmModel.class);
     }
 
@@ -131,7 +131,7 @@ public class GenericDetailPresenter implements BasePresenter {
         }
     }
 
-    private final class SearchDetailsSubscriber extends DefaultSubscriber<UserModel> {
+    private final class PutSubscriber extends DefaultSubscriber<UserModel> {
         @Override
         public void onCompleted() {
             hideViewLoading();

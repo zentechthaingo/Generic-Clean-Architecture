@@ -13,7 +13,7 @@ public class UserRealmModel extends RealmObject {
     private int userId;
 
     @SerializedName("cover_url")
-    private String coverUrl;
+    private String cover_url;
 
     @SerializedName(FULL_NAME_COLUMN)
     private String full_name;
@@ -40,12 +40,12 @@ public class UserRealmModel extends RealmObject {
         return this;
     }
 
-    public String getCoverUrl() {
-        return coverUrl;
+    public String getCover_url() {
+        return cover_url;
     }
 
-    public void setCoverUrl(String coverUrl) {
-        this.coverUrl = coverUrl;
+    public void setCover_url(String cover_url) {
+        this.cover_url = cover_url;
     }
 
     public String getFullName() {

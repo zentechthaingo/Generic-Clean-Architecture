@@ -14,6 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 
 @Singleton
@@ -116,7 +117,7 @@ public class UserEntityDataMapper extends EntityDataMapper {
         if (userRealmModel != null) {
             userEntity = new UserEntity();
             userEntity.setUserId(userRealmModel.getUserId());
-            userEntity.setCoverUrl(userRealmModel.getCoverUrl());
+            userEntity.setCoverUrl(userRealmModel.getCover_url());
             userEntity.setFullName(userRealmModel.getFullName());
             userEntity.setDescription(userRealmModel.getDescription());
             userEntity.setFollowers(userRealmModel.getFollowers());
@@ -131,7 +132,7 @@ public class UserEntityDataMapper extends EntityDataMapper {
             userRealmModel = new UserRealmModel();
             if (userEntity.getUserId() != 0)
                 userRealmModel.setUserId(userEntity.getUserId());
-            userRealmModel.setCoverUrl(userEntity.getCoverUrl());
+            userRealmModel.setCover_url(userEntity.getCoverUrl());
             userRealmModel.setFullName(userEntity.getFullName());
             userRealmModel.setDescription(userEntity.getDescription());
             userRealmModel.setFollowers(userEntity.getFollowers());
@@ -165,12 +166,15 @@ public class UserEntityDataMapper extends EntityDataMapper {
      */
     public User transformToDomain(UserRealmModel userRealmModel) {
         if (userRealmModel != null) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
             User user = new User(userRealmModel.getUserId());
-            user.setCoverUrl(userRealmModel.getCoverUrl());
+            user.setCoverUrl(userRealmModel.getCover_url());
             user.setFullName(userRealmModel.getFullName());
             user.setDescription(userRealmModel.getDescription());
             user.setFollowers(userRealmModel.getFollowers());
             user.setEmail(userRealmModel.getEmail());
+            realm.commitTransaction();
             return user;
         }
         return null;

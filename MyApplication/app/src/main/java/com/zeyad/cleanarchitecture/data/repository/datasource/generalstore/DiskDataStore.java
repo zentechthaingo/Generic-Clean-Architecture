@@ -1,5 +1,6 @@
 package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
+import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
@@ -7,6 +8,9 @@ import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
 import com.zeyad.cleanarchitecture.utilities.Utils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -53,6 +57,18 @@ public class DiskDataStore implements DataStore {
     public Observable<?> putToDisk(RealmObject object) {
         return Observable.defer(() -> mRealmManager.put(object))
                 .map(realmModel -> mEntityDataMapper.transformToDomain((UserRealmModel) realmModel));
+    }
+
+    @Override
+    public Observable<?> putToDisk(Object object, Class dataClass) {
+        return Observable.defer(() -> {
+            try {
+                return mRealmManager.put(new JSONObject(new Gson().toJson(object)), dataClass);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return Observable.error(e);
+            }
+        }).map(realmModel -> mEntityDataMapper.transformToDomain((UserRealmModel) realmModel));
     }
 
     @Override
