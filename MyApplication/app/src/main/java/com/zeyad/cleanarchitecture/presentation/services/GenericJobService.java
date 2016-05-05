@@ -19,9 +19,9 @@ import com.zeyad.cleanarchitecture.utilities.Utils;
 import java.util.LinkedList;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class ImageDownloadJobService extends JobService { // runs on the ui thread
+public class GenericJobService extends JobService { // runs on the ui thread
 
-    private static final String TAG = ImageDownloadJobService.class.getName();
+    private static final String TAG = GenericJobService.class.getName();
     private BaseActivity mActivity;
     private final LinkedList<JobParameters> jobParamsMap = new LinkedList<>();
 
@@ -86,12 +86,12 @@ public class ImageDownloadJobService extends JobService { // runs on the ui thre
 
     @Override
     public boolean onStartJob(JobParameters params) { // return true if u r doing background thread work, else return false
-        startService(new Intent(this, ImageDownloadIntentService.class)
-                .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_PATH, params.getExtras().getString(""))
-                .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(params
+        startService(new Intent(getApplicationContext(), GenericNetworkQueueIntentService.class)
+                .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_PATH, params.getExtras().getString(""))
+                .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(params
                         .getExtras().getString(""))));
-//                .putExtra(ImageDownloadIntentService.WIDTH, getWidth())
-//                .putExtra(ImageDownloadIntentService.HEIGHT, getHeight()));
+//                .putExtra(GenericNetworkQueueIntentService.WIDTH, getWidth())
+//                .putExtra(GenericNetworkQueueIntentService.HEIGHT, getHeight()));
         jobFinished(params, false);// true to reschedule, false to drop
         return true;
     }

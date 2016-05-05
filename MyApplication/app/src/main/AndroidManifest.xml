@@ -47,7 +47,7 @@
                 android:value="com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity" />
         </activity>
         <!-- <service -->
-        <!-- android:name="com.zeyad.cleanarchitecturet.presentation.view.services.ImageDownloadGcmService" -->
+        <!-- android:name="com.zeyad.cleanarchitecturet.presentation.view.services.GenericGCMService" -->
         <!-- android:exported="true" -->
         <!-- android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE"> -->
         <!-- <intent-filter> -->
@@ -55,7 +55,7 @@
         <!-- </intent-filter> -->
         <!-- </service> -->
         <service
-            android:name=".presentation.services.ImageDownloadIntentService"
+            android:name=".presentation.services.GenericNetworkQueueIntentService"
             android:enabled="true" />
 
     </application>

@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.presentation.services.ImageDownloadIntentService;
+import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.io.File;
@@ -95,11 +95,11 @@ public class AutoLoadImageView extends ImageView {
             loadBitmap(DISK);
         else {
             loadBitmap(CLOUD);
-            getContext().startService(new Intent(getContext(), ImageDownloadIntentService.class)
-                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_PATH, imageUrl)
-                    .putExtra(ImageDownloadIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(imageUrl))
-                    .putExtra(ImageDownloadIntentService.WIDTH, getWidth())
-                    .putExtra(ImageDownloadIntentService.HEIGHT, getHeight()));
+            getContext().startService(new Intent(getContext(), GenericNetworkQueueIntentService.class)
+                    .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_PATH, imageUrl)
+                    .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(imageUrl))
+                    .putExtra(GenericNetworkQueueIntentService.WIDTH, getWidth())
+                    .putExtra(GenericNetworkQueueIntentService.HEIGHT, getHeight()));
         }
     }
 

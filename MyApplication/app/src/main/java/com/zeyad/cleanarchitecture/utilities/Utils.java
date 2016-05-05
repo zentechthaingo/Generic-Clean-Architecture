@@ -135,6 +135,7 @@ public class Utils {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         if (scheduler.schedule(jobInfo) == 1)
             Log.d("JobScheduler", "Job scheduled successfully!");
+        else Log.d("JobScheduler", "Failed to scheduled Job!");
     }
 
     /**

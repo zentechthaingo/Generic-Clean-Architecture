@@ -95,14 +95,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 //    /**
 //     * Service object to interact scheduled jobs.
 //     */
-//    ImageDownloadJobService mImageDownloadJobService;
+//    GenericJobService mImageDownloadJobService;
 
     //    Handler mHandler = new Handler(/* default looper */) {
 //        @Override
 //        public void handleMessage(Message msg) {
 //            switch (msg.what) {
 //                case MSG_SERVICE_OBJ:
-//                    mImageDownloadJobService = (ImageDownloadJobService) msg.obj;
+//                    mImageDownloadJobService = (GenericJobService) msg.obj;
 //                    mImageDownloadJobService.setUiCallback(ProductListActivity.this);
 //            }
 //        }

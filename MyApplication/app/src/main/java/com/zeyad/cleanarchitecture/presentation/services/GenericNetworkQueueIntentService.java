@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
 import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
@@ -25,15 +26,17 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 
-public class ImageDownloadIntentService extends IntentService {
+// TODO: 5/4/16 Generalize!
+public class GenericNetworkQueueIntentService extends IntentService {
 
-    public static final String TAG = ImageDownloadIntentService.class.getSimpleName(),
+    public static final String TAG = GenericNetworkQueueIntentService.class.getSimpleName(),
             EXTRA_REMOTE_PATH = "REMOTE_PATH",
             EXTRA_REMOTE_NAME = "REMOTE_NAME",
             EXTRA_FILTER_SCHEME = "FILTER",
@@ -46,24 +49,23 @@ public class ImageDownloadIntentService extends IntentService {
             EXTENDED_DATA_STATUS_FAILED = "FAILED",
             WIDTH = "WIDTH", HEIGHT = "HEIGHT",
             POST_OBJECT = "POST_OBJECT",
-            DELETE_OBJECT = "DELETE_OBJECT", DELETE_COLLECTION = "DELETE_COLLECTION";
-    public static String CACHE_DIR;
+            DELETE_COLLECTION = "DELETE_COLLECTION";
     private final Set<String> downloadedKeys = new HashSet<>();
     private final Map<String, List<String>> categorizedKeys = new Hashtable<>();
     private File dir;
     @Inject
     RxEventBus rxEventBus;
 
-    public ImageDownloadIntentService() {
-        super("ImageDownloadIntentService");
+    public GenericNetworkQueueIntentService() {
+        super("GenericNetworkQueueIntentService");
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         ((AndroidApplication) getApplicationContext()).getApplicationComponent().inject(this);
-        CACHE_DIR = Constants.CACHE_DIR = new File(String.valueOf(getCacheDir())).getAbsolutePath();
-        dir = new File(CACHE_DIR);
+        Constants.CACHE_DIR = new File(String.valueOf(getCacheDir())).getAbsolutePath();
+        dir = new File(Constants.CACHE_DIR);
         File lockSignature = new File(dir, "dl.lock");
         if (!dir.exists()) {
             dir.mkdirs();
@@ -81,7 +83,7 @@ public class ImageDownloadIntentService extends IntentService {
         File[] files = dir.listFiles();
         if (files != null)
             for (File file : files) {
-                String key = file.getAbsolutePath().replace(CACHE_DIR, "");
+                String key = file.getAbsolutePath().replace(Constants.CACHE_DIR, "");
                 if (!downloadedKeys.contains(key)) {
                     Log.d(TAG, "Preloaded cached file: " + key);
                     downloadedKeys.add(key);
@@ -146,6 +148,30 @@ public class ImageDownloadIntentService extends IntentService {
     }
 
     private void download(final File target, int index) {
+        // TODO: 5/4/16 Test!
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(target);
+            Glide.with(GenericNetworkQueueIntentService.this)
+                    .load(Constants.BASE_URL + "cover_" + index + ".jpg")
+                    .asBitmap()
+                    .into(-1, -1)
+                    .get()
+                    .compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            rxEventBus.send("file Downloaded!");
+        } catch (InterruptedException | ExecutionException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         RestApiImpl restApi = new RestApiImpl();
         restApi.download(index).subscribe(new Subscriber<ResponseBody>() {
             @Override

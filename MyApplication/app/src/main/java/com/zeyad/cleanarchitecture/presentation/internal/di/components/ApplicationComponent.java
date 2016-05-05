@@ -8,7 +8,7 @@ import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
-import com.zeyad.cleanarchitecture.presentation.services.ImageDownloadIntentService;
+import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule;
 import com.zeyad.cleanarchitecture.presentation.views.activities.BaseActivity;
 
@@ -24,7 +24,7 @@ import dagger.Component;
 public interface ApplicationComponent {
     void inject(BaseActivity baseActivity);
 
-    void inject(ImageDownloadIntentService imageDownloadIntentService);
+    void inject(GenericNetworkQueueIntentService genericNetworkQueueIntentService);
 
     //Exposed to sub-graphs.
     Context context();
