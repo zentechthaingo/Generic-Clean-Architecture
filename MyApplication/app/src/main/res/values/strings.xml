@@ -51,4 +51,7 @@
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">item Detail</string>
     <string name="fab_transition">fab transition</string>
+    <string name="invalid_email_msg">Invalid Email or empty!</string>
+    <string name="invalid_name_msg">Name shouldn\'t be empty!</string>
+    <string name="invalid_number_msg">Invalid Number</string>
 </resources>

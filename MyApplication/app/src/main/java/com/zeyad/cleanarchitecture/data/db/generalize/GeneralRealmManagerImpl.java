@@ -6,7 +6,9 @@ import android.util.Log;
 
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.utilities.Constants;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Collections;
@@ -91,6 +93,13 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     public Observable<?> put(JSONObject realmObject, Class dataClass) {
         if (realmObject != null) {
             return Observable.defer(() -> {
+                if (realmObject.optInt(UserRealmModel.ID_COLUMN) == 0)
+                    try {
+                        realmObject.put(UserRealmModel.ID_COLUMN, Utils.getNextId(UserRealmModel.class,
+                                UserRealmModel.ID_COLUMN));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 mRealm = Realm.getDefaultInstance();
                 mRealm.beginTransaction();
                 Observable observable = Observable.just(mRealm.createOrUpdateObjectFromJson(dataClass, realmObject));

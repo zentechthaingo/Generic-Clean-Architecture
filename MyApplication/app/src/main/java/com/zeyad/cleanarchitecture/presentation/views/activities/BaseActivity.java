@@ -50,8 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param fragment        The fragment to be added.
      */
     protected void addFragment(int containerViewId, Fragment fragment, List<Pair<View, String>> sharedElements) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager()
-                .beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         for (Pair<View, String> pair : sharedElements)
             fragmentTransaction.addSharedElement(pair.first, pair.second);
         fragmentTransaction.add(containerViewId, fragment).commit();
@@ -78,9 +77,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Glide.get(this).clearMemory();
-        Glide.get(this).trimMemory(ComponentCallbacks2.TRIM_MEMORY_COMPLETE);
-        AndroidApplication.getRefWatcher(this).watch(this);
+        Glide.get(getApplicationContext()).clearMemory();
+        Glide.get(getApplicationContext()).trimMemory(ComponentCallbacks2.TRIM_MEMORY_COMPLETE);
+        AndroidApplication.getRefWatcher(getApplicationContext()).watch(this);
     }
 
     /**
@@ -89,7 +88,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param message An string representing a message to be shown.
      */
     protected void showToastMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 //    /**

@@ -19,8 +19,8 @@ import android.widget.TextView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
-import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.presenters.GenericDetailPresenter;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
 import com.zeyad.cleanarchitecture.presentation.views.activities.UserDetailsActivity;
 import com.zeyad.cleanarchitecture.utilities.Utils;
@@ -32,7 +32,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Observable;
 import rx.Observer;
-import rx.Subscription;
 
 import static android.text.TextUtils.isEmpty;
 import static android.util.Patterns.EMAIL_ADDRESS;
@@ -75,10 +74,6 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     @Bind(R.id.bt_retry)
     Button bt_retry;
     private UserViewModel mUserViewModel;
-    private Observable<CharSequence> fullNameChangeObservable;
-    private Observable<CharSequence> emailChangeObservable;
-    private Observable<CharSequence> followersChangeObservable;
-    private Subscription formSubscription;
 
     public UserDetailsFragment() {
         super();
@@ -119,7 +114,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     @Override
     public void onPause() {
         super.onPause();
-        Utils.unsubscribeIfNotNull(formSubscription);
+        Utils.unsubscribeIfNotNull(mCompositeSubscription);
         userDetailsPresenter.pause();
     }
 
@@ -171,23 +166,52 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     public void editUser(UserViewModel userViewModel) {
         ll_item_details.setVisibility(View.GONE);
         ll_edit.setVisibility(View.VISIBLE);
-        fullNameChangeObservable = RxTextView.textChanges(et_fullName).skip(1);
-        emailChangeObservable = RxTextView.textChanges(et_email).skip(1);
-        followersChangeObservable = RxTextView.textChanges(et_followers).skip(1);
-        validateForm();
+        mCompositeSubscription.add(Observable.combineLatest(RxTextView.textChanges(et_email).skip(1),
+                RxTextView.textChanges(et_followers).skip(1), RxTextView.textChanges(et_fullName).skip(1),
+                (newEmail, newFollowers, newFullName) -> {
+                    boolean emailValid = !isEmpty(newEmail) &&
+                            EMAIL_ADDRESS.matcher(newEmail).matches();
+                    if (!emailValid)
+                        tv_email.setError(getString(R.string.invalid_email_msg));
+                    boolean passValid = !isEmpty(newFullName);
+                    if (!passValid)
+                        et_fullName.setError(getString(R.string.invalid_name_msg));
+                    boolean numValid = !isEmpty(newFollowers);
+                    if (numValid)
+                        numValid = Integer.parseInt(newFollowers.toString()) > 0;
+                    if (!numValid)
+                        et_followers.setError(getString(R.string.invalid_number_msg));
+                    return emailValid && passValid && numValid;
+                })
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(Boolean formValid) {
+                        if (formValid)
+                            ((UserDetailsActivity) getActivity()).getEditDetailsFab().setEnabled(true);
+                        else
+                            ((UserDetailsActivity) getActivity()).getEditDetailsFab().setEnabled(false);
+                    }
+                }));
         if (userViewModel != null) {
             mUserViewModel = userViewModel;
-            et_fullName.setText(userViewModel.getFullName());
-            et_email.setText(userViewModel.getEmail());
-            et_followers.setText(String.valueOf(userViewModel.getFollowers()));
-            et_description.setText(userViewModel.getDescription());
+            et_fullName.setText(mUserViewModel.getFullName());
+            et_email.setText(mUserViewModel.getEmail());
+            et_followers.setText(String.valueOf(mUserViewModel.getFollowers()));
+            et_description.setText(mUserViewModel.getDescription());
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().
                     findViewById(R.id.toolbar_layout);
             if (appBarLayout != null)
-                appBarLayout.setTitle(userViewModel.getFullName());
+                appBarLayout.setTitle(mUserViewModel.getFullName());
 //            applyPalette();
         }
-//        else mUserViewModel = null;
     }
 
     @Override
@@ -195,7 +219,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
         mUserViewModel = userViewModel;
         ll_edit.setVisibility(View.GONE);
         ll_item_details.setVisibility(View.VISIBLE);
-        renderUser(userViewModel);
+        renderUser(mUserViewModel);
     }
 
     @Override
@@ -208,7 +232,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
         mUserViewModel.setEmail(et_email.getText().toString());
         mUserViewModel.setFollowers(Integer.parseInt(et_followers.getText().toString()));
         mUserViewModel.setDescription(et_description.getText().toString());
-        Log.d(UserDetailsFragment.class.getName(), mUserViewModel.toString());
+//        Log.d(UserDetailsFragment.class.getName(), mUserViewModel.toString());
         return mUserViewModel;
     }
 
@@ -259,44 +283,6 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
 
     public GenericDetailPresenter getUserDetailsPresenter() {
         return userDetailsPresenter;
-    }
-
-    private void validateForm() {
-        formSubscription = Observable.combineLatest(emailChangeObservable, followersChangeObservable,
-                fullNameChangeObservable, (newEmail, newFollowers, newFullName) -> {
-                    boolean emailValid = !isEmpty(newEmail) &&
-                            EMAIL_ADDRESS.matcher(newEmail).matches();
-                    if (!emailValid)
-                        tv_email.setError("Invalid Email or empty!");
-                    boolean passValid = !isEmpty(newFullName);
-                    if (!passValid)
-                        et_fullName.setError("Name shouldn't be empty!");
-                    boolean numValid = !isEmpty(newFollowers);
-                    if (numValid)
-                        numValid = Integer.parseInt(newFollowers.toString()) > 0;
-                    if (!numValid)
-                        et_followers.setError("Invalid Number!");
-                    return emailValid && passValid && numValid;
-                })
-                .subscribe(new Observer<Boolean>() {
-                    @Override
-                    public void onCompleted() {
-//                        Timber.d("completed");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-//                        Timber.e(e, "there was an error");
-                    }
-
-                    @Override
-                    public void onNext(Boolean formValid) {
-                        if (formValid)
-                            ((UserDetailsActivity) getActivity()).getEditDetailsFab().setEnabled(true);
-                        else
-                            ((UserDetailsActivity) getActivity()).getEditDetailsFab().setEnabled(false);
-                    }
-                });
     }
 
     private void applyPalette() {

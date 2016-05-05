@@ -6,11 +6,9 @@ import com.fernandocejas.frodo.annotation.RxLogObservable;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.DataStoreFactory;
-import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -61,7 +59,6 @@ public class DataRepository implements Repository {
                 .concat(dataStoreFactory
                                 .putToDisk(entityDataMapper)
                                 .putToDisk(object, dataClass),
-//                                .putToDisk((RealmObject) entityDataMapper.transformToRealm(object, dataClass)),
                         dataStoreFactory
                                 .putToCloud(entityDataMapper)
                                 .postToCloud(object, domainClass, dataClass))
@@ -90,7 +87,8 @@ public class DataRepository implements Repository {
 
     @Override
     @RxLogObservable
-    public Observable<?> search(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
+    public Observable<?> search(String query, String column, Class presentationClass, Class domainClass,
+                                Class dataClass) {
         return dataStoreFactory
                 .searchCloud(entityDataMapper)
                 .searchCloud(query, domainClass, dataClass)

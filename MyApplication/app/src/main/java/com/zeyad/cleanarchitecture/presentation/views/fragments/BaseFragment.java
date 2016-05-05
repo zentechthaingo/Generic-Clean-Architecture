@@ -6,10 +6,14 @@ import android.widget.Toast;
 
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 
+import rx.subscriptions.CompositeSubscription;
+
 /**
  * Base {@link Fragment} class for every fragment in this application.
  */
 public abstract class BaseFragment extends Fragment {
+
+    public CompositeSubscription mCompositeSubscription;
 
     public BaseFragment() {
     }
@@ -18,6 +22,7 @@ public abstract class BaseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        mCompositeSubscription = new CompositeSubscription();
     }
 
     /**
@@ -26,7 +31,7 @@ public abstract class BaseFragment extends Fragment {
      * @param message An string representing a message to be shown.
      */
     protected void showToastMessage(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     /**
