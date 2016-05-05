@@ -30,7 +30,7 @@ import com.zeyad.cleanarchitecture.presentation.annimations.DetailsTransition;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.presenters.GenericListPresenter;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
@@ -77,9 +77,9 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     private ActionMode actionMode;
     private UsersAdapter.OnItemClickListener onItemClickListener = new UsersAdapter.OnItemClickListener() {
         @Override
-        public void onUserItemClicked(int position, UserModel userModel, UserViewHolder holder) {
-            if (mUserListPresenter != null && userModel != null && actionMode == null)
-                mUserListPresenter.onUserClicked(userModel, holder);
+        public void onUserItemClicked(int position, UserViewModel userViewModel, UserViewHolder holder) {
+            if (mUserListPresenter != null && userViewModel != null && actionMode == null)
+                mUserListPresenter.onUserClicked(userViewModel, holder);
             else toggleSelection(position);
         }
 
@@ -226,17 +226,17 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     }
 
     @Override
-    public void renderUserList(Collection<UserModel> userModelCollection) {
-        if (userModelCollection != null) {
-            mUsersAdapter.setUsersCollection(userModelCollection);
-            mUsersAdapter.animateTo((List<UserModel>) userModelCollection);
+    public void renderUserList(Collection<UserViewModel> userViewModelCollection) {
+        if (userViewModelCollection != null) {
+            mUsersAdapter.setUsersCollection(userViewModelCollection);
+            mUsersAdapter.animateTo((List<UserViewModel>) userViewModelCollection);
             rv_users.scrollToPosition(0);
         }
     }
 
     // TODO: 4/6/16 Reorganize!
     @Override
-    public void viewUser(UserModel userModel, UserViewHolder holder) {
+    public void viewUser(UserViewModel userViewModel, UserViewHolder holder) {
         Pair<View, String> firstPair = null;
         Pair<View, String> secondPair = null;
         Pair<View, String> thirdPair = null;
@@ -260,17 +260,17 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 mSharedElements.add(thirdPair);
             }
             Bundle arguments = new Bundle();
-            arguments.putInt(UserDetailsFragment.ARG_ITEM_ID, userModel.getUserId());
-            arguments.putString(UserDetailsFragment.ARG_ITEM_IMAGE, userModel.getCoverUrl());
-            arguments.putString(UserDetailsFragment.ARG_ITEM_NAME, userModel.getFullName());
+            arguments.putInt(UserDetailsFragment.ARG_ITEM_ID, userViewModel.getUserId());
+            arguments.putString(UserDetailsFragment.ARG_ITEM_IMAGE, userViewModel.getCoverUrl());
+            arguments.putString(UserDetailsFragment.ARG_ITEM_NAME, userViewModel.getFullName());
             fragment.setArguments(arguments);
 
             addFragment(R.id.detail_container, fragment, mSharedElements);
         } else if (Utils.hasLollipop())
-            navigator.navigateToUserDetails(this, userModel.getUserId(),
+            navigator.navigateToUserDetails(this, userViewModel.getUserId(),
                     ActivityOptions.makeSceneTransitionAnimation(this, firstPair, secondPair, thirdPair).toBundle());
         else
-            navigator.navigateToUserDetails(this, userModel.getUserId(), null);
+            navigator.navigateToUserDetails(this, userViewModel.getUserId(), null);
     }
 
     @Override

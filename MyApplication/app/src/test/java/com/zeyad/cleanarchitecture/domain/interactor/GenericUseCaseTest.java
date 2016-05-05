@@ -6,7 +6,7 @@ import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class GenericUseCaseTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         genericUseCase = new GenericUseCase(mockRepository, mockThreadExecutor, mockPostExecutionThread);
-        presentationClass = UserModel.class;
+        presentationClass = UserViewModel.class;
         domainClass = User.class;
         dataClass = UserRealmModel.class;
     }
@@ -80,8 +80,8 @@ public class GenericUseCaseTest {
 
     @Test
     public void testGenericUseCaseObservablePut() {
-        genericUseCase.buildUseCaseObservablePut(new UserModel(), presentationClass, domainClass, dataClass);
-        verify(mockRepository).put(new UserModel(), presentationClass, domainClass, dataClass);
+        genericUseCase.buildUseCaseObservablePut(new UserViewModel(), presentationClass, domainClass, dataClass);
+        verify(mockRepository).put(new UserViewModel(), presentationClass, domainClass, dataClass);
         verifyNoMoreInteractions(mockRepository);
         verifyZeroInteractions(mockThreadExecutor);
         verifyZeroInteractions(mockPostExecutionThread);

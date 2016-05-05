@@ -1,25 +1,25 @@
 package com.zeyad.cleanarchitecture.presentation.views;
 
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import java.util.Collection;
 
 /**
  * Interface representing a View in a model view presenter (MVP) pattern.
- * In this case is used as a view representing a list of {@link UserModel}.
+ * In this case is used as a view representing a list of {@link UserViewModel}.
  */
 public interface UserListView extends LoadDataView {
     /**
      * Render a user list in the UI.
      *
-     * @param userModelCollection The collection of {@link UserModel} that will be shown.
+     * @param userViewModelCollection The collection of {@link UserViewModel} that will be shown.
      */
-    void renderUserList(Collection<UserModel> userModelCollection);
+    void renderUserList(Collection<UserViewModel> userViewModelCollection);
 
     /**
-     * View a {@link UserModel} profile/details.
+     * View a {@link UserViewModel} profile/details.
      *
-     * @param userModel The user that will be shown.
+     * @param userViewModel The user that will be shown.
      */
-    void viewUser(UserModel userModel, UserViewHolder holder);
+    void viewUser(UserViewModel userViewModel, UserViewHolder holder);
 }

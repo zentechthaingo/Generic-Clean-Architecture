@@ -10,7 +10,7 @@ import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.FirebaseUserListView;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 import com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity;
@@ -88,14 +88,14 @@ public class UserListFirebasePresenter implements BasePresenter {
 
     private void getUserList() {
         hideViewLoading();
-        viewListView.setupFirebaseAdapter(new FirebaseRecyclerAdapter<UserModel, UserViewHolder>(UserModel.class,
+        viewListView.setupFirebaseAdapter(new FirebaseRecyclerAdapter<UserViewModel, UserViewHolder>(UserViewModel.class,
                 R.layout.row_user, UserViewHolder.class, ref) {
             @Override
-            protected void populateViewHolder(UserViewHolder userViewHolder, final UserModel userModel, int i) {
-                userViewHolder.getTextViewTitle().setText(userModel.getFullName());
+            protected void populateViewHolder(UserViewHolder userViewHolder, final UserViewModel userViewModel, int i) {
+                userViewHolder.getTextViewTitle().setText(userViewModel.getFullName());
                 userViewHolder.itemView.setOnClickListener(v -> {
                     if (context instanceof UserListActivity)
-                        ((UserListActivity) context).viewUser(userModel, userViewHolder);
+                        ((UserListActivity) context).viewUser(userViewModel, userViewHolder);
                 });
             }
         });

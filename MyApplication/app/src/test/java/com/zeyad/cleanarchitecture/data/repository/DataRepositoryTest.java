@@ -7,7 +7,7 @@ import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.DataStore;
 import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.DataStoreFactory;
 import com.zeyad.cleanarchitecture.domain.models.User;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,7 +45,7 @@ public class DataRepositoryTest extends ApplicationTestCase {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        presentationClass = UserModel.class;
+        presentationClass = UserViewModel.class;
         domainClass = User.class;
         dataClass = UserRealmModel.class;
         userDataRepository = new DataRepository(mockUserDataStoreFactory, mockUserEntityDataMapper);

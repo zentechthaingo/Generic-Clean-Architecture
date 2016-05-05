@@ -10,7 +10,7 @@ import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
 
 import javax.inject.Inject;
@@ -23,7 +23,7 @@ public class GenericDetailPresenter implements BasePresenter {
      * id used to retrieve user details
      */
     private int mUserId;
-    private UserModel mUserModel;
+    private UserViewModel mUserViewModel;
     private UserDetailsView mViewDetailsView;
     private final GenericUseCase mGetUserDetailsBaseUseCase;
 
@@ -87,31 +87,31 @@ public class GenericDetailPresenter implements BasePresenter {
                 errorBundle.getException()));
     }
 
-    private void showUserDetailsInView(UserModel userModel) {
-        mUserModel = userModel;
-        mViewDetailsView.renderUser(this.mUserModel);
+    private void showUserDetailsInView(UserViewModel userViewModel) {
+        mUserViewModel = userViewModel;
+        mViewDetailsView.renderUser(this.mUserViewModel);
     }
 
-    private void showUserPutSuccess(@NonNull UserModel userModel) {
-        mUserModel = userModel;
-        mViewDetailsView.putUserSuccess(mUserModel);
+    private void showUserPutSuccess(@NonNull UserViewModel userViewModel) {
+        mUserViewModel = userViewModel;
+        mViewDetailsView.putUserSuccess(mUserViewModel);
     }
 
     private void getUserDetails() {
-        mGetUserDetailsBaseUseCase.executeDetail(new UserDetailsSubscriber(), UserModel.class,
+        mGetUserDetailsBaseUseCase.executeDetail(new UserDetailsSubscriber(), UserViewModel.class,
                 User.class, UserRealmModel.class, mUserId);
     }
 
     public void setupEdit() {
-        mViewDetailsView.editUser(mUserModel);
+        mViewDetailsView.editUser(mUserViewModel);
     }
 
     public void submitEdit() {
         mGetUserDetailsBaseUseCase.executePut(new PutSubscriber(), mViewDetailsView.getValidatedUser(),
-                UserModel.class, User.class, UserRealmModel.class);
+                UserViewModel.class, User.class, UserRealmModel.class);
     }
 
-    private final class UserDetailsSubscriber extends DefaultSubscriber<UserModel> {
+    private final class UserDetailsSubscriber extends DefaultSubscriber<UserViewModel> {
         @Override
         public void onCompleted() {
             hideViewLoading();
@@ -126,12 +126,12 @@ public class GenericDetailPresenter implements BasePresenter {
         }
 
         @Override
-        public void onNext(UserModel userModel) {
-            showUserDetailsInView(userModel);
+        public void onNext(UserViewModel userViewModel) {
+            showUserDetailsInView(userViewModel);
         }
     }
 
-    private final class PutSubscriber extends DefaultSubscriber<UserModel> {
+    private final class PutSubscriber extends DefaultSubscriber<UserViewModel> {
         @Override
         public void onCompleted() {
             hideViewLoading();
@@ -146,8 +146,8 @@ public class GenericDetailPresenter implements BasePresenter {
         }
 
         @Override
-        public void onNext(UserModel userModel) {
-            showUserPutSuccess(userModel);
+        public void onNext(UserViewModel userViewModel) {
+            showUserPutSuccess(userViewModel);
         }
     }
 }

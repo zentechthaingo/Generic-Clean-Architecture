@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 import com.firebase.ui.FirebaseRecyclerAdapter;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.FirebaseUserListView;
 import com.zeyad.cleanarchitecture.presentation.presenters.UserListFirebasePresenter;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
@@ -36,7 +36,7 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
      * Interface for listening user list events.
      */
     public interface UserListListener {
-        void onUserClicked(final UserModel userModel);
+        void onUserClicked(final UserViewModel userViewModel);
     }
 
     @Inject
@@ -49,7 +49,7 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
     RelativeLayout rl_retry;
     @Bind(R.id.bt_retry)
     Button bt_retry;
-    private FirebaseRecyclerAdapter<UserModel, UserViewHolder> recyclerAdapter;
+    private FirebaseRecyclerAdapter<UserViewModel, UserViewHolder> recyclerAdapter;
     private UserListListener userListListener;
 
     public UserListFirebaseFragment() {
@@ -138,23 +138,23 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
     }
 
     @Override
-    public void renderUserList(FirebaseRecyclerAdapter<UserModel, UserViewHolder> adapter) {
+    public void renderUserList(FirebaseRecyclerAdapter<UserViewModel, UserViewHolder> adapter) {
         recyclerAdapter = adapter;
         rv_users.setAdapter(recyclerAdapter);
     }
 
     @Override
-    public void renderUserList(Collection<UserModel> userModelCollection) {
+    public void renderUserList(Collection<UserViewModel> userViewModelCollection) {
     }
 
     @Override
-    public void viewUser(UserModel userModel, UserViewHolder holder) {
+    public void viewUser(UserViewModel userViewModel, UserViewHolder holder) {
         if (userListListener != null)
-            userListListener.onUserClicked(userModel);
+            userListListener.onUserClicked(userViewModel);
     }
 
     @Override
-    public void setupFirebaseAdapter(FirebaseRecyclerAdapter<UserModel, UserViewHolder> recyclerAdapter) {
+    public void setupFirebaseAdapter(FirebaseRecyclerAdapter<UserViewModel, UserViewHolder> recyclerAdapter) {
         this.recyclerAdapter = recyclerAdapter;
         rv_users.setAdapter(recyclerAdapter);
     }

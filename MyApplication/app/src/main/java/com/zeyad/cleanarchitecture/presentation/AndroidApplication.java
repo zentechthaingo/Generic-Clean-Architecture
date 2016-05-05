@@ -6,9 +6,11 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.Logger;
+import com.scand.realmbrowser.RealmBrowser;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.zeyad.cleanarchitecture.BuildConfig;
+import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.ApplicationComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerApplicationComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule;
@@ -68,6 +70,10 @@ public class AndroidApplication extends Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
+
+        new RealmBrowser.Builder(this)
+                .add(Realm.getDefaultInstance(), UserRealmModel.class) // add class, you want to view
+                .showNotification(); // call method showNotification()
     }
 
     private void initializeFirebase() {

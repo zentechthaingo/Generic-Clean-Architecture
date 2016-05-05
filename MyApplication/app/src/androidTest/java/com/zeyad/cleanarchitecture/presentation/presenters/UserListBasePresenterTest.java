@@ -4,7 +4,7 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 
 import com.zeyad.cleanarchitecture.domain.interactors.GetUserList;
-import com.zeyad.cleanarchitecture.presentation.model.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchitecture.presentation.view_models.mapper.UserViewModelDataMapper;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
 
 import org.mockito.Mock;
@@ -27,13 +27,13 @@ public class UserListBasePresenterTest extends AndroidTestCase {
     @Mock
     private GetUserList mockGetUserList;
     @Mock
-    private UserModelDataMapper mockUserModelDataMapper;
+    private UserViewModelDataMapper mockUserViewModelDataMapper;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         MockitoAnnotations.initMocks(this);
-        userListPresenter = new UserListPresenter(mockGetUserList, mockUserModelDataMapper);
+        userListPresenter = new UserListPresenter(mockGetUserList, mockUserViewModelDataMapper);
         userListPresenter.setView(mockUserListView);
     }
 

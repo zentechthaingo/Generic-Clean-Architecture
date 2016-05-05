@@ -215,13 +215,14 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     public boolean evictById(final int itemId, Class clazz) {
         mRealm = Realm.getDefaultInstance();
         RealmModel toDelete = mRealm.where(clazz).equalTo("userId", itemId).findFirst();
-        if (toDelete != null && RealmObject.isValid(toDelete)) {
+        if (toDelete != null) {
             mRealm.beginTransaction();
             RealmObject.deleteFromRealm(toDelete);
             mRealm.commitTransaction();
 //            mRealm.close();
             writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
-            return RealmObject.isValid(toDelete);
+            Log.d(TAG, "ItemId: " + itemId + " is deleted: " + !RealmObject.isValid(toDelete));
+            return !RealmObject.isValid(toDelete);
         } else return false;
     }
 
@@ -230,7 +231,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         return Observable.defer(() -> {
             boolean isDeleted = true;
             for (int i = 0; i < list.size(); i++)
-                isDeleted = isDeleted && !evictById(list.get(i), dataClass);
+                isDeleted = isDeleted && evictById(list.get(i), dataClass);
             return Observable.just(isDeleted);
         });
     }

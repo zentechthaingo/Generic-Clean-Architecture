@@ -9,8 +9,8 @@ import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
-import com.zeyad.cleanarchitecture.presentation.model.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.mapper.UserViewModelDataMapper;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 
@@ -29,12 +29,12 @@ public class UserListPresenter implements BasePresenter {
 
     private UserListView viewListView;
     private final BaseUseCase getUserListBaseUseCase;
-    private final UserModelDataMapper userModelDataMapper;
+    private final UserViewModelDataMapper userViewModelDataMapper;
 
     @Inject
-    public UserListPresenter(@Named("userEntityList") BaseUseCase getUserListUserCase, UserModelDataMapper userModelDataMapper) {
+    public UserListPresenter(@Named("userEntityList") BaseUseCase getUserListUserCase, UserViewModelDataMapper userViewModelDataMapper) {
         getUserListBaseUseCase = getUserListUserCase;
-        this.userModelDataMapper = userModelDataMapper;
+        this.userViewModelDataMapper = userViewModelDataMapper;
     }
 
     public void setView(@NonNull UserListView view) {
@@ -71,8 +71,8 @@ public class UserListPresenter implements BasePresenter {
         getUserList();
     }
 
-    public void onUserClicked(UserModel userModel, UserViewHolder holder) {
-        viewListView.viewUser(userModel, holder);
+    public void onUserClicked(UserViewModel userViewModel, UserViewHolder holder) {
+        viewListView.viewUser(userViewModel, holder);
     }
 
     private void showViewLoading() {
@@ -97,7 +97,7 @@ public class UserListPresenter implements BasePresenter {
     }
 
     private void showUsersCollectionInView(Collection<User> usersCollection) {
-        viewListView.renderUserList(userModelDataMapper.transform(usersCollection));
+        viewListView.renderUserList(userViewModelDataMapper.transform(usersCollection));
     }
 
     private void getUserList() {

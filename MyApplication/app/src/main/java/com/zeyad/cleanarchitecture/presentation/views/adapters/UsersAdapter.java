@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 
 import java.util.ArrayList;
@@ -21,27 +21,27 @@ import rx.subscriptions.CompositeSubscription;
 // TODO: 4/10/16 Generalize!
 
 /**
- * Adapter that manages a collection of {@link UserModel}.
+ * Adapter that manages a collection of {@link UserViewModel}.
  */
 public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     public interface OnItemClickListener {
-        void onUserItemClicked(int position, UserModel userModel, UserViewHolder holder);
+        void onUserItemClicked(int position, UserViewModel userViewModel, UserViewHolder holder);
 
         boolean onItemLongClicked(int position);
     }
 
-    private List<UserModel> mUsersCollection;
+    private List<UserViewModel> mUsersCollection;
     private final LayoutInflater mLayoutInflater;
     private OnItemClickListener mOnItemClickListener;
     private CompositeSubscription mCompositeSubscription;
     private SparseBooleanArray mSelectedItems;
 
-    public UsersAdapter(Context context, Collection<UserModel> usersCollection) {
+    public UsersAdapter(Context context, Collection<UserViewModel> usersCollection) {
         validateUsersCollection(usersCollection);
         mLayoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.mUsersCollection = (List<UserModel>) usersCollection;
+        this.mUsersCollection = (List<UserViewModel>) usersCollection;
         mSelectedItems = new SparseBooleanArray();
         mCompositeSubscription = new CompositeSubscription();
     }
@@ -58,17 +58,17 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     @Override
     public void onBindViewHolder(UserViewHolder holder, final int position) {
-        final UserModel userModel = mUsersCollection.get(position);
-        holder.getTextViewTitle().setText(userModel.getFullName());
+        final UserViewModel userViewModel = mUsersCollection.get(position);
+        holder.getTextViewTitle().setText(userViewModel.getFullName());
         holder.getRl_row_user().setBackgroundColor(isSelected(position) ? Color.GRAY : Color.WHITE);
         mCompositeSubscription.add(
                 RxView.clicks(holder.itemView).subscribe(aVoid -> {
                     if (mOnItemClickListener != null)
-                        mOnItemClickListener.onUserItemClicked(position, userModel, holder);
+                        mOnItemClickListener.onUserItemClicked(position, userViewModel, holder);
                 }));
         mCompositeSubscription.add(RxView.longClicks(holder.itemView).subscribe(aVoid -> {
             if (mOnItemClickListener != null)
-                mOnItemClickListener.onItemLongClicked(mUsersCollection.indexOf(userModel));
+                mOnItemClickListener.onItemLongClicked(mUsersCollection.indexOf(userViewModel));
         }));
     }
 
@@ -77,13 +77,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
         return mUsersCollection.get(position).getUserId();
     }
 
-    public List<UserModel> getmUsersCollection() {
+    public List<UserViewModel> getmUsersCollection() {
         return mUsersCollection;
     }
 
-    public void setUsersCollection(Collection<UserModel> mUsersCollection) {
+    public void setUsersCollection(Collection<UserViewModel> mUsersCollection) {
         validateUsersCollection(mUsersCollection);
-        this.mUsersCollection = (List<UserModel>) mUsersCollection;
+        this.mUsersCollection = (List<UserViewModel>) mUsersCollection;
         notifyDataSetChanged();
     }
 
@@ -93,13 +93,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     public List<Integer> getSelectedItemsIds() {
         ArrayList<Integer> integers = new ArrayList<>();
-        for (UserModel userModel : mUsersCollection)
-            if (userModel.isChecked())
-                integers.add(userModel.getUserId());
+        for (UserViewModel userViewModel : mUsersCollection)
+            if (userViewModel.isChecked())
+                integers.add(userViewModel.getUserId());
         return integers;
     }
 
-    private void validateUsersCollection(Collection<UserModel> usersCollection) {
+    private void validateUsersCollection(Collection<UserViewModel> usersCollection) {
         if (usersCollection == null)
             throw new IllegalArgumentException("The list cannot be null");
     }
@@ -196,44 +196,44 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
 
     //-----------------animations--------------------------//
 
-    public void animateTo(List<UserModel> models) {
+    public void animateTo(List<UserViewModel> models) {
         applyAndAnimateRemovals(models);
         applyAndAnimateAdditions(models);
         applyAndAnimateMovedItems(models);
     }
 
-    private void applyAndAnimateRemovals(List<UserModel> newModels) {
+    private void applyAndAnimateRemovals(List<UserViewModel> newModels) {
         for (int i = mUsersCollection.size() - 1; i >= 0; i--) {
-            final UserModel model = mUsersCollection.get(i);
+            final UserViewModel model = mUsersCollection.get(i);
             if (!newModels.contains(model))
                 removeItem(i);
         }
     }
 
-    private void applyAndAnimateAdditions(List<UserModel> newModels) {
+    private void applyAndAnimateAdditions(List<UserViewModel> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
-            final UserModel model = newModels.get(i);
+            final UserViewModel model = newModels.get(i);
             if (!mUsersCollection.contains(model))
                 addItem(i, model);
         }
     }
 
-    private void applyAndAnimateMovedItems(List<UserModel> newModels) {
+    private void applyAndAnimateMovedItems(List<UserViewModel> newModels) {
         for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
-            final UserModel model = newModels.get(toPosition);
+            final UserViewModel model = newModels.get(toPosition);
             final int fromPosition = mUsersCollection.indexOf(model);
             if (fromPosition >= 0 && fromPosition != toPosition)
                 moveItem(fromPosition, toPosition);
         }
     }
 
-    public UserModel removeItem(int position) {
+    public UserViewModel removeItem(int position) {
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, mUsersCollection.size());
         return mUsersCollection.remove(position);
     }
 
-    public void addItem(int position, UserModel model) {
+    public void addItem(int position, UserViewModel model) {
         mUsersCollection.add(position, model);
         notifyItemInserted(position);
         notifyItemChanged(position, mUsersCollection.size());

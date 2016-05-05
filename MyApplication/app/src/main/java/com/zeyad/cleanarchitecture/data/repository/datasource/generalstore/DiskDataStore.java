@@ -1,5 +1,7 @@
 package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
@@ -36,7 +38,10 @@ public class DiskDataStore implements DataStore {
     @Override
     public Observable<List> collection(Class domainClass, Class dataClass) {
         return mRealmManager.getAll(dataClass)
-                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels))
+                .map(realmModels -> {
+                    Log.d(TAG, "Size: " + realmModels.size());
+                    return mEntityDataMapper.transformAllToDomain(realmModels);
+                })
                 .compose(Utils.logSources(TAG, mRealmManager));
     }
 

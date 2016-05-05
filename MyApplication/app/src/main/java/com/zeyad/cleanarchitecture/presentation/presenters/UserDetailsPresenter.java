@@ -9,7 +9,7 @@ import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
-import com.zeyad.cleanarchitecture.presentation.model.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchitecture.presentation.view_models.mapper.UserViewModelDataMapper;
 import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
 
 import javax.inject.Inject;
@@ -30,13 +30,13 @@ public class UserDetailsPresenter implements BasePresenter {
     private UserDetailsView viewDetailsView;
 
     private final BaseUseCase getUserDetailsBaseUseCase;
-    private final UserModelDataMapper userModelDataMapper;
+    private final UserViewModelDataMapper userViewModelDataMapper;
 
     @Inject
     public UserDetailsPresenter(@Named("userDetails") BaseUseCase getUserDetailsBaseUseCase,
-                                UserModelDataMapper userModelDataMapper) {
+                                UserViewModelDataMapper userViewModelDataMapper) {
         this.getUserDetailsBaseUseCase = getUserDetailsBaseUseCase;
-        this.userModelDataMapper = userModelDataMapper;
+        this.userViewModelDataMapper = userViewModelDataMapper;
     }
 
     public void setView(@NonNull UserDetailsView view) {
@@ -96,7 +96,7 @@ public class UserDetailsPresenter implements BasePresenter {
     }
 
     private void showUserDetailsInView(User user) {
-        viewDetailsView.renderUser(userModelDataMapper.transform(user));
+        viewDetailsView.renderUser(userViewModelDataMapper.transform(user));
     }
 
     private void getUserDetails() {

@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.presenters.GenericDetailPresenter;
 import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
 import com.zeyad.cleanarchitecture.presentation.views.activities.UserDetailsActivity;
@@ -74,7 +74,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     LinearLayout ll_item_details;
     @Bind(R.id.bt_retry)
     Button bt_retry;
-    private UserModel mUserModel;
+    private UserViewModel mUserViewModel;
     private Observable<CharSequence> fullNameChangeObservable;
     private Observable<CharSequence> emailChangeObservable;
     private Observable<CharSequence> followersChangeObservable;
@@ -147,7 +147,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     }
 
     @Override
-    public void renderUser(UserModel user) {
+    public void renderUser(UserViewModel user) {
         if (user != null) {
             if (user.getCoverUrl() != null)
                 ((UserDetailsActivity) getActivity()).mDetailImage
@@ -168,48 +168,48 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     }
 
     @Override
-    public void editUser(UserModel userModel) {
+    public void editUser(UserViewModel userViewModel) {
         ll_item_details.setVisibility(View.GONE);
         ll_edit.setVisibility(View.VISIBLE);
         fullNameChangeObservable = RxTextView.textChanges(et_fullName).skip(1);
         emailChangeObservable = RxTextView.textChanges(et_email).skip(1);
         followersChangeObservable = RxTextView.textChanges(et_followers).skip(1);
         validateForm();
-        if (userModel != null) {
-            mUserModel = userModel;
-            et_fullName.setText(userModel.getFullName());
-            et_email.setText(userModel.getEmail());
-            et_followers.setText(String.valueOf(userModel.getFollowers()));
-            et_description.setText(userModel.getDescription());
+        if (userViewModel != null) {
+            mUserViewModel = userViewModel;
+            et_fullName.setText(userViewModel.getFullName());
+            et_email.setText(userViewModel.getEmail());
+            et_followers.setText(String.valueOf(userViewModel.getFollowers()));
+            et_description.setText(userViewModel.getDescription());
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) getActivity().
                     findViewById(R.id.toolbar_layout);
             if (appBarLayout != null)
-                appBarLayout.setTitle(userModel.getFullName());
+                appBarLayout.setTitle(userViewModel.getFullName());
 //            applyPalette();
         }
-//        else mUserModel = null;
+//        else mUserViewModel = null;
     }
 
     @Override
-    public void putUserSuccess(UserModel userModel) {
-        mUserModel = userModel;
+    public void putUserSuccess(UserViewModel userViewModel) {
+        mUserViewModel = userViewModel;
         ll_edit.setVisibility(View.GONE);
         ll_item_details.setVisibility(View.VISIBLE);
-        renderUser(userModel);
+        renderUser(userViewModel);
     }
 
     @Override
-    public UserModel getValidatedUser() {
-        if (mUserModel != null)
-            mUserModel.setUserId(mUserModel.getUserId());
-        if (mUserModel == null)
-            mUserModel = new UserModel();
-        mUserModel.setFullName(et_fullName.getText().toString());
-        mUserModel.setEmail(et_email.getText().toString());
-        mUserModel.setFollowers(Integer.parseInt(et_followers.getText().toString()));
-        mUserModel.setDescription(et_description.getText().toString());
-        Log.d(UserDetailsFragment.class.getName(), mUserModel.toString());
-        return mUserModel;
+    public UserViewModel getValidatedUser() {
+        if (mUserViewModel != null)
+            mUserViewModel.setUserId(mUserViewModel.getUserId());
+        if (mUserViewModel == null)
+            mUserViewModel = new UserViewModel();
+        mUserViewModel.setFullName(et_fullName.getText().toString());
+        mUserViewModel.setEmail(et_email.getText().toString());
+        mUserViewModel.setFollowers(Integer.parseInt(et_followers.getText().toString()));
+        mUserViewModel.setDescription(et_description.getText().toString());
+        Log.d(UserDetailsFragment.class.getName(), mUserViewModel.toString());
+        return mUserViewModel;
     }
 
     @Override

@@ -11,7 +11,7 @@ import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 
@@ -26,7 +26,7 @@ public class GenericListPresenter implements BasePresenter {
 
     private UserListView viewListView;
     private GenericUseCase getGeneralListUseCase;
-    private List<UserModel> mUserModels;
+    private List<UserViewModel> mUserViewModels;
 
     @Inject
     public GenericListPresenter(@Named("generalizedUseCase") GenericUseCase getUserListUserCase) {
@@ -57,8 +57,8 @@ public class GenericListPresenter implements BasePresenter {
         loadUserList();
     }
 
-    public void onUserClicked(UserModel userModel, UserViewHolder holder) {
-        viewListView.viewUser(userModel, holder);
+    public void onUserClicked(UserViewModel userViewModel, UserViewHolder holder) {
+        viewListView.viewUser(userViewModel, holder);
     }
 
 //    public void search(SearchView searchView) {
@@ -68,7 +68,7 @@ public class GenericListPresenter implements BasePresenter {
 //                .debounce(200, TimeUnit.MILLISECONDS)
 //                .onBackpressureLatest()
 //                .flatMap(query -> getGeneralListUseCase.executeSearch(query.toString(),
-//                        UserRealmModel.FULL_NAME_COLUMN, UserModel.class, User.class, UserRealmModel.class))
+//                        UserRealmModel.FULL_NAME_COLUMN, UserViewModel.class, User.class, UserRealmModel.class))
 ////                        .distinct()
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribeOn(Schedulers.io())
@@ -76,11 +76,11 @@ public class GenericListPresenter implements BasePresenter {
 //                .subscribe(new SearchSubscriber());
 //    }
 
-    public void search(List<UserModel> userModels, String query) {
-        mUserModels = userModels;
-//        showUsersCollectionInView(filter(userModels, query));
+    public void search(List<UserViewModel> userViewModels, String query) {
+        mUserViewModels = userViewModels;
+//        showUsersCollectionInView(filter(userViewModels, query));
         getGeneralListUseCase.executeSearch(query, "full_name", new SearchSubscriber(),
-                UserModel.class, User.class, UserRealmModel.class);
+                UserViewModel.class, User.class, UserRealmModel.class);
     }
 
     public void deleteCollection(List<Integer> ids) {
@@ -117,16 +117,16 @@ public class GenericListPresenter implements BasePresenter {
                 errorBundle.getException()));
     }
 
-    public void showUsersCollectionInView(Collection<UserModel> userModels) {
-        viewListView.renderUserList(userModels);
+    public void showUsersCollectionInView(Collection<UserViewModel> userViewModels) {
+        viewListView.renderUserList(userViewModels);
     }
 
     private void getUserList() {
-        getGeneralListUseCase.executeList(new UserListSubscriber(), UserModel.class, User.class,
+        getGeneralListUseCase.executeList(new UserListSubscriber(), UserViewModel.class, User.class,
                 UserRealmModel.class);
     }
 
-    private final class UserListSubscriber extends DefaultSubscriber<Collection<UserModel>> {
+    private final class UserListSubscriber extends DefaultSubscriber<List<UserViewModel>> {
         @Override
         public void onCompleted() {
             hideViewLoading();
@@ -141,12 +141,12 @@ public class GenericListPresenter implements BasePresenter {
         }
 
         @Override
-        public void onNext(Collection<UserModel> users) {
+        public void onNext(List<UserViewModel> users) {
             showUsersCollectionInView(users);
         }
     }
 
-    private final class SearchSubscriber extends DefaultSubscriber<Collection<UserModel>> {
+    private final class SearchSubscriber extends DefaultSubscriber<Collection<UserViewModel>> {
         @Override
         public void onCompleted() {
 
@@ -161,7 +161,7 @@ public class GenericListPresenter implements BasePresenter {
         }
 
         @Override
-        public void onNext(Collection<UserModel> response) {
+        public void onNext(Collection<UserViewModel> response) {
             showUsersCollectionInView(response);
         }
     }
@@ -191,7 +191,7 @@ public class GenericListPresenter implements BasePresenter {
         }
     }
 
-    public List<UserModel> getUserModels() {
-        return mUserModels;
+    public List<UserViewModel> getUserModels() {
+        return mUserViewModels;
     }
 }

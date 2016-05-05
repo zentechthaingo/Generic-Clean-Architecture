@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.models.User;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
@@ -44,10 +44,10 @@ public class EntityDataMapper {
      * @param userDomain Object to be transformed.
      * @return {@link User} if valid {@link User} otherwise null.
      */
-    public UserModel transformToPresentation(Object userDomain, Class presentationClass) {
+    public UserViewModel transformToPresentation(Object userDomain, Class presentationClass) {
         if (userDomain != null) {
             User cast = gson.fromJson(gson.toJson(userDomain), User.class);
-            UserModel user = new UserModel(cast.getUserId());
+            UserViewModel user = new UserViewModel(cast.getUserId());
             user.setCoverUrl(cast.getCoverUrl());
             user.setFullName(cast.getFullName());
             user.setDescription(cast.getDescription());
@@ -64,11 +64,11 @@ public class EntityDataMapper {
      * @param userRealmModels Objects to be transformed.
      * @return {@link User} if valid {@link UserRealmModel} otherwise null.
      */
-    public Collection<UserModel> transformAllToPresentation(Collection userRealmModels, Class presentationClass) {
-        Collection<UserModel> userModels = new ArrayList<>();
+    public Collection<UserViewModel> transformAllToPresentation(Collection userRealmModels, Class presentationClass) {
+        Collection<UserViewModel> userViewModels = new ArrayList<>();
         for (int i = 0; i < userRealmModels.size(); i++)
-            userModels.add(transformToPresentation(userRealmModels.toArray()[i], presentationClass));
-        return userModels;
+            userViewModels.add(transformToPresentation(userRealmModels.toArray()[i], presentationClass));
+        return userViewModels;
     }
 
     /**

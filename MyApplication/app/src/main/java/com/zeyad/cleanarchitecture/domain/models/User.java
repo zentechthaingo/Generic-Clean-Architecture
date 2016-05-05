@@ -5,10 +5,13 @@ package com.zeyad.cleanarchitecture.domain.models;
  */
 public class User {
 
-    private final int userId;
+    private int userId;
 
     public User(int userId) {
         this.userId = userId;
+    }
+
+    public User() {
     }
 
     private String coverUrl;

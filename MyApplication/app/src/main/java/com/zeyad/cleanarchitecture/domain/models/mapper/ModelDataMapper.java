@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.models.User;
-import com.zeyad.cleanarchitecture.presentation.model.UserModel;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,11 +42,11 @@ public class ModelDataMapper {
      * @param userDomain Object to be transformed.
      * @return {@link User} if valid {@link User} otherwise null.
      */
-    public UserModel transformToPresentation(Object userDomain, Class presentationClass) {
+    public UserViewModel transformToPresentation(Object userDomain, Class presentationClass) {
         if (!(userDomain instanceof Boolean))
             if (userDomain != null) {
                 User cast = gson.fromJson(gson.toJson(userDomain), User.class);
-                UserModel user = new UserModel(cast.getUserId());
+                UserViewModel user = new UserViewModel(cast.getUserId());
                 user.setCoverUrl(cast.getCoverUrl());
                 user.setFullName(cast.getFullName());
                 user.setDescription(cast.getDescription());
@@ -69,8 +69,8 @@ public class ModelDataMapper {
      * @param userRealmModels Objects to be transformed.
      * @return {@link User} if valid {@link UserRealmModel} otherwise null.
      */
-//    public collection<UserModel> transformAllToPresentation(collection userRealmModels, Class presentationClass) {
-//        collection<UserModel> userModels = new ArrayList<>();
+//    public collection<UserViewModel> transformAllToPresentation(collection userRealmModels, Class presentationClass) {
+//        collection<UserViewModel> userModels = new ArrayList<>();
 //        for (int i = 0; i < userRealmModels.size(); i++)
 //            userModels.add(transformToPresentation(userRealmModels.toArray()[i], presentationClass));
 //        return userModels;

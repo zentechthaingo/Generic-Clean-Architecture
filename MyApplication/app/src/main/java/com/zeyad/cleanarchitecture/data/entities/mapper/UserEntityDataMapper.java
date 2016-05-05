@@ -167,17 +167,27 @@ public class UserEntityDataMapper extends EntityDataMapper {
     public User transformToDomain(UserRealmModel userRealmModel) {
         if (userRealmModel != null) {
             Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            User user = new User(userRealmModel.getUserId());
-            user.setCoverUrl(userRealmModel.getCover_url());
-            user.setFullName(userRealmModel.getFullName());
-            user.setDescription(userRealmModel.getDescription());
-            user.setFollowers(userRealmModel.getFollowers());
-            user.setEmail(userRealmModel.getEmail());
-            realm.commitTransaction();
-            return user;
+            try {
+                realm.beginTransaction();
+                User user = new User(userRealmModel.getUserId());
+                user.setCoverUrl(userRealmModel.getCover_url());
+                user.setFullName(userRealmModel.getFullName());
+                user.setDescription(userRealmModel.getDescription());
+                user.setFollowers(userRealmModel.getFollowers());
+                user.setEmail(userRealmModel.getEmail());
+                realm.commitTransaction();
+                realm.close();
+                return user;
+            } catch (Exception e) {
+                e.printStackTrace();
+                realm.commitTransaction();
+                realm.close();
+            } finally {
+                if (realm.isInTransaction())
+                    realm.commitTransaction();
+            }
         }
-        return null;
+        return new User(0);
     }
 
     /**
@@ -188,8 +198,12 @@ public class UserEntityDataMapper extends EntityDataMapper {
      */
     public List<User> transformAllToDomain(Collection<UserRealmModel> userRealmModels) {
         List<User> users = new ArrayList<>();
-        for (UserRealmModel realmObject : userRealmModels)
-            users.add(transformToDomain(realmObject));
+        User user;
+        for (UserRealmModel realmObject : userRealmModels) {
+            user = transformToDomain(realmObject);
+            if (user.getUserId() != 0)
+                users.add(user);
+        }
         return users;
     }
 }

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
-import com.zeyad.cleanarchitecture.presentation.model.mapper.UserModelDataMapper;
+import com.zeyad.cleanarchitecture.presentation.view_models.mapper.UserViewModelDataMapper;
 import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
 
 import org.junit.After;
@@ -30,14 +30,14 @@ public class GenericDetailPresenterTest extends AndroidTestCase {
     @Mock
     private GenericUseCase mockGetUserDetails;
     @Mock
-    private UserModelDataMapper mockUserModelDataMapper;
+    private UserViewModelDataMapper mockUserViewModelDataMapper;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         MockitoAnnotations.initMocks(this);
         userDetailsPresenter = new UserDetailsPresenter(mockGetUserDetails,
-                mockUserModelDataMapper);
+                mockUserViewModelDataMapper);
         userDetailsPresenter.setView(mockUserDetailsView);
     }
 

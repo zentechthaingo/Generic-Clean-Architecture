@@ -1,17 +1,17 @@
-package com.zeyad.cleanarchitecture.presentation.model;
+package com.zeyad.cleanarchitecture.presentation.view_models;
 
 /**
  * Class that represents a user in the presentation layer.
  */
-public class UserModel {
+public class UserViewModel {
 
     private int userId;
 
-    public UserModel(int userId) {
+    public UserViewModel(int userId) {
         this.userId = userId;
     }
 
-    public UserModel() {
+    public UserViewModel() {
     }
 
     private String coverUrl;
