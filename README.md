@@ -22,15 +22,16 @@ The project's first version is almost done, just a couple of minor bugs and some
 ### Todo:
 
 * Fix delete multiple
-* GCM job scheduler / android priority queue
+* cache post/delete failed requests
 * Update Tests
 * CI with infer -- verion 1 ends here!
+* GCM push notifications
+* Generic Services
+* Generic adapter (RealmAdapter! https://github.com/thorbenprimke/realm-recyclerview)
+* Data binding
 * Migrate to native java 8
 * StorIO / SqlBrite
-* Data binding
-* Generic adapter (RealmAdapter! https://github.com/thorbenprimke/realm-recyclerview)
 * Add Strict Mode
-* GCM push notifications
 
 ### Who do I talk to? ###
 
