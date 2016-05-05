@@ -21,16 +21,15 @@ The project's first version is almost done, just a couple of minor bugs and some
 
 ### Todo:
 
-* Fix delete multiple
-* cache post/delete failed requests
-* Update Tests
-* CI with infer -- verion 1 ends here!
+* Cache delete & post failed requests
+* Update Tests -- version 1.0
+* CI with infer 
 * GCM push notifications
 * Generic Services
-* Generic adapter (RealmAdapter! https://github.com/thorbenprimke/realm-recyclerview)
+* Generic RecyclerView Adapter 
 * Data binding
-* Migrate to native java 8
 * StorIO / SqlBrite
+* Migrate to native java 8
 * Add Strict Mode
 
 ### Who do I talk to? ###
