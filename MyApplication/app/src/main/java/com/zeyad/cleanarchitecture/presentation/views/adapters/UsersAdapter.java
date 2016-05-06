@@ -11,6 +11,7 @@ import com.jakewharton.rxbinding.view.RxView;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +44,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.mUsersCollection = (List<UserViewModel>) usersCollection;
         mSelectedItems = new SparseBooleanArray();
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeSubscription = Utils.getNewCompositeSubIfUnsubscribed(mCompositeSubscription);
     }
 
     @Override

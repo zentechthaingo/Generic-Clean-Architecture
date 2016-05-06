@@ -25,6 +25,7 @@ import android.widget.RelativeLayout;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.zeyad.cleanarchitecture.R;
+import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.presentation.annimations.DetailsTransition;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
@@ -45,6 +46,8 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Activity that shows a list of Users.
@@ -170,10 +173,26 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         getComponent(UserComponent.class).inject(this);
         mUserListPresenter.setView(this);
         mCompositeSubscription.add(rxEventBus.toObserverable()
-                .subscribe(event -> {
-                    if (event instanceof String)
-                        Log.d(TAG, (String) event);
-                }));
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DefaultSubscriber<Object>() {
+                               @Override
+                               public void onCompleted() {
+
+                               }
+
+                               @Override
+                               public void onError(Throwable e) {
+
+                               }
+
+                               @Override
+                               public void onNext(Object event) {
+                                   if (event instanceof String)
+                                       Log.d(TAG, (String) event);
+                               }
+                           }
+                ));
     }
 
     protected <C> C getComponent(Class<C> componentType) {
@@ -233,42 +252,36 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         }
     }
 
-    // TODO: 4/6/16 Reorganize!
     @Override
     public void viewUser(UserViewModel userViewModel, UserViewHolder holder) {
-        Pair<View, String> firstPair = null;
-        Pair<View, String> secondPair = null;
-        Pair<View, String> thirdPair = null;
         if (Utils.hasLollipop()) {
-            firstPair = new Pair<>(holder.getmAvatar(), holder.getmAvatar()
+            Pair<View, String> firstPair = new Pair<>(holder.getmAvatar(), holder.getmAvatar()
                     .getTransitionName());
-            secondPair = new Pair<>(holder.getTextViewTitle(),
+            Pair<View, String> secondPair = new Pair<>(holder.getTextViewTitle(),
                     holder.getTextViewTitle().getTransitionName());
-            thirdPair = new Pair<>(mAddFab, mAddFab.getTransitionName());
-        }
-        mSharedElements = new ArrayList<>();
-        if (mTwoPane) {
-            UserDetailsFragment fragment = new UserDetailsFragment();
-            if (Utils.hasLollipop()) {
-                fragment.setSharedElementEnterTransition(new DetailsTransition());
-                fragment.setEnterTransition(new Fade());
-                fragment.setExitTransition(new Fade());
-                fragment.setSharedElementReturnTransition(new DetailsTransition());
-                mSharedElements.add(firstPair);
-                mSharedElements.add(secondPair);
-                mSharedElements.add(thirdPair);
-            }
-            Bundle arguments = new Bundle();
-            arguments.putInt(UserDetailsFragment.ARG_ITEM_ID, userViewModel.getUserId());
-            arguments.putString(UserDetailsFragment.ARG_ITEM_IMAGE, userViewModel.getCoverUrl());
-            arguments.putString(UserDetailsFragment.ARG_ITEM_NAME, userViewModel.getFullName());
-            fragment.setArguments(arguments);
-
-            addFragment(R.id.detail_container, fragment, mSharedElements);
-        } else if (Utils.hasLollipop())
-            navigator.navigateToUserDetails(this, userViewModel.getUserId(),
-                    ActivityOptions.makeSceneTransitionAnimation(this, firstPair, secondPair, thirdPair).toBundle());
-        else
+            Pair<View, String> thirdPair = new Pair<>(mAddFab, mAddFab.getTransitionName());
+            mSharedElements = new ArrayList<>();
+            if (mTwoPane) {
+                UserDetailsFragment fragment = new UserDetailsFragment();
+                if (Utils.hasLollipop()) {
+                    fragment.setSharedElementEnterTransition(new DetailsTransition());
+                    fragment.setEnterTransition(new Fade());
+                    fragment.setExitTransition(new Fade());
+                    fragment.setSharedElementReturnTransition(new DetailsTransition());
+                    mSharedElements.add(firstPair);
+                    mSharedElements.add(secondPair);
+                    mSharedElements.add(thirdPair);
+                }
+                Bundle arguments = new Bundle();
+                arguments.putInt(UserDetailsFragment.ARG_ITEM_ID, userViewModel.getUserId());
+                arguments.putString(UserDetailsFragment.ARG_ITEM_IMAGE, userViewModel.getCoverUrl());
+                arguments.putString(UserDetailsFragment.ARG_ITEM_NAME, userViewModel.getFullName());
+                fragment.setArguments(arguments);
+                addFragment(R.id.detail_container, fragment, mSharedElements);
+            } else
+                navigator.navigateToUserDetails(this, userViewModel.getUserId(),
+                        ActivityOptions.makeSceneTransitionAnimation(this, firstPair, secondPair, thirdPair).toBundle());
+        } else
             navigator.navigateToUserDetails(this, userViewModel.getUserId(), null);
     }
 

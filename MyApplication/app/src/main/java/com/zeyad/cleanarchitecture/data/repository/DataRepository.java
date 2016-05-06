@@ -1,7 +1,5 @@
 package com.zeyad.cleanarchitecture.data.repository;
 
-import android.util.Log;
-
 import com.fernandocejas.frodo.annotation.RxLogObservable;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
@@ -9,14 +7,12 @@ import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.DataS
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
 import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 
-import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
-import rx.functions.Action2;
 
 @Singleton
 public class DataRepository implements Repository {
@@ -61,13 +57,12 @@ public class DataRepository implements Repository {
                         dataStoreFactory
                                 .putToCloud(entityDataMapper)
                                 .postToCloud(object, domainClass, dataClass))
-                .collect(HashSet::new, HashSet::add)
-                .flatMap(Observable::from);
+                .distinct();
     }
 
     @Override
     @RxLogObservable
-    public Observable<Boolean> deleteCollection(List list, Class domainClass, Class dataClass) {
+    public Observable<?> deleteCollection(List list, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
                                 .deleteCollectionFromCloud(entityDataMapper)
@@ -75,13 +70,7 @@ public class DataRepository implements Repository {
                         dataStoreFactory
                                 .deleteCollectionFromDisk(entityDataMapper)
                                 .deleteCollectionFromDisk(list, dataClass))
-                .collect(HashSet::new, new Action2<HashSet<Boolean>, Object>() {
-                    @Override
-                    public void call(HashSet<Boolean> set, Object bool) {
-                        set.add((boolean) bool);
-                        Log.d("Repository/deleteCol", "isDeleted: " + (boolean) bool);
-                    }
-                }).map(set -> ((HashSet) set).size() == 1);
+                .distinct();
     }
 
     @Override
@@ -95,8 +84,5 @@ public class DataRepository implements Repository {
                         .searchDisk(entityDataMapper)
                         .searchDisk(query, column, domainClass, dataClass))
                 .distinct();
-//                        .collect(HashSet::new, HashSet::add)
-//                        .flatMap((Func1<HashSet<Object>, Observable<List>>)
-//                                objects -> Observable.from((List) objects)));
     }
 }

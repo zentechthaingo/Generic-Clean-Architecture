@@ -16,6 +16,7 @@ import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.ApplicationComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
 import com.zeyad.cleanarchitecture.presentation.navigation.Navigator;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getApplicationComponent().inject(this);
         navigator = new Navigator();
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeSubscription = Utils.getNewCompositeSubIfUnsubscribed(mCompositeSubscription);
     }
 
     /**

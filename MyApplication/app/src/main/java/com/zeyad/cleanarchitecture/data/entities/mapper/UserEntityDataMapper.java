@@ -181,7 +181,6 @@ public class UserEntityDataMapper extends EntityDataMapper {
             } catch (Exception e) {
                 e.printStackTrace();
                 realm.commitTransaction();
-                realm.close();
             } finally {
                 if (realm.isInTransaction())
                     realm.commitTransaction();

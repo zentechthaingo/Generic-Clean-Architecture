@@ -24,7 +24,7 @@ public interface Repository {
 
     Observable<?> put(final Object object, Class presentationClass, Class domainClass, Class dataClass);
 
-    Observable<Boolean> deleteCollection(final List<Integer> list, Class domainClass, Class dataClass);
+    Observable<?> deleteCollection(final List<Integer> list, Class domainClass, Class dataClass);
 
     Observable<?> search(String query, String column, Class presentationClass, Class domainClass, Class dataClass);
 }

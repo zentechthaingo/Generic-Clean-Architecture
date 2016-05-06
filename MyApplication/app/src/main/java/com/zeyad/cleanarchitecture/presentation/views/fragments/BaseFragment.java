@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import rx.subscriptions.CompositeSubscription;
 
@@ -22,7 +23,7 @@ public abstract class BaseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        mCompositeSubscription = new CompositeSubscription();
+        mCompositeSubscription = Utils.getNewCompositeSubIfUnsubscribed(mCompositeSubscription);
     }
 
     /**

@@ -229,7 +229,6 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
             RealmObject.deleteFromRealm(toDelete);
             mRealm.commitTransaction();
             writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
-            Log.d(TAG, "ItemId: " + itemId + " is deleted: " + !RealmObject.isValid(toDelete));
             return !RealmObject.isValid(toDelete);
         } else return false;
     }
