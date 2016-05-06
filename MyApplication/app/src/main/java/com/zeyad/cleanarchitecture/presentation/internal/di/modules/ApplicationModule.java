@@ -2,7 +2,11 @@ package com.zeyad.cleanarchitecture.presentation.internal.di.modules;
 
 import android.content.Context;
 
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.Params;
+import com.birbit.android.jobqueue.config.Configuration;
 import com.firebase.client.Firebase;
+import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.RealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
@@ -10,6 +14,7 @@ import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.executor.JobExecutor;
 import com.zeyad.cleanarchitecture.data.repository.DataRepository;
 import com.zeyad.cleanarchitecture.data.repository.UserDataRepository;
+import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.CloudDataStore;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
@@ -88,5 +93,23 @@ public class ApplicationModule {
     @Singleton
     RxEventBus provideRxEventBus() {
         return new RxEventBus();
+    }
+
+    @Provides
+    @Singleton
+    JobManager provideJobManager() {
+        return new JobManager(new Configuration.Builder(application.getApplicationContext()).build());
+    }
+
+    @Provides
+    @Singleton
+    Params provideJobParams() {
+        return new Params(1).requireNetwork().persist();
+    }
+
+    @Provides
+    @Singleton
+    Gson provideGson() {
+        return new Gson();
     }
 }

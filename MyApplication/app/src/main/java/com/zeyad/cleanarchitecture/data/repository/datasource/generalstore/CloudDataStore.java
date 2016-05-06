@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.Params;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GcmNetworkManager;
@@ -14,15 +16,18 @@ import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.jobs.NetworkJob;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
-import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
 import com.zeyad.cleanarchitecture.presentation.services.GenericGCMService;
 import com.zeyad.cleanarchitecture.presentation.services.GenericJobService;
+import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import io.realm.RealmObject;
 import rx.Observable;
@@ -32,10 +37,15 @@ import rx.schedulers.Schedulers;
 
 public class CloudDataStore implements DataStore {
 
+    @Inject
+    JobManager jobManager;
+    @Inject
+    Params params;
     private final RestApi restApi;
     private GeneralRealmManager realmManager;
     private EntityDataMapper entityDataMapper;
-    private static final String TAG = "CloudDataStore", POST_TAG = "postObject", DELETE_TAG = "delete";
+    private static final String TAG = "CloudDataStore";
+    public static final String POST_TAG = "postObject", DELETE_TAG = "deleteObject", QUEUED_POSTS = "queuedPosts";
     private Class dataClass;
     private final Action1<Object> saveGenericToCacheAction =
             object -> realmManager.put((RealmObject) entityDataMapper.transformToRealm(object, dataClass))
@@ -60,19 +70,26 @@ public class CloudDataStore implements DataStore {
         realmObjectCollection.addAll((List) entityDataMapper.transformAllToRealm(collection, dataClass));
         realmManager.putAll(realmObjectCollection);
     };
+    // TODO: 6/05/16 Test!
+    // TODO: 6/05/16 Finish!
     private Action1<Object> queuePost = object -> {
+        Bundle extras = new Bundle();
+        extras.putString(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.POST);
+        extras.putString(GenericNetworkQueueIntentService.POST_OBJECT, new Gson().toJson(object));
+        jobManager.start();
+        jobManager.addJobInBackground(new NetworkJob(params.addTags(POST_TAG).groupBy(CloudDataStore.QUEUED_POSTS), extras));
+        // TODO: 6/05/16 Drop starting here!
         if (Utils.hasLollipop()) {
             if (GoogleApiAvailability.getInstance()
                     .isGooglePlayServicesAvailable(realmManager.getContext().getApplicationContext())
                     == ConnectionResult.SUCCESS) {
-                Bundle extras = new Bundle();
-                extras.putString(GenericNetworkQueueIntentService.POST_OBJECT, new Gson().toJson(object));
                 GcmNetworkManager.getInstance(realmManager.getContext().getApplicationContext().getApplicationContext())
                         .schedule(new OneoffTask.Builder()
                                 .setService(GenericGCMService.class)
-                                .setRequiredNetwork(OneoffTask.NETWORK_STATE_ANY)
+                                .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
                                 .setRequiresCharging(false)
                                 .setUpdateCurrent(false)
+                                .setPersisted(true)
                                 .setExtras(extras)
                                 .setTag(POST_TAG)
                                 .build());
@@ -91,13 +108,24 @@ public class CloudDataStore implements DataStore {
             }
         }
     };
+    // TODO: 6/05/16 Test!
+    // TODO: 6/05/16 Finish!
     private final Action1<List> queueDeleteCollection = list -> {
+        Bundle extras = new Bundle();
+        Gson gson = new Gson();
+        ArrayList<String> strings = new ArrayList<>();
+        extras.putString(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.DELETE_COLLECTION);
+        for (Object object : list)
+            strings.add(gson.toJson(object));
+        extras.putStringArrayList(GenericNetworkQueueIntentService.LIST, strings);
+        jobManager.start();
+        jobManager.addJobInBackground(new NetworkJob(params.addTags(DELETE_TAG).groupBy(CloudDataStore.QUEUED_POSTS), extras));
+        // TODO: 6/05/16 Drop starting here!
         if (Utils.hasLollipop()) {
             if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager
                     .getContext().getApplicationContext()) == ConnectionResult.SUCCESS) {
                 GcmNetworkManager gcmNetworkManager = GcmNetworkManager.getInstance(realmManager
                         .getContext().getApplicationContext());
-                Bundle extras = new Bundle();
                 for (Object object : list) {
                     extras.putString(GenericNetworkQueueIntentService.DELETE_COLLECTION, new Gson().toJson(object));
                     gcmNetworkManager.schedule(new OneoffTask.Builder()
@@ -105,13 +133,13 @@ public class CloudDataStore implements DataStore {
                             .setRequiredNetwork(OneoffTask.NETWORK_STATE_ANY)
                             .setRequiresCharging(false)
                             .setExtras(extras)
+                            .setPersisted(true)
                             .setUpdateCurrent(false)
                             .setTag(DELETE_TAG)
                             .build());
                     extras.clear();
                 }
             } else {
-                Gson gson = new Gson();
                 PersistableBundle persistableBundle = new PersistableBundle();
                 for (int i = 0; i < list.size(); i++)
                     persistableBundle.putString(GenericNetworkQueueIntentService.POST_OBJECT + " " + i,

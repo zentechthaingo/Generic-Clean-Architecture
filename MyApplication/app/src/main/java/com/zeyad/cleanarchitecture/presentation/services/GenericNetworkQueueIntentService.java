@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -49,7 +50,12 @@ public class GenericNetworkQueueIntentService extends IntentService {
             EXTENDED_DATA_STATUS_FAILED = "FAILED",
             WIDTH = "WIDTH", HEIGHT = "HEIGHT",
             POST_OBJECT = "POST_OBJECT",
-            DELETE_COLLECTION = "DELETE_COLLECTION";
+            DELETE_COLLECTION = "DELETE_COLLECTION",
+            GET_OBJECT = "GET_OBJECT",
+            EXTRA_BUNDLE = "EXTRA_BUNDLE",
+            JOB_TYPE = "JOB_TYPE",
+            POST = "POST",
+            LIST = "LIST";
     private final Set<String> downloadedKeys = new HashSet<>();
     private final Map<String, List<String>> categorizedKeys = new Hashtable<>();
     private File dir;
@@ -57,14 +63,15 @@ public class GenericNetworkQueueIntentService extends IntentService {
     RxEventBus rxEventBus;
 
     public GenericNetworkQueueIntentService() {
-        super("GenericNetworkQueueIntentService");
+        super(GenericNetworkQueueIntentService.class.getName());
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         ((AndroidApplication) getApplicationContext()).getApplicationComponent().inject(this);
-        Constants.CACHE_DIR = new File(String.valueOf(getCacheDir())).getAbsolutePath();
+        if (TextUtils.isEmpty(Constants.CACHE_DIR))
+            Constants.CACHE_DIR = new File(String.valueOf(getCacheDir())).getAbsolutePath();
         dir = new File(Constants.CACHE_DIR);
         File lockSignature = new File(dir, "dl.lock");
         if (!dir.exists()) {

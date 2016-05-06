@@ -2,7 +2,10 @@ package com.zeyad.cleanarchitecture.presentation.internal.di.components;
 
 import android.content.Context;
 
+import com.birbit.android.jobqueue.JobManager;
+import com.birbit.android.jobqueue.Params;
 import com.firebase.client.Firebase;
+import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
@@ -40,4 +43,10 @@ public interface ApplicationComponent {
     Firebase firebase();
 
     RxEventBus rxEventBus();
+
+    JobManager jobManager();
+
+    Params params();
+
+    Gson gson();
 }

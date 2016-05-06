@@ -22,11 +22,10 @@ import java.io.File;
  */
 public class AutoLoadImageView extends ImageView {
 
-    private static final String TAG = "AutoLoadImageView", CLOUD = "Cloud", DISK = "Disk";
+    private static final String TAG = AutoLoadImageView.class.getName(), CLOUD = "Cloud", DISK = "Disk";
     private String imageUrl;
     private File img;
     private int imagePlaceHolderResourceId = -1, imageOnErrorResourceId = -1, imageFallBackResourceId = -1;
-
 
     public AutoLoadImageView(Context context) {
         super(context);
@@ -46,11 +45,11 @@ public class AutoLoadImageView extends ImageView {
      * @param imageUrl The url of the resource to load.
      */
     public AutoLoadImageView setImageUrl(final String imageUrl) {
+        imagePlaceHolderResourceId = imageOnErrorResourceId = imageFallBackResourceId = R.drawable.placer_holder_img;
         if (imageUrl != null) {
             this.imageUrl = imageUrl;
             loadImageFromUrl(imageUrl);
         } else return this;
-        imagePlaceHolderResourceId = imageOnErrorResourceId = imageFallBackResourceId = R.drawable.placer_holder_img;
         return this;
     }
 
