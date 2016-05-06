@@ -20,6 +20,7 @@ import com.zeyad.cleanarchitecture.presentation.presenters.UserListFirebasePrese
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -144,7 +145,7 @@ public class UserListFirebaseFragment extends BaseFragment implements FirebaseUs
     }
 
     @Override
-    public void renderUserList(Collection<UserViewModel> userViewModelCollection) {
+    public void renderUserList(List<UserViewModel> userViewModelCollection) {
     }
 
     @Override

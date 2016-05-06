@@ -14,7 +14,6 @@ import com.zeyad.cleanarchitecture.presentation.view_models.mapper.UserViewModel
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -96,7 +95,7 @@ public class UserListPresenter implements BasePresenter {
                 errorBundle.getException()));
     }
 
-    private void showUsersCollectionInView(Collection<User> usersCollection) {
+    private void showUsersCollectionInView(List<User> usersCollection) {
         viewListView.renderUserList(userViewModelDataMapper.transform(usersCollection));
     }
 

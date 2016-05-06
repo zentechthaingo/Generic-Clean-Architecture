@@ -7,6 +7,7 @@ import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -45,8 +46,8 @@ public class UserViewModelDataMapper {
      * @param usersCollection Objects to be transformed.
      * @return List of {@link UserViewModel}.
      */
-    public Collection<UserViewModel> transform(Collection<User> usersCollection) {
-        Collection<UserViewModel> userViewModelsCollection;
+    public List<UserViewModel> transform(List<User> usersCollection) {
+        List<UserViewModel> userViewModelsCollection;
         if (usersCollection != null && !usersCollection.isEmpty()) {
             userViewModelsCollection = new ArrayList<>();
             for (User user : usersCollection)

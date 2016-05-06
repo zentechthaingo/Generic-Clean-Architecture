@@ -6,7 +6,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.graphics.Palette;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -232,7 +231,6 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
         mUserViewModel.setEmail(et_email.getText().toString());
         mUserViewModel.setFollowers(Integer.parseInt(et_followers.getText().toString()));
         mUserViewModel.setDescription(et_description.getText().toString());
-//        Log.d(UserDetailsFragment.class.getName(), mUserViewModel.toString());
         return mUserViewModel;
     }
 

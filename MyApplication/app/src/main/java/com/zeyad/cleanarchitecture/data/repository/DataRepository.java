@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 
 import rx.Observable;
 import rx.functions.Action2;
-import rx.functions.Func1;
 
 @Singleton
 public class DataRepository implements Repository {
@@ -94,9 +93,10 @@ public class DataRepository implements Repository {
                 .searchCloud(query, domainClass, dataClass)
                 .mergeWith(dataStoreFactory
                         .searchDisk(entityDataMapper)
-                        .searchDisk(query, column, domainClass, dataClass)
-                        .collect(HashSet::new, HashSet::add)
-                        .flatMap((Func1<HashSet<Object>, Observable<List>>)
-                                objects -> Observable.from((List) objects)));
+                        .searchDisk(query, column, domainClass, dataClass))
+                .distinct();
+//                        .collect(HashSet::new, HashSet::add)
+//                        .flatMap((Func1<HashSet<Object>, Observable<List>>)
+//                                objects -> Observable.from((List) objects)));
     }
 }

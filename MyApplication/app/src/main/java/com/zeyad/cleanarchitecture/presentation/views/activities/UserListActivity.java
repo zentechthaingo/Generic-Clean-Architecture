@@ -4,7 +4,6 @@ import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.view.ActionMode;
@@ -30,8 +29,8 @@ import com.zeyad.cleanarchitecture.presentation.annimations.DetailsTransition;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
-import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.presenters.GenericListPresenter;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 import com.zeyad.cleanarchitecture.presentation.views.adapters.UsersAdapter;
@@ -39,7 +38,6 @@ import com.zeyad.cleanarchitecture.presentation.views.fragments.UserDetailsFragm
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -58,10 +56,10 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
             STATE_SCROLL = "scrollPosition";
     private boolean mTwoPane;
     private UserComponent userComponent;
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
     @Inject
     GenericListPresenter mUserListPresenter;
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
     @Bind(R.id.rv_users)
     RecyclerView rv_users;
     @Bind(R.id.rl_progress)
@@ -171,11 +169,11 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     private void initialize() {
         getComponent(UserComponent.class).inject(this);
         mUserListPresenter.setView(this);
-        rxEventBus.toObserverable()
+        mCompositeSubscription.add(rxEventBus.toObserverable()
                 .subscribe(event -> {
                     if (event instanceof String)
                         Log.d(TAG, (String) event);
-                });
+                }));
     }
 
     protected <C> C getComponent(Class<C> componentType) {
@@ -187,10 +185,11 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         ButterKnife.bind(this);
         onSearchRequested();
         Window window = this.getWindow();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Utils.hasLollipop()) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//            window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
+            if (Utils.hasM())
+                window.setStatusBarColor(getColor(R.color.title_color));
         }
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getTitle());
@@ -226,10 +225,10 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     }
 
     @Override
-    public void renderUserList(Collection<UserViewModel> userViewModelCollection) {
+    public void renderUserList(List<UserViewModel> userViewModelCollection) {
         if (userViewModelCollection != null) {
             mUsersAdapter.setUsersCollection(userViewModelCollection);
-            mUsersAdapter.animateTo((List<UserViewModel>) userViewModelCollection);
+            mUsersAdapter.animateTo(userViewModelCollection);
             rv_users.scrollToPosition(0);
         }
     }
@@ -304,7 +303,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                mUserListPresenter.search(mUsersAdapter.getmUsersCollection(), query);
+                mUserListPresenter.search(query);
                 return true;
             }
 
@@ -313,7 +312,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 if (newText.isEmpty())
                     mUserListPresenter.showUsersCollectionInView(mUserListPresenter.getUserModels());
                 else
-                    mUserListPresenter.search(mUsersAdapter.getmUsersCollection(), newText);
+                    mUserListPresenter.search(newText);
                 return true;
             }
         });

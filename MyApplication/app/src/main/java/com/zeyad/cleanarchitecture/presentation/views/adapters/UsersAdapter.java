@@ -77,7 +77,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UserViewHolder> {
         return mUsersCollection.get(position).getUserId();
     }
 
-    public List<UserViewModel> getmUsersCollection() {
+    public List<UserViewModel> getUserList() {
         return mUsersCollection;
     }
 
