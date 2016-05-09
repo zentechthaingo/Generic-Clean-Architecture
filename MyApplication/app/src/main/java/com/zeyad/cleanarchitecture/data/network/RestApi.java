@@ -68,6 +68,9 @@ public interface RestApi {
 
     @Multipart
     @POST("upload")
-    Observable<ResponseBody> upload(@Part("description") RequestBody description, @Part MultipartBody.Part file);
+    Observable<ResponseBody> upload(@Part("description") RequestBody description,
+                                    @Part MultipartBody.Part file);
 
+    @GET
+    Observable dynamicGet(@Url String url);
 }

@@ -80,4 +80,9 @@ public class RestApiImpl implements RestApi {
     public Observable<ResponseBody> upload(@Part("description") RequestBody description, @Part MultipartBody.Part file) {
         return ApiConnection.upload(file, description);
     }
+
+    @Override
+    public Observable dynamicGet(@Url String url) {
+        return null;
+    }
 }

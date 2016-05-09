@@ -54,4 +54,6 @@
     <string name="invalid_email_msg">Invalid Email or empty!</string>
     <string name="invalid_name_msg">Name shouldn\'t be empty!</string>
     <string name="invalid_number_msg">Invalid Number</string>
+    <string name="network_error_persisted">No Notwork but post request persisted to queue!\n Request will be posted as soon as network is available.</string>
+    <string name="network_error_not_persisted"><![CDATA[No network & could not persist request to queue!\nGoogle play services not available and android version less than 5.0!]]></string>
 </resources>

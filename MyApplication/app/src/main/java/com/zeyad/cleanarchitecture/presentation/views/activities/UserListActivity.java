@@ -178,18 +178,25 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 .subscribe(new DefaultSubscriber<Object>() {
                                @Override
                                public void onCompleted() {
-
                                }
 
                                @Override
                                public void onError(Throwable e) {
-
+                                    e.printStackTrace();
                                }
 
                                @Override
                                public void onNext(Object event) {
                                    if (event instanceof String)
                                        Log.d(TAG, (String) event);
+                                   if (event instanceof Integer)
+                                       switch ((Integer) event) {
+                                           case 100:
+                                               loadUserList();
+                                               return;
+                                           default:
+                                               break;
+                                       }
                                }
                            }
                 ));
@@ -313,6 +320,31 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView mSearchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//        RxSearchView.queryTextChanges(mSearchView)
+//                .filter(charSequence -> !TextUtils.isEmpty(charSequence))
+//                .throttleLast(100, TimeUnit.MILLISECONDS)
+//                .debounce(200, TimeUnit.MILLISECONDS)
+//                .onBackpressureLatest()
+//                .doOnNext(query -> mUserListPresenter.search(query.toString()))
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .onErrorResumeNext(Observable.empty())
+//                .subscribe(new DefaultSubscriber<Object>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(Object o) {
+//
+//                    }
+//                });
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

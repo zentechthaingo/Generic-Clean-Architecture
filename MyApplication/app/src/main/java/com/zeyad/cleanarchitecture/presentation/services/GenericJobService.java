@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -86,6 +87,37 @@ public class GenericJobService extends JobService { // runs on the ui thread
 
     @Override
     public boolean onStartJob(JobParameters params) { // return true if u r doing background thread work, else return false
+        switch (params.getExtras().getString(GenericNetworkQueueIntentService.JOB_TYPE)) {
+            case GenericNetworkQueueIntentService.DOWNLOAD_IMAGE:
+                String url = params.getExtras().getString(GenericNetworkQueueIntentService.EXTRA_REMOTE_PATH);
+                startService(new Intent(getApplicationContext(), GenericNetworkQueueIntentService.class)
+                        .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_PATH, url)
+                        .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_NAME,
+                                Utils.getFileNameFromUrl(url))
+                        .putExtra(GenericNetworkQueueIntentService.WIDTH, -1)
+                        .putExtra(GenericNetworkQueueIntentService.HEIGHT, -1));
+                break;
+            case GenericNetworkQueueIntentService.UPLOAD_IMAGE:
+                // not yet
+                break;
+            case GenericNetworkQueueIntentService.POST_OBJECT:
+                startService(new Intent(this, GenericNetworkQueueIntentService.class)
+                        .putExtra(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.POST)
+                        .putExtra(GenericNetworkQueueIntentService.POST_OBJECT,
+                                (Parcelable) params.getExtras()
+                                        .get(GenericNetworkQueueIntentService.POST_OBJECT)));
+                break;
+            case GenericNetworkQueueIntentService.DELETE_COLLECTION:
+                startService(new Intent(this, GenericNetworkQueueIntentService.class)
+                        .putExtra(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.DELETE_COLLECTION)
+                        .putExtra(GenericNetworkQueueIntentService.DELETE_COLLECTION,
+                                (Parcelable) params.getExtras()
+                                        .get(GenericNetworkQueueIntentService.DELETE_COLLECTION)));
+                break;
+            default:
+                break;
+        }
+
         startService(new Intent(getApplicationContext(), GenericNetworkQueueIntentService.class)
                 .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_PATH, params.getExtras().getString(""))
                 .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(params

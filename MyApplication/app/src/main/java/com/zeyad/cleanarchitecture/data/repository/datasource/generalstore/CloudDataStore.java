@@ -2,50 +2,48 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
 import android.app.job.JobInfo;
 import android.content.ComponentName;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 
-import com.birbit.android.jobqueue.JobManager;
-import com.birbit.android.jobqueue.Params;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.OneoffTask;
 import com.google.gson.Gson;
+import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
-import com.zeyad.cleanarchitecture.data.jobs.NetworkJob;
+import com.zeyad.cleanarchitecture.data.exceptions.NetworkConnectionException;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
 import com.zeyad.cleanarchitecture.presentation.services.GenericGCMService;
 import com.zeyad.cleanarchitecture.presentation.services.GenericJobService;
 import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
+import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
+import java.util.concurrent.TimeUnit;
 
 import io.realm.RealmObject;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class CloudDataStore implements DataStore {
 
-    @Inject
-    JobManager jobManager;
-    @Inject
-    Params params;
+    Gson gson;
+    Context mContext;
     private final RestApi restApi;
     private GeneralRealmManager realmManager;
     private EntityDataMapper entityDataMapper;
     private static final String TAG = "CloudDataStore";
-    public static final String POST_TAG = "postObject", DELETE_TAG = "deleteObject", QUEUED_POSTS = "queuedPosts";
     private Class dataClass;
     private final Action1<Object> saveGenericToCacheAction =
             object -> realmManager.put((RealmObject) entityDataMapper.transformToRealm(object, dataClass))
@@ -70,91 +68,77 @@ public class CloudDataStore implements DataStore {
         realmObjectCollection.addAll((List) entityDataMapper.transformAllToRealm(collection, dataClass));
         realmManager.putAll(realmObjectCollection);
     };
-    // TODO: 6/05/16 Test!
-    // TODO: 6/05/16 Finish!
-    private Action1<Object> queuePost = object -> {
-        Bundle extras = new Bundle();
-        extras.putString(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.POST);
-        extras.putString(GenericNetworkQueueIntentService.POST_OBJECT, new Gson().toJson(object));
-        jobManager.start();
-        jobManager.addJobInBackground(new NetworkJob(params.addTags(POST_TAG).groupBy(CloudDataStore.QUEUED_POSTS), extras));
-        // TODO: 6/05/16 Drop starting here!
-        if (Utils.hasLollipop()) {
-            if (GoogleApiAvailability.getInstance()
-                    .isGooglePlayServicesAvailable(realmManager.getContext().getApplicationContext())
-                    == ConnectionResult.SUCCESS) {
-                GcmNetworkManager.getInstance(realmManager.getContext().getApplicationContext().getApplicationContext())
-                        .schedule(new OneoffTask.Builder()
-                                .setService(GenericGCMService.class)
-                                .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
-                                .setRequiresCharging(false)
-                                .setUpdateCurrent(false)
-                                .setPersisted(true)
-                                .setExtras(extras)
-                                .setTag(POST_TAG)
-                                .build());
-            } else {
-                PersistableBundle persistableBundle = new PersistableBundle();
-                persistableBundle.putString(GenericNetworkQueueIntentService.POST_OBJECT, new Gson().toJson(object));
-                Utils.scheduleJob(realmManager.getContext().getApplicationContext(),
-                        new JobInfo.Builder(1,
-                                new ComponentName(realmManager.getContext().getApplicationContext(),
-                                        GenericJobService.class))
-                                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                                .setRequiresCharging(false)
-                                .setPersisted(true)
-                                .setExtras(persistableBundle)
-                                .build());
-            }
-        }
+    private final Action1<List> deleteCollectionGenericsFromCacheAction = collection -> {
+        List<RealmObject> realmObjectList = new ArrayList<>();
+        realmObjectList.addAll((List) entityDataMapper.transformAllToRealm(collection, dataClass));
+        for (RealmObject realmObject : realmObjectList)
+            realmManager.evict(realmObject, dataClass);
     };
     // TODO: 6/05/16 Test!
-    // TODO: 6/05/16 Finish!
-    private final Action1<List> queueDeleteCollection = list -> {
+    private Func1<Object, Boolean> queuePost = object -> {
         Bundle extras = new Bundle();
-        Gson gson = new Gson();
+        extras.putString(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.POST);
+        extras.putString(GenericNetworkQueueIntentService.POST_OBJECT, gson.toJson(object));
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS) {
+            GcmNetworkManager.getInstance(mContext).schedule(new OneoffTask.Builder()
+                    .setService(GenericGCMService.class)
+                    .setRequiredNetwork(OneoffTask.NETWORK_STATE_CONNECTED)
+                    .setRequiresCharging(false)
+                    .setUpdateCurrent(false)
+                    .setPersisted(true)
+                    .setExtras(extras)
+                    .setTag(Constants.POST_TAG)
+                    .build());
+            Log.d(TAG, "queuePost scheduled through GcmNetworkManager: " + true);
+            return true;
+        } else if (Utils.hasLollipop()) {
+            PersistableBundle persistableBundle = new PersistableBundle();
+            persistableBundle.putString(GenericNetworkQueueIntentService.POST_OBJECT, gson.toJson(object));
+            boolean isScheduled = Utils.scheduleJob(mContext, new JobInfo.Builder(1, new ComponentName(mContext,
+                    GenericJobService.class))
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setRequiresCharging(false)
+                    .setPersisted(true)
+                    .setExtras(persistableBundle)
+                    .build());
+            Log.d(TAG, "queuePost scheduled through JobScheduler: " + isScheduled);
+            return isScheduled;
+        }
+        return false;
+    };
+    // TODO: 6/05/16 Test!
+    private final Func1<List, Boolean> queueDeleteCollection = list -> {
+        Bundle extras = new Bundle();
         ArrayList<String> strings = new ArrayList<>();
         extras.putString(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.DELETE_COLLECTION);
         for (Object object : list)
             strings.add(gson.toJson(object));
         extras.putStringArrayList(GenericNetworkQueueIntentService.LIST, strings);
-        jobManager.start();
-        jobManager.addJobInBackground(new NetworkJob(params.addTags(DELETE_TAG).groupBy(CloudDataStore.QUEUED_POSTS), extras));
-        // TODO: 6/05/16 Drop starting here!
-        if (Utils.hasLollipop()) {
-            if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(realmManager
-                    .getContext().getApplicationContext()) == ConnectionResult.SUCCESS) {
-                GcmNetworkManager gcmNetworkManager = GcmNetworkManager.getInstance(realmManager
-                        .getContext().getApplicationContext());
-                for (Object object : list) {
-                    extras.putString(GenericNetworkQueueIntentService.DELETE_COLLECTION, new Gson().toJson(object));
-                    gcmNetworkManager.schedule(new OneoffTask.Builder()
-                            .setService(GenericGCMService.class)
-                            .setRequiredNetwork(OneoffTask.NETWORK_STATE_ANY)
-                            .setRequiresCharging(false)
-                            .setExtras(extras)
-                            .setPersisted(true)
-                            .setUpdateCurrent(false)
-                            .setTag(DELETE_TAG)
-                            .build());
-                    extras.clear();
-                }
-            } else {
-                PersistableBundle persistableBundle = new PersistableBundle();
-                for (int i = 0; i < list.size(); i++)
-                    persistableBundle.putString(GenericNetworkQueueIntentService.POST_OBJECT + " " + i,
-                            gson.toJson(list.get(i)));
-                Utils.scheduleJob(realmManager.getContext().getApplicationContext(),
-                        new JobInfo.Builder(1,
-                                new ComponentName(realmManager.getContext().getApplicationContext(),
-                                        GenericJobService.class))
-                                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                                .setPersisted(true)
-                                .setRequiresCharging(false)
-                                .setExtras(persistableBundle)
-                                .build());
-            }
+        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS) {
+            GcmNetworkManager.getInstance(mContext).schedule(new OneoffTask.Builder()
+                    .setService(GenericGCMService.class)
+                    .setRequiredNetwork(OneoffTask.NETWORK_STATE_ANY)
+                    .setRequiresCharging(false)
+                    .setExtras(extras)
+                    .setPersisted(true)
+                    .setUpdateCurrent(false)
+                    .setTag(Constants.DELETE_TAG)
+                    .build());
+            Log.d(TAG, "queueDeleteCollection scheduled through GcmNetworkManager: " + true);
+            return true;
+        } else if (Utils.hasLollipop()) {
+            PersistableBundle persistableBundle = new PersistableBundle();
+            persistableBundle.putStringArray(GenericNetworkQueueIntentService.LIST, (String[]) strings.toArray());
+            boolean isScheduled = Utils.scheduleJob(mContext, new JobInfo.Builder(1, new ComponentName(mContext, GenericJobService.class))
+                    .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                    .setPersisted(true)
+                    .setRequiresCharging(false)
+                    .setExtras(persistableBundle)
+                    .build());
+            Log.d(TAG, "queueDeleteCollection scheduled through JobScheduler: " + isScheduled);
+            return isScheduled;
         }
+        return false;
     };
 
     /**
@@ -167,19 +151,20 @@ public class CloudDataStore implements DataStore {
         this.restApi = restApi;
         this.entityDataMapper = entityDataMapper;
         this.realmManager = realmManager;
+        mContext = realmManager.getContext().getApplicationContext();
+        gson = new Gson();
     }
 
     @Override
     public Observable<List> collection(Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
         return restApi.userCollection()
-//                .retryWhen(observable -> {
-//                    Log.v(TAG, "retryWhen, call");
-//                    return observable.compose(Utils.zipWithFlatMap(TAG));
-//                }).repeatWhen(observable -> {
-//                    Log.v(TAG, "repeatWhen, call");
-//                    return observable.compose(Utils.zipWithFlatMap(TAG));
-//                })
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                        .flatMap(i -> {
+                            Log.d(TAG, "delay retry by " + i + " second(s)");
+                            return Observable.timer(i, TimeUnit.SECONDS);
+                        }))
+//                .toBlocking()
                 .doOnNext(saveAllGenericsToCacheAction)
                 .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
     }
@@ -188,36 +173,74 @@ public class CloudDataStore implements DataStore {
     public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
         return restApi.objectById(itemId)
-//                .retryWhen(observable -> {
-//                    Log.v(TAG, "retryWhen, call");
-//                    return observable.compose(Utils.zipWithFlatMap(TAG));
-//                }).repeatWhen(observable -> {
-//                    Log.v(TAG, "repeatWhen, call");
-//                    return observable.compose(Utils.zipWithFlatMap(TAG));
-//                })
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                        .flatMap(i -> {
+                            Log.d(TAG, "delay retry by " + i + " second(s)");
+                            return Observable.timer(i, TimeUnit.SECONDS);
+                        }))
+//                .toBlocking()
                 .doOnNext(saveGenericToCacheAction)
                 .map(entities -> entityDataMapper.transformToDomain(entities, domainClass));
     }
 
     @Override
-    public Observable<?> postToCloud(Object object, Class domainClass, Class dataClass) {
-//        return restApi.postItem(object)
-//                .doOnNext(saveGenericToCacheAction)
-//                .doOnError(throwable -> queuePost.call(object))
-//                .map(realmModel -> entityDataMapper.transformToDomain(realmModel, domainClass));
-        return Observable.just(true);
-    }
-
-    @Override
     public Observable<List> searchCloud(String query, Class domainClass, Class dataClass) {
-//        return restApi.search(query).map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
+//        return restApi.search(query)
+//                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+//                        .flatMap(i -> {
+//                            Log.d(TAG, "delay retry by " + i + " second(s)");
+//                            return Observable.timer(i, TimeUnit.SECONDS);
+//                        }))
+////                .toBlocking()
+//                .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
         return Observable.empty();
     }
 
     @Override
+    public Observable<?> postToCloud(Object object, Class domainClass, Class dataClass) {
+        return Observable.defer(() -> {
+            if (!Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
+                    || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
+                queuePost.call(object);
+                return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_persisted)));
+            } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
+                    || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
+                return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
+//            return restApi.postItem(object)
+//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+//                            .flatMap(i -> {
+//                                Log.d(TAG, "delay retry by " + i + " second(s)");
+//                                return Observable.timer(i, TimeUnit.SECONDS);
+//                            }))
+////                .toBlocking()
+//                    .doOnNext(saveGenericToCacheAction)
+//                    .doOnError(throwable -> queuePost.call(object))
+//                    .map(realmModel -> entityDataMapper.transformToDomain(realmModel, domainClass));
+            return Observable.just(true);
+        });
+    }
+
+    @Override
     public Observable<?> deleteCollectionFromCloud(List list, Class domainClass, Class dataClass) {
-//        return restApi.deleteCollection(list).doOnError(throwable -> queueDeleteCollection.call(list));
-        return Observable.just(true);
+        return Observable.defer(() -> {
+            if (!Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
+                    || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
+                queueDeleteCollection.call(list);
+                return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_persisted)));
+            } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
+                    || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
+                return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
+//            return restApi.deleteCollection(list)
+//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+//                            .flatMap(i -> {
+//                                Log.d(TAG, "delay retry by " + i + " second(s)");
+//                                return Observable.timer(i, TimeUnit.SECONDS);
+//                            }))
+////                .toBlocking()
+//                    .doOnCompleted(() -> deleteCollectionGenericsFromCacheAction.call(list))
+//                    .doOnError(throwable -> queueDeleteCollection.call(list));
+            return Observable.just(true);
+        });
     }
 
     @Override

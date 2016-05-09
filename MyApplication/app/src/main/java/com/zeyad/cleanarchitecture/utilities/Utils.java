@@ -131,11 +131,15 @@ public class Utils {
 
     // TODO: 1/5/16 Test!
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static void scheduleJob(Context context, JobInfo jobInfo) {
+    public static boolean scheduleJob(Context context, JobInfo jobInfo) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        if (scheduler.schedule(jobInfo) == 1)
+        if (scheduler.schedule(jobInfo) == 1) {
             Log.d("JobScheduler", "Job scheduled successfully!");
-        else Log.d("JobScheduler", "Failed to scheduled Job!");
+            return true;
+        } else {
+            Log.d("JobScheduler", "Failed to scheduled Job!");
+            return false;
+        }
     }
 
     /**

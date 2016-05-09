@@ -95,6 +95,7 @@ public class AutoLoadImageView extends ImageView {
         else {
             loadBitmap(CLOUD);
             getContext().startService(new Intent(getContext(), GenericNetworkQueueIntentService.class)
+                    .putExtra(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.DOWNLOAD_IMAGE)
                     .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_PATH, imageUrl)
                     .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(imageUrl))
                     .putExtra(GenericNetworkQueueIntentService.WIDTH, getWidth())
@@ -141,7 +142,6 @@ public class AutoLoadImageView extends ImageView {
     public Bitmap getBitmap() {
         BitmapDrawable bitmapDrawable = (BitmapDrawable) getDrawable();
         return (bitmapDrawable.getBitmap() != null) ? bitmapDrawable.getBitmap() : null;
-
 //        Bitmap bitmap;
 //        Drawable drawable = getDrawable();
 //        if (drawable instanceof BitmapDrawable) {

@@ -18,7 +18,7 @@ public class RxEventBus {
     private final Subject<Object, Object> rxBus = new SerializedSubject<>(PublishSubject.create());
 
     public void send(Object o) {
-        if (hasObservers())
+//        if (hasObservers())
             rxBus.onNext(o);
     }
 

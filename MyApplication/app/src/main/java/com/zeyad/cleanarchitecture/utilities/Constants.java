@@ -2,7 +2,7 @@ package com.zeyad.cleanarchitecture.utilities;
 
 public class Constants {
 
-    public static final String BASE_URL = "https://s3-eu-west-1.amazonaws.com/developer-application-test",
+    public static final String API_BASE_URL = "http://www.android10.org/myapi/",
             IMAGE_EXTENSION = ".jpg", BASE_IMAGE_NAME_CACHED = "image_";
 
     // Firebase credentials
@@ -15,8 +15,9 @@ public class Constants {
 
     public static final String SETTINGS_FILE_NAME = "com.zeyad.cleanarchitecture.SETTINGS",
             COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE = "collection_last_cache_update",
-            DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE = "detail_last_cache_update",
-            API_BASE_URL = "http://www.android10.org/myapi/";
+            DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE = "detail_last_cache_update";
 
     public static final long EXPIRATION_TIME = 600000;
+
+    public static final String POST_TAG = "postObject", DELETE_TAG = "deleteObject", EXTRA = "EXTRA";
 }

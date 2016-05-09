@@ -163,4 +163,10 @@ public class ApiConnection {
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).upload(description, file);
     }
+
+    public static Observable dynamicGet(String url) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicGet(url);
+    }
 }
