@@ -21,15 +21,15 @@ The project's first version is almost done, just a couple of minor bugs and some
 
 ### Todo:
 
-* Cache delete & post failed requests
+* Cache delete & post failed requests (Inprogress)
+* Generic Services (Inprogress)
 * Update Tests -- version 1.0
 * CI with infer 
-* GCM push notifications
-* Generic Services
-* Generic RecyclerView Adapter 
-* Data binding
+* GCM push notifications 
 * StorIO / SqlBrite
 * Migrate to native java 8
+* Generic RecyclerView Adapter
+* Data binding
 * Add Strict Mode
 
 ### Who do I talk to? ###
