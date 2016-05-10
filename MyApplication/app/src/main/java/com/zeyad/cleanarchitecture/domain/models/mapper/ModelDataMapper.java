@@ -23,6 +23,7 @@ public class ModelDataMapper {
 
     @Inject
     public ModelDataMapper() {
+        // TODO: 10/05/16 remove exclusion strategies!
         gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes f) {

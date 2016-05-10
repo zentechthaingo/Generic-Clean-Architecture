@@ -40,6 +40,7 @@ public class DiskDataStore implements DataStore {
                 .compose(Utils.logSources(TAG, mRealmManager));
     }
 
+    // TODO: 10/05/16 cast inside mapper!
     @Override
     public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
         return mRealmManager.getById(itemId, dataClass)
@@ -53,12 +54,14 @@ public class DiskDataStore implements DataStore {
                 .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel));
     }
 
+    // TODO: 10/05/16 cast inside mapper!
     @Override
     public Observable<?> putToDisk(RealmObject object) {
         return Observable.defer(() -> mRealmManager.put(object))
                 .map(realmModel -> mEntityDataMapper.transformToDomain((UserRealmModel) realmModel));
     }
 
+    // TODO: 10/05/16 cast inside mapper!
     @Override
     public Observable<?> putToDisk(Object object, Class dataClass) {
         return Observable.defer(() -> {

@@ -127,6 +127,7 @@ public class GenericListPresenter implements BasePresenter {
                 UserRealmModel.class);
     }
 
+    // TODO: 10/05/16 combine Search and List subscribers!
     private final class UserListSubscriber extends DefaultSubscriber<List<UserViewModel>> {
         @Override
         public void onCompleted() {
