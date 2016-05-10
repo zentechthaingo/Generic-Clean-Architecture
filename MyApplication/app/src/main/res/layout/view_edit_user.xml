@@ -28,7 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/et_email"
-            android:inputType="textWebEmailAddress" />
+            android:inputType="textWebEmailAddress"
+            android:usesCleartextTraffic="true" />
 
         <TextView
             style="@style/AppTheme.TextViewTitle"
