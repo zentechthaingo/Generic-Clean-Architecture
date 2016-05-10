@@ -33,7 +33,7 @@ import rx.schedulers.Schedulers;
 @Singleton
 public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
-    public final String TAG = "GeneralRealmManagerImpl";
+    public final String TAG = GeneralRealmManagerImpl.class.getName();
     private Realm mRealm;
     private Context mContext;
 
@@ -43,6 +43,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         this.mContext = mContext;
     }
 
+    // TODO: 10/05/16 pass column name!
     @Override
     public Observable<?> getById(final int itemId, Class clazz) {
         return Observable.defer(() ->
@@ -95,8 +96,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
             return Observable.defer(() -> {
                 if (realmObject.optInt(UserRealmModel.ID_COLUMN) == 0)
                     try {
-                        realmObject.put(UserRealmModel.ID_COLUMN, Utils.getNextId(UserRealmModel.class,
-                                UserRealmModel.ID_COLUMN));
+                        realmObject.put(UserRealmModel.ID_COLUMN, Utils.getNextId(dataClass, UserRealmModel.ID_COLUMN));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

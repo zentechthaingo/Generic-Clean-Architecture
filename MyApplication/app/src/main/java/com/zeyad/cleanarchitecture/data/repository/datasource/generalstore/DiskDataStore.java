@@ -24,9 +24,9 @@ public class DiskDataStore implements DataStore {
     public final String TAG = "DiskUserDataStore";
 
     /**
-     * Construct a {@link UserDataStore} based file system data store.
+     * Construct a {@link DataStore} based file system data store.
      *
-     * @param realmManager A {@link RealmManager} to cache data retrieved from the api.
+     * @param realmManager A {@link GeneralRealmManager} to cache data retrieved from the api.
      */
     public DiskDataStore(GeneralRealmManager realmManager, EntityDataMapper entityDataMapper) {
         mRealmManager = realmManager;

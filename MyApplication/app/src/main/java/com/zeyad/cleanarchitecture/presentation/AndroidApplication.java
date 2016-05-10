@@ -68,10 +68,10 @@ public class AndroidApplication extends Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-
-//        new RealmBrowser.Builder(this)
-//                .add(Realm.getDefaultInstance(), UserRealmModel.class) // add class, you want to view
-//                .showNotification(); // call method showNotification()
+//        if (BuildConfig.DEBUG)
+//            new RealmBrowser.Builder(this)
+//                    .add(Realm.getDefaultInstance(), UserRealmModel.class) // add class, you want to view
+//                    .showNotification(); // call method showNotification()
     }
 
     private void initializeFirebase() {

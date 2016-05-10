@@ -17,24 +17,13 @@
 
     <string name="search">Search</string>
 
-    <string name="stop">Stop</string>
-    <string name="start">Start/Stop Streaming</string>
-    <string name="flash">Flash</string>
-    <string name="camera">Camera</string>
-    <string name="video">Video Settings</string>
-    <string name="save">OK</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="uri">URI</string>
-    <string name="password_hint">Leave empty if not needed</string>
-    <string name="username_hint">Leave empty if not needed</string>
-    <string name="default_bitrate">0 kbps</string>
-    <string name="default_stream">rtsp://wowzaipaddress:1935/live/test.stream</string>
-
-    //Exception messages
+    // Exception messages
     <string name="exception_message_generic">There was an application error</string>
     <string name="exception_message_no_connection">There is no internet connection</string>
     <string name="exception_message_user_not_found">Cannot retrieve user data. Check your internet connection</string>
+    <string name="network_error_persisted">No Notwork but post request persisted to queue!\n Request will be posted as soon as network is available.</string>
+    <string name="network_error_not_persisted"><![CDATA[No network & could not persist request to queue!\nGoogle play services not available and android version less than 5.0!]]></string>
+
     <string name="login">Login</string>
     <string name="logout">Logout</string>
 
@@ -54,6 +43,4 @@
     <string name="invalid_email_msg">Invalid Email or empty!</string>
     <string name="invalid_name_msg">Name shouldn\'t be empty!</string>
     <string name="invalid_number_msg">Invalid Number</string>
-    <string name="network_error_persisted">No Notwork but post request persisted to queue!\n Request will be posted as soon as network is available.</string>
-    <string name="network_error_not_persisted"><![CDATA[No network & could not persist request to queue!\nGoogle play services not available and android version less than 5.0!]]></string>
 </resources>

@@ -29,7 +29,7 @@ public class DataStoreFactory {
     }
 
     /**
-     * Create {@link UserDataStore} from a user id.
+     * Create {@link UserDataStore} from an id.
      */
     public DataStore getById(int id, EntityDataMapper entityDataMapper, Class dataClass) {
         if (mRealmManager.isItemValid(id, dataClass) || !Utils.isNetworkAvailable(mContext))

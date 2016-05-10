@@ -2,27 +2,24 @@ package com.zeyad.cleanarchitecture.data.db.generalize;
 
 import android.content.Context;
 
-import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
-
 import org.json.JSONObject;
 
 import java.util.List;
 
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
-import io.realm.RealmResults;
 import rx.Observable;
 
 public interface GeneralRealmManager {
     /**
-     * Gets an {@link Observable} which will emit a {@link UserRealmModel}.
+     * Gets an {@link Observable} which will emit an Object.
      *
      * @param userId The user id to retrieve data.
      */
     Observable<?> getById(final int userId, Class clazz);
 
     /**
-     * Gets an {@link Observable} which will emit a {@link RealmResults <UserRealmModel>}.
+     * Gets an {@link Observable} which will emit a List of Objects.
      */
     Observable<List> getAll(Class clazz);
 

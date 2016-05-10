@@ -28,6 +28,7 @@ public interface RestApi {
     @GET("users.json")
     Observable<List> userCollection();
 
+    // TODO: 10/05/16 remove!
     @GET("users.json")
     Observable<List<UserRealmModel>> userRealmModelCollection();
 
@@ -36,6 +37,7 @@ public interface RestApi {
      *
      * @param userId The user id used to getById user data.
      */
+    // TODO: 10/05/16 remove!
     @GET("user_{id}.json")
     Observable<UserRealmModel> userRealmById(@Path("id") final int userId);
 
