@@ -6,8 +6,6 @@ import android.widget.Button;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 
-import java.io.File;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -25,7 +23,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Constants.CACHE_DIR = new File(String.valueOf(getCacheDir())).getAbsolutePath();
+        Constants.CACHE_DIR = getCacheDir().getAbsolutePath();
     }
 
     /**

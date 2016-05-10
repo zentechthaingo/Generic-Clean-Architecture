@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".presentation.AndroidApplication"
@@ -58,11 +59,10 @@
         <service
             android:name=".presentation.services.GenericNetworkQueueIntentService"
             android:enabled="true" />
-        <!--<service-->
-            <!--android:name="com.zeyad.cleanarchitecture.presentation.services.GenericJobService"-->
-            <!--android:exported="true"-->
-            <!--android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">-->
-        <!--</service>-->
+        <service
+            android:name="com.zeyad.cleanarchitecture.presentation.services.GenericJobService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <receiver android:name=".presentation.broadcastreceivers.NetworkChangeReceiver">
             <intent-filter>

@@ -38,15 +38,15 @@ import rx.schedulers.Schedulers;
 
 public class CloudDataStore implements DataStore {
 
-    Gson gson;
-    Context mContext;
-    private final RestApi restApi;
-    private GeneralRealmManager realmManager;
-    private EntityDataMapper entityDataMapper;
+    private Gson mGson;
+    private Context mContext;
+    private final RestApi mRestApi;
+    private GeneralRealmManager mRealmManager;
+    private EntityDataMapper mEntityDataMapper;
     private static final String TAG = "CloudDataStore";
     private Class dataClass;
     private final Action1<Object> saveGenericToCacheAction =
-            object -> realmManager.put((RealmObject) entityDataMapper.transformToRealm(object, dataClass))
+            object -> mRealmManager.put((RealmObject) mEntityDataMapper.transformToRealm(object, dataClass))
                     .subscribeOn(Schedulers.io())
                     .subscribe(new Subscriber<Object>() {
                         @Override
@@ -65,20 +65,20 @@ public class CloudDataStore implements DataStore {
                     });
     private final Action1<List> saveAllGenericsToCacheAction = collection -> {
         List<RealmObject> realmObjectCollection = new ArrayList<>();
-        realmObjectCollection.addAll((List) entityDataMapper.transformAllToRealm(collection, dataClass));
-        realmManager.putAll(realmObjectCollection);
+        realmObjectCollection.addAll((List) mEntityDataMapper.transformAllToRealm(collection, dataClass));
+        mRealmManager.putAll(realmObjectCollection);
     };
     private final Action1<List> deleteCollectionGenericsFromCacheAction = collection -> {
         List<RealmObject> realmObjectList = new ArrayList<>();
-        realmObjectList.addAll((List) entityDataMapper.transformAllToRealm(collection, dataClass));
+        realmObjectList.addAll((List) mEntityDataMapper.transformAllToRealm(collection, dataClass));
         for (RealmObject realmObject : realmObjectList)
-            realmManager.evict(realmObject, dataClass);
+            mRealmManager.evict(realmObject, dataClass);
     };
     // TODO: 6/05/16 Test!
     private Func1<Object, Boolean> queuePost = object -> {
         Bundle extras = new Bundle();
         extras.putString(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.POST);
-        extras.putString(GenericNetworkQueueIntentService.POST_OBJECT, gson.toJson(object));
+        extras.putString(GenericNetworkQueueIntentService.POST_OBJECT, mGson.toJson(object));
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS) {
             GcmNetworkManager.getInstance(mContext).schedule(new OneoffTask.Builder()
                     .setService(GenericGCMService.class)
@@ -93,7 +93,7 @@ public class CloudDataStore implements DataStore {
             return true;
         } else if (Utils.hasLollipop()) {
             PersistableBundle persistableBundle = new PersistableBundle();
-            persistableBundle.putString(GenericNetworkQueueIntentService.POST_OBJECT, gson.toJson(object));
+            persistableBundle.putString(GenericNetworkQueueIntentService.POST_OBJECT, mGson.toJson(object));
             boolean isScheduled = Utils.scheduleJob(mContext, new JobInfo.Builder(1, new ComponentName(mContext,
                     GenericJobService.class))
                     .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -112,7 +112,7 @@ public class CloudDataStore implements DataStore {
         ArrayList<String> strings = new ArrayList<>();
         extras.putString(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.DELETE_COLLECTION);
         for (Object object : list)
-            strings.add(gson.toJson(object));
+            strings.add(mGson.toJson(object));
         extras.putStringArrayList(GenericNetworkQueueIntentService.LIST, strings);
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS) {
             GcmNetworkManager.getInstance(mContext).schedule(new OneoffTask.Builder()
@@ -144,21 +144,21 @@ public class CloudDataStore implements DataStore {
     /**
      * Construct a {@link UserDataStore} based on connections to the api (Cloud).
      *
-     * @param restApi      The {@link RestApi} implementation to use.
-     * @param realmManager A {@link RealmManager} to cache data retrieved from the api.
+     * @param mRestApi      The {@link RestApi} implementation to use.
+     * @param mRealmManager A {@link RealmManager} to cache data retrieved from the api.
      */
-    public CloudDataStore(RestApi restApi, GeneralRealmManager realmManager, EntityDataMapper entityDataMapper) {
-        this.restApi = restApi;
-        this.entityDataMapper = entityDataMapper;
-        this.realmManager = realmManager;
-        mContext = realmManager.getContext().getApplicationContext();
-        gson = new Gson();
+    public CloudDataStore(RestApi mRestApi, GeneralRealmManager mRealmManager, EntityDataMapper mEntityDataMapper) {
+        this.mRestApi = mRestApi;
+        this.mEntityDataMapper = mEntityDataMapper;
+        this.mRealmManager = mRealmManager;
+        mContext = mRealmManager.getContext().getApplicationContext();
+        mGson = new Gson();
     }
 
     @Override
     public Observable<List> collection(Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
-        return restApi.userCollection()
+        return mRestApi.userCollection()
                 .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
@@ -166,13 +166,13 @@ public class CloudDataStore implements DataStore {
                         }))
 //                .toBlocking()
                 .doOnNext(saveAllGenericsToCacheAction)
-                .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
+                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels, domainClass));
     }
 
     @Override
     public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
-        return restApi.objectById(itemId)
+        return mRestApi.objectById(itemId)
                 .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
@@ -180,19 +180,19 @@ public class CloudDataStore implements DataStore {
                         }))
 //                .toBlocking()
                 .doOnNext(saveGenericToCacheAction)
-                .map(entities -> entityDataMapper.transformToDomain(entities, domainClass));
+                .map(entities -> mEntityDataMapper.transformToDomain(entities, domainClass));
     }
 
     @Override
     public Observable<List> searchCloud(String query, Class domainClass, Class dataClass) {
-//        return restApi.search(query)
+//        return mRestApi.search(query)
 //                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
 //                        .flatMap(i -> {
 //                            Log.d(TAG, "delay retry by " + i + " second(s)");
 //                            return Observable.timer(i, TimeUnit.SECONDS);
 //                        }))
 ////                .toBlocking()
-//                .map(realmModels -> entityDataMapper.transformAllToDomain(realmModels, domainClass));
+//                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels, domainClass));
         return Observable.empty();
     }
 
@@ -206,7 +206,7 @@ public class CloudDataStore implements DataStore {
             } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
-//            return restApi.postItem(object)
+//            return mRestApi.postItem(object)
 //                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
 //                            .flatMap(i -> {
 //                                Log.d(TAG, "delay retry by " + i + " second(s)");
@@ -215,7 +215,7 @@ public class CloudDataStore implements DataStore {
 ////                .toBlocking()
 //                    .doOnNext(saveGenericToCacheAction)
 //                    .doOnError(throwable -> queuePost.call(object))
-//                    .map(realmModel -> entityDataMapper.transformToDomain(realmModel, domainClass));
+//                    .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
             return Observable.just(true);
         });
     }
@@ -230,7 +230,7 @@ public class CloudDataStore implements DataStore {
             } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
-//            return restApi.deleteCollection(list)
+//            return mRestApi.deleteCollection(list)
 //                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
 //                            .flatMap(i -> {
 //                                Log.d(TAG, "delay retry by " + i + " second(s)");
