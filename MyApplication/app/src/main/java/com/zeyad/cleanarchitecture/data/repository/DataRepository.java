@@ -75,7 +75,7 @@ public class DataRepository implements Repository {
 
     @Override
     @RxLogObservable
-    public Observable<?> search(String query, String column, Class presentationClass, Class domainClass,
+    public Observable<List> search(String query, String column, Class presentationClass, Class domainClass,
                                 Class dataClass) {
         return dataStoreFactory
                 .searchCloud(entityDataMapper)
