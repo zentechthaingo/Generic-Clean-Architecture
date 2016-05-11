@@ -25,6 +25,7 @@ The project's first version is almost done, just a couple of minor bugs and some
 * Generic Services (Inprogress)
 * Update Tests -- version 1.0
 * CI with infer 
+* RxPrefs
 * GCM push notifications 
 * StorIO / SqlBrite
 * Migrate to native java 8
