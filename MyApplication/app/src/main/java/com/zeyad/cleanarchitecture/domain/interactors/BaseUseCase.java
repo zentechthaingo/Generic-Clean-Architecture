@@ -45,7 +45,7 @@ public abstract class BaseUseCase {
     protected abstract Observable buildUseCaseObservablePut(Object object, Class presentationClass,
                                                             Class domainClass, Class dataClass);
 
-    protected abstract Observable buildUseCaseObservableDeleteMultiple(List list, Class domainClass,
+    protected abstract Observable buildUseCaseObservableDeleteMultiple(List<Integer> list, Class domainClass,
                                                                        Class dataClass);
 
     protected abstract Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass,

@@ -3,10 +3,8 @@ package com.zeyad.cleanarchitecture.domain.models.mapper;
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.models.User;
-import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
