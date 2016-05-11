@@ -13,6 +13,8 @@ import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.UserEntity;
+import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +22,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
 import rx.Observable;
@@ -28,26 +29,6 @@ import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
 public class Utils {
-
-    private static final int COUNTER_START = 1, ATTEMPTS = 5;
-
-    public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
-        try {
-            return clazz.cast(o);
-        } catch (ClassCastException e) {
-            return null;
-        }
-    }
-
-    public static <T> Observable.Transformer<T, Long> zipWithFlatMap(String TAG) {
-        return observable -> observable.zipWith(Observable.range(COUNTER_START, ATTEMPTS), (t, repeatAttempt) -> {
-            Log.v(TAG, "zipWith, call, repeatAttempt " + repeatAttempt);
-            return repeatAttempt;
-        }).flatMap(repeatAttempt -> {
-            Log.v(TAG, "flatMap, call, repeatAttempt " + repeatAttempt);
-            return Observable.timer(repeatAttempt * 5, TimeUnit.SECONDS);
-        });
-    }
 
     public static int getNextId(Class clazz, String column) {
         Number currentMax = Realm.getDefaultInstance().where(clazz).max(column);
@@ -127,16 +108,12 @@ public class Utils {
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity != null) {
-            NetworkInfo[] info = connectivity.getAllNetworkInfo();
-            if (info != null)
-                for (NetworkInfo anInfo : info)
-                    if (anInfo.getState() == NetworkInfo.State.CONNECTED)
-                        return true;
+            NetworkInfo activeNetworkInfo = connectivity.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.getState() == NetworkInfo.State.CONNECTED;
         }
         return false;
     }
 
-    // TODO: 1/5/16 Test!
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static boolean scheduleJob(Context context, JobInfo jobInfo) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
@@ -179,5 +156,23 @@ public class Utils {
 
     public static boolean hasM() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
+    }
+
+    // FIXME: 11/05/16 Super Ugly!
+    public static EntityMapper getDataMapper(Class dataClass) {
+        switch (dataClass.getName()) {
+            case "com.zeyad.cleanarchitecture.data.entities.UserRealmModel":
+                return new EntityDataMapper();
+            default:
+                return null;
+        }
+    }
+
+    public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
+        try {
+            return clazz.cast(o);
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 }

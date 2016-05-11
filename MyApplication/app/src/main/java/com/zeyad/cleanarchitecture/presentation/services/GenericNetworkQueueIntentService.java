@@ -50,14 +50,14 @@ public class GenericNetworkQueueIntentService extends IntentService {
             case DOWNLOAD_IMAGE:
                 new DownloadImage(intent, rxEventBus, this);
                 break;
-            case UPLOAD_IMAGE:
-                new UploadImage(intent, rxEventBus);
+            case DELETE_COLLECTION:
+                new Delete(intent, rxEventBus, this);
                 break;
             case POST_OBJECT:
                 new Post(intent, rxEventBus, this);
                 break;
-            case DELETE_COLLECTION:
-                new Delete(intent, rxEventBus, this);
+            case UPLOAD_IMAGE:
+                new UploadImage(intent, rxEventBus);
                 break;
             default:
                 break;

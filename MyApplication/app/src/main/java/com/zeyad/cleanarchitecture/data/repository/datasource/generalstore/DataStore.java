@@ -23,7 +23,7 @@ public interface DataStore {
 
     Observable<?> postToCloud(Object object, Class domainClass, Class dataClass);
 
-    Observable<?> putToDisk(RealmObject object);
+    Observable<?> putToDisk(RealmObject object, Class dataClass);
 
     Observable<?> putToDisk(Object object, Class dataClass);
 

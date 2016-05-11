@@ -61,6 +61,6 @@ public class GenericUseCase extends BaseUseCase {
     @Override
     public Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
         return repository.search(query, column, presentationClass, domainClass, dataClass)
-                .map(collection -> modelDataMapper.transformAllToPresentation((Collection) collection, presentationClass));
+                .map(collection -> modelDataMapper.transformAllToPresentation((List) collection, presentationClass));
     }
 }

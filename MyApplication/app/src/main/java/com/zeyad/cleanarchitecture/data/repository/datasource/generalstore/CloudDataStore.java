@@ -43,7 +43,7 @@ public class CloudDataStore implements DataStore {
     private final RestApi mRestApi;
     private GeneralRealmManager mRealmManager;
     private EntityDataMapper mEntityDataMapper;
-    private static final String TAG = "CloudDataStore";
+    private static final String TAG = CloudDataStore.class.getName();
     private Class dataClass;
     private final Action1<Object> saveGenericToCacheAction =
             object -> mRealmManager.put((RealmObject) mEntityDataMapper.transformToRealm(object, dataClass))
@@ -159,7 +159,8 @@ public class CloudDataStore implements DataStore {
     public Observable<List> collection(Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
         return mRestApi.userCollection()
-                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                        Constants.ATTEMPTS), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
                             return Observable.timer(i, TimeUnit.SECONDS);
@@ -173,7 +174,8 @@ public class CloudDataStore implements DataStore {
     public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
         this.dataClass = dataClass;
         return mRestApi.objectById(itemId)
-                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                        Constants.ATTEMPTS), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
                             return Observable.timer(i, TimeUnit.SECONDS);
@@ -186,7 +188,8 @@ public class CloudDataStore implements DataStore {
     @Override
     public Observable<List> searchCloud(String query, Class domainClass, Class dataClass) {
 //        return mRestApi.search(query)
-//                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+//                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+//        Constants.ATTEMPTS), (n, i) -> i)
 //                        .flatMap(i -> {
 //                            Log.d(TAG, "delay retry by " + i + " second(s)");
 //                            return Observable.timer(i, TimeUnit.SECONDS);
@@ -207,7 +210,8 @@ public class CloudDataStore implements DataStore {
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
 //            return mRestApi.postItem(object)
-//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+//            Constants.ATTEMPTS), (n, i) -> i)
 //                            .flatMap(i -> {
 //                                Log.d(TAG, "delay retry by " + i + " second(s)");
 //                                return Observable.timer(i, TimeUnit.SECONDS);
@@ -231,7 +235,8 @@ public class CloudDataStore implements DataStore {
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
 //            return mRestApi.deleteCollection(list)
-//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+//            Constants.ATTEMPTS), (n, i) -> i)
 //                            .flatMap(i -> {
 //                                Log.d(TAG, "delay retry by " + i + " second(s)");
 //                                return Observable.timer(i, TimeUnit.SECONDS);
@@ -244,7 +249,7 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> putToDisk(RealmObject object) {
+    public Observable<?> putToDisk(RealmObject object, Class dataClass) {
         return Observable.error(new Exception("cant getById from disk in cloud data store"));
     }
 

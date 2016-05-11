@@ -152,7 +152,7 @@ public class GenericListPresenter implements BasePresenter {
     private final class SearchSubscriber extends DefaultSubscriber<List<UserViewModel>> {
         @Override
         public void onCompleted() {
-
+            hideViewLoading();
         }
 
         @Override

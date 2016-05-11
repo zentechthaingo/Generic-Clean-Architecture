@@ -18,6 +18,7 @@ public class Constants {
             DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE = "detail_last_cache_update";
 
     public static final long EXPIRATION_TIME = 600000;
+    public static final int COUNTER_START = 1, ATTEMPTS = 5;
 
     public static final String POST_TAG = "postObject", DELETE_TAG = "deleteObject", EXTRA = "EXTRA";
 }

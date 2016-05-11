@@ -3,7 +3,7 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
-import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import org.json.JSONException;
@@ -17,8 +17,8 @@ import rx.Observable;
 public class DiskDataStore implements DataStore {
 
     private GeneralRealmManager mRealmManager;
-    private UserEntityDataMapper mEntityDataMapper;
-    public final String TAG = "DiskUserDataStore";
+    private EntityMapper mEntityDataMapper;
+    public final String TAG = DiskDataStore.class.getName();
 
     /**
      * Construct a {@link DataStore} based file system data store.
@@ -27,11 +27,12 @@ public class DiskDataStore implements DataStore {
      */
     public DiskDataStore(GeneralRealmManager realmManager, EntityDataMapper entityDataMapper) {
         mRealmManager = realmManager;
-        mEntityDataMapper = new UserEntityDataMapper();
+        mEntityDataMapper = entityDataMapper;
     }
 
     @Override
     public Observable<List> collection(Class domainClass, Class dataClass) {
+        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return mRealmManager.getAll(dataClass)
                 .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels))
                 .compose(Utils.logSources(TAG, mRealmManager));
@@ -39,6 +40,7 @@ public class DiskDataStore implements DataStore {
 
     @Override
     public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
+        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return mRealmManager.getById(itemId, dataClass)
                 .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel))
                 .compose(Utils.logSource(TAG, mRealmManager));
@@ -46,18 +48,21 @@ public class DiskDataStore implements DataStore {
 
     @Override
     public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
+        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return mRealmManager.getWhere(dataClass, query, column)
                 .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel));
     }
 
     @Override
-    public Observable<?> putToDisk(RealmObject object) {
+    public Observable<?> putToDisk(RealmObject object, Class dataClass) {
+        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return Observable.defer(() -> mRealmManager.put(object))
                 .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
     }
 
     @Override
     public Observable<?> putToDisk(Object object, Class dataClass) {
+        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return Observable.defer(() -> {
             try {
                 return mRealmManager.put(new JSONObject(new Gson().toJson(object)), dataClass);
@@ -75,16 +80,16 @@ public class DiskDataStore implements DataStore {
 
     @Override
     public Observable<List> searchCloud(String query, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant getById from cloud in disk data store"));
+        return Observable.error(new Exception("cant search cloud in disk data store"));
     }
 
     @Override
     public Observable<?> postToCloud(Object object, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant getById from cloud in disk data store"));
+        return Observable.error(new Exception("cant post to cloud in disk data store"));
     }
 
     @Override
     public Observable<?> deleteCollectionFromCloud(List list, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant getById from cloud in disk data store"));
+        return Observable.error(new Exception("cant delete from cloud in disk data store"));
     }
 }

@@ -2,6 +2,7 @@ package com.zeyad.cleanarchitecture.data.entities.mapper;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
@@ -18,7 +19,9 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 
 @Singleton
-public class UserEntityDataMapper extends EntityDataMapper {
+public class UserEntityDataMapper {
+
+    Gson gson;
 
     @Inject
     public UserEntityDataMapper() {
