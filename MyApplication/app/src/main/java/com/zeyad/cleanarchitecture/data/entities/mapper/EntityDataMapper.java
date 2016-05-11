@@ -7,7 +7,6 @@ import com.google.gson.GsonBuilder;
 import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.models.User;
-import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
@@ -36,39 +35,6 @@ public class EntityDataMapper {
                 return false;
             }
         }).create();
-    }
-
-    /**
-     * Transform a {@link User} into an {@link User}.
-     *
-     * @param userDomain Object to be transformed.
-     * @return {@link User} if valid {@link User} otherwise null.
-     */
-    public UserViewModel transformToPresentation(Object userDomain, Class presentationClass) {
-        if (userDomain != null) {
-            User cast = gson.fromJson(gson.toJson(userDomain), User.class);
-            UserViewModel user = new UserViewModel(cast.getUserId());
-            user.setCoverUrl(cast.getCoverUrl());
-            user.setFullName(cast.getFullName());
-            user.setDescription(cast.getDescription());
-            user.setFollowers(cast.getFollowers());
-            user.setEmail(cast.getEmail());
-            return user;
-        }
-        return null;
-    }
-
-    /**
-     * Transform a {@link UserRealmModel} into an {@link User}.
-     *
-     * @param userRealmModels Objects to be transformed.
-     * @return {@link User} if valid {@link UserRealmModel} otherwise null.
-     */
-    public Collection<UserViewModel> transformAllToPresentation(Collection userRealmModels, Class presentationClass) {
-        Collection<UserViewModel> userViewModels = new ArrayList<>();
-        for (int i = 0; i < userRealmModels.size(); i++)
-            userViewModels.add(transformToPresentation(userRealmModels.toArray()[i], presentationClass));
-        return userViewModels;
     }
 
     /**
@@ -134,7 +100,7 @@ public class EntityDataMapper {
      * @param collection Objects to be transformed.
      * @return {@link List <UserRealmModel>} if valid {@link UserRealmModel} otherwise null.
      */
-    public Collection<Object> transformAllToRealm(Collection collection, Class dataClass) {
+    public List<Object> transformAllToRealm(Collection collection, Class dataClass) {
         List<Object> userRealmModels = new ArrayList<>();
         Object userRealmModel;
         for (Object userEntity : collection) {

@@ -62,7 +62,7 @@ public class DataRepository implements Repository {
 
     @Override
     @RxLogObservable
-    public Observable<?> deleteCollection(List list, Class domainClass, Class dataClass) {
+    public Observable<?> deleteCollection(List<Integer> list, Class domainClass, Class dataClass) {
         return Observable
                 .merge(dataStoreFactory
                                 .deleteCollectionFromCloud(entityDataMapper)

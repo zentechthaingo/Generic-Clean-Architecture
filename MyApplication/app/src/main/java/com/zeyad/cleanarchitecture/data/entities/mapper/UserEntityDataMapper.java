@@ -161,13 +161,14 @@ public class UserEntityDataMapper extends EntityDataMapper {
     /**
      * Transform a {@link User} into an {@link User}.
      *
-     * @param userRealmModel Object to be transformed.
+     * @param object Object to be transformed.
      * @return {@link User} if valid {@link User} otherwise null.
      */
-    public User transformToDomain(UserRealmModel userRealmModel) {
-        if (userRealmModel != null) {
+    public User transformToDomain(Object object) {
+        if (object != null) {
             Realm realm = Realm.getDefaultInstance();
             try {
+                UserRealmModel userRealmModel = (UserRealmModel) object;
                 realm.beginTransaction();
                 User user = new User(userRealmModel.getUserId());
                 user.setCoverUrl(userRealmModel.getCover_url());

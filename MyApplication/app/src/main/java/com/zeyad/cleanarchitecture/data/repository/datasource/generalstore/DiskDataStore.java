@@ -1,12 +1,9 @@
 package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
 import com.google.gson.Gson;
-import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import org.json.JSONException;
@@ -40,11 +37,10 @@ public class DiskDataStore implements DataStore {
                 .compose(Utils.logSources(TAG, mRealmManager));
     }
 
-    // TODO: 10/05/16 cast inside mapper!
     @Override
     public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
         return mRealmManager.getById(itemId, dataClass)
-                .map(realmModel -> mEntityDataMapper.transformToDomain((UserRealmModel) realmModel))
+                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel))
                 .compose(Utils.logSource(TAG, mRealmManager));
     }
 
@@ -54,14 +50,12 @@ public class DiskDataStore implements DataStore {
                 .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel));
     }
 
-    // TODO: 10/05/16 cast inside mapper!
     @Override
     public Observable<?> putToDisk(RealmObject object) {
         return Observable.defer(() -> mRealmManager.put(object))
-                .map(realmModel -> mEntityDataMapper.transformToDomain((UserRealmModel) realmModel));
+                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
     }
 
-    // TODO: 10/05/16 cast inside mapper!
     @Override
     public Observable<?> putToDisk(Object object, Class dataClass) {
         return Observable.defer(() -> {
@@ -71,7 +65,7 @@ public class DiskDataStore implements DataStore {
                 e.printStackTrace();
                 return Observable.error(e);
             }
-        }).map(realmModel -> mEntityDataMapper.transformToDomain((UserRealmModel) realmModel));
+        }).map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
     }
 
     @Override
