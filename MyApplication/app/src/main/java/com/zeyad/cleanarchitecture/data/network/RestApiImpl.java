@@ -22,6 +22,16 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
+    public Observable<Object> dynamicGetObject(@Url String url) {
+        return ApiConnection.dynamicGetObject(url);
+    }
+
+    @Override
+    public Observable<List> dynamicGetList(@Url String url) {
+        return ApiConnection.dynamicGetList(url);
+    }
+
+    @Override
     public Observable<List> userCollection() {
         return ApiConnection.userCollection();
     }
@@ -79,10 +89,5 @@ public class RestApiImpl implements RestApi {
     @Override
     public Observable<ResponseBody> upload(@Part("description") RequestBody description, @Part MultipartBody.Part file) {
         return ApiConnection.upload(file, description);
-    }
-
-    @Override
-    public Observable dynamicGet(@Url String url) {
-        return null;
     }
 }

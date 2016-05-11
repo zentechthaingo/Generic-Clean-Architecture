@@ -2,7 +2,6 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
@@ -25,14 +24,13 @@ public class DiskDataStore implements DataStore {
      *
      * @param realmManager A {@link GeneralRealmManager} to cache data retrieved from the api.
      */
-    public DiskDataStore(GeneralRealmManager realmManager, EntityDataMapper entityDataMapper) {
+    public DiskDataStore(GeneralRealmManager realmManager, EntityMapper entityDataMapper) {
         mRealmManager = realmManager;
         mEntityDataMapper = entityDataMapper;
     }
 
     @Override
     public Observable<List> collection(Class domainClass, Class dataClass) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return mRealmManager.getAll(dataClass)
                 .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels))
                 .compose(Utils.logSources(TAG, mRealmManager));
@@ -40,7 +38,6 @@ public class DiskDataStore implements DataStore {
 
     @Override
     public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return mRealmManager.getById(itemId, dataClass)
                 .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel))
                 .compose(Utils.logSource(TAG, mRealmManager));
@@ -48,21 +45,18 @@ public class DiskDataStore implements DataStore {
 
     @Override
     public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return mRealmManager.getWhere(dataClass, query, column)
                 .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel));
     }
 
     @Override
     public Observable<?> putToDisk(RealmObject object, Class dataClass) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return Observable.defer(() -> mRealmManager.put(object))
                 .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
     }
 
     @Override
     public Observable<?> putToDisk(Object object, Class dataClass) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
         return Observable.defer(() -> {
             try {
                 return mRealmManager.put(new JSONObject(new Gson().toJson(object)), dataClass);
@@ -91,5 +85,16 @@ public class DiskDataStore implements DataStore {
     @Override
     public Observable<?> deleteCollectionFromCloud(List list, Class domainClass, Class dataClass) {
         return Observable.error(new Exception("cant delete from cloud in disk data store"));
+    }
+
+
+    @Override
+    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant get List from cloud in disk data store"));
+    }
+
+    @Override
+    public Observable<?> dynamicObject(String url, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant get Object from cloud in disk data store"));
     }
 }

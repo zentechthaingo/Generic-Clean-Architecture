@@ -21,6 +21,10 @@ public interface DataStore {
      */
     Observable<?> getById(final int itemId, Class domainClass, Class dataClass);
 
+    Observable<List> dynamicList(final String url, Class domainClass, Class dataClass);
+
+    Observable<?> dynamicObject(final String url, Class domainClass, Class dataClass);
+
     Observable<?> postToCloud(Object object, Class domainClass, Class dataClass);
 
     Observable<?> putToDisk(RealmObject object, Class dataClass);
@@ -34,4 +38,5 @@ public interface DataStore {
     Observable<List> searchCloud(String query, Class domainClass, Class dataClass);
 
     Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass);
+
 }

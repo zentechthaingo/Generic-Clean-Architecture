@@ -11,16 +11,20 @@ import rx.Observable;
  */
 public interface Repository {
     /**
-     * Get an {@link rx.Observable} which will emit a collection of Items.
+     * Get an {@link Observable} which will emit a collection of Items.
      */
     Observable<List> collection(Class presentationClass, Class domainClass, Class dataClass);
 
     /**
-     * Get an {@link rx.Observable} which will emit an Item.
+     * Get an {@link Observable} which will emit an Item.
      *
      * @param itemId The user id used to retrieve getById data.
      */
     Observable<?> getById(final int itemId, Class presentationClass, Class domainClass, Class dataClass);
+
+    Observable<List> dynamicCollection(final String url, Class presentationClass, Class domainClass, Class dataClass);
+
+    Observable<?> dynamicObject(final String url, Class presentationClass, Class domainClass, Class dataClass);
 
     Observable<?> put(final Object object, Class presentationClass, Class domainClass, Class dataClass);
 

@@ -22,6 +22,16 @@ import rx.Observable;
  * RestApi for retrieving data from the network.
  */
 public interface RestApi {
+
+    @GET
+    Observable<Object> dynamicGetObject(@Url String url);
+
+    @GET
+    Observable<List> dynamicGetList(@Url String url);
+
+//    @POST
+//    Observable<Object> dynamicPostList(@Url String url);
+
     /**
      * Retrieves an {@link rx.Observable} which will emit a collection of {@link UserEntity}.
      */
@@ -72,7 +82,4 @@ public interface RestApi {
     @POST("upload")
     Observable<ResponseBody> upload(@Part("description") RequestBody description,
                                     @Part MultipartBody.Part file);
-
-    @GET
-    Observable dynamicGet(@Url String url);
 }

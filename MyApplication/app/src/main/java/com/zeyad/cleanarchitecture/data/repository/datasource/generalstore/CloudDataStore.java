@@ -16,6 +16,7 @@ import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
 import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.data.exceptions.NetworkConnectionException;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
@@ -42,7 +43,7 @@ public class CloudDataStore implements DataStore {
     private Context mContext;
     private final RestApi mRestApi;
     private GeneralRealmManager mRealmManager;
-    private EntityDataMapper mEntityDataMapper;
+    private EntityMapper mEntityDataMapper;
     private static final String TAG = CloudDataStore.class.getName();
     private Class dataClass;
     private final Action1<Object> saveGenericToCacheAction =
@@ -147,7 +148,7 @@ public class CloudDataStore implements DataStore {
      * @param mRestApi      The {@link RestApi} implementation to use.
      * @param mRealmManager A {@link RealmManager} to cache data retrieved from the api.
      */
-    public CloudDataStore(RestApi mRestApi, GeneralRealmManager mRealmManager, EntityDataMapper mEntityDataMapper) {
+    public CloudDataStore(RestApi mRestApi, GeneralRealmManager mRealmManager, EntityMapper mEntityDataMapper) {
         this.mRestApi = mRestApi;
         this.mEntityDataMapper = mEntityDataMapper;
         this.mRealmManager = mRealmManager;
@@ -184,6 +185,37 @@ public class CloudDataStore implements DataStore {
                 .doOnNext(saveGenericToCacheAction)
                 .map(entities -> mEntityDataMapper.transformToDomain(entities, domainClass));
     }
+
+    @Override
+    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass) {
+        this.dataClass = dataClass;
+        return mRestApi.dynamicGetList(url)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                        Constants.ATTEMPTS), (n, i) -> i)
+                        .flatMap(i -> {
+                            Log.d(TAG, "delay retry by " + i + " second(s)");
+                            return Observable.timer(i, TimeUnit.SECONDS);
+                        }))
+//                .toBlocking()
+                .doOnNext(saveAllGenericsToCacheAction)
+                .map(entities -> mEntityDataMapper.transformAllToDomain(entities, domainClass));
+    }
+
+    @Override
+    public Observable<?> dynamicObject(String url, Class domainClass, Class dataClass) {
+        this.dataClass = dataClass;
+        return mRestApi.dynamicGetObject(url)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                        Constants.ATTEMPTS), (n, i) -> i)
+                        .flatMap(i -> {
+                            Log.d(TAG, "delay retry by " + i + " second(s)");
+                            return Observable.timer(i, TimeUnit.SECONDS);
+                        }))
+//                .toBlocking()
+                .doOnNext(saveGenericToCacheAction)
+                .map(entity -> mEntityDataMapper.transformToDomain(entity, domainClass));
+    }
+
 
     @Override
     public Observable<List> searchCloud(String query, Class domainClass, Class dataClass) {
