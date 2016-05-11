@@ -45,6 +45,7 @@ public class EntityDataMapper {
      */
     public User transformToDomain(Object userRealmModel, Class domainClass) {
         if (userRealmModel != null) {
+//            return (User) Utils.convertInstanceOfObject(userRealmModel, domainClass);
             UserEntity cast = gson.fromJson(gson.toJson(userRealmModel), UserEntity.class);
             User user = new User(cast.getUserId());
             user.setCoverUrl(cast.getCoverUrl());

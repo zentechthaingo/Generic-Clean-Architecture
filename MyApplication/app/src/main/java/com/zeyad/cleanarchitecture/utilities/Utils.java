@@ -31,6 +31,14 @@ public class Utils {
 
     private static final int COUNTER_START = 1, ATTEMPTS = 5;
 
+    public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
+        try {
+            return clazz.cast(o);
+        } catch (ClassCastException e) {
+            return null;
+        }
+    }
+
     public static <T> Observable.Transformer<T, Long> zipWithFlatMap(String TAG) {
         return observable -> observable.zipWith(Observable.range(COUNTER_START, ATTEMPTS), (t, repeatAttempt) -> {
             Log.v(TAG, "zipWith, call, repeatAttempt " + repeatAttempt);
@@ -48,7 +56,6 @@ public class Utils {
         else return 1;
     }
 
-    // Simple logging to let us know what each source is returning
     public static Observable.Transformer<Collection<UserEntity>, Collection<UserEntity>>
     logUsersSources(final String source, RealmManager realmManager) {
         return observable -> observable.doOnNext(userEntities -> {
