@@ -2,6 +2,7 @@ package com.zeyad.cleanarchitecture.domain.repository;
 
 import com.zeyad.cleanarchitecture.domain.models.User;
 
+import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
@@ -25,6 +26,9 @@ public interface Repository {
     Observable<List> dynamicCollection(final String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist);
 
     Observable<?> dynamicObject(final String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist);
+
+    Observable<?> dynamicPost(final String url, final HashMap<String, Object> keyValuePairs,
+                              Class presentationClass, Class domainClass);
 
     Observable<?> put(final Object object, Class presentationClass, Class domainClass, Class dataClass, boolean persist);
 

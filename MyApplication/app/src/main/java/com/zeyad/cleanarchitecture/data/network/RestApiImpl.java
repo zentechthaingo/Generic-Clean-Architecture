@@ -1,7 +1,6 @@
 package com.zeyad.cleanarchitecture.data.network;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -31,13 +30,8 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public Observable<Object> dynamicPostObject(@Url String url, Object bundle) {
-        return ApiConnection.dynamicPost(url, bundle);
-    }
-
-    @Override
-    public Observable<Object> dynamicPostObject(@Url String url, @Path("") HashMap<String, Object> bundle) {
-        return ApiConnection.dynamicPost(url, bundle);
+    public Observable<Object> dynamicPostObject(@Url String url, RequestBody body) {
+        return ApiConnection.dynamicPost(url, body);
     }
 
     @Override

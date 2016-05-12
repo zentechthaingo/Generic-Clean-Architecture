@@ -7,7 +7,9 @@ import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -28,10 +30,7 @@ public interface RestApi {
     Observable<List> dynamicGetList(@Url String url);
 
     @POST
-    Observable<Object> dynamicPostObject(@Url String url, @Path("bundle") Object bundle);
-
-    @POST
-    Observable<Object> dynamicPostObject(@Url String url, @Path("bundle") HashMap<String, Object> bundle);
+    Observable<Object> dynamicPostObject(@Url String url, @Body RequestBody body);
 
     /**
      * Retrieves an {@link rx.Observable} which will emit a collection of {@link Object}.

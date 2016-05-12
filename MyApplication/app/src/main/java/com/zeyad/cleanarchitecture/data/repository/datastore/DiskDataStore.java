@@ -8,6 +8,7 @@ import com.zeyad.cleanarchitecture.utilities.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.realm.RealmObject;
@@ -91,5 +92,10 @@ public class DiskDataStore implements DataStore {
     @Override
     public Observable<?> dynamicObject(String url, Class domainClass, Class dataClass, boolean persist) {
         return Observable.error(new Exception("cant get Object from cloud in disk data store"));
+    }
+
+    @Override
+    public Observable<?> dynamicPost(String url, HashMap<String, Object> keyValuePairs, Class domainClass) {
+        return Observable.error(new Exception("cant post Object to cloud in disk data store"));
     }
 }

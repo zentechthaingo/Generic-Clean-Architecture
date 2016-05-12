@@ -6,6 +6,7 @@ import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.domain.models.mapper.ModelDataMapper;
 import com.zeyad.cleanarchitecture.domain.repository.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -56,6 +57,13 @@ public class GenericUseCase extends BaseUseCase {
     protected Observable buildUseCaseObservableDynamicObject(String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
         return repository.dynamicObject(url, presentationClass, domainClass, dataClass, persist)
                 .map(item -> modelDataMapper.transformToPresentation(item, presentationClass));
+    }
+
+    @Override
+    protected Observable buildUseCaseObservableDynamicPost(String url, HashMap<String, Object> keyValuePairs,
+                                                           Class presentationClass, Class domainClass) {
+        return repository.dynamicPost(url, keyValuePairs, presentationClass, domainClass)
+                .map(object -> modelDataMapper.transformToPresentation(object, presentationClass));
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
 import com.zeyad.cleanarchitecture.domain.repository.Repository;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -59,6 +60,14 @@ public class DataRepository implements Repository {
                                        boolean persist) {
         return mDataStoreFactory.getObjectDynamicallyFromCloud(Utils.getDataMapper(dataClass))
                 .dynamicObject(url, domainClass, dataClass, persist);
+    }
+
+    @Override
+    @RxLogObservable
+    public Observable<?> dynamicPost(String url, HashMap<String, Object> keyValuePairs,
+                                     Class presentationClass, Class domainClass) {
+        return mDataStoreFactory.dynamicPost(mEntityDataMapper).dynamicPost(url, keyValuePairs,
+                domainClass);
     }
 
     @Override

@@ -71,6 +71,10 @@ public class DataStoreFactory {
         return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
+    public DataStore dynamicPost(EntityMapper entityDataMapper) {
+        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
+    }
+
     public DataStore search(EntityMapper entityDataMapper) {
         if (!Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);

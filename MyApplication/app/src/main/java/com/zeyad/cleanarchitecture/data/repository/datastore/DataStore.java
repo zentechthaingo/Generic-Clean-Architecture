@@ -1,5 +1,6 @@
 package com.zeyad.cleanarchitecture.data.repository.datastore;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.realm.RealmObject;
@@ -24,6 +25,8 @@ public interface DataStore {
     Observable<List> dynamicList(final String url, Class domainClass, Class dataClass, boolean persist);
 
     Observable<?> dynamicObject(final String url, Class domainClass, Class dataClass, boolean persist);
+
+    Observable<?> dynamicPost(final String url, final HashMap<String, Object> keyValuePairs, Class domainClass);
 
     Observable<?> putToCloud(Object object, Class domainClass, Class dataClass, boolean persist);
 

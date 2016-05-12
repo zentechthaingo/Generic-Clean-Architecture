@@ -11,7 +11,6 @@ import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -164,17 +163,9 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).dynamicGetList(url);
     }
 
-    // TODO: 5/11/16 Test!
-    public static Observable<Object> dynamicPost(String url, Object bundle) {
+    public static Observable<Object> dynamicPost(String url, RequestBody requestBody) {
         if (retrofit == null)
             retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).dynamicPostObject(url, bundle);
-    }
-
-    // TODO: 5/11/16 Test!
-    public static Observable<Object> dynamicPost(String url, HashMap bundle) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).dynamicPostObject(url, bundle);
+        return retrofit.create(RestApi.class).dynamicPostObject(url, requestBody);
     }
 }

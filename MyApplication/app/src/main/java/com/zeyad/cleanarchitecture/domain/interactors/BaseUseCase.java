@@ -3,6 +3,7 @@ package com.zeyad.cleanarchitecture.domain.interactors;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 
+import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
@@ -47,6 +48,9 @@ public abstract class BaseUseCase {
 
     protected abstract Observable buildUseCaseObservableDynamicObject(String url, Class presentationClass,
                                                                       Class domainClass, Class dataClass, boolean persist);
+
+    protected abstract Observable buildUseCaseObservableDynamicPost(String url, HashMap<String, Object> keyValuePairs,
+                                                                    Class presentationClass, Class dataClass);
 
     protected abstract Observable buildUseCaseObservablePut(Object object, Class presentationClass,
                                                             Class domainClass, Class dataClass, boolean persist);
@@ -127,6 +131,20 @@ public abstract class BaseUseCase {
     @SuppressWarnings("unchecked")
     public void executedynamicObject(Subscriber UseCaseSubscriber, String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
         subscription = buildUseCaseObservableDynamicObject(url, presentationClass, domainClass, dataClass, persist)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public void executeDynamicPost(Subscriber UseCaseSubscriber, String url, HashMap<String, Object> keyValuePairs,
+                                   Class presentationClass, Class dataClass) {
+        subscription = buildUseCaseObservableDynamicPost(url, keyValuePairs, presentationClass, dataClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);

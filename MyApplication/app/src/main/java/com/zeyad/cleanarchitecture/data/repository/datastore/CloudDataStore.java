@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -23,11 +24,16 @@ import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueInte
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.realm.RealmObject;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -63,12 +69,12 @@ public class CloudDataStore implements DataStore {
                     });
     private final Action1<List> saveAllGenericsToCacheAction = collection -> {
         List<RealmObject> realmObjectCollection = new ArrayList<>();
-        realmObjectCollection.addAll((List) mEntityDataMapper.transformAllToRealm(collection, dataClass));
+        realmObjectCollection.addAll(mEntityDataMapper.transformAllToRealm(collection, dataClass));
         mRealmManager.putAll(realmObjectCollection);
     };
     private final Action1<List> deleteCollectionGenericsFromCacheAction = collection -> {
         List<RealmObject> realmObjectList = new ArrayList<>();
-        realmObjectList.addAll((List) mEntityDataMapper.transformAllToRealm(collection, dataClass));
+        realmObjectList.addAll(mEntityDataMapper.transformAllToRealm(collection, dataClass));
         for (RealmObject realmObject : realmObjectList)
             mRealmManager.evict(realmObject, dataClass);
     };
@@ -218,6 +224,19 @@ public class CloudDataStore implements DataStore {
                     if (persist)
                         saveGenericToCacheAction.call(object);
                 })
+                .map(entity -> mEntityDataMapper.transformToDomain(entity, domainClass));
+    }
+
+    @Override
+    public Observable<?> dynamicPost(final String url, final HashMap<String, Object> keyValuePairs,
+                                     Class domainClass) {
+        return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse("application/json"),
+                new JSONObject(keyValuePairs).toString()))
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                        .flatMap(i -> {
+                            Log.d(TAG, "delay retry by " + i + " second(s)");
+                            return Observable.timer(i, TimeUnit.SECONDS);
+                        }))
                 .map(entity -> mEntityDataMapper.transformToDomain(entity, domainClass));
     }
 
