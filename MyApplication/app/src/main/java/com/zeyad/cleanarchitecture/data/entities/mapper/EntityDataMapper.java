@@ -4,7 +4,6 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.utilities.Utils;
@@ -44,17 +43,9 @@ public class EntityDataMapper implements EntityMapper {
      * @return {@link User} if valid {@link User} otherwise null.
      */
     @Override
-    public User transformToDomain(Object userRealmModel, Class domainClass) {
-        if (userRealmModel != null) {
-            UserEntity cast = gson.fromJson(gson.toJson(userRealmModel), UserEntity.class);
-            User user = new User(cast.getUserId());
-            user.setCoverUrl(cast.getCoverUrl());
-            user.setFullName(cast.getFullName());
-            user.setDescription(cast.getDescription());
-            user.setFollowers(cast.getFollowers());
-            user.setEmail(cast.getEmail());
-            return user;
-        }
+    public Object transformToDomain(Object userRealmModel, Class domainClass) {
+        if (userRealmModel != null)
+            return gson.fromJson(gson.toJson(userRealmModel), domainClass);
         return null;
     }
 
@@ -65,8 +56,8 @@ public class EntityDataMapper implements EntityMapper {
      * @return {@link User} if valid {@link UserRealmModel} otherwise null.
      */
     @Override
-    public List<User> transformAllToDomain(List userRealmModels, Class domainClass) {
-        List<User> users = new ArrayList<>();
+    public List<Object> transformAllToDomain(List userRealmModels, Class domainClass) {
+        List<Object> users = new ArrayList<>();
         for (Object realmObject : userRealmModels)
             users.add(transformToDomain(realmObject, domainClass));
         return users;

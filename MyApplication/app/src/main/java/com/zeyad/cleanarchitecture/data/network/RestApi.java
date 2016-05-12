@@ -1,6 +1,5 @@
 package com.zeyad.cleanarchitecture.data.network;
 
-import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 
 import java.util.Collection;

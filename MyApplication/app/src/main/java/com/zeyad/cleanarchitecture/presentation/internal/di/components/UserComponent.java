@@ -5,7 +5,6 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModu
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.UserModule;
 import com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity;
 import com.zeyad.cleanarchitecture.presentation.views.fragments.UserDetailsFragment;
-import com.zeyad.cleanarchitecture.presentation.views.fragments.UserListFirebaseFragment;
 
 import dagger.Component;
 
@@ -17,8 +16,6 @@ import dagger.Component;
 @Component(dependencies = ApplicationComponent.class, modules = {ActivityModule.class, UserModule.class})
 public interface UserComponent extends ActivityComponent {
     void inject(UserListActivity userListActivity);
-
-    void inject(UserListFirebaseFragment userListFirebaseFragment);
 
     void inject(UserDetailsFragment userDetailsFragment);
 }

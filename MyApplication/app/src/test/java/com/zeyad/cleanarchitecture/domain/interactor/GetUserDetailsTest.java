@@ -2,8 +2,6 @@ package com.zeyad.cleanarchitecture.domain.interactor;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecture.domain.interactors.GetUserDetails;
-import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 public class GetUserDetailsTest {

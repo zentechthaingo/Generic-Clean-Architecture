@@ -26,9 +26,8 @@ public class ModelDataMapper {
      * @return {@link User} if valid {@link User} otherwise null.
      */
     public Object transformToPresentation(Object object, Class presentationClass) {
-        if (object != null)
-            if (!(object instanceof Boolean))
-                return gson.fromJson(gson.toJson(object), presentationClass);
+        if (object != null && !(object instanceof Boolean))
+            return gson.fromJson(gson.toJson(object), presentationClass);
         return null;
     }
 
@@ -38,8 +37,8 @@ public class ModelDataMapper {
      * @param list Objects to be transformed.
      * @return {@link User} if valid {@link UserRealmModel} otherwise null.
      */
-    public List transformAllToPresentation(List list, Class presentationClass) {
-        List transformedList = new ArrayList<>();
+    public List<Object> transformAllToPresentation(List list, Class presentationClass) {
+        List<Object> transformedList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++)
             transformedList.add(transformToPresentation(list.get(i), presentationClass));
         return transformedList;

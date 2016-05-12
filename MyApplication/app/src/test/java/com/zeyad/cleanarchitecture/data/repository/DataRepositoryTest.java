@@ -1,11 +1,10 @@
 package com.zeyad.cleanarchitecture.data.repository;
 
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
-import com.zeyad.cleanarchitecture.data.entities.UserEntity;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
-import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.DataStore;
-import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.DataStoreFactory;
+import com.zeyad.cleanarchitecture.data.repository.datastore.DataStore;
+import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 

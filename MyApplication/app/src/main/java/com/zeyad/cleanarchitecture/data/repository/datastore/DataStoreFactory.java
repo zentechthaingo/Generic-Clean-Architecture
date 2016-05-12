@@ -1,12 +1,11 @@
-package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
+package com.zeyad.cleanarchitecture.data.repository.datastore;
 
 import android.content.Context;
 
-import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
+import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
-import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
@@ -89,30 +88,18 @@ public class DataStoreFactory {
     }
     //----------------------------------Get Simultaneously----------------------------------------//
 
-    /**
-     * Create {@link UserDataStore} from a user id.
-     */
     public DataStore createByIdFromDisk(EntityDataMapper entityDataMapper) {
         return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
-    /**
-     * Create {@link UserDataStore} from a user id.
-     */
     public DataStore createByIdFromCloud(EntityDataMapper entityDataMapper) {
         return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
-    /**
-     * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
-     */
     public DataStore createAllFromDisk(EntityDataMapper entityDataMapper) {
         return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
-    /**
-     * Create {@link UserDataStore} to retrieve data from the Cloud or DB.
-     */
     public DataStore createAllFromCloud(EntityDataMapper entityDataMapper) {
         return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }

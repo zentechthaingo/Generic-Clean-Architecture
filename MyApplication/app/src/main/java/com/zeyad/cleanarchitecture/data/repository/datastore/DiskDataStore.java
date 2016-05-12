@@ -1,7 +1,7 @@
-package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
+package com.zeyad.cleanarchitecture.data.repository.datastore;
 
 import com.google.gson.Gson;
-import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
+import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 

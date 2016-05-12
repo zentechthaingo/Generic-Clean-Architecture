@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
+package com.zeyad.cleanarchitecture.data.repository.datastore;
 
 import java.util.List;
 

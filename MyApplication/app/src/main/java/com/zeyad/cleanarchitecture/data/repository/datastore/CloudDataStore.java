@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
+package com.zeyad.cleanarchitecture.data.repository.datastore;
 
 import android.app.job.JobInfo;
 import android.content.ComponentName;
@@ -13,13 +13,10 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.OneoffTask;
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.data.db.RealmManager;
-import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.data.exceptions.NetworkConnectionException;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
-import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.UserDataStore;
 import com.zeyad.cleanarchitecture.presentation.services.GenericGCMService;
 import com.zeyad.cleanarchitecture.presentation.services.GenericJobService;
 import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
@@ -143,10 +140,10 @@ public class CloudDataStore implements DataStore {
     };
 
     /**
-     * Construct a {@link UserDataStore} based on connections to the api (Cloud).
+     * Construct a {@link DataStore} based on connections to the api (Cloud).
      *
      * @param mRestApi      The {@link RestApi} implementation to use.
-     * @param mRealmManager A {@link RealmManager} to cache data retrieved from the api.
+     * @param mRealmManager A {@link GeneralRealmManager} to cache data retrieved from the api.
      */
     public CloudDataStore(RestApi mRestApi, GeneralRealmManager mRealmManager, EntityMapper mEntityDataMapper) {
         this.mRestApi = mRestApi;

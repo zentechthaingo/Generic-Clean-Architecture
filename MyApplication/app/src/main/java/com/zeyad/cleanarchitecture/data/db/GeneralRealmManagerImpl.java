@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.data.db.generalize;
+package com.zeyad.cleanarchitecture.data.db;
 
 import android.content.Context;
 import android.content.SharedPreferences;

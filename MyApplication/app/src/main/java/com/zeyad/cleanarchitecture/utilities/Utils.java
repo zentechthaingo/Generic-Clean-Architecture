@@ -10,9 +10,7 @@ import android.os.Build;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.zeyad.cleanarchitecture.data.db.RealmManager;
-import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.UserEntity;
+import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 
@@ -20,7 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
 import io.realm.Realm;
@@ -37,18 +34,6 @@ public class Utils {
         else return 1;
     }
 
-    public static Observable.Transformer<Collection<UserEntity>, Collection<UserEntity>>
-    logUsersSources(final String source, RealmManager realmManager) {
-        return observable -> observable.doOnNext(userEntities -> {
-            if (userEntities == null)
-                System.out.println(source + " does not have any data.");
-            else if (!realmManager.areUsersValid())
-                System.out.println(source + " has stale data.");
-            else
-                System.out.println(source + " has the data you are looking for!");
-        });
-    }
-
     // Simple logging to let us know what each source is returning
     public static Observable.Transformer<List, List> logSources(final String source,
                                                                 GeneralRealmManager realmManager) {
@@ -56,19 +41,6 @@ public class Utils {
             if (entities == null)
                 System.out.println(source + " does not have any data.");
             else if (!realmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE))
-                System.out.println(source + " has stale data.");
-            else
-                System.out.println(source + " has the data you are looking for!");
-        });
-    }
-
-    // Simple logging to let us know what each source is returning
-    public static Observable.Transformer<UserEntity, UserEntity> logUserSource(final String source,
-                                                                               RealmManager realmManager) {
-        return observable -> observable.doOnNext(userEntity -> {
-            if (userEntity == null)
-                System.out.println(source + " does not have any data.");
-            else if (!realmManager.isUserValid(userEntity.getUserId()))
                 System.out.println(source + " has stale data.");
             else
                 System.out.println(source + " has the data you are looking for!");

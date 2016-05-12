@@ -3,7 +3,6 @@ package com.zeyad.cleanarchitecture.data.db;
 import android.content.Context;
 import android.test.AndroidTestCase;
 
-import com.zeyad.cleanarchitecture.data.db.generalize.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 

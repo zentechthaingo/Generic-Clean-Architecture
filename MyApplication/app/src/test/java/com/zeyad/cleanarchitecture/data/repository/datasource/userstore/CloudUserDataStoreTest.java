@@ -2,8 +2,6 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.userstore;
 
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.db.RealmManager;
-import com.zeyad.cleanarchitecture.data.entities.UserEntity;
-import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
 
 import org.junit.Before;

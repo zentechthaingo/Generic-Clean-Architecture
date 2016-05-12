@@ -3,10 +3,8 @@ package com.zeyad.cleanarchitecture.data.repository;
 import com.fernandocejas.frodo.annotation.RxLogObservable;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
-import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchitecture.data.repository.datasource.generalstore.DataStoreFactory;
+import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
 import com.zeyad.cleanarchitecture.domain.repositories.Repository;
-import com.zeyad.cleanarchitecture.domain.repositories.UserRepository;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.List;
