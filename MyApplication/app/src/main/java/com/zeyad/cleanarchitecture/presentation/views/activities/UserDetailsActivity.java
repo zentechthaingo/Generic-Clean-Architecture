@@ -29,8 +29,8 @@ import butterknife.ButterKnife;
  */
 public class UserDetailsActivity extends BaseActivity implements HasComponent<UserComponent> {
 
-    private static final String INTENT_EXTRA_PARAM_USER_ID = "org.android10.INTENT_PARAM_USER_ID",
-            INSTANCE_STATE_PARAM_USER_ID = "org.android10.STATE_PARAM_USER_ID", FAB_EDIT_TAG = "edit",
+    private static final String INTENT_EXTRA_PARAM_USER_ID = "INTENT_PARAM_USER_ID",
+            INSTANCE_STATE_PARAM_USER_ID = "STATE_PARAM_USER_ID", FAB_EDIT_TAG = "edit",
             FAB_ADD_TAG = "done";
     @Bind(R.id.detail_toolbar)
     public Toolbar mToolbar;

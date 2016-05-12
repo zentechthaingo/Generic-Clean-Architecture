@@ -36,9 +36,8 @@ public class ActivityModule {
 
     @Provides
     @PerActivity
-    @Named("generalizedUseCase")
     GenericUseCase providesGetGeneralListUseCase(Repository repository, ThreadExecutor threadExecutor,
-                                                     PostExecutionThread postExecutionThread) {
+                                                 PostExecutionThread postExecutionThread) {
         return new GenericUseCase(repository, threadExecutor, postExecutionThread);
     }
 

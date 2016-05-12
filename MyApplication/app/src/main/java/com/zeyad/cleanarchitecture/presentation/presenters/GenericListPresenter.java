@@ -18,7 +18,6 @@ import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 @PerActivity
 public class GenericListPresenter implements BasePresenter {
@@ -28,7 +27,7 @@ public class GenericListPresenter implements BasePresenter {
     private List<UserViewModel> mUserViewModels;
 
     @Inject
-    public GenericListPresenter(@Named("generalizedUseCase") GenericUseCase getUserListUserCase) {
+    public GenericListPresenter(GenericUseCase getUserListUserCase) {
         getGeneralListUseCase = getUserListUserCase;
     }
 

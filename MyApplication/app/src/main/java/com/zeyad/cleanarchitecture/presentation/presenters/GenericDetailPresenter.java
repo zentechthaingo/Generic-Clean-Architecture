@@ -28,7 +28,7 @@ public class GenericDetailPresenter implements BasePresenter {
     private final GenericUseCase mGetUserDetailsBaseUseCase;
 
     @Inject
-    public GenericDetailPresenter(@Named("generalizedDetailUseCase") GenericUseCase genericUseCase) {
+    public GenericDetailPresenter(GenericUseCase genericUseCase) {
         mGetUserDetailsBaseUseCase = genericUseCase;
     }
 
