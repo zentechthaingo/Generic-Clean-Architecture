@@ -81,7 +81,7 @@ public class GenericListPresenter implements BasePresenter {
     }
 
     public void deleteCollection(List<Integer> ids) {
-        getGeneralListUseCase.executeDeleteCollection(new DeleteSubscriber(), ids, User.class, UserRealmModel.class);
+        getGeneralListUseCase.executeDeleteCollection(new DeleteSubscriber(), ids, User.class, UserRealmModel.class, true);
     }
 
     public List<UserViewModel> getUserModels() {
@@ -124,7 +124,7 @@ public class GenericListPresenter implements BasePresenter {
 
     private void getUserList() {
         getGeneralListUseCase.executeList(new UserListSubscriber(), UserViewModel.class, User.class,
-                UserRealmModel.class);
+                UserRealmModel.class, true);
     }
 
     // TODO: 10/05/16 combine Search and List subscribers!

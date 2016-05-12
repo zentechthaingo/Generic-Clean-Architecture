@@ -154,146 +154,156 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<List> collection(Class domainClass, Class dataClass) {
+    public Observable<List> collection(Class domainClass, Class dataClass, boolean persist) {
         this.dataClass = dataClass;
         return mRestApi.userCollection()
-                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-                        Constants.ATTEMPTS), (n, i) -> i)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
                             return Observable.timer(i, TimeUnit.SECONDS);
                         }))
 //                .toBlocking()
-                .doOnNext(saveAllGenericsToCacheAction)
+                .doOnNext(list -> {
+                    if (persist)
+                        saveAllGenericsToCacheAction.call(list);
+                })
                 .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels, domainClass));
     }
 
     @Override
-    public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
+    public Observable<?> getById(final int itemId, Class domainClass, Class dataClass, boolean persist) {
         this.dataClass = dataClass;
         return mRestApi.objectById(itemId)
-                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-                        Constants.ATTEMPTS), (n, i) -> i)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
                             return Observable.timer(i, TimeUnit.SECONDS);
                         }))
 //                .toBlocking()
-                .doOnNext(saveGenericToCacheAction)
-                .map(entities -> mEntityDataMapper.transformToDomain(entities, domainClass));
+                .doOnNext(object -> {
+                    if (persist)
+                        saveGenericToCacheAction.call(object);
+                })
+                .map(entity -> mEntityDataMapper.transformToDomain(entity, domainClass));
     }
 
     @Override
-    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass) {
+    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
         this.dataClass = dataClass;
         return mRestApi.dynamicGetList(url)
-                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-                        Constants.ATTEMPTS), (n, i) -> i)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
                             return Observable.timer(i, TimeUnit.SECONDS);
                         }))
 //                .toBlocking()
-                .doOnNext(saveAllGenericsToCacheAction)
+                .doOnNext(list -> {
+                    if (persist)
+                        saveAllGenericsToCacheAction.call(list);
+                })
                 .map(entities -> mEntityDataMapper.transformAllToDomain(entities, domainClass));
     }
 
     @Override
-    public Observable<?> dynamicObject(String url, Class domainClass, Class dataClass) {
+    public Observable<?> dynamicObject(String url, Class domainClass, Class dataClass, boolean persist) {
         this.dataClass = dataClass;
         return mRestApi.dynamicGetObject(url)
-                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-                        Constants.ATTEMPTS), (n, i) -> i)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
                             return Observable.timer(i, TimeUnit.SECONDS);
                         }))
 //                .toBlocking()
-                .doOnNext(saveGenericToCacheAction)
+                .doOnNext(object -> {
+                    if (persist)
+                        saveGenericToCacheAction.call(object);
+                })
                 .map(entity -> mEntityDataMapper.transformToDomain(entity, domainClass));
     }
 
-
     @Override
-    public Observable<List> searchCloud(String query, Class domainClass, Class dataClass) {
-//        return mRestApi.search(query)
-//                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-//        Constants.ATTEMPTS), (n, i) -> i)
-//                        .flatMap(i -> {
-//                            Log.d(TAG, "delay retry by " + i + " second(s)");
-//                            return Observable.timer(i, TimeUnit.SECONDS);
-//                        }))
-////                .toBlocking()
-//                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels, domainClass));
-        return Observable.empty();
+    public Observable<List> search(String query, String column, Class domainClass, Class dataClass) {
+        return mRestApi.search(query)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                        .flatMap(i -> {
+                            Log.d(TAG, "delay retry by " + i + " second(s)");
+                            return Observable.timer(i, TimeUnit.SECONDS);
+                        }))
+//                .toBlocking()
+                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels, domainClass));
     }
 
     @Override
-    public Observable<?> postToCloud(Object object, Class domainClass, Class dataClass) {
+    public Observable<?> putToCloud(Object object, Class domainClass, Class dataClass, boolean persist) {
         return Observable.defer(() -> {
             if (!Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
-                queuePost.call(object);
+//                queuePost.call(object);
+                if (persist)
+                    saveGenericToCacheAction.call(object);
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_persisted)));
             } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
-            return mRestApi.dynamicPostObject("www.google.com/{bundle}", object)
-                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-                            Constants.ATTEMPTS), (n, i) -> i)
-                            .flatMap(i -> {
-                                Log.d(TAG, "delay retry by " + i + " second(s)");
-                                return Observable.timer(i, TimeUnit.SECONDS);
-                            }))
-//                .toBlocking()
-                    .doOnNext(saveGenericToCacheAction)
-                    .doOnError(throwable -> queuePost.call(object))
-                    .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
-//            return Observable.just(true);
+//            return mRestApi.postItem(object)
+//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+//                            .flatMap(i -> {
+//                                Log.d(TAG, "delay retry by " + i + " second(s)");
+//                                return Observable.timer(i, TimeUnit.SECONDS);
+//                            }))
+////                .toBlocking()
+//                    .doOnNext(saveGenericToCacheAction)
+//                    .doOnError(throwable -> {
+//                        if (persist)
+//                            saveGenericToCacheAction.call(object);
+////                        queuePost.call(object);
+//                    })
+//                    .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
+            return Observable.just(true);
         });
     }
 
     @Override
-    public Observable<?> deleteCollectionFromCloud(List list, Class domainClass, Class dataClass) {
+    public Observable<?> deleteCollectionFromCloud(List list, Class domainClass, Class dataClass, boolean persist) {
         return Observable.defer(() -> {
             if (!Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
-                queueDeleteCollection.call(list);
+//                queueDeleteCollection.call(list);
+                if (persist)
+                    deleteCollectionGenericsFromCacheAction.call(list);
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_persisted)));
             } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
 //            return mRestApi.deleteCollection(list)
-//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-//            Constants.ATTEMPTS), (n, i) -> i)
+//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
 //                            .flatMap(i -> {
 //                                Log.d(TAG, "delay retry by " + i + " second(s)");
 //                                return Observable.timer(i, TimeUnit.SECONDS);
 //                            }))
 ////                .toBlocking()
 //                    .doOnCompleted(() -> deleteCollectionGenericsFromCacheAction.call(list))
-//                    .doOnError(throwable -> queueDeleteCollection.call(list));
+//                    .doOnError(throwable -> {
+////                        queueDeleteCollection.call(list);
+//                        if (persist)
+//                            deleteCollectionGenericsFromCacheAction.call(list);
+//                    });
             return Observable.just(true);
         });
     }
 
     @Override
     public Observable<?> putToDisk(RealmObject object, Class dataClass) {
-        return Observable.error(new Exception("cant getById from disk in cloud data store"));
+        return Observable.error(new Exception("cant put to disk in cloud data store"));
     }
 
     @Override
     public Observable<?> putToDisk(Object object, Class dataClass) {
-        return Observable.error(new Exception("cant getById from disk in cloud data store"));
+        return Observable.error(new Exception("cant put to disk in cloud data store"));
     }
 
     @Override
-    public Observable<?> deleteCollectionFromDisk(List list, Class clazz) {
-        return Observable.error(new Exception("cant getById from disk in cloud data store"));
-    }
-
-    @Override
-    public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant getById from disk in cloud data store"));
+    public Observable<?> deleteCollectionFromDisk(List list, Class dataClass) {
+        return Observable.error(new Exception("cant delete from disk in cloud data store"));
     }
 }

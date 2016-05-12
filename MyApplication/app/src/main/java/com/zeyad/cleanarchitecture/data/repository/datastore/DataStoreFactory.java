@@ -23,7 +23,7 @@ public class DataStoreFactory {
     @Inject
     public DataStoreFactory(GeneralRealmManager realmManager, Context context) {
         if (realmManager == null)
-            throw new IllegalArgumentException("Constructor parameters cannot be null!!!");
+            throw new IllegalArgumentException("Constructor parameters cannot be null!");
         mContext = context;
         mRealmManager = realmManager;
     }
@@ -52,14 +52,14 @@ public class DataStoreFactory {
     /**
      * Create {@link DataStore} to retrieve data from the Cloud or DB.
      */
-    public DataStore getAllDynamic(EntityMapper entityDataMapper) {
+    public DataStore getAllDynamicallyFromCloud(EntityMapper entityDataMapper) {
         return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
     /**
      * Create {@link DataStore} from an id.
      */
-    public DataStore getObjectDynamic(int id, EntityMapper entityDataMapper, Class dataClass) {
+    public DataStore getObjectDynamicallyFromCloud(EntityMapper entityDataMapper) {
         return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
@@ -71,12 +71,11 @@ public class DataStoreFactory {
         return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
-    public DataStore searchCloud(EntityMapper entityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
-    }
-
-    public DataStore searchDisk(EntityMapper entityDataMapper) {
-        return new DiskDataStore(mRealmManager, entityDataMapper);
+    public DataStore search(EntityMapper entityDataMapper) {
+        if (!Utils.isNetworkAvailable(mContext))
+            return new DiskDataStore(mRealmManager, entityDataMapper);
+        else
+            return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
     public DataStore deleteCollectionFromCloud(EntityMapper entityDataMapper) {
@@ -85,33 +84,5 @@ public class DataStoreFactory {
 
     public DataStore deleteCollectionFromDisk(EntityMapper entityDataMapper) {
         return new DiskDataStore(mRealmManager, entityDataMapper);
-    }
-    //----------------------------------Get Simultaneously----------------------------------------//
-
-    public DataStore createByIdFromDisk(EntityDataMapper entityDataMapper) {
-        return new DiskDataStore(mRealmManager, entityDataMapper);
-    }
-
-    public DataStore createByIdFromCloud(EntityDataMapper entityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
-    }
-
-    public DataStore createAllFromDisk(EntityDataMapper entityDataMapper) {
-        return new DiskDataStore(mRealmManager, entityDataMapper);
-    }
-
-    public DataStore createAllFromCloud(EntityDataMapper entityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
-    }
-
-    public Observable<Collection> getAllUsersFromAllSources(Observable<Collection> cloud,
-                                                            Observable<Collection> disk) {
-        return Observable.concat(disk, cloud)
-                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE));
-    }
-
-    public Observable getUserFromAllSources(Observable cloud, Observable disk) {
-        return Observable.concat(disk, cloud)
-                .first(userEntity -> userEntity != null && mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE));
     }
 }

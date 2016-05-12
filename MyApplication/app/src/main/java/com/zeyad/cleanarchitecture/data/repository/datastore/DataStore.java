@@ -12,31 +12,28 @@ public interface DataStore {
     /**
      * Get an {@link rx.Observable} which will emit a collection of ?.
      */
-    Observable<List> collection(Class domainClass, Class dataClass);
+    Observable<List> collection(Class domainClass, Class dataClass, boolean persist);
 
     /**
      * Get an {@link rx.Observable} which will emit a ? by its id.
      *
      * @param itemId The id to retrieve user data.
      */
-    Observable<?> getById(final int itemId, Class domainClass, Class dataClass);
+    Observable<?> getById(final int itemId, Class domainClass, Class dataClass, boolean persist);
 
-    Observable<List> dynamicList(final String url, Class domainClass, Class dataClass);
+    Observable<List> dynamicList(final String url, Class domainClass, Class dataClass, boolean persist);
 
-    Observable<?> dynamicObject(final String url, Class domainClass, Class dataClass);
+    Observable<?> dynamicObject(final String url, Class domainClass, Class dataClass, boolean persist);
 
-    Observable<?> postToCloud(Object object, Class domainClass, Class dataClass);
+    Observable<?> putToCloud(Object object, Class domainClass, Class dataClass, boolean persist);
 
     Observable<?> putToDisk(RealmObject object, Class dataClass);
 
     Observable<?> putToDisk(Object object, Class dataClass);
 
-    Observable<?> deleteCollectionFromCloud(final List list, Class domainClass, Class dataClass);
+    Observable<?> deleteCollectionFromCloud(final List list, Class domainClass, Class dataClass, boolean persist);
 
     Observable<?> deleteCollectionFromDisk(final List<Integer> list, Class clazz);
 
-    Observable<List> searchCloud(String query, Class domainClass, Class dataClass);
-
-    Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass);
-
+    Observable<List> search(String query, String column, Class domainClass, Class dataClass);
 }

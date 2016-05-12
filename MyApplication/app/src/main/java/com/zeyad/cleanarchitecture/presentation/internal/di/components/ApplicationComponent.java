@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecture.domain.repositories.Repository;
+import com.zeyad.cleanarchitecture.domain.repository.Repository;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule;
 import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
 import com.zeyad.cleanarchitecture.presentation.views.activities.BaseActivity;

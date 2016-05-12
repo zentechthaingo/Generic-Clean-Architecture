@@ -4,7 +4,7 @@ import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.domain.models.mapper.ModelDataMapper;
-import com.zeyad.cleanarchitecture.domain.repositories.Repository;
+import com.zeyad.cleanarchitecture.domain.repository.Repository;
 
 import java.util.List;
 
@@ -35,31 +35,43 @@ public class GenericUseCase extends BaseUseCase {
     }
 
     @Override
-    public Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.collection(presentationClass, domainClass, dataClass)
+    public Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+        return repository.collection(presentationClass, domainClass, dataClass, persist)
                 .map(collection -> modelDataMapper.transformAllToPresentation(collection, presentationClass));
     }
 
     @Override
-    public Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.getById(itemId, presentationClass, domainClass, dataClass)
+    public Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+        return repository.getById(itemId, presentationClass, domainClass, dataClass, persist)
                 .map(item -> modelDataMapper.transformToPresentation(item, presentationClass));
     }
 
     @Override
-    public Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
-        return repository.put(object, presentationClass, domainClass, dataClass)
+    protected Observable buildUseCaseObservableDynamicList(String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+        return repository.dynamicCollection(url, presentationClass, domainClass, dataClass, persist)
+                .map(collection -> modelDataMapper.transformAllToPresentation(collection, presentationClass));
+    }
+
+    @Override
+    protected Observable buildUseCaseObservableDynamicObject(String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+        return repository.dynamicObject(url, presentationClass, domainClass, dataClass, persist)
                 .map(item -> modelDataMapper.transformToPresentation(item, presentationClass));
     }
 
     @Override
-    public Observable buildUseCaseObservableDeleteMultiple(List<Integer> list, Class domainClass, Class dataClass) {
-        return repository.deleteCollection(list, domainClass, dataClass);
+    public Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+        return repository.put(object, presentationClass, domainClass, dataClass, persist)
+                .map(item -> modelDataMapper.transformToPresentation(item, presentationClass));
+    }
+
+    @Override
+    public Observable buildUseCaseObservableDeleteMultiple(List<Integer> list, Class domainClass, Class dataClass, boolean persist) {
+        return repository.deleteCollection(list, domainClass, dataClass, persist);
     }
 
     @Override
     public Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
         return repository.search(query, column, presentationClass, domainClass, dataClass)
-                .map(collection -> modelDataMapper.transformAllToPresentation(collection, presentationClass));
+                .map(list -> modelDataMapper.transformAllToPresentation(list, presentationClass));
     }
 }

@@ -5,7 +5,7 @@ import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
-import com.zeyad.cleanarchitecture.domain.repositories.Repository;
+import com.zeyad.cleanarchitecture.domain.repository.Repository;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import org.junit.Before;

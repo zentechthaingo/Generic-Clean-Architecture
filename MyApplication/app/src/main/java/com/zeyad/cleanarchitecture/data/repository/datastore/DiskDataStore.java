@@ -30,21 +30,21 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<List> collection(Class domainClass, Class dataClass) {
+    public Observable<List> collection(Class domainClass, Class dataClass, boolean persist) {
         return mRealmManager.getAll(dataClass)
                 .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels))
                 .compose(Utils.logSources(TAG, mRealmManager));
     }
 
     @Override
-    public Observable<?> getById(final int itemId, Class domainClass, Class dataClass) {
+    public Observable<?> getById(final int itemId, Class domainClass, Class dataClass, boolean persist) {
         return mRealmManager.getById(itemId, dataClass)
                 .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel))
                 .compose(Utils.logSource(TAG, mRealmManager));
     }
 
     @Override
-    public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
+    public Observable<List> search(String query, String column, Class domainClass, Class dataClass) {
         return mRealmManager.getWhere(dataClass, query, column)
                 .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel));
     }
@@ -73,28 +73,23 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<List> searchCloud(String query, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant search cloud in disk data store"));
-    }
-
-    @Override
-    public Observable<?> postToCloud(Object object, Class domainClass, Class dataClass) {
+    public Observable<?> putToCloud(Object object, Class domainClass, Class dataClass, boolean persist) {
         return Observable.error(new Exception("cant post to cloud in disk data store"));
     }
 
     @Override
-    public Observable<?> deleteCollectionFromCloud(List list, Class domainClass, Class dataClass) {
+    public Observable<?> deleteCollectionFromCloud(List list, Class domainClass, Class dataClass, boolean persist) {
         return Observable.error(new Exception("cant delete from cloud in disk data store"));
     }
 
 
     @Override
-    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass) {
+    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
         return Observable.error(new Exception("cant get List from cloud in disk data store"));
     }
 
     @Override
-    public Observable<?> dynamicObject(String url, Class domainClass, Class dataClass) {
+    public Observable<?> dynamicObject(String url, Class domainClass, Class dataClass, boolean persist) {
         return Observable.error(new Exception("cant get Object from cloud in disk data store"));
     }
 }

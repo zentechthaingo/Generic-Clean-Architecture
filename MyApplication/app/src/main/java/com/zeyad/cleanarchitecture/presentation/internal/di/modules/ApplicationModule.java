@@ -10,7 +10,7 @@ import com.zeyad.cleanarchitecture.data.repository.DataRepository;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecture.domain.repositories.Repository;
+import com.zeyad.cleanarchitecture.domain.repository.Repository;
 import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecture.presentation.UIThread;
 

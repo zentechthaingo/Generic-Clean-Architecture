@@ -15,7 +15,7 @@ import rx.subscriptions.Subscriptions;
  * Abstract class for a Use Case (Interactor in terms of Clean Architecture).
  * This interface represents a execution unit for different use cases (this means any use case
  * in the application should implement this contract).
- * <p>
+ * <p/>
  * By convention each BaseUseCase implementation will return the result using a {@link rx.Subscriber}
  * that will executeDetail its job in a background thread and will post the result in the UI thread.
  */
@@ -32,21 +32,27 @@ public abstract class BaseUseCase {
     }
 
     /**
-     * Builds an {@link rx.Observable} which will be used when executing the current {@link BaseUseCase}.
+     * Builds an {@link Observable} which will be used when executing the current {@link BaseUseCase}.
      */
     protected abstract Observable buildUseCaseObservable();
 
     protected abstract Observable buildUseCaseObservableList(Class presentationClass, Class domainClass,
-                                                             Class dataClass);
+                                                             Class dataClass, boolean persist);
 
     protected abstract Observable buildUseCaseObservableDetail(int itemId, Class presentationClass,
-                                                               Class domainClass, Class dataClass);
+                                                               Class domainClass, Class dataClass, boolean persist);
+
+    protected abstract Observable buildUseCaseObservableDynamicList(String url, Class presentationClass,
+                                                                    Class domainClass, Class dataClass, boolean persist);
+
+    protected abstract Observable buildUseCaseObservableDynamicObject(String url, Class presentationClass,
+                                                                      Class domainClass, Class dataClass, boolean persist);
 
     protected abstract Observable buildUseCaseObservablePut(Object object, Class presentationClass,
-                                                            Class domainClass, Class dataClass);
+                                                            Class domainClass, Class dataClass, boolean persist);
 
     protected abstract Observable buildUseCaseObservableDeleteMultiple(List<Integer> list, Class domainClass,
-                                                                       Class dataClass);
+                                                                       Class dataClass, boolean persist);
 
     protected abstract Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass,
                                                               Class domainClass, Class dataClass);
@@ -80,8 +86,8 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void executeList(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass) {
-        subscription = buildUseCaseObservableList(presentationClass, domainClass, dataClass)
+    public void executeList(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+        subscription = buildUseCaseObservableList(presentationClass, domainClass, dataClass, persist)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);
@@ -93,8 +99,8 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void executeDetail(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass, int id) {
-        subscription = buildUseCaseObservableDetail(id, presentationClass, domainClass, dataClass)
+    public void executeDetail(Subscriber UseCaseSubscriber, Class presentationClass, Class domainClass, Class dataClass, int id, boolean persist) {
+        subscription = buildUseCaseObservableDetail(id, presentationClass, domainClass, dataClass, persist)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);
@@ -106,8 +112,34 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
      */
     @SuppressWarnings("unchecked")
-    public void executePut(Subscriber UseCaseSubscriber, Object object, Class presentationClass, Class domainClass, Class dataClass) {
-        subscription = buildUseCaseObservablePut(object, presentationClass, domainClass, dataClass)
+    public void executeDynamicList(Subscriber UseCaseSubscriber, String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+        subscription = buildUseCaseObservableDynamicList(url, presentationClass, domainClass, dataClass, persist)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public void executedynamicObject(Subscriber UseCaseSubscriber, String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+        subscription = buildUseCaseObservableDynamicObject(url, presentationClass, domainClass, dataClass, persist)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservable()}.
+     */
+    @SuppressWarnings("unchecked")
+    public void executePut(Subscriber UseCaseSubscriber, Object object, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+        subscription = buildUseCaseObservablePut(object, presentationClass, domainClass, dataClass, persist)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);
@@ -138,15 +170,15 @@ public abstract class BaseUseCase {
      */
     @SuppressWarnings("unchecked")
     public void executeDeleteCollection(Subscriber UseCaseSubscriber, List list, Class domainClass,
-                                        Class dataClass) {
-        subscription = buildUseCaseObservableDeleteMultiple(list, domainClass, dataClass)
+                                        Class dataClass, boolean persist) {
+        subscription = buildUseCaseObservableDeleteMultiple(list, domainClass, dataClass, persist)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);
     }
 
     /**
-     * Unsubscribes from current {@link rx.Subscription}.
+     * Unsubscribes from current {@link Subscription}.
      */
     public void unsubscribe() {
         if (!subscription.isUnsubscribed())
