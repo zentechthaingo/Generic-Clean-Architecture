@@ -238,18 +238,18 @@ public class CloudDataStore implements DataStore {
             } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
-//            return mRestApi.postItem(object)
-//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-//            Constants.ATTEMPTS), (n, i) -> i)
-//                            .flatMap(i -> {
-//                                Log.d(TAG, "delay retry by " + i + " second(s)");
-//                                return Observable.timer(i, TimeUnit.SECONDS);
-//                            }))
-////                .toBlocking()
-//                    .doOnNext(saveGenericToCacheAction)
-//                    .doOnError(throwable -> queuePost.call(object))
-//                    .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
-            return Observable.just(true);
+            return mRestApi.dynamicPostObject("www.google.com/{bundle}", object)
+                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                            Constants.ATTEMPTS), (n, i) -> i)
+                            .flatMap(i -> {
+                                Log.d(TAG, "delay retry by " + i + " second(s)");
+                                return Observable.timer(i, TimeUnit.SECONDS);
+                            }))
+//                .toBlocking()
+                    .doOnNext(saveGenericToCacheAction)
+                    .doOnError(throwable -> queuePost.call(object))
+                    .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
+//            return Observable.just(true);
         });
     }
 

@@ -1,8 +1,7 @@
 package com.zeyad.cleanarchitecture.data.network;
 
-import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
-
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -28,27 +27,17 @@ public interface RestApi {
     @GET
     Observable<List> dynamicGetList(@Url String url);
 
-//    @POST
-//    Observable<Object> dynamicPostList(@Url String url);
+    @POST
+    Observable<Object> dynamicPostObject(@Url String url, @Path("bundle") Object bundle);
+
+    @POST
+    Observable<Object> dynamicPostObject(@Url String url, @Path("bundle") HashMap<String, Object> bundle);
 
     /**
-     * Retrieves an {@link rx.Observable} which will emit a collection of {@link UserEntity}.
+     * Retrieves an {@link rx.Observable} which will emit a collection of {@link Object}.
      */
     @GET("users.json")
     Observable<List> userCollection();
-
-    // TODO: 10/05/16 remove!
-    @GET("users.json")
-    Observable<List<UserRealmModel>> userRealmModelCollection();
-
-    /**
-     * Retrieves an {@link rx.Observable} which will emit a {@link UserEntity}.
-     *
-     * @param userId The user id used to getById user data.
-     */
-    // TODO: 10/05/16 remove!
-    @GET("user_{id}.json")
-    Observable<UserRealmModel> userRealmById(@Path("id") final int userId);
 
     @GET("user_{id}.json")
     Observable<Object> objectById(@Path("id") final int userId);

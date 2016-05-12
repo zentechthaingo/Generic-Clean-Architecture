@@ -6,12 +6,12 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.GsonBuilder;
 import com.zeyad.cleanarchitecture.BuildConfig;
-import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.data.executor.JobExecutor;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -97,22 +97,10 @@ public class ApiConnection {
                 .build();
     }
 
-    public static Observable<List<UserRealmModel>> userRealmCollection() {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).userRealmModelCollection();
-    }
-
     public static Observable<List> userCollection() {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).userCollection();
-    }
-
-    public static Observable<UserRealmModel> userRealm(int userId) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).userRealmById(userId);
     }
 
     public static Observable<Object> objectById(int id) {
@@ -174,5 +162,19 @@ public class ApiConnection {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).dynamicGetList(url);
+    }
+
+    // TODO: 5/11/16 Test!
+    public static Observable<Object> dynamicPost(String url, Object bundle) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicPostObject(url, bundle);
+    }
+
+    // TODO: 5/11/16 Test!
+    public static Observable<Object> dynamicPost(String url, HashMap bundle) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicPostObject(url, bundle);
     }
 }

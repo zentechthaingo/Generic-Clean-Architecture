@@ -1,8 +1,7 @@
 package com.zeyad.cleanarchitecture.data.network;
 
-import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
-
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -32,18 +31,18 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
+    public Observable<Object> dynamicPostObject(@Url String url, Object bundle) {
+        return ApiConnection.dynamicPost(url, bundle);
+    }
+
+    @Override
+    public Observable<Object> dynamicPostObject(@Url String url, @Path("") HashMap<String, Object> bundle) {
+        return ApiConnection.dynamicPost(url, bundle);
+    }
+
+    @Override
     public Observable<List> userCollection() {
         return ApiConnection.userCollection();
-    }
-
-    @Override
-    public Observable<List<UserRealmModel>> userRealmModelCollection() {
-        return ApiConnection.userRealmCollection();
-    }
-
-    @Override
-    public Observable<UserRealmModel> userRealmById(@Path("id") int userId) {
-        return ApiConnection.userRealm(userId);
     }
 
     @Override
