@@ -21,7 +21,6 @@ The project's first version is almost done, just a couple of minor bugs and some
 
 ### Todo:
 
-* Dynamic Post retrofit
 * Update Tests -- version 1.0
 * CI with infer 
 * RxPrefs
