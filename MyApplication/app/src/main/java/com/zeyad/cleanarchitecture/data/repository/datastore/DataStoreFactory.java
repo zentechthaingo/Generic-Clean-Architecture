@@ -3,17 +3,12 @@ package com.zeyad.cleanarchitecture.data.repository.datastore;
 import android.content.Context;
 
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
-import java.util.Collection;
-
 import javax.inject.Inject;
-
-import rx.Observable;
 
 public class DataStoreFactory {
 
@@ -29,19 +24,9 @@ public class DataStoreFactory {
     }
 
     /**
-     * Create {@link DataStore} from an id.
+     * Create {@link DataStore} .
      */
-    public DataStore getById(int id, EntityMapper entityDataMapper, Class dataClass) {
-        if (mRealmManager.isItemValid(id, dataClass) || !Utils.isNetworkAvailable(mContext))
-            return new DiskDataStore(mRealmManager, entityDataMapper);
-        else
-            return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
-    }
-
-    /**
-     * Create {@link DataStore} to retrieve data from the Cloud or DB.
-     */
-    public DataStore getAll(EntityMapper entityDataMapper) {
+    public DataStore dynamically(EntityMapper entityDataMapper) {
         if (mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE)
                 || !Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);
@@ -50,43 +35,26 @@ public class DataStoreFactory {
     }
 
     /**
-     * Create {@link DataStore} to retrieve data from the Cloud or DB.
-     */
-    public DataStore getAllDynamicallyFromCloud(EntityMapper entityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
-    }
-
-    /**
      * Create {@link DataStore} from an id.
      */
-    public DataStore getObjectDynamicallyFromCloud(EntityMapper entityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
-    }
-
-    public DataStore putToDisk(EntityMapper entityDataMapper) {
-        return new DiskDataStore(mRealmManager, entityDataMapper);
-    }
-
-    public DataStore putToCloud(EntityMapper entityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
-    }
-
-    public DataStore dynamicPost(EntityMapper entityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
-    }
-
-    public DataStore search(EntityMapper entityDataMapper) {
-        if (!Utils.isNetworkAvailable(mContext))
+    public DataStore dynamically(int id, EntityMapper entityDataMapper, Class dataClass) {
+        if (mRealmManager.isItemValid(id, dataClass) || !Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);
         else
             return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 
-    public DataStore deleteCollectionFromCloud(EntityMapper entityDataMapper) {
-        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
+    /**
+     * Creates a disk {@link DataStore}.
+     */
+    public DataStore disk(EntityMapper entityDataMapper) {
+        return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
-    public DataStore deleteCollectionFromDisk(EntityMapper entityDataMapper) {
-        return new DiskDataStore(mRealmManager, entityDataMapper);
+    /**
+     * Creates a cloud {@link DataStore}.
+     */
+    public DataStore cloud(EntityMapper entityDataMapper) {
+        return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }
 }

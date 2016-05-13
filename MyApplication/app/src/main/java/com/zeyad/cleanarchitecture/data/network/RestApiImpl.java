@@ -6,6 +6,7 @@ import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import retrofit2.http.Body;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Url;
@@ -20,6 +21,16 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
+    public Observable<ResponseBody> dynamicDownload(@Url String url) {
+        return ApiConnection.dynamicDownload(url);
+    }
+
+    @Override
+    public Observable<ResponseBody> upload(@Url String url, @Part("description") RequestBody description, @Part MultipartBody.Part file) {
+        return ApiConnection.upload(url, file, description);
+    }
+
+    @Override
     public Observable<Object> dynamicGetObject(@Url String url) {
         return ApiConnection.dynamicGetObject(url);
     }
@@ -31,7 +42,12 @@ public class RestApiImpl implements RestApi {
 
     @Override
     public Observable<Object> dynamicPostObject(@Url String url, RequestBody body) {
-        return ApiConnection.dynamicPost(url, body);
+        return ApiConnection.dynamicPostObject(url, body);
+    }
+
+    @Override
+    public Observable<List> dynamicPostList(@Url String url, @Body RequestBody body) {
+        return ApiConnection.dynamicPostList(url, body);
     }
 
     @Override
@@ -72,11 +88,6 @@ public class RestApiImpl implements RestApi {
     @Override
     public Observable<ResponseBody> download(@Path("index") int index) {
         return ApiConnection.download(index);
-    }
-
-    @Override
-    public Observable<ResponseBody> dynamicDownload(@Url String url) {
-        return ApiConnection.dynamicDownload(url);
     }
 
     @Override

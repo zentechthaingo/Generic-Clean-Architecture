@@ -1,38 +1,38 @@
 package com.zeyad.cleanarchitecture.domain.repository;
 
-import com.zeyad.cleanarchitecture.domain.models.User;
-
 import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
+// TODO: 13/05/16 Document!
 
 /**
- * Interface that represents a Repository for getting {@link User} related data.
+ * Interface that represents a Repository for getting Objects from the data layer.
  */
 public interface Repository {
     /**
-     * Get an {@link Observable} which will emit a collection of Items.
+     * Get an {@link Observable} which will emit a collectionFromDisk of Items.
      */
-    Observable<List> collection(Class presentationClass, Class domainClass, Class dataClass, boolean persist);
+    Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist);
+
 
     /**
      * Get an {@link Observable} which will emit an Item.
      *
-     * @param itemId The user id used to retrieve getById data.
+     * @param itemId The user id used to retrieve getDynamicallyById data.
      */
-    Observable<?> getById(final int itemId, Class presentationClass, Class domainClass, Class dataClass, boolean persist);
+    Observable<?> getObjectDynamicallyById(String url, int itemId, Class domainClass, Class dataClass,
+                                           boolean persist);
 
-    Observable<List> dynamicCollection(final String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist);
+    Observable<?> postObjectDynamically(String url, HashMap<String, Object> keyValuePairs,
+                                        Class domainClass, Class dataClass, boolean persist);
 
-    Observable<?> dynamicObject(final String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist);
+    Observable<List> postListDynamically(String url, HashMap<String, Object> keyValuePairs,
+                                         Class domainClass, Class dataClass, boolean persist);
 
-    Observable<?> dynamicPost(final String url, final HashMap<String, Object> keyValuePairs,
-                              Class presentationClass, Class domainClass);
+    Observable<?> deleteListDynamically(String url, HashMap<String, Object> keyValuePairs, Class domainClass,
+                                        Class dataClass, boolean persist);
 
-    Observable<?> put(final Object object, Class presentationClass, Class domainClass, Class dataClass, boolean persist);
-
-    Observable<?> deleteCollection(final List<Integer> list, Class domainClass, Class dataClass, boolean persist);
-
-    Observable<List> search(String query, String column, Class presentationClass, Class domainClass, Class dataClass);
+    Observable<List> searchDisk(String query, String column, Class presentationClass, Class domainClass,
+                                Class dataClass);
 }

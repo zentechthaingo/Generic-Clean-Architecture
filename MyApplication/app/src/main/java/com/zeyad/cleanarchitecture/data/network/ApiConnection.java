@@ -96,6 +96,43 @@ public class ApiConnection {
                 .build();
     }
 
+    public static Observable<ResponseBody> dynamicDownload(String url) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicDownload(url);
+    }
+
+    public static Observable<Object> dynamicGetObject(String url) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicGetObject(url);
+    }
+
+    public static Observable<List> dynamicGetList(String url) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicGetList(url);
+    }
+
+    public static Observable<Object> dynamicPostObject(String url, RequestBody requestBody) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicPostObject(url, requestBody);
+    }
+
+    public static Observable<List> dynamicPostList(String url, RequestBody requestBody) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicPostList(url, requestBody);
+    }
+
+    // TODO: 13/05/16 Test!
+    public static Observable<ResponseBody> upload(String url, MultipartBody.Part file, RequestBody description) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).upload(url, description, file);
+    }
+
     public static Observable<List> userCollection() {
         if (retrofit == null)
             retrofit = createRetro2Client();
@@ -138,34 +175,10 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).download(index);
     }
 
-    public static Observable<ResponseBody> dynamicDownload(String url) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).dynamicDownload(url);
-    }
-
     // TODO: 4/6/16 Test!
     public static Observable<ResponseBody> upload(MultipartBody.Part file, RequestBody description) {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).upload(description, file);
-    }
-
-    public static Observable<Object> dynamicGetObject(String url) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).dynamicGetObject(url);
-    }
-
-    public static Observable<List> dynamicGetList(String url) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).dynamicGetList(url);
-    }
-
-    public static Observable<Object> dynamicPost(String url, RequestBody requestBody) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).dynamicPostObject(url, requestBody);
     }
 }

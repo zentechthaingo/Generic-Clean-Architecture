@@ -21,4 +21,13 @@ public class Constants {
     public static final int COUNTER_START = 1, ATTEMPTS = 5;
 
     public static final String POST_TAG = "postObject", DELETE_TAG = "deleteObject", EXTRA = "EXTRA";
+
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String APPLICATION_JSON = "application/json";
+    public static final String IMAGE_PNG = "image/png";
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String ACCEPT = "Accept";
+    public static final String BEARER = "Bearer";
+    public static final String DEVICE_ID = "DeviceID";
+    public static final String USER_AGENT = "User-Agent";
 }
