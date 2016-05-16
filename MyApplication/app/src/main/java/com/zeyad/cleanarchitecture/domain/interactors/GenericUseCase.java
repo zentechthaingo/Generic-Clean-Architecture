@@ -7,7 +7,6 @@ import com.zeyad.cleanarchitecture.domain.models.mapper.ModelDataMapper;
 import com.zeyad.cleanarchitecture.domain.repository.Repository;
 
 import java.util.HashMap;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -30,7 +29,6 @@ public class GenericUseCase extends BaseUseCase {
         this.modelDataMapper = new ModelDataMapper();
     }
 
-
     @Override
     protected Observable buildUseCaseObservableDynamicList(String url, Class presentationClass,
                                                            Class domainClass, Class dataClass,
@@ -40,8 +38,9 @@ public class GenericUseCase extends BaseUseCase {
     }
 
     @Override
-    protected Observable buildUseCaseObservableDynamicObjectById(String url, int itemId, Class presentationClass, Class domainClass,
-                                                                 Class dataClass, boolean persist) {
+    protected Observable buildUseCaseObservableDynamicObjectById(String url, int itemId, Class presentationClass,
+                                                                 Class domainClass, Class dataClass,
+                                                                 boolean persist) {
         return repository.getObjectDynamicallyById(url, itemId, domainClass, dataClass, persist)
                 .map(item -> modelDataMapper.transformToPresentation(item, presentationClass));
     }
@@ -71,7 +70,7 @@ public class GenericUseCase extends BaseUseCase {
     @Override
     public Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass,
                                                   Class domainClass, Class dataClass) {
-        return repository.searchDisk(query, column, presentationClass, domainClass, dataClass)
+        return repository.searchDisk(query, column, domainClass, dataClass)
                 .map(list -> modelDataMapper.transformAllToPresentation(list, presentationClass));
     }
 }

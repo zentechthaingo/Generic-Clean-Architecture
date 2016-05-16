@@ -1,8 +1,8 @@
 package com.zeyad.cleanarchitecture.data.repository;
 
 import com.fernandocejas.frodo.annotation.RxLogObservable;
-import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
 import com.zeyad.cleanarchitecture.domain.repository.Repository;
 import com.zeyad.cleanarchitecture.utilities.Utils;
@@ -95,8 +95,7 @@ public class DataRepository implements Repository {
     // TODO: 13/05/16 Generalize!
     @Override
     @RxLogObservable
-    public Observable<List> searchDisk(String query, String column, Class presentationClass, Class domainClass,
-                                       Class dataClass) {
+    public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
         return mDataStoreFactory.dynamically(Utils.getDataMapper(dataClass))
                 .searchDisk(query, column, domainClass, dataClass);
     }

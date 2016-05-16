@@ -44,11 +44,11 @@ public class GenericDetailPresenter implements BasePresenter {
 
     @Override
     public void pause() {
-        mGetUserDetailsBaseUseCase.unsubscribe();
     }
 
     @Override
     public void destroy() {
+        mGetUserDetailsBaseUseCase.unsubscribe();
     }
 
     /**

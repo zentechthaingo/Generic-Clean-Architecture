@@ -162,7 +162,8 @@ public class CloudDataStore implements DataStore {
     public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
         this.dataClass = dataClass;
         return mRestApi.dynamicGetList(url)
-                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                        Constants.ATTEMPTS), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
                             return Observable.timer(i, TimeUnit.SECONDS);
@@ -179,7 +180,8 @@ public class CloudDataStore implements DataStore {
     public Observable<?> dynamicObject(String url, int itemId, Class domainClass, Class dataClass, boolean persist) {
         this.dataClass = dataClass;
         return mRestApi.dynamicGetObject(url)
-                .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                        Constants.ATTEMPTS), (n, i) -> i)
                         .flatMap(i -> {
                             Log.d(TAG, "delay retry by " + i + " second(s)");
                             return Observable.timer(i, TimeUnit.SECONDS);
@@ -207,7 +209,8 @@ public class CloudDataStore implements DataStore {
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
             return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
                     new JSONObject(keyValuePairs).toString()))
-                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                            Constants.ATTEMPTS), (n, i) -> i)
                             .flatMap(i -> {
                                 Log.d(TAG, "delay retry by " + i + " second(s)");
                                 return Observable.timer(i, TimeUnit.SECONDS);
@@ -239,7 +242,8 @@ public class CloudDataStore implements DataStore {
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
             return mRestApi.dynamicPostList(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
                     new JSONObject(keyValuePairs).toString()))
-                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                            Constants.ATTEMPTS), (n, i) -> i)
                             .flatMap(i -> {
                                 Log.d(TAG, "delay retry by " + i + " second(s)");
                                 return Observable.timer(i, TimeUnit.SECONDS);
@@ -272,7 +276,7 @@ public class CloudDataStore implements DataStore {
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
             return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
                     new JSONObject(keyValuePairs).toString()))
-                    .retryWhen(attempts -> attempts.zipWith(Observable.range(1, 3), (n, i) -> i)
+                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START, Constants.ATTEMPTS), (n, i) -> i)
                             .flatMap(i -> {
                                 Log.d(TAG, "delay retry by " + i + " second(s)");
                                 return Observable.timer(i, TimeUnit.SECONDS);

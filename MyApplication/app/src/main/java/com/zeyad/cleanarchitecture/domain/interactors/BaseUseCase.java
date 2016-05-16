@@ -4,7 +4,6 @@ import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 
 import java.util.HashMap;
-import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -16,7 +15,7 @@ import rx.subscriptions.Subscriptions;
  * Abstract class for a Use Case (Interactor in terms of Clean Architecture).
  * This interface represents a execution unit for different use cases (this means any use case
  * in the application should implement this contract).
- * <p/>
+ * <p>
  * By convention each BaseUseCase implementation will return the result using a {@link rx.Subscriber}
  * that will executeDetail its job in a background thread and will post the result in the UI thread.
  */
@@ -155,7 +154,6 @@ public abstract class BaseUseCase {
         if (!subscription.isUnsubscribed())
             subscription.unsubscribe();
     }
-
     //--------------------------------------------------------------------------------//
 
     /**

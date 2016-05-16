@@ -33,6 +33,5 @@ public interface Repository {
     Observable<?> deleteListDynamically(String url, HashMap<String, Object> keyValuePairs, Class domainClass,
                                         Class dataClass, boolean persist);
 
-    Observable<List> searchDisk(String query, String column, Class presentationClass, Class domainClass,
-                                Class dataClass);
+    Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass);
 }

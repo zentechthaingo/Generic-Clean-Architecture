@@ -44,15 +44,12 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
     private UserComponent userComponent;
 
     public static Intent getCallingIntent(Context context, int userId) {
-        Intent callingIntent = new Intent(context, UserDetailsActivity.class);
-        callingIntent.putExtra(INTENT_EXTRA_PARAM_USER_ID, userId);
-        return callingIntent;
+        return new Intent(context, UserDetailsActivity.class).putExtra(INTENT_EXTRA_PARAM_USER_ID, userId);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_details);
         initializeActivity(savedInstanceState);
         initializeInjector();
     }
@@ -78,6 +75,7 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
      * Initializes this activity.
      */
     private void initializeActivity(Bundle savedInstanceState) {
+        setContentView(R.layout.activity_user_details);
         if (savedInstanceState == null)
             userId = getIntent().getIntExtra(INTENT_EXTRA_PARAM_USER_ID, -1);
         else
@@ -87,7 +85,7 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null)
             addFragment(R.id.user_detail_container, UserDetailsFragment.newInstance(userId), new ArrayList<>());
         editDetailsFab.setTag(FAB_EDIT_TAG);
