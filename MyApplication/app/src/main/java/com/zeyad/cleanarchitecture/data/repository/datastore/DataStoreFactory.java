@@ -3,17 +3,12 @@ package com.zeyad.cleanarchitecture.data.repository.datastore;
 import android.content.Context;
 
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
-import java.util.Collection;
-
 import javax.inject.Inject;
-
-import rx.Observable;
 
 public class DataStoreFactory {
 

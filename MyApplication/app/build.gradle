@@ -20,7 +20,10 @@ apply plugin: 'com.fernandocejas.frodo'
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
-
+    dexOptions{
+        maxProcessCount 2
+        javaMaxHeapSize "2g"
+    }
     defaultConfig {
         applicationId "com.zeyad.cleanarchitecture"
         minSdkVersion 19
@@ -114,12 +117,12 @@ dependencies {
     // Google Play Services
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
     // Support
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:support-v4:23.3.0'
-    compile 'com.android.support:recyclerview-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
-    compile 'com.android.support:cardview-v7:23.3.0'
-    compile 'com.android.support:palette-v7:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:cardview-v7:23.4.0'
+    compile 'com.android.support:palette-v7:23.4.0'
     // Network
     compile 'com.squareup.retrofit2:retrofit:2.0.2'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'

@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;

@@ -3,7 +3,7 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
 import com.zeyad.cleanarchitecture.data.repository.datastore.CloudDataStore;
 import com.zeyad.cleanarchitecture.domain.models.User;
@@ -35,7 +35,7 @@ public class CloudDataStoreTest extends ApplicationTestCase {
     @Mock
     private GeneralRealmManager mockRealmManager;
     @Mock
-    private EntityDataMapper mockUserEntityDataMapper;
+    private UserEntityDataMapper mockUserEntityDataMapper;
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
     private Class domainClass, dataClass;

@@ -2,7 +2,7 @@ package com.zeyad.cleanarchitecture.data.repository;
 
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datastore.DataStore;
 import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
 import com.zeyad.cleanarchitecture.domain.models.User;
@@ -30,7 +30,7 @@ public class DataRepositoryTest extends ApplicationTestCase {
     @Mock
     private DataStoreFactory mockUserDataStoreFactory;
     @Mock
-    private EntityDataMapper mockUserEntityDataMapper;
+    private UserEntityDataMapper mockUserEntityDataMapper;
     @Mock
     private DataStore mockUserDataStore;
     @Mock

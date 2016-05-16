@@ -18,11 +18,11 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 
 @Singleton
-public class EntityDataMapper implements EntityMapper {
+public class UserEntityDataMapper implements EntityMapper {
     protected Gson gson;
 
     @Inject
-    public EntityDataMapper() {
+    public UserEntityDataMapper() {
         gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(FieldAttributes f) {

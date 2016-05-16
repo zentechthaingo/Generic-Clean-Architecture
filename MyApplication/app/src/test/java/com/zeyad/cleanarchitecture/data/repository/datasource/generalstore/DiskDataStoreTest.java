@@ -3,7 +3,7 @@ package com.zeyad.cleanarchitecture.data.repository.datasource.generalstore;
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datastore.DiskDataStore;
 import com.zeyad.cleanarchitecture.domain.models.User;
 
@@ -29,7 +29,7 @@ public class DiskDataStoreTest extends ApplicationTestCase {
     @Mock
     private GeneralRealmManager mockRealmManager;
     @Mock
-    private EntityDataMapper entityDataMapper;
+    private UserEntityDataMapper entityDataMapper;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

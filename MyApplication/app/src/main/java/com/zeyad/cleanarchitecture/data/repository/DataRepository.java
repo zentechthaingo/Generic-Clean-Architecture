@@ -1,7 +1,7 @@
 package com.zeyad.cleanarchitecture.data.repository;
 
 import com.fernandocejas.frodo.annotation.RxLogObservable;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
 import com.zeyad.cleanarchitecture.domain.repository.Repository;
@@ -29,7 +29,7 @@ public class DataRepository implements Repository {
     @Inject
     public DataRepository(DataStoreFactory dataStoreFactory) {
         mDataStoreFactory = dataStoreFactory;
-        mEntityDataMapper = new EntityDataMapper();
+        mEntityDataMapper = new UserEntityDataMapper();
     }
 
     @Override

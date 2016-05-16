@@ -15,7 +15,7 @@ import com.google.android.gms.gcm.OneoffTask;
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.presentation.services.GenericGCMService;
@@ -40,7 +40,7 @@ public class Post {
     private Gson gson;
     private Class dataClass;
     private Context mContext;
-    private EntityDataMapper entityDataMapper;
+    private UserEntityDataMapper entityDataMapper;
     private GeneralRealmManager realmManager;
     private RxEventBus rxEventBus;
 
@@ -52,7 +52,7 @@ public class Post {
         postToCloud(extras.get(0));
         dataClass = (Class) extras.get(1);
         realmManager = new GeneralRealmManagerImpl(mContext);
-        entityDataMapper = new EntityDataMapper();
+        entityDataMapper = new UserEntityDataMapper();
     }
 
     public Observable<?> postToCloud(Object object) {

@@ -11,7 +11,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 
 import org.json.JSONException;
@@ -134,7 +134,7 @@ public class Utils {
     public static EntityMapper getDataMapper(Class dataClass) {
         switch (dataClass.getName()) {
             case "com.zeyad.cleanarchitecture.data.entities.UserRealmModel":
-                return new EntityDataMapper();
+                return new UserEntityDataMapper();
             default:
                 return null;
         }

@@ -5,7 +5,7 @@ import android.content.Context;
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.repository.datastore.DataStore;
 import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
 import com.zeyad.cleanarchitecture.data.repository.datasource.userstore.CloudUserDataStore;
@@ -32,7 +32,7 @@ public class DataStoreFactoryTest extends ApplicationTestCase {
     @Mock
     private GeneralRealmManager mockRealmManager;
     @Mock
-    private EntityDataMapper mockEntityDataMapper;
+    private UserEntityDataMapper mockEntityDataMapper;
     @Mock
     private Context mContext;
     private Class dataClass;
