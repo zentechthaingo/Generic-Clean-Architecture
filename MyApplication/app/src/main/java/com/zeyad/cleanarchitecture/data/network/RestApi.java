@@ -30,6 +30,19 @@ public interface RestApi {
     @POST
     Observable<Object> dynamicPostObject(@Url String url, @Body RequestBody body);
 
+    @POST
+    Observable<List> dynamicPostList(@Url String url, @Body RequestBody body);
+
+    @Streaming
+    @GET
+    Observable<ResponseBody> dynamicDownload(@Url String fileUrl);
+
+    @Multipart
+    @POST
+    Observable<ResponseBody> upload(@Url String url, @Part("description") RequestBody description,
+                                    @Part MultipartBody.Part file);
+    //-----------//
+
     /**
      * Retrieves an {@link rx.Observable} which will emit a collection of {@link Object}.
      */
@@ -58,10 +71,6 @@ public interface RestApi {
     @Streaming
     @GET("cover_{index}.jpg")
     Observable<ResponseBody> download(@Path("index") int index);
-
-    @Streaming
-    @GET
-    Observable<ResponseBody> dynamicDownload(@Url String fileUrl);
 
     @Multipart
     @POST("upload")

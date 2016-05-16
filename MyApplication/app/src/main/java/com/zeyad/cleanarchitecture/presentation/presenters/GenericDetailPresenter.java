@@ -12,9 +12,11 @@ import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
+import com.zeyad.cleanarchitecture.utilities.Constants;
+
+import java.util.HashMap;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 @PerActivity
 public class GenericDetailPresenter implements BasePresenter {
@@ -99,8 +101,9 @@ public class GenericDetailPresenter implements BasePresenter {
     }
 
     private void getUserDetails() {
-        mGetUserDetailsBaseUseCase.executeDetail(new UserDetailsSubscriber(), UserViewModel.class,
-                User.class, UserRealmModel.class, mUserId, true);
+        mGetUserDetailsBaseUseCase.executeGetObject(new UserDetailsSubscriber(),
+                Constants.API_BASE_URL + "user_" + mUserId + ".json", mUserId, UserViewModel.class,
+                User.class, UserRealmModel.class, true);
     }
 
     public void setupEdit() {
@@ -109,7 +112,14 @@ public class GenericDetailPresenter implements BasePresenter {
 
     public void submitEdit() {
         showViewLoading();
-        mGetUserDetailsBaseUseCase.executePut(new PutSubscriber(), mViewDetailsView.getValidatedUser(),
+        HashMap<String, Object> keyValuePairs = new HashMap<>();
+        keyValuePairs.put("userId", mViewDetailsView.getValidatedUser().getUserId());
+        keyValuePairs.put("coverUrl", mViewDetailsView.getValidatedUser().getCoverUrl());
+        keyValuePairs.put("full_name", mViewDetailsView.getValidatedUser().getFullName());
+        keyValuePairs.put("email", mViewDetailsView.getValidatedUser().getEmail());
+        keyValuePairs.put("description", mViewDetailsView.getValidatedUser().getDescription());
+        keyValuePairs.put("followers", mViewDetailsView.getValidatedUser().getFollowers());
+        mGetUserDetailsBaseUseCase.executeDynamicPutObject(new PutSubscriber(), "", keyValuePairs,
                 UserViewModel.class, User.class, UserRealmModel.class, true);
     }
 

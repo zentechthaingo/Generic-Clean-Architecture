@@ -15,6 +15,7 @@ import javax.inject.Singleton;
 
 import rx.Observable;
 
+// TODO: 13/05/16 Document!
 @Singleton
 public class DataRepository implements Repository {
 
@@ -34,83 +35,69 @@ public class DataRepository implements Repository {
 
     @Override
     @RxLogObservable
-    public Observable<List> collection(Class presentationClass, Class domainClass, Class dataClass,
-                                       boolean persist) {
-        return mDataStoreFactory.getAll(Utils.getDataMapper(dataClass)).collection(domainClass, dataClass, persist);
+    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
+        return mDataStoreFactory.dynamically(Utils.getDataMapper(dataClass))
+                .dynamicList(url, domainClass, dataClass, persist);
     }
 
     @Override
     @RxLogObservable
-    public Observable<?> getById(int itemId, Class presentationClass, Class domainClass, Class dataClass,
-                                 boolean persist) {
-        return mDataStoreFactory.getById(itemId, Utils.getDataMapper(dataClass), dataClass)
-                .getById(itemId, domainClass, dataClass, persist);
+    public Observable<?> getObjectDynamicallyById(String url, int itemId, Class domainClass, Class dataClass,
+                                                  boolean persist) {
+        if (persist)
+            return mDataStoreFactory.dynamically(itemId, Utils.getDataMapper(dataClass), dataClass)
+                    .dynamicObject(url, itemId, domainClass, dataClass, true);
+        else
+            return mDataStoreFactory.cloud(Utils.getDataMapper(dataClass))
+                    .dynamicObject(url, itemId, domainClass, dataClass, false);
     }
 
     @Override
     @RxLogObservable
-    public Observable<List> dynamicCollection(String url, Class presentationClass, Class domainClass,
-                                              Class dataClass, boolean persist) {
-        return mDataStoreFactory.getAllDynamicallyFromCloud(Utils.getDataMapper(dataClass)).dynamicList(url, domainClass, dataClass, persist);
-    }
-
-    @Override
-    @RxLogObservable
-    public Observable<?> dynamicObject(String url, Class presentationClass, Class domainClass, Class dataClass,
-                                       boolean persist) {
-        return mDataStoreFactory.getObjectDynamicallyFromCloud(Utils.getDataMapper(dataClass))
-                .dynamicObject(url, domainClass, dataClass, persist);
-    }
-
-    @Override
-    @RxLogObservable
-    public Observable<?> dynamicPost(String url, HashMap<String, Object> keyValuePairs,
-                                     Class presentationClass, Class domainClass) {
-        return mDataStoreFactory.dynamicPost(mEntityDataMapper).dynamicPost(url, keyValuePairs,
-                domainClass);
-    }
-
-    @Override
-    @RxLogObservable
-    public Observable<?> put(Object object, Class presentationClass, Class domainClass, Class dataClass,
-                             boolean persist) {
+    public Observable<?> postObjectDynamically(String url, HashMap<String, Object> keyValuePairs,
+                                               Class domainClass, Class dataClass, boolean persist) {
         mEntityDataMapper = Utils.getDataMapper(dataClass);
         if (persist)
-            return Observable
-                    .concat(mDataStoreFactory
-                                    .putToDisk(mEntityDataMapper)
-                                    .putToDisk(object, dataClass),
-                            mDataStoreFactory
-                                    .putToCloud(mEntityDataMapper)
-                                    .putToCloud(object, domainClass, dataClass, true))
+            return Observable.concat(mDataStoreFactory
+                            .disk(mEntityDataMapper)
+                            .putToDisk(keyValuePairs, dataClass),
+                    mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url,
+                            keyValuePairs, domainClass, dataClass, true))
                     .distinct();
-        return mDataStoreFactory.putToCloud(mEntityDataMapper).putToCloud(object, domainClass,
-                dataClass, false);
-
+        return mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url, keyValuePairs,
+                domainClass, dataClass, false);
     }
 
     @Override
     @RxLogObservable
-    public Observable<?> deleteCollection(List<Integer> list, Class domainClass, Class dataClass,
-                                          boolean persist) {
+    public Observable<List> postListDynamically(String url, HashMap<String, Object> keyValuePairs,
+                                                Class domainClass, Class dataClass, boolean persist) {
+        return mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostList(url, keyValuePairs,
+                domainClass, dataClass, persist);
+    }
+
+    @Override
+    @RxLogObservable
+    public Observable<?> deleteListDynamically(String url, HashMap<String, Object> keyValuePairs,
+                                               Class domainClass, Class dataClass, boolean persist) {
         mEntityDataMapper = Utils.getDataMapper(dataClass);
         if (persist)
-            return Observable
-                    .merge(mDataStoreFactory
-                                    .deleteCollectionFromCloud(mEntityDataMapper)
-                                    .deleteCollectionFromCloud(list, domainClass, dataClass, true),
-                            mDataStoreFactory
-                                    .deleteCollectionFromDisk(mEntityDataMapper)
-                                    .deleteCollectionFromDisk(list, dataClass))
+            return Observable.concat(mDataStoreFactory
+                            .disk(mEntityDataMapper)
+                            .deleteCollectionFromDisk(keyValuePairs, dataClass),
+                    mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url,
+                            keyValuePairs, domainClass, dataClass, true))
                     .distinct();
-        return mDataStoreFactory.deleteCollectionFromCloud(mEntityDataMapper)
-                .deleteCollectionFromCloud(list, domainClass, dataClass, false);
+        return mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url, keyValuePairs,
+                domainClass, dataClass, false);
     }
 
+    // TODO: 13/05/16 Generalize!
     @Override
     @RxLogObservable
-    public Observable<List> search(String query, String column, Class presentationClass, Class domainClass,
-                                   Class dataClass) {
-        return mDataStoreFactory.search(Utils.getDataMapper(dataClass)).search(query, column, domainClass, dataClass);
+    public Observable<List> searchDisk(String query, String column, Class presentationClass, Class domainClass,
+                                       Class dataClass) {
+        return mDataStoreFactory.dynamically(Utils.getDataMapper(dataClass))
+                .searchDisk(query, column, domainClass, dataClass);
     }
 }

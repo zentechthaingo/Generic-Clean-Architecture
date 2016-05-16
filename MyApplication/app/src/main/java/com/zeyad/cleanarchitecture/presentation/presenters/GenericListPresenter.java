@@ -14,7 +14,9 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.views.UserListView;
 import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
+import com.zeyad.cleanarchitecture.utilities.Constants;
 
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -80,7 +82,10 @@ public class GenericListPresenter implements BasePresenter {
     }
 
     public void deleteCollection(List<Integer> ids) {
-        getGeneralListUseCase.executeDeleteCollection(new DeleteSubscriber(), ids, User.class, UserRealmModel.class, true);
+        HashMap<String, Object> keyValuePairs = new HashMap<>(1);
+        keyValuePairs.put("ids", ids);
+        getGeneralListUseCase.executeDeleteCollection(new DeleteSubscriber(), "", keyValuePairs,
+                User.class, UserRealmModel.class, true);
     }
 
     public List<UserViewModel> getUserModels() {
@@ -122,8 +127,8 @@ public class GenericListPresenter implements BasePresenter {
     }
 
     private void getUserList() {
-        getGeneralListUseCase.executeList(new UserListSubscriber(), UserViewModel.class, User.class,
-                UserRealmModel.class, true);
+        getGeneralListUseCase.executeList(new UserListSubscriber(), Constants.API_BASE_URL + "users.json",
+                UserViewModel.class, User.class, UserRealmModel.class, true);
     }
 
     // TODO: 10/05/16 combine Search and List subscribers!
