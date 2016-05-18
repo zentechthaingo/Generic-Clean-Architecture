@@ -3,8 +3,8 @@ package com.zeyad.cleanarchitecture.presentation.internal.di.components;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.UserModule;
-import com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity;
-import com.zeyad.cleanarchitecture.presentation.views.fragments.UserDetailsFragment;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment;
 
 import dagger.Component;
 

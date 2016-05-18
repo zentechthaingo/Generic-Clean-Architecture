@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.zeyad.cleanarchitecture.presentation.views.activities.UserDetailsActivity;
-import com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
 
 /**
  * Class used to navigate through the application.

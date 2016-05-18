@@ -1,5 +1,6 @@
-package com.zeyad.cleanarchitecture.presentation.views;
+package com.zeyad.cleanarchitecture.presentation.screens.users.details;
 
+import com.zeyad.cleanarchitecture.presentation.screens.LoadDataView;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 /**

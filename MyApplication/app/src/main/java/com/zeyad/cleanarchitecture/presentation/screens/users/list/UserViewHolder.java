@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.views;
+package com.zeyad.cleanarchitecture.presentation.screens.users.list;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -6,7 +6,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.presentation.views.components.AutoLoadImageView;
+import com.zeyad.cleanarchitecture.presentation.components.AutoLoadImageView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

@@ -1,5 +1,7 @@
-package com.zeyad.cleanarchitecture.presentation.views;
+package com.zeyad.cleanarchitecture.presentation.screens.users.list;
 
+import com.zeyad.cleanarchitecture.presentation.screens.LoadDataView;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserViewHolder;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import java.util.List;

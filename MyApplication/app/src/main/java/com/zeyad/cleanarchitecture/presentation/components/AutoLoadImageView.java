@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.views.components;
+package com.zeyad.cleanarchitecture.presentation.components;
 
 import android.content.Context;
 import android.content.Intent;

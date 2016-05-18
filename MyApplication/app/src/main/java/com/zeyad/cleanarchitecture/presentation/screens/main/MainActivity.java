@@ -1,9 +1,10 @@
-package com.zeyad.cleanarchitecture.presentation.views.activities;
+package com.zeyad.cleanarchitecture.presentation.screens.main;
 
 import android.os.Bundle;
 import android.widget.Button;
 
 import com.zeyad.cleanarchitecture.R;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import butterknife.Bind;

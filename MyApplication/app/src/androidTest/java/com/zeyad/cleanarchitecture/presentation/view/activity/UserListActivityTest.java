@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.presentation.views.activities.UserListActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
 
 public class UserListActivityTest extends ActivityInstrumentationTestCase2<UserListActivity> {
 

@@ -14,7 +14,7 @@ import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.zeyad.cleanarchitecture.presentation.views.activities.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.LinkedList;

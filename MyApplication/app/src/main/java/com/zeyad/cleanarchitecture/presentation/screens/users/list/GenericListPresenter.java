@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.presenters;
+package com.zeyad.cleanarchitecture.presentation.screens.users.list;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -11,9 +11,10 @@ import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.BasePresenter;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
-import com.zeyad.cleanarchitecture.presentation.views.UserListView;
-import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListView;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserViewHolder;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import java.util.HashMap;

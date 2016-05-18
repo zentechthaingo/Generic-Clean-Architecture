@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".presentation.views.activities.UserListActivity">
+    tools:context=".presentation.screens.users.list.UserListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"

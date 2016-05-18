@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.views.activities;
+package com.zeyad.cleanarchitecture.presentation.screens;
 
 import android.app.Activity;
 import android.content.ComponentCallbacks2;
@@ -30,9 +30,10 @@ import rx.subscriptions.CompositeSubscription;
 public abstract class BaseActivity extends AppCompatActivity {
     // FIXME: 3/27/16 Fix DI!
     //    @Inject
-    Navigator navigator;
+    public Navigator navigator;
     //    public static final int MSG_SERVICE_OBJ = 37;
     @Inject
+    public
     RxEventBus rxEventBus;
     public CompositeSubscription mCompositeSubscription;
 

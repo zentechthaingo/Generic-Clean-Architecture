@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.views.fragments;
+package com.zeyad.cleanarchitecture.presentation.screens.users.details;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -18,10 +18,8 @@ import android.widget.TextView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
-import com.zeyad.cleanarchitecture.presentation.presenters.GenericDetailPresenter;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
-import com.zeyad.cleanarchitecture.presentation.views.UserDetailsView;
-import com.zeyad.cleanarchitecture.presentation.views.activities.UserDetailsActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseFragment;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import javax.inject.Inject;

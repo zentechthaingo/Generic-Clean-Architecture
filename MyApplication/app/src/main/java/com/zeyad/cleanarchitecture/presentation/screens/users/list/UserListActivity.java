@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.views.activities;
+package com.zeyad.cleanarchitecture.presentation.screens.users.list;
 
 import android.app.ActivityOptions;
 import android.app.SearchManager;
@@ -30,12 +30,9 @@ import com.zeyad.cleanarchitecture.presentation.annimations.DetailsTransition;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
-import com.zeyad.cleanarchitecture.presentation.presenters.GenericListPresenter;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
-import com.zeyad.cleanarchitecture.presentation.views.UserListView;
-import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
-import com.zeyad.cleanarchitecture.presentation.views.adapters.UsersAdapter;
-import com.zeyad.cleanarchitecture.presentation.views.fragments.UserDetailsFragment;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
@@ -182,7 +179,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
                                @Override
                                public void onError(Throwable e) {
-                                    e.printStackTrace();
+                                   e.printStackTrace();
                                }
 
                                @Override

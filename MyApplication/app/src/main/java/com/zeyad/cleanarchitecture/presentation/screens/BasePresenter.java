@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.presenters;
+package com.zeyad.cleanarchitecture.presentation.screens;
 
 /**
  * Interface representing a BasePresenter in a model view presenter (MVP) pattern.

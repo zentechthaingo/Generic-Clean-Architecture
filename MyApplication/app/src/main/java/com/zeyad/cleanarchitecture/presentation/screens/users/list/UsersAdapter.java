@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.views.adapters;
+package com.zeyad.cleanarchitecture.presentation.screens.users.list;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import com.jakewharton.rxbinding.view.RxView;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
-import com.zeyad.cleanarchitecture.presentation.views.UserViewHolder;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
