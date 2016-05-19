@@ -33,8 +33,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.realm.RealmModel;
 import io.realm.RealmObject;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -225,23 +223,24 @@ public class CloudDataStore implements DataStore {
             } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
-            return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
-                    new JSONObject(keyValuePairs).toString()))
-                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-                            Constants.ATTEMPTS), (n, i) -> i)
-                            .flatMap(i -> {
-                                Log.d(TAG, "delay retry by " + i + " second(s)");
-                                return Observable.timer(i, TimeUnit.SECONDS);
-                            }))
-//                .toBlocking()
-                    .doOnNext(object -> {
-                        if (persist)
-                            saveGenericToCacheAction.call(object);
-                    })
-                    .doOnError(throwable -> {
-//                        queuePost.call(object);
-                    })
-                    .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
+//            return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
+//                    new JSONObject(keyValuePairs).toString()))
+//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+//                            Constants.ATTEMPTS), (n, i) -> i)
+//                            .flatMap(i -> {
+//                                Log.d(TAG, "delay retry by " + i + " second(s)");
+//                                return Observable.timer(i, TimeUnit.SECONDS);
+//                            }))
+////                .toBlocking()
+//                    .doOnNext(object -> {
+//                        if (persist)
+//                            saveGenericToCacheAction.call(object);
+//                    })
+//                    .doOnError(throwable -> {
+////                        queuePost.call(object);
+//                    })
+//                    .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
+            return Observable.empty();
         });
     }
 
@@ -259,22 +258,23 @@ public class CloudDataStore implements DataStore {
             } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
-            return mRestApi.dynamicPostList(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
-                    new JSONObject(keyValuePairs).toString()))
-                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-                            Constants.ATTEMPTS), (n, i) -> i)
-                            .flatMap(i -> {
-                                Log.d(TAG, "delay retry by " + i + " second(s)");
-                                return Observable.timer(i, TimeUnit.SECONDS);
-                            }))
-//                .toBlocking()
-                    .doOnNext(saveGenericToCacheAction)
-                    .doOnError(throwable -> {
-                        if (persist)
-                            saveGenericToCacheAction.call(keyValuePairs);
-//                        queuePost.call(object);
-                    })
-                    .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel, domainClass));
+//            return mRestApi.dynamicPostList(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
+//                    new JSONObject(keyValuePairs).toString()))
+//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+//                            Constants.ATTEMPTS), (n, i) -> i)
+//                            .flatMap(i -> {
+//                                Log.d(TAG, "delay retry by " + i + " second(s)");
+//                                return Observable.timer(i, TimeUnit.SECONDS);
+//                            }))
+////                .toBlocking()
+//                    .doOnNext(saveGenericToCacheAction)
+//                    .doOnError(throwable -> {
+//                        if (persist)
+//                            saveGenericToCacheAction.call(keyValuePairs);
+////                        queuePost.call(object);
+//                    })
+//                    .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel, domainClass));
+            return Observable.empty();
         });
     }
 
@@ -293,20 +293,21 @@ public class CloudDataStore implements DataStore {
             } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
-            return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
-                    new JSONObject(keyValuePairs).toString()))
-                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START, Constants.ATTEMPTS), (n, i) -> i)
-                            .flatMap(i -> {
-                                Log.d(TAG, "delay retry by " + i + " second(s)");
-                                return Observable.timer(i, TimeUnit.SECONDS);
-                            }))
-//                .toBlocking()
-                    .doOnCompleted(() -> deleteCollectionGenericsFromCacheAction.call(ids))
-                    .doOnError(throwable -> {
-//                        queueDeleteCollection.call(list);
-                        if (persist)
-                            deleteCollectionGenericsFromCacheAction.call(ids);
-                    });
+//            return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
+//                    new JSONObject(keyValuePairs).toString()))
+//                    .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START, Constants.ATTEMPTS), (n, i) -> i)
+//                            .flatMap(i -> {
+//                                Log.d(TAG, "delay retry by " + i + " second(s)");
+//                                return Observable.timer(i, TimeUnit.SECONDS);
+//                            }))
+////                .toBlocking()
+//                    .doOnCompleted(() -> deleteCollectionGenericsFromCacheAction.call(ids))
+//                    .doOnError(throwable -> {
+////                        queueDeleteCollection.call(list);
+//                        if (persist)
+//                            deleteCollectionGenericsFromCacheAction.call(ids);
+//                    });
+            return Observable.empty();
         });
     }
 

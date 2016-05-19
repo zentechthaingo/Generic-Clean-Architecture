@@ -46,7 +46,7 @@ public class DataRepository implements Repository {
                                                   Class domainClass, Class dataClass,
                                                   boolean persist) {
         if (persist)
-            return mDataStoreFactory.dynamically(url, itemId, Utils.getDataMapper(dataClass), dataClass)
+            return mDataStoreFactory.dynamically(url, idColumnName, itemId, Utils.getDataMapper(dataClass), dataClass)
                     .dynamicObject(url, idColumnName, itemId, domainClass, dataClass, true);
         else
             return mDataStoreFactory.cloud(Utils.getDataMapper(dataClass))
@@ -86,8 +86,8 @@ public class DataRepository implements Repository {
             return Observable.concat(mDataStoreFactory
                             .disk(mEntityDataMapper)
                             .deleteCollectionFromDisk(keyValuePairs, dataClass),
-                    mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url,
-                            keyValuePairs, domainClass, dataClass, true))
+                    mDataStoreFactory.cloud(mEntityDataMapper).deleteCollectionFromCloud(url,
+                            keyValuePairs, dataClass, true))
                     .distinct();
         return mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url, keyValuePairs,
                 domainClass, dataClass, false);

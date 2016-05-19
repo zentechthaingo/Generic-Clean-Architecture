@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
@@ -33,7 +34,6 @@ import rx.schedulers.Schedulers;
 public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
     public final String TAG = GeneralRealmManagerImpl.class.getName();
-    ;
     private Realm mRealm;
     private Context mContext;
 
@@ -109,13 +109,14 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         return Observable.error(new Exception("realmModel cant be null"));
     }
 
+    // TODO: 19/05/16 Generalize!
     @Override
     public Observable<?> put(JSONObject realmObject, Class dataClass) {
         if (realmObject != null) {
             return Observable.defer(() -> {
-                if (realmObject.optInt("id") == 0)
+                if (realmObject.optInt("userId") == 0)
                     try {
-                        realmObject.put("id", Utils.getNextId(dataClass, "id"));
+                        realmObject.put("userId", Utils.getNextId(dataClass, "userId"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -159,16 +160,17 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                 });
     }
 
+    // TODO: 19/05/16 Generalize!
     @Override
-    public boolean isCached(int itemId, Class clazz) {
+    public boolean isCached(int itemId, String columnId, Class clazz) {
         mRealm = Realm.getDefaultInstance();
-        Object realmObject = mRealm.where(clazz).equalTo("id", itemId).findFirst();
-        return realmObject != null;
+        Object realmObject = mRealm.where(clazz).equalTo(columnId, itemId).findFirst();
+        return realmObject != null && ((UserRealmModel) realmObject).getDescription() != null;
     }
 
     @Override
-    public boolean isItemValid(int itemId, Class clazz) {
-        return /*isCached(itemId, clazz) &&*/ areItemsValid(Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
+    public boolean isItemValid(int itemId, String columnId, Class clazz) {
+        return isCached(itemId, columnId, clazz) && areItemsValid(Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
     }
 
     @Override

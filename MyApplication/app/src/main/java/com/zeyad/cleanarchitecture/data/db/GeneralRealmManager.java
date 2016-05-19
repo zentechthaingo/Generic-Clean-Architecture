@@ -48,14 +48,14 @@ public interface GeneralRealmManager {
      * @param itemId The id used to look for inside the cache.
      * @return true if the element is cached, otherwise false.
      */
-    boolean isCached(final int itemId, Class clazz);
+    boolean isCached(final int itemId, String columnId, Class clazz);
 
     /**
      * Checks if the cache is expired.
      *
      * @return true, the cache is expired, otherwise false.
      */
-    boolean isItemValid(final int itemId, Class clazz);
+    boolean isItemValid(final int itemId, String columnId, Class clazz);
 
     boolean areItemsValid(String destination);
 

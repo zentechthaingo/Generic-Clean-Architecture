@@ -56,7 +56,7 @@ public class Utils {
                 JSONObject jsonObject = new JSONObject(new Gson().toJson(userEntity));
                 if (userEntity == null)
                     System.out.println(source + " does not have any data.");
-                else if (!realmManager.isItemValid(jsonObject.getInt("userId"), userEntity.getClass()))
+                else if (!realmManager.isItemValid(jsonObject.getInt("userId"), "userId", userEntity.getClass()))
                     System.out.println(source + " has stale data.");
                 else
                     System.out.println(source + " has the data you are looking for!");

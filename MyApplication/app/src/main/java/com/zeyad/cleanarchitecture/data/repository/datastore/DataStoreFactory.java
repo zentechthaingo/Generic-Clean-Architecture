@@ -39,10 +39,11 @@ public class DataStoreFactory {
     /**
      * Create {@link DataStore} from an id.
      */
-    public DataStore dynamically(String url, int id, EntityMapper entityDataMapper, Class dataClass) {
+    public DataStore dynamically(String url, String idColumnName, int id, EntityMapper entityDataMapper,
+                                 Class dataClass) {
         if (url.isEmpty())
             return new DiskDataStore(mRealmManager, entityDataMapper);
-        if (mRealmManager.isItemValid(id, dataClass) || !Utils.isNetworkAvailable(mContext))
+        if (mRealmManager.isItemValid(id, idColumnName, dataClass) || !Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);
         else
             return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);

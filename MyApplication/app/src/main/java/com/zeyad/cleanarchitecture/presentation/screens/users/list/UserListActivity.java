@@ -263,9 +263,13 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
             @Override
             public List<Integer> getSelectedItemsIds() {
                 ArrayList<Integer> integers = new ArrayList<>();
-                for (UserViewModel userViewModel : mDataList)
-                    if (userViewModel.isChecked())
-                        integers.add(userViewModel.getUserId());
+                for (int i = 0; i < mDataList.size(); i++)
+                    try {
+                        if (getSelectedItems().contains(i))
+                            integers.add(mDataList.get(i).getUserId());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 return integers;
             }
         };
