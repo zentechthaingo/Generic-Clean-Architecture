@@ -16,8 +16,9 @@ public abstract class GenericDetailPresenter<M> implements BasePresenter {
     /**
      * id used to retrieve user details
      */
-    private int mItemId;
-    private GenericDetailView<M> mViewDetailsView;
+    public int mItemId;
+    public M mItemViewModel;
+    public GenericDetailView<M> mViewDetailsView;
     public final GenericUseCase mGetDetailsUseCase;
 
     public GenericDetailPresenter(GenericUseCase genericUseCase) {
@@ -49,6 +50,16 @@ public abstract class GenericDetailPresenter<M> implements BasePresenter {
         loadOrderDetails();
     }
 
+    public int getmItemId() {
+        return mItemId;
+    }
+
+    public void setmItemId(int mItemId) {
+        this.mItemId = mItemId;
+    }
+
+    public abstract void getItemDetails();
+
     /**
      * Loads user details.
      */
@@ -58,15 +69,15 @@ public abstract class GenericDetailPresenter<M> implements BasePresenter {
         getItemDetails();
     }
 
-    private void showViewLoading() {
+    public void showViewLoading() {
         mViewDetailsView.showLoading();
     }
 
-    private void hideViewLoading() {
+    public void hideViewLoading() {
         mViewDetailsView.hideLoading();
     }
 
-    private void showViewRetry() {
+    public void showViewRetry() {
         mViewDetailsView.showRetry();
     }
 
@@ -74,16 +85,15 @@ public abstract class GenericDetailPresenter<M> implements BasePresenter {
         mViewDetailsView.hideRetry();
     }
 
-    private void showErrorMessage(ErrorBundle errorBundle) {
+    public void showErrorMessage(ErrorBundle errorBundle) {
         mViewDetailsView.showError(ErrorMessageFactory.create(mViewDetailsView.getContext(),
                 errorBundle.getException()));
     }
 
-    private void showUserDetailsInView(M m) {
+    private void showItemDetailsInView(M m) {
+        mItemViewModel = m;
         mViewDetailsView.renderItem(m);
     }
-
-    public abstract void getItemDetails();
 
     public final class ItemDetailSubscriber extends DefaultSubscriber<M> {
         @Override
@@ -101,7 +111,7 @@ public abstract class GenericDetailPresenter<M> implements BasePresenter {
 
         @Override
         public void onNext(M m) {
-            showUserDetailsInView(m);
+            showItemDetailsInView(m);
         }
     }
 }

@@ -16,16 +16,15 @@ import java.util.List;
  */
 public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder> implements BasePresenter {
 
-    private GenericListView<M, H> genericListView;
-    public GenericUseCase getGeneralListUseCase;
-
+    private GenericListView<M, H> mGenericListView;
+    public GenericUseCase mGetGenericListUseCase;
 
     public GenericListPresenter(GenericUseCase genericUseCase) {
-        getGeneralListUseCase = genericUseCase;
+        mGetGenericListUseCase = genericUseCase;
     }
 
     public void setView(@NonNull GenericListView<M, H> view) {
-        genericListView = view;
+        mGenericListView = view;
     }
 
     @Override
@@ -38,7 +37,7 @@ public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder>
 
     @Override
     public void destroy() {
-        getGeneralListUseCase.unsubscribe();
+        mGetGenericListUseCase.unsubscribe();
     }
 
     /**
@@ -49,8 +48,14 @@ public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder>
     }
 
     public void onItemClicked(M OrderHistoryViewModel, H holder) {
-        genericListView.viewItemDetail(OrderHistoryViewModel, holder);
+        mGenericListView.viewItemDetail(OrderHistoryViewModel, holder);
     }
+
+    public void showItemsListInView(List<M> userViewModels) {
+        mGenericListView.renderItemList(userViewModels);
+    }
+
+    public abstract void getItemList();
 
     /**
      * Loads all users.
@@ -61,32 +66,26 @@ public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder>
         getItemList();
     }
 
-    private void showViewLoading() {
-        genericListView.showLoading();
+    public void showViewLoading() {
+        mGenericListView.showLoading();
     }
 
-    private void hideViewLoading() {
-        genericListView.hideLoading();
+    public void hideViewLoading() {
+        mGenericListView.hideLoading();
     }
 
-    private void showViewRetry() {
-        genericListView.showRetry();
+    public void showViewRetry() {
+        mGenericListView.showRetry();
     }
 
-    private void hideViewRetry() {
-        genericListView.hideRetry();
+    public void hideViewRetry() {
+        mGenericListView.hideRetry();
     }
 
-    private void showErrorMessage(ErrorBundle errorBundle) {
-        genericListView.showError(ErrorMessageFactory.create(genericListView.getContext(),
+    public void showErrorMessage(ErrorBundle errorBundle) {
+        mGenericListView.showError(ErrorMessageFactory.create(mGenericListView.getContext(),
                 errorBundle.getException()));
     }
-
-    public void showItemsListInView(List<M> userViewModels) {
-        genericListView.renderItemList(userViewModels);
-    }
-
-    public abstract void getItemList();
 
     public final class ItemListSubscriber extends DefaultSubscriber<List<M>> {
         @Override

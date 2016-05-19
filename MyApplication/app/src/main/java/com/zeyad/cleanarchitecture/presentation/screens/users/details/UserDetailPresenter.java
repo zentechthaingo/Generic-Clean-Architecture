@@ -20,7 +20,7 @@ import java.util.HashMap;
 import javax.inject.Inject;
 
 @PerActivity
-public class GenericDetailPresenter implements BasePresenter {
+public class UserDetailPresenter implements BasePresenter {
 
     /**
      * id used to retrieve user details
@@ -31,7 +31,7 @@ public class GenericDetailPresenter implements BasePresenter {
     private final GenericUseCase mGetUserDetailsBaseUseCase;
 
     @Inject
-    public GenericDetailPresenter(GenericUseCase genericUseCase) {
+    public UserDetailPresenter(GenericUseCase genericUseCase) {
         mGetUserDetailsBaseUseCase = genericUseCase;
     }
 

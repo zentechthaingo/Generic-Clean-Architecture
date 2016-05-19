@@ -44,7 +44,7 @@ public class UserDetailsFragment extends BaseFragment implements GenericEditable
             ARG_ITEM_IMAGE = "item_image", ARG_ITEM_NAME = "item_name", ADD_NEW_ITEM = "add_new_item";
     private int userId;
     @Inject
-    GenericDetailPresenter userDetailsPresenter;
+    UserDetailPresenter userDetailsPresenter;
     @Bind(R.id.tv_fullname)
     TextView tv_fullName;
     @Bind(R.id.et_full_name)
@@ -278,7 +278,7 @@ public class UserDetailsFragment extends BaseFragment implements GenericEditable
         loadUserDetails();
     }
 
-    public GenericDetailPresenter getUserDetailsPresenter() {
+    public UserDetailPresenter getUserDetailsPresenter() {
         return userDetailsPresenter;
     }
 

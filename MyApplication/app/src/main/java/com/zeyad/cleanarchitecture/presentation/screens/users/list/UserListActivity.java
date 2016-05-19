@@ -61,7 +61,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     private boolean mTwoPane;
     private UserComponent userComponent;
     @Inject
-    GenericListPresenter mUserListPresenter;
+    UserListPresenter mUserListPresenter;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.rv_users)
@@ -81,14 +81,16 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         @Override
         public void onItemClicked(int position, Object userViewModel, RecyclerView.ViewHolder holder) {
             if (mUserListPresenter != null && userViewModel != null && actionMode == null)
-                mUserListPresenter.onUserClicked((UserViewModel) userViewModel, (UserViewHolder) holder);
+                mUserListPresenter.onItemClicked((UserViewModel) userViewModel, (UserViewHolder) holder);
             else toggleSelection(position);
         }
 
         @Override
         public boolean onItemLongClicked(int position) {
-            if (toggleSelection(position))
+            if (mUsersAdapter.isAllowSelection()) {
                 actionMode = startSupportActionMode(UserListActivity.this);
+                toggleSelection(position);
+            }
             return true;
         }
     };
@@ -400,7 +402,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.isEmpty())
-                    mUserListPresenter.showUsersCollectionInView(mUserListPresenter.getUserModels());
+                    mUserListPresenter.showItemsListInView(mUserListPresenter.getItemsViewModels());
                 else
                     mUserListPresenter.search(newText);
                 return true;
@@ -419,7 +421,8 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
      */
     private boolean toggleSelection(int position) {
         try {
-            if (mUsersAdapter.toggleSelection(position)) {
+            if (mUsersAdapter.isAllowSelection()) {
+                mUsersAdapter.toggleSelection(position);
                 int count = mUsersAdapter.getSelectedItemCount();
                 if (count == 0) {
                     actionMode.finish();

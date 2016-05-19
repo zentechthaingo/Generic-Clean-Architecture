@@ -4,7 +4,7 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
-import com.zeyad.cleanarchitecture.presentation.screens.users.list.GenericListPresenter;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListPresenter;
 import com.zeyad.cleanarchitecture.presentation.view_models.mapper.UserViewModelDataMapper;
 
 import org.junit.After;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
  * Created by ZIaDo on 4/30/16.
  */
 public class GenericListPresenterTest extends AndroidTestCase {
-    private GenericListPresenter userListPresenter;
+    private UserListPresenter userListPresenter;
     @Mock
     private Context mockContext;
     @Mock
@@ -36,7 +36,7 @@ public class GenericListPresenterTest extends AndroidTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         MockitoAnnotations.initMocks(this);
-        userListPresenter = new GenericListPresenter(mockGetUserList);
+        userListPresenter = new UserListPresenter(mockGetUserList);
         userListPresenter.setView(mockUserListView);
     }
 
