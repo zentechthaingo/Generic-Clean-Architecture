@@ -133,6 +133,8 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).upload(url, description, file);
     }
 
+    //------------------------------------------------//
+
     public static Observable<List> userCollection() {
         if (retrofit == null)
             retrofit = createRetro2Client();
@@ -173,12 +175,5 @@ public class ApiConnection {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).download(index);
-    }
-
-    // TODO: 4/6/16 Test!
-    public static Observable<ResponseBody> upload(MultipartBody.Part file, RequestBody description) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).upload(description, file);
     }
 }

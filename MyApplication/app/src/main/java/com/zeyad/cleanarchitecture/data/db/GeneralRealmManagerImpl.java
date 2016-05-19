@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
@@ -34,6 +33,7 @@ import rx.schedulers.Schedulers;
 public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
     public final String TAG = GeneralRealmManagerImpl.class.getName();
+    ;
     private Realm mRealm;
     private Context mContext;
 
@@ -43,12 +43,15 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         this.mContext = mContext;
     }
 
-    // TODO: 10/05/16 pass column name!
     @Override
-    public Observable<?> getById(final int itemId, Class clazz) {
-        return Observable.defer(() ->
-                Observable.just(Realm.getDefaultInstance()
-                        .where(clazz).equalTo("userId", itemId).findFirst()));
+    public Observable<?> getById(final String idColumnName, final int itemId, Class dataClass) {
+        return Observable.defer(() -> {
+            int finalItemId = itemId;
+            if (itemId <= 0)
+                finalItemId = Realm.getDefaultInstance().where(dataClass).max(idColumnName).intValue();
+            return Observable.just(Realm.getDefaultInstance()
+                    .where(dataClass).equalTo(idColumnName, finalItemId).findFirst());
+        });
     }
 
     @Override
@@ -87,16 +90,32 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                 return observable;
             });
         }
-        return Observable.empty();
+        return Observable.error(new Exception("realmObject cant be null"));
+    }
+
+    @Override
+    public Observable<?> put(RealmModel realmModel) {
+        if (realmModel != null) {
+            return Observable.defer(() -> {
+                mRealm = Realm.getDefaultInstance();
+                mRealm.beginTransaction();
+                Observable observable = Observable.just(mRealm.copyToRealmOrUpdate(realmModel));
+                mRealm.commitTransaction();
+                writeToPreferences(System.currentTimeMillis(), Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
+                mRealm.close();
+                return observable;
+            });
+        }
+        return Observable.error(new Exception("realmModel cant be null"));
     }
 
     @Override
     public Observable<?> put(JSONObject realmObject, Class dataClass) {
         if (realmObject != null) {
             return Observable.defer(() -> {
-                if (realmObject.optInt(UserRealmModel.ID_COLUMN) == 0)
+                if (realmObject.optInt("id") == 0)
                     try {
-                        realmObject.put(UserRealmModel.ID_COLUMN, Utils.getNextId(dataClass, UserRealmModel.ID_COLUMN));
+                        realmObject.put("id", Utils.getNextId(dataClass, "id"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -109,7 +128,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                 return observable;
             });
         }
-        return Observable.empty();
+        return Observable.error(new Exception("json cant be null"));
     }
 
     @Override
@@ -119,7 +138,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
             mRealm.beginTransaction();
             mRealm.copyToRealmOrUpdate(realmModels);
             mRealm.commitTransaction();
-            mRealm.close();
+//            mRealm.close();
             writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
             return Observable.from(realmModels);
         }).subscribeOn(Schedulers.io())
@@ -143,18 +162,13 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     @Override
     public boolean isCached(int itemId, Class clazz) {
         mRealm = Realm.getDefaultInstance();
-//        mRealm.beginTransaction();
-        UserRealmModel realmObject = mRealm.where(UserRealmModel.class).equalTo("userId", itemId).findFirst();
-        boolean isCached = realmObject != null;
-        isCached = isCached && realmObject.getDescription() != null;
-//        mRealm.commitTransaction();
-//        mRealm.close();
-        return isCached;
+        Object realmObject = mRealm.where(clazz).equalTo("id", itemId).findFirst();
+        return realmObject != null;
     }
 
     @Override
     public boolean isItemValid(int itemId, Class clazz) {
-        return isCached(itemId, clazz) && areItemsValid(Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
+        return /*isCached(itemId, clazz) &&*/ areItemsValid(Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
     }
 
     @Override

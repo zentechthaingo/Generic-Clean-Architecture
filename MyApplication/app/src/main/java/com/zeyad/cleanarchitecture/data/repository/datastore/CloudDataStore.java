@@ -23,6 +23,7 @@ import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueInte
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.realm.RealmModel;
 import io.realm.RealmObject;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -49,23 +51,38 @@ public class CloudDataStore implements DataStore {
     private static final String TAG = CloudDataStore.class.getName();
     private Class dataClass;
     private final Action1<Object> saveGenericToCacheAction =
-            object -> mRealmManager.put((RealmObject) mEntityDataMapper.transformToRealm(object, dataClass))
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(new Subscriber<Object>() {
-                        @Override
-                        public void onCompleted() {
-                        }
+            object -> {
+                Object mappedObject = mEntityDataMapper.transformToRealm(object, dataClass);
+                Observable<?> observable;
+                if (mappedObject instanceof RealmObject)
+                    observable = mRealmManager.put((RealmObject) mappedObject);
+                else if (mappedObject instanceof RealmModel)
+                    observable = mRealmManager.put((RealmModel) mappedObject);
+                else
+                    try {
+                        observable = mRealmManager.put(new JSONObject(new Gson().toJson(object, dataClass)), dataClass);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        observable = Observable.error(new Exception("object is not well formed!"));
+                    }
+                observable.subscribeOn(Schedulers.io())
+                        .subscribe(new Subscriber<Object>() {
+                            @Override
+                            public void onCompleted() {
+                                Log.d(TAG, object.getClass().getName() + " completed!");
+                            }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            e.printStackTrace();
-                        }
+                            @Override
+                            public void onError(Throwable e) {
+                                e.printStackTrace();
+                            }
 
-                        @Override
-                        public void onNext(Object o) {
-                            Log.d(TAG, object.getClass().getName() + " added!");
-                        }
-                    });
+                            @Override
+                            public void onNext(Object o) {
+                                Log.d(TAG, object.getClass().getName() + " added!");
+                            }
+                        });
+            };
     private final Action1<List> saveAllGenericsToCacheAction = collection -> {
         List<RealmObject> realmObjectCollection = new ArrayList<>();
         realmObjectCollection.addAll(mEntityDataMapper.transformAllToRealm(collection, dataClass));
@@ -162,12 +179,12 @@ public class CloudDataStore implements DataStore {
     public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
         this.dataClass = dataClass;
         return mRestApi.dynamicGetList(url)
-                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-                        Constants.ATTEMPTS), (n, i) -> i)
-                        .flatMap(i -> {
-                            Log.d(TAG, "delay retry by " + i + " second(s)");
-                            return Observable.timer(i, TimeUnit.SECONDS);
-                        }))
+//                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
+//                        Constants.ATTEMPTS), (n, i) -> i)
+//                        .flatMap(i -> {
+//                            Log.d(TAG, "delay retry by " + i + " second(s)");
+//                            return Observable.timer(i, TimeUnit.SECONDS);
+//                        }))
 //                .toBlocking()
                 .doOnNext(list -> {
                     if (persist)
@@ -177,7 +194,8 @@ public class CloudDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> dynamicObject(String url, int itemId, Class domainClass, Class dataClass, boolean persist) {
+    public Observable<?> dynamicObject(String url, String idColumnName, int itemId, Class domainClass,
+                                       Class dataClass, boolean persist) {
         this.dataClass = dataClass;
         return mRestApi.dynamicGetObject(url)
                 .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
@@ -216,10 +234,11 @@ public class CloudDataStore implements DataStore {
                                 return Observable.timer(i, TimeUnit.SECONDS);
                             }))
 //                .toBlocking()
-                    .doOnNext(saveGenericToCacheAction)
-                    .doOnError(throwable -> {
+                    .doOnNext(object -> {
                         if (persist)
-                            saveGenericToCacheAction.call(keyValuePairs);
+                            saveGenericToCacheAction.call(object);
+                    })
+                    .doOnError(throwable -> {
 //                        queuePost.call(object);
                     })
                     .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));

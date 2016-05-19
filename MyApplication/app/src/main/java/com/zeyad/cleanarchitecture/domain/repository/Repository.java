@@ -21,8 +21,8 @@ public interface Repository {
      *
      * @param itemId The user id used to retrieve getDynamicallyById data.
      */
-    Observable<?> getObjectDynamicallyById(String url, int itemId, Class domainClass, Class dataClass,
-                                           boolean persist);
+    Observable<?> getObjectDynamicallyById(String url, String idColumnName, int itemId, Class domainClass,
+                                           Class dataClass, boolean persist);
 
     Observable<?> postObjectDynamically(String url, HashMap<String, Object> keyValuePairs,
                                         Class domainClass, Class dataClass, boolean persist);

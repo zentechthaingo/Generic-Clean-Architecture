@@ -71,9 +71,4 @@ public interface RestApi {
     @Streaming
     @GET("cover_{index}.jpg")
     Observable<ResponseBody> download(@Path("index") int index);
-
-    @Multipart
-    @POST("upload")
-    Observable<ResponseBody> upload(@Part("description") RequestBody description,
-                                    @Part MultipartBody.Part file);
 }

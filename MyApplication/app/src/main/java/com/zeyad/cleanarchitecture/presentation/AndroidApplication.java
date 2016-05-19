@@ -4,14 +4,13 @@ import android.app.Application;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.Logger;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.zeyad.cleanarchitecture.BuildConfig;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.ApplicationComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerApplicationComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule;
+import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -36,11 +35,12 @@ public class AndroidApplication extends Application {
         super.onCreate();
         androidApplication = this;
         initializeRealm();
-        initializeFirebase();
+//        initializeFirebase();
         initializeInjector();
         initializeLeakCanary();
         if (BuildConfig.DEBUG)
             initializeStetho();
+        Constants.CACHE_DIR = getCacheDir().getAbsolutePath();
     }
 
     private void initializeLeakCanary() {
@@ -74,10 +74,10 @@ public class AndroidApplication extends Application {
 //                    .showNotification(); // call method showNotification()
     }
 
-    private void initializeFirebase() {
-        Firebase.setAndroidContext(this);
-        Firebase.getDefaultConfig().setLogLevel(Logger.Level.DEBUG);
-    }
+//    private void initializeFirebase() {
+//        Firebase.setAndroidContext(this);
+//        Firebase.getDefaultConfig().setLogLevel(Logger.Level.DEBUG);
+//    }
 
     private void initializeInjector() {
         applicationComponent = DaggerApplicationComponent.builder()

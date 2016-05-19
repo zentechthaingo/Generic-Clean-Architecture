@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import io.realm.RealmModel;
 import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import rx.Observable;
@@ -16,7 +17,7 @@ public interface GeneralRealmManager {
      *
      * @param userId The user id to retrieve data.
      */
-    Observable<?> getById(final int userId, Class clazz);
+    Observable<?> getById(final String idColumnName, final int userId, Class clazz);
 
     /**
      * Gets an {@link Observable} which will emit a List of Objects.
@@ -29,6 +30,8 @@ public interface GeneralRealmManager {
      * @param realmModel Element to insert in the cache.
      */
     Observable<?> put(RealmObject realmModel);
+
+    Observable<?> put(RealmModel realmModel);
 
     Observable<?> put(JSONObject realmObject, Class dataClass);
 

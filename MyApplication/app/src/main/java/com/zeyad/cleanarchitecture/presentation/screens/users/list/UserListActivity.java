@@ -106,7 +106,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     }
 
     public static Intent getCallingIntent(Context context) {
-        return new Intent(context, UserListActivity.class);
+        return new Intent(context, UserListActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 
     @Override

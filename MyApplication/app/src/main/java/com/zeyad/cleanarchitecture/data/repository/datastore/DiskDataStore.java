@@ -30,15 +30,16 @@ public class DiskDataStore implements DataStore {
     @Override
     public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
         return mRealmManager.getAll(dataClass)
-                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels))
+                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels, domainClass))
                 .compose(Utils.logSources(TAG, mRealmManager));
     }
 
     @Override
-    public Observable<?> dynamicObject(String url, int itemId, Class domainClass, Class dataClass, boolean persist) {
-        return mRealmManager.getById(itemId, dataClass)
-                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel))
-                .compose(Utils.logSource(TAG, mRealmManager));
+    public Observable<?> dynamicObject(String url, String idColumnName, int itemId, Class domainClass,
+                                       Class dataClass, boolean persist) {
+        return mRealmManager.getById(idColumnName, itemId, dataClass)
+                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
+        //  .compose(Utils.logSource(TAG, mRealmManager));
     }
 
     @Override
@@ -60,7 +61,8 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> deleteCollectionFromCloud(String url, HashMap<String, Object> keyValuePairs, Class dataClass, boolean persist) {
+    public Observable<?> deleteCollectionFromCloud(String url, HashMap<String, Object> keyValuePairs,
+                                                   Class dataClass, boolean persist) {
         return Observable.error(new Exception("cant get Object from cloud in disk data store"));
     }
 

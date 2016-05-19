@@ -36,20 +36,21 @@ public class DataRepository implements Repository {
     @Override
     @RxLogObservable
     public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
-        return mDataStoreFactory.dynamically(Utils.getDataMapper(dataClass))
+        return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass))
                 .dynamicList(url, domainClass, dataClass, persist);
     }
 
     @Override
     @RxLogObservable
-    public Observable<?> getObjectDynamicallyById(String url, int itemId, Class domainClass, Class dataClass,
+    public Observable<?> getObjectDynamicallyById(String url, String idColumnName, int itemId,
+                                                  Class domainClass, Class dataClass,
                                                   boolean persist) {
         if (persist)
-            return mDataStoreFactory.dynamically(itemId, Utils.getDataMapper(dataClass), dataClass)
-                    .dynamicObject(url, itemId, domainClass, dataClass, true);
+            return mDataStoreFactory.dynamically(url, itemId, Utils.getDataMapper(dataClass), dataClass)
+                    .dynamicObject(url, idColumnName, itemId, domainClass, dataClass, true);
         else
             return mDataStoreFactory.cloud(Utils.getDataMapper(dataClass))
-                    .dynamicObject(url, itemId, domainClass, dataClass, false);
+                    .dynamicObject(url, idColumnName, itemId, domainClass, dataClass, false);
     }
 
     @Override
@@ -96,7 +97,7 @@ public class DataRepository implements Repository {
     @Override
     @RxLogObservable
     public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
-        return mDataStoreFactory.dynamically(Utils.getDataMapper(dataClass))
-                .searchDisk(query, column, domainClass, dataClass);
+        return mDataStoreFactory.disk(Utils.getDataMapper(dataClass)).searchDisk(query, column,
+                domainClass, dataClass);
     }
 }

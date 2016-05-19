@@ -38,8 +38,8 @@ public abstract class BaseUseCase {
                                                                     Class domainClass, Class dataClass,
                                                                     boolean persist);
 
-    protected abstract Observable buildUseCaseObservableDynamicObjectById(String url, int itemId,
-                                                                          Class presentationClass,
+    protected abstract Observable buildUseCaseObservableDynamicObjectById(String url, String idColumnName,
+                                                                          int itemId, Class presentationClass,
                                                                           Class domainClass,
                                                                           Class dataClass, boolean persist);
 
@@ -78,10 +78,10 @@ public abstract class BaseUseCase {
      * @param UseCaseSubscriber The guy who will be listen to the observable build with {@link #buildUseCaseObservableDynamicObjectById}.
      */
     @SuppressWarnings("unchecked")
-    public void executeGetObject(Subscriber UseCaseSubscriber, String url, int id, Class presentationClass,
+    public void executeGetObject(Subscriber UseCaseSubscriber, String url, String idColumnName, int id, Class presentationClass,
                                  Class domainClass, Class dataClass, boolean persist) {
-        subscription = buildUseCaseObservableDynamicObjectById(url, id, presentationClass, domainClass,
-                dataClass, persist)
+        subscription = buildUseCaseObservableDynamicObjectById(url, idColumnName, id, presentationClass,
+                domainClass, dataClass, persist)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);

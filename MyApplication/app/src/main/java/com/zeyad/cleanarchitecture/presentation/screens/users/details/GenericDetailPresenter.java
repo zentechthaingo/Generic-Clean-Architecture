@@ -12,7 +12,6 @@ import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.BasePresenter;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
-import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsView;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import java.util.HashMap;
@@ -103,8 +102,8 @@ public class GenericDetailPresenter implements BasePresenter {
 
     private void getUserDetails() {
         mGetUserDetailsBaseUseCase.executeGetObject(new UserDetailsSubscriber(),
-                Constants.API_BASE_URL + "user_" + mUserId + ".json", mUserId, UserViewModel.class,
-                User.class, UserRealmModel.class, true);
+                Constants.API_BASE_URL + "user_" + mUserId + ".json", UserRealmModel.ID_COLUMN,
+                mUserId, UserViewModel.class, User.class, UserRealmModel.class, true);
     }
 
     public void setupEdit() {

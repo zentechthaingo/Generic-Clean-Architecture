@@ -50,6 +50,8 @@ public class RestApiImpl implements RestApi {
         return ApiConnection.dynamicPostList(url, body);
     }
 
+    //-------------------------------//
+
     @Override
     public Observable<List> userCollection() {
         return ApiConnection.userCollection();
@@ -88,10 +90,5 @@ public class RestApiImpl implements RestApi {
     @Override
     public Observable<ResponseBody> download(@Path("index") int index) {
         return ApiConnection.download(index);
-    }
-
-    @Override
-    public Observable<ResponseBody> upload(@Part("description") RequestBody description, @Part MultipartBody.Part file) {
-        return ApiConnection.upload(file, description);
     }
 }

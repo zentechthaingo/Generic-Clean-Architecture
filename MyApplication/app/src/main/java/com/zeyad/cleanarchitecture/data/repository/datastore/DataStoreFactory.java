@@ -26,7 +26,9 @@ public class DataStoreFactory {
     /**
      * Create {@link DataStore} .
      */
-    public DataStore dynamically(EntityMapper entityDataMapper) {
+    public DataStore dynamically(String url, EntityMapper entityDataMapper) {
+        if (url.isEmpty())
+            return new DiskDataStore(mRealmManager, entityDataMapper);
         if (mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE)
                 || !Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);
@@ -37,7 +39,9 @@ public class DataStoreFactory {
     /**
      * Create {@link DataStore} from an id.
      */
-    public DataStore dynamically(int id, EntityMapper entityDataMapper, Class dataClass) {
+    public DataStore dynamically(String url, int id, EntityMapper entityDataMapper, Class dataClass) {
+        if (url.isEmpty())
+            return new DiskDataStore(mRealmManager, entityDataMapper);
         if (mRealmManager.isItemValid(id, dataClass) || !Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);
         else

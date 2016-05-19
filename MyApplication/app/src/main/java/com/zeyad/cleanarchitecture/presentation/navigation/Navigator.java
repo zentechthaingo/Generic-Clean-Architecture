@@ -41,4 +41,8 @@ public class Navigator {
             else context.startActivity(intentToLaunch, bundle);
         }
     }
+
+    public void navigateTo(Context context, Intent intent) {
+        context.startActivity(intent);
+    }
 }
