@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.view.ActionMode;
@@ -18,6 +19,7 @@ import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -31,6 +33,7 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.GenericRecyclerViewAdapter;
 import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.utilities.Utils;
@@ -70,21 +73,21 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     Button bt_retry;
     @Bind(R.id.fab_add)
     FloatingActionButton mAddFab;
-    private UsersAdapter mUsersAdapter;
     private List<Pair<View, String>> mSharedElements;
     private ActionMode actionMode;
-    private UsersAdapter.OnItemClickListener onItemClickListener = new UsersAdapter.OnItemClickListener() {
+    private GenericRecyclerViewAdapter<UserViewModel, UserViewHolder> mUsersAdapter;
+    private GenericRecyclerViewAdapter.OnItemClickListener onItemClickListener = new GenericRecyclerViewAdapter.OnItemClickListener() {
         @Override
-        public void onUserItemClicked(int position, UserViewModel userViewModel, UserViewHolder holder) {
+        public void onItemClicked(int position, Object userViewModel, RecyclerView.ViewHolder holder) {
             if (mUserListPresenter != null && userViewModel != null && actionMode == null)
-                mUserListPresenter.onUserClicked(userViewModel, holder);
+                mUserListPresenter.onUserClicked((UserViewModel) userViewModel, (UserViewHolder) holder);
             else toggleSelection(position);
         }
 
         @Override
         public boolean onItemLongClicked(int position) {
-            actionMode = startSupportActionMode(UserListActivity.this);
-            toggleSelection(position);
+            if (toggleSelection(position))
+                actionMode = startSupportActionMode(UserListActivity.this);
             return true;
         }
     };
@@ -219,8 +222,52 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         if (findViewById(R.id.detail_container) != null) // Two pane for tablets(res/values-w900dp).
             mTwoPane = true;
         rv_users.setLayoutManager(new LinearLayoutManager(this));
-        mUsersAdapter = new UsersAdapter(this, new ArrayList<>());
+        mUsersAdapter = new GenericRecyclerViewAdapter<UserViewModel, UserViewHolder>(getContext(), new ArrayList<>()) {
+            @Override
+            public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return new UserViewHolder(mLayoutInflater.inflate(R.layout.row_user, parent, false));
+            }
+
+            @Override
+            public void onBindViewHolder(UserViewHolder holder, int position) {
+                final UserViewModel userViewModel = mDataList.get(position);
+                holder.getTextViewTitle().setText(userViewModel.getFullName());
+                try {
+                    holder.getRl_row_user().setBackgroundColor(isSelected(position) ? Color.GRAY : Color.WHITE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                mCompositeSubscription.add(RxView.clicks(holder.itemView).subscribe(aVoid -> {
+                    if (mOnItemClickListener != null)
+                        mOnItemClickListener.onItemClicked(position, userViewModel, holder);
+                }));
+                mCompositeSubscription.add(RxView.longClicks(holder.itemView).subscribe(aVoid -> {
+                    if (mOnItemClickListener != null)
+                        mOnItemClickListener.onItemLongClicked(mDataList.indexOf(userViewModel));
+                }));
+            }
+
+            @Override
+            public int getItemViewType(int position) {
+                return 0;
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return mDataList.get(position).getUserId();
+            }
+
+            @Override
+            public List<Integer> getSelectedItemsIds() {
+                ArrayList<Integer> integers = new ArrayList<>();
+                for (UserViewModel userViewModel : mDataList)
+                    if (userViewModel.isChecked())
+                        integers.add(userViewModel.getUserId());
+                return integers;
+            }
+        };
         mUsersAdapter.setOnItemClickListener(onItemClickListener);
+        mUsersAdapter.setAllowSelection(true);
         rv_users.setAdapter(mUsersAdapter);
         rv_users.setItemAnimator(new DefaultItemAnimator());
     }
@@ -250,7 +297,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     public void renderUserList(List<UserViewModel> userViewModelCollection) {
         if (userViewModelCollection != null) {
-            mUsersAdapter.setUsersCollection(userViewModelCollection);
+            mUsersAdapter.setDataList(userViewModelCollection);
             mUsersAdapter.animateTo(userViewModelCollection);
             rv_users.scrollToPosition(0);
         }
@@ -369,15 +416,22 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
      *
      * @param position Position of the item to toggle the selection state
      */
-    private void toggleSelection(int position) {
-        mUsersAdapter.toggleSelection(position);
-        int count = mUsersAdapter.getSelectedItemCount();
-        if (count == 0) {
-            actionMode.finish();
-        } else {
-            actionMode.setTitle(String.valueOf(count));
-            actionMode.invalidate();
+    private boolean toggleSelection(int position) {
+        try {
+            if (mUsersAdapter.toggleSelection(position)) {
+                int count = mUsersAdapter.getSelectedItemCount();
+                if (count == 0) {
+                    actionMode.finish();
+                } else {
+                    actionMode.setTitle(String.valueOf(count));
+                    actionMode.invalidate();
+                }
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     @Override
@@ -407,7 +461,11 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
-        mUsersAdapter.clearSelection();
+        try {
+            mUsersAdapter.clearSelection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         actionMode = null;
         mToolbar.setVisibility(View.VISIBLE);
     }

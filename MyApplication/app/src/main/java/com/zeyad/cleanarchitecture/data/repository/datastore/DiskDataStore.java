@@ -30,7 +30,7 @@ public class DiskDataStore implements DataStore {
     @Override
     public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
         return mRealmManager.getAll(dataClass)
-                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels, domainClass))
+                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels))
                 .compose(Utils.logSources(TAG, mRealmManager));
     }
 
@@ -38,7 +38,7 @@ public class DiskDataStore implements DataStore {
     public Observable<?> dynamicObject(String url, String idColumnName, int itemId, Class domainClass,
                                        Class dataClass, boolean persist) {
         return mRealmManager.getById(idColumnName, itemId, dataClass)
-                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
+                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
         //  .compose(Utils.logSource(TAG, mRealmManager));
     }
 

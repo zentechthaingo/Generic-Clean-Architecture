@@ -28,6 +28,7 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:singleLine="true"
+        android:textColor="@color/title_color"
         android:textSize="@dimen/lv_row_text_size"
         android:transitionName="@string/transition_text" />
 
