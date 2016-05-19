@@ -11,6 +11,7 @@ import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.BasePresenter;
+import com.zeyad.cleanarchitecture.presentation.screens.GenericEditableItemView;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 
@@ -26,7 +27,7 @@ public class GenericDetailPresenter implements BasePresenter {
      */
     private int mUserId;
     private UserViewModel mUserViewModel;
-    private UserDetailsView mViewDetailsView;
+    private GenericEditableItemView<UserViewModel> mViewDetailsView;
     private final GenericUseCase mGetUserDetailsBaseUseCase;
 
     @Inject
@@ -34,7 +35,7 @@ public class GenericDetailPresenter implements BasePresenter {
         mGetUserDetailsBaseUseCase = genericUseCase;
     }
 
-    public void setView(@NonNull UserDetailsView view) {
+    public void setView(@NonNull GenericEditableItemView<UserViewModel> view) {
         this.mViewDetailsView = view;
     }
 
@@ -91,13 +92,13 @@ public class GenericDetailPresenter implements BasePresenter {
 
     private void showUserDetailsInView(UserViewModel userViewModel) {
         mUserViewModel = userViewModel;
-        mViewDetailsView.renderUser(this.mUserViewModel);
+        mViewDetailsView.renderItem(this.mUserViewModel);
     }
 
     private void showUserPutSuccess(@NonNull UserViewModel userViewModel) {
         hideViewLoading();
         mUserViewModel = userViewModel;
-        mViewDetailsView.putUserSuccess(mUserViewModel);
+        mViewDetailsView.putItemSuccess(mUserViewModel);
     }
 
     private void getUserDetails() {
@@ -107,18 +108,19 @@ public class GenericDetailPresenter implements BasePresenter {
     }
 
     public void setupEdit() {
-        mViewDetailsView.editUser(mUserViewModel);
+        mViewDetailsView.editItem(mUserViewModel);
     }
 
     public void submitEdit() {
         showViewLoading();
         HashMap<String, Object> keyValuePairs = new HashMap<>();
-        keyValuePairs.put("userId", mViewDetailsView.getValidatedUser().getUserId());
-        keyValuePairs.put("coverUrl", mViewDetailsView.getValidatedUser().getCoverUrl());
-        keyValuePairs.put("full_name", mViewDetailsView.getValidatedUser().getFullName());
-        keyValuePairs.put("email", mViewDetailsView.getValidatedUser().getEmail());
-        keyValuePairs.put("description", mViewDetailsView.getValidatedUser().getDescription());
-        keyValuePairs.put("followers", mViewDetailsView.getValidatedUser().getFollowers());
+        UserViewModel tempUser = mViewDetailsView.getValidatedItem();
+        keyValuePairs.put("userId", tempUser.getUserId());
+        keyValuePairs.put("coverUrl", tempUser.getCoverUrl());
+        keyValuePairs.put("full_name", tempUser.getFullName());
+        keyValuePairs.put("email", tempUser.getEmail());
+        keyValuePairs.put("description", tempUser.getDescription());
+        keyValuePairs.put("followers", tempUser.getFollowers());
         mGetUserDetailsBaseUseCase.executeDynamicPutObject(new PutSubscriber(), "", keyValuePairs,
                 UserViewModel.class, User.class, UserRealmModel.class, true);
     }

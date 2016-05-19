@@ -18,8 +18,9 @@ import android.widget.TextView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
-import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseFragment;
+import com.zeyad.cleanarchitecture.presentation.screens.GenericEditableItemView;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import javax.inject.Inject;
@@ -37,7 +38,7 @@ import static android.util.Patterns.EMAIL_ADDRESS;
 /**
  * Fragment that shows details of a certain user.
  */
-public class UserDetailsFragment extends BaseFragment implements UserDetailsView {
+public class UserDetailsFragment extends BaseFragment implements GenericEditableItemView<UserViewModel> {
 
     public static final String ARGUMENT_KEY_USER_ID = "USER_ID", ARG_ITEM_ID = "item_id",
             ARG_ITEM_IMAGE = "item_image", ARG_ITEM_NAME = "item_name", ADD_NEW_ITEM = "add_new_item";
@@ -139,7 +140,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     }
 
     @Override
-    public void renderUser(UserViewModel user) {
+    public void renderItem(UserViewModel user) {
         if (user != null) {
             if (user.getCoverUrl() != null)
                 ((UserDetailsActivity) getActivity()).mDetailImage
@@ -160,7 +161,7 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     }
 
     @Override
-    public void editUser(UserViewModel userViewModel) {
+    public void editItem(UserViewModel userViewModel) {
         ll_item_details.setVisibility(View.GONE);
         ll_edit.setVisibility(View.VISIBLE);
         mCompositeSubscription.add(Observable.combineLatest(RxTextView.textChanges(et_email).skip(1),
@@ -212,15 +213,15 @@ public class UserDetailsFragment extends BaseFragment implements UserDetailsView
     }
 
     @Override
-    public void putUserSuccess(UserViewModel userViewModel) {
+    public void putItemSuccess(UserViewModel userViewModel) {
         mUserViewModel = userViewModel;
         ll_edit.setVisibility(View.GONE);
         ll_item_details.setVisibility(View.VISIBLE);
-        renderUser(mUserViewModel);
+        renderItem(mUserViewModel);
     }
 
     @Override
-    public UserViewModel getValidatedUser() {
+    public UserViewModel getValidatedItem() {
         if (mUserViewModel != null)
             mUserViewModel.setUserId(mUserViewModel.getUserId());
         if (mUserViewModel == null)

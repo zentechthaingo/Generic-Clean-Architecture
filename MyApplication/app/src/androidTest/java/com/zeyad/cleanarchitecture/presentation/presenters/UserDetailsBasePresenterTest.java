@@ -4,7 +4,6 @@ import android.content.Context;
 import android.test.AndroidTestCase;
 
 import com.zeyad.cleanarchitecture.presentation.view_models.mapper.UserViewModelDataMapper;
-import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsView;
 
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;

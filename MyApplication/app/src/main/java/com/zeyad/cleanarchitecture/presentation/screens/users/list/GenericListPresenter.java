@@ -12,9 +12,8 @@ import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.BasePresenter;
+import com.zeyad.cleanarchitecture.presentation.screens.GenericListView;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
-import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListView;
-import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserViewHolder;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 
 import java.util.HashMap;
@@ -25,7 +24,7 @@ import javax.inject.Inject;
 @PerActivity
 public class GenericListPresenter implements BasePresenter {
 
-    private UserListView viewListView;
+    private GenericListView<UserViewModel, UserViewHolder> viewListView;
     private GenericUseCase getGeneralListUseCase;
     private List<UserViewModel> mUserViewModels;
 
@@ -34,7 +33,7 @@ public class GenericListPresenter implements BasePresenter {
         getGeneralListUseCase = getUserListUserCase;
     }
 
-    public void setView(@NonNull UserListView view) {
+    public void setView(@NonNull GenericListView<UserViewModel, UserViewHolder> view) {
         viewListView = view;
     }
 
@@ -59,7 +58,7 @@ public class GenericListPresenter implements BasePresenter {
     }
 
     public void onUserClicked(UserViewModel userViewModel, UserViewHolder holder) {
-        viewListView.viewUser(userViewModel, holder);
+        viewListView.viewItemDetail(userViewModel, holder);
     }
 
 //    public void search(SearchView searchView) {
@@ -124,7 +123,7 @@ public class GenericListPresenter implements BasePresenter {
     }
 
     public void showUsersCollectionInView(List<UserViewModel> userViewModels) {
-        viewListView.renderUserList(userViewModels);
+        viewListView.renderItemList(userViewModels);
     }
 
     private void getUserList() {

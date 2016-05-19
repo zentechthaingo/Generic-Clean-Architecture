@@ -33,6 +33,7 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.GenericListView;
 import com.zeyad.cleanarchitecture.presentation.screens.GenericRecyclerViewAdapter;
 import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
@@ -52,7 +53,7 @@ import rx.schedulers.Schedulers;
 /**
  * Activity that shows a list of Users.
  */
-public class UserListActivity extends BaseActivity implements HasComponent<UserComponent>, UserListView,
+public class UserListActivity extends BaseActivity implements HasComponent<UserComponent>, GenericListView<UserViewModel, UserViewHolder>,
         ActionMode.Callback {
 
     private static final String TAG = UserListActivity.class.getSimpleName(),
@@ -295,7 +296,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     }
 
     @Override
-    public void renderUserList(List<UserViewModel> userViewModelCollection) {
+    public void renderItemList(List<UserViewModel> userViewModelCollection) {
         if (userViewModelCollection != null) {
             mUsersAdapter.setDataList(userViewModelCollection);
             mUsersAdapter.animateTo(userViewModelCollection);
@@ -304,7 +305,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     }
 
     @Override
-    public void viewUser(UserViewModel userViewModel, UserViewHolder holder) {
+    public void viewItemDetail(UserViewModel userViewModel, UserViewHolder holder) {
         if (Utils.hasLollipop()) {
             Pair<View, String> firstPair = new Pair<>(holder.getmAvatar(), holder.getmAvatar()
                     .getTransitionName());
@@ -410,7 +411,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
     /**
      * Toggle the selection state of an item.
-     * <p>
+     * <p/>
      * If the item was the last one in the selection and is unselected, the selection is stopped.
      * Note that the selection must already be started (actionMode must not be null).
      *

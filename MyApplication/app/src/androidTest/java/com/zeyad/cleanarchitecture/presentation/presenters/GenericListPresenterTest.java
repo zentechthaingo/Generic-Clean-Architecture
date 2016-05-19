@@ -6,7 +6,6 @@ import android.test.AndroidTestCase;
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.presentation.screens.users.list.GenericListPresenter;
 import com.zeyad.cleanarchitecture.presentation.view_models.mapper.UserViewModelDataMapper;
-import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListView;
 
 import org.junit.After;
 import org.junit.Test;
