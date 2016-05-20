@@ -1,5 +1,6 @@
 package com.zeyad.cleanarchitecture.presentation.components.adapter;
 
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -21,7 +22,8 @@ public class RecyclerViewFooterViewHolder extends GenericRecyclerViewAdapter.Vie
         ButterKnife.bind(this, itemView);
     }
 
-    public TextView getTvFooter() {
-        return tvFooter;
+    @Override
+    public void bindData(Object data, SparseBooleanArray selectedItems, int position) {
+        tvFooter.setText((String) data);
     }
 }

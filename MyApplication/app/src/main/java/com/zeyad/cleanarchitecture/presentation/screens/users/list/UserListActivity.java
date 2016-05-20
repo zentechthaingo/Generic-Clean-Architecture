@@ -237,8 +237,6 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                         return new RecyclerViewFooterViewHolder(mLayoutInflater, parent);
                     case ItemInfo.LOADING: // loading
                         return new RecyclerViewLoadingViewHolder(mLayoutInflater, parent);
-                    case 0: // loading
-                        return new RecyclerViewLoadingViewHolder(mLayoutInflater, parent);
                     default:
                         return new UserViewHolder(mLayoutInflater.inflate(viewType, parent, false));
                 }
@@ -285,6 +283,8 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 });
             mUsersAdapter.setDataList(mDataList);
             mUsersAdapter.animateTo(mDataList);
+            mUsersAdapter.setHasHeader(true, "Header!");
+            mUsersAdapter.setHasFooter(true, "Footer!");
             rv_users.scrollToPosition(0);
         }
     }

@@ -117,11 +117,11 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         return mHasHeader;
     }
 
-    public void setHasHeader(boolean hasHeader) {
+    public void setHasHeader(boolean hasHeader, String label) {
         mHasHeader = hasHeader;
         if (mDataList.size() > 0)
             if (mHasHeader)
-                mDataList.add(0, new ItemInfo<Void>(null, ItemInfo.HEADER) {
+                mDataList.add(0, new ItemInfo<String>(label, ItemInfo.HEADER) {
                     @Override
                     public long getId() {
                         return HEADER;
@@ -134,11 +134,11 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         return mHasHeader;
     }
 
-    public void setHasFooter(boolean hasFooter) {
+    public void setHasFooter(boolean hasFooter, String label) {
         mHasFooter = hasFooter;
         if (mDataList.size() > 0)
             if (mHasFooter)
-                mDataList.add(mDataList.size(), new ItemInfo<Void>(null, ItemInfo.FOOTER) {
+                mDataList.add(mDataList.size(), new ItemInfo<String>(label, ItemInfo.FOOTER) {
                     @Override
                     public long getId() {
                         return FOOTER;
