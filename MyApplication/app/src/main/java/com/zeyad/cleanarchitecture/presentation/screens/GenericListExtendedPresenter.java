@@ -22,7 +22,7 @@ public abstract class GenericListExtendedPresenter<M, H extends RecyclerView.Vie
 
     public abstract void search(String query);
 
-    public abstract void deleteCollection(List<Integer> ids);
+    public abstract void deleteCollection(List<Long> ids);
 
     public List<M> getItemsViewModels() {
         return mItemViewModels;

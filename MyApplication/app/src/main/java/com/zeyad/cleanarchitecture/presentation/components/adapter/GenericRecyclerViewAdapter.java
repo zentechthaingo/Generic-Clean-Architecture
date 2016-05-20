@@ -1,11 +1,13 @@
-package com.zeyad.cleanarchitecture.presentation.screens;
+package com.zeyad.cleanarchitecture.presentation.components.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
+import com.jakewharton.rxbinding.view.RxView;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
@@ -17,23 +19,36 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * @author by zeyad on 19/05/16.
  */
-public abstract class GenericRecyclerViewAdapter<M, H extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<H> {
+public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<GenericRecyclerViewAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
-        void onItemClicked(int position, Object model, RecyclerView.ViewHolder holder);
+        void onItemClicked(int position, ItemInfo userViewModel, ViewHolder holder);
 
         boolean onItemLongClicked(int position);
     }
 
+    public static class ViewHolder extends RecyclerView.ViewHolder implements ItemBase {
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        public void bindData(Object data, SparseBooleanArray selectedItems, int position) {
+        }
+    }
+
+    public Context mContext;
     public final LayoutInflater mLayoutInflater;
-    public List<M> mDataList;
+    public List<ItemInfo> mDataList;
     public OnItemClickListener mOnItemClickListener;
     public SparseBooleanArray mSelectedItems;
     public boolean mIsLoadingFooterAdded = false;
-    private boolean mHasHeader = false, allowSelection = false;
+    private boolean mHasHeader = false, mHasFooter = false, allowSelection = false;
     private CompositeSubscription mCompositeSubscription;
 
-    public GenericRecyclerViewAdapter(Context context, List<M> list) {
+    public GenericRecyclerViewAdapter(Context context, List<ItemInfo> list) {
+        mContext = context;
         validateList(list);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mDataList = list;
@@ -42,30 +57,95 @@ public abstract class GenericRecyclerViewAdapter<M, H extends RecyclerView.ViewH
     }
 
     @Override
-    public abstract H onCreateViewHolder(ViewGroup parent, int viewType);
+    public abstract ViewHolder onCreateViewHolder(ViewGroup parent, int viewType);
 
     @Override
-    public abstract void onBindViewHolder(H holder, int position);
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        ItemInfo itemInfo = mDataList.get(position);
+        holder.bindData(itemInfo.getData(), mSelectedItems, position);
+        if (!(hasHeader() && position == 0 || hasFooter() && position == mDataList.size() - 1)) {
+            mCompositeSubscription.add(RxView.clicks(holder.itemView).subscribe(aVoid -> {
+                if (mOnItemClickListener != null)
+                    mOnItemClickListener.onItemClicked(position, itemInfo, holder);
+            }));
+            mCompositeSubscription.add(RxView.longClicks(holder.itemView).subscribe(aVoid -> {
+                if (mOnItemClickListener != null)
+                    mOnItemClickListener.onItemLongClicked(position);
+            }));
+        }
+    }
 
     @Override
-    public abstract int getItemViewType(int position);
+    public int getItemViewType(int position) {
+        if (position == 0 && hasHeader())
+            return ItemInfo.HEADER;
+        else if (position == mDataList.size() - 1 && mIsLoadingFooterAdded)
+            return ItemInfo.LOADING;
+        else if (position == mDataList.size() - 1 && !mIsLoadingFooterAdded && hasFooter())
+            return ItemInfo.FOOTER;
+        else
+            return mDataList != null ? mDataList.get(position).getLayoutId() : 0;
+    }
 
     @Override
-    public abstract long getItemId(int position);
+    public long getItemId(int position) {
+        return mDataList.get(position).getId();
+    }
 
-    public abstract List<Integer> getSelectedItemsIds();
+    public List<Long> getSelectedItemsIds() {
+        ArrayList<Long> integers = new ArrayList<>();
+        for (int i = 0; i < mDataList.size(); i++)
+            try {
+                if (getSelectedItems().contains(i))
+                    integers.add(mDataList.get(i).getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        return integers;
+    }
 
     @Override
     public int getItemCount() {
-        return mDataList.size();
+        return mDataList != null ? mDataList.size() : 0;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
     }
 
     public boolean hasHeader() {
         return mHasHeader;
     }
 
-    public void hasHeader(boolean hasHeader) {
+    public void setHasHeader(boolean hasHeader) {
         mHasHeader = hasHeader;
+        if (mDataList.size() > 0)
+            if (mHasHeader)
+                mDataList.add(0, new ItemInfo<Void>(null, ItemInfo.HEADER) {
+                    @Override
+                    public long getId() {
+                        return HEADER;
+                    }
+                });
+            else if (mDataList.get(0).getId() == ItemInfo.HEADER) mDataList.remove(0);
+    }
+
+    public boolean hasFooter() {
+        return mHasHeader;
+    }
+
+    public void setHasFooter(boolean hasFooter) {
+        mHasFooter = hasFooter;
+        if (mDataList.size() > 0)
+            if (mHasFooter)
+                mDataList.add(mDataList.size(), new ItemInfo<Void>(null, ItemInfo.FOOTER) {
+                    @Override
+                    public long getId() {
+                        return FOOTER;
+                    }
+                });
+            else if (mDataList.get(mDataList.size() - 1).getId() == ItemInfo.FOOTER)
+                mDataList.remove(mDataList.size() - 1);
     }
 
     public boolean isAllowSelection() {
@@ -78,20 +158,25 @@ public abstract class GenericRecyclerViewAdapter<M, H extends RecyclerView.ViewH
 
     public void addLoading() {
         mIsLoadingFooterAdded = true;
-        mDataList.add(null);
+        mDataList.add(mDataList.size() - 1, new ItemInfo<Void>(null, ItemInfo.LOADING) {
+            @Override
+            public long getId() {
+                return LOADING;
+            }
+        });
         notifyItemInserted(mDataList.size() - 1);
     }
 
     public void removeLoading() {
         mIsLoadingFooterAdded = false;
         int position = mDataList.size() - 1;
-        if (mDataList.get(position) == null) {
+        if (mDataList.get(position).getId() == ItemInfo.LOADING) {
             mDataList.remove(position);
             notifyItemRemoved(position);
         }
     }
 
-    public void setItemList(List<M> dataSet) {
+    public void setItemList(List<ItemInfo> dataSet) {
         mDataList.addAll(dataSet);
         validateList(mDataList);
         if (mDataList.get(0) != null)
@@ -99,19 +184,19 @@ public abstract class GenericRecyclerViewAdapter<M, H extends RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
-    public List<M> getDataList() {
+    public List<ItemInfo> getDataList() {
         return mDataList;
     }
 
-    public void setDataList(List<M> dataList) {
+    public void setDataList(List<ItemInfo> dataList) {
         validateList(dataList);
         mDataList = dataList;
         notifyDataSetChanged();
     }
 
-    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
-        this.mOnItemClickListener = mOnItemClickListener;
-    }
+//    public void setOnItemClickListener(OnItemClickListener mOnItemClickListener) {
+//        this.mOnItemClickListener = mOnItemClickListener;
+//    }
 
     public CompositeSubscription getCompositeSubscription() {
         return mCompositeSubscription;
@@ -203,7 +288,7 @@ public abstract class GenericRecyclerViewAdapter<M, H extends RecyclerView.ViewH
             }
     }
 
-    private void validateList(List<M> dataList) {
+    private void validateList(List<ItemInfo> dataList) {
         if (dataList == null)
             throw new IllegalArgumentException("The list cannot be null");
     }
@@ -216,19 +301,19 @@ public abstract class GenericRecyclerViewAdapter<M, H extends RecyclerView.ViewH
 
     //-----------------animations--------------------------//
 
-    public void animateTo(List<M> models) {
+    public void animateTo(List<ItemInfo> models) {
         applyAndAnimateRemovals(models);
         applyAndAnimateAdditions(models);
         applyAndAnimateMovedItems(models);
     }
 
-    public M removeItem(int position) {
+    public ItemInfo removeItem(int position) {
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, mDataList.size());
         return mDataList.remove(position);
     }
 
-    public void addItem(int position, M model) {
+    public void addItem(int position, ItemInfo model) {
         mDataList.add(position, model);
         notifyItemInserted(position);
         notifyItemChanged(position, mDataList.size());
@@ -239,25 +324,25 @@ public abstract class GenericRecyclerViewAdapter<M, H extends RecyclerView.ViewH
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    private void applyAndAnimateRemovals(List<M> newModels) {
+    private void applyAndAnimateRemovals(List<ItemInfo> newModels) {
         for (int i = mDataList.size() - 1; i >= 0; i--) {
-            final M model = mDataList.get(i);
+            final ItemInfo model = mDataList.get(i);
             if (!newModels.contains(model))
                 removeItem(i);
         }
     }
 
-    private void applyAndAnimateAdditions(List<M> newModels) {
+    private void applyAndAnimateAdditions(List<ItemInfo> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
-            final M model = newModels.get(i);
+            final ItemInfo model = newModels.get(i);
             if (!mDataList.contains(model))
                 addItem(i, model);
         }
     }
 
-    private void applyAndAnimateMovedItems(List<M> newModels) {
+    private void applyAndAnimateMovedItems(List<ItemInfo> newModels) {
         for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
-            final M model = newModels.get(toPosition);
+            final ItemInfo model = newModels.get(toPosition);
             final int fromPosition = mDataList.indexOf(model);
             if (fromPosition >= 0 && fromPosition != toPosition)
                 moveItem(fromPosition, toPosition);

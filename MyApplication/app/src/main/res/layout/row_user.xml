@@ -14,8 +14,8 @@
         android:layout_height="@dimen/lv_row_icon_width"
         android:layout_alignParentStart="true"
         android:contentDescription="@string/string_content_description"
-        android:paddingLeft="@dimen/lv_row_icon_padding"
-        android:paddingRight="@dimen/lv_row_icon_padding"
+        android:paddingLeft="@dimen/lv_row_padding"
+        android:paddingRight="@dimen/lv_row_padding"
         android:src="@drawable/ic_launcher"
         android:transitionName="@string/transition_photo" />
 

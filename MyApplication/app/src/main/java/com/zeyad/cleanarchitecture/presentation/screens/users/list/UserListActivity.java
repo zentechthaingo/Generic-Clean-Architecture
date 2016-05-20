@@ -4,7 +4,6 @@ import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.view.ActionMode;
@@ -29,12 +28,16 @@ import com.jakewharton.rxbinding.view.RxView;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.presentation.annimations.DetailsTransition;
+import com.zeyad.cleanarchitecture.presentation.components.adapter.GenericRecyclerViewAdapter;
+import com.zeyad.cleanarchitecture.presentation.components.adapter.ItemInfo;
+import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewFooterViewHolder;
+import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewHeaderViewHolder;
+import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewLoadingViewHolder;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.GenericListView;
-import com.zeyad.cleanarchitecture.presentation.screens.GenericRecyclerViewAdapter;
 import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.utilities.Utils;
@@ -53,11 +56,10 @@ import rx.schedulers.Schedulers;
 /**
  * Activity that shows a list of Users.
  */
-public class UserListActivity extends BaseActivity implements HasComponent<UserComponent>, GenericListView<UserViewModel, UserViewHolder>,
-        ActionMode.Callback {
+public class UserListActivity extends BaseActivity implements HasComponent<UserComponent>,
+        GenericListView<UserViewModel, UserViewHolder>, ActionMode.Callback {
 
-    private static final String TAG = UserListActivity.class.getSimpleName(),
-            STATE_SCROLL = "scrollPosition";
+    private static final String TAG = UserListActivity.class.getSimpleName(), STATE_SCROLL = "scrollPosition";
     private boolean mTwoPane;
     private UserComponent userComponent;
     @Inject
@@ -76,12 +78,12 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     FloatingActionButton mAddFab;
     private List<Pair<View, String>> mSharedElements;
     private ActionMode actionMode;
-    private GenericRecyclerViewAdapter<UserViewModel, UserViewHolder> mUsersAdapter;
+    private GenericRecyclerViewAdapter mUsersAdapter;
     private GenericRecyclerViewAdapter.OnItemClickListener onItemClickListener = new GenericRecyclerViewAdapter.OnItemClickListener() {
         @Override
-        public void onItemClicked(int position, Object userViewModel, RecyclerView.ViewHolder holder) {
+        public void onItemClicked(int position, ItemInfo userViewModel, GenericRecyclerViewAdapter.ViewHolder holder) {
             if (mUserListPresenter != null && userViewModel != null && actionMode == null)
-                mUserListPresenter.onItemClicked((UserViewModel) userViewModel, (UserViewHolder) holder);
+                mUserListPresenter.onItemClicked((UserViewModel) userViewModel.getData(), (UserViewHolder) holder);
             else toggleSelection(position);
         }
 
@@ -213,7 +215,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         setContentView(R.layout.activity_user_list);
         ButterKnife.bind(this);
         onSearchRequested();
-        Window window = this.getWindow();
+        Window window = getWindow();
         if (Utils.hasLollipop()) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -225,52 +227,21 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         if (findViewById(R.id.detail_container) != null) // Two pane for tablets(res/values-w900dp).
             mTwoPane = true;
         rv_users.setLayoutManager(new LinearLayoutManager(this));
-        mUsersAdapter = new GenericRecyclerViewAdapter<UserViewModel, UserViewHolder>(getContext(), new ArrayList<>()) {
+        mUsersAdapter = new GenericRecyclerViewAdapter(getContext(), new ArrayList<>()) {
             @Override
-            public UserViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new UserViewHolder(mLayoutInflater.inflate(R.layout.row_user, parent, false));
-            }
-
-            @Override
-            public void onBindViewHolder(UserViewHolder holder, int position) {
-                final UserViewModel userViewModel = mDataList.get(position);
-                holder.getTextViewTitle().setText(userViewModel.getFullName());
-                try {
-                    holder.getRl_row_user().setBackgroundColor(isSelected(position) ? Color.GRAY : Color.WHITE);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                switch (viewType) {
+                    case ItemInfo.HEADER: // header
+                        return new RecyclerViewHeaderViewHolder(mLayoutInflater, parent);
+                    case ItemInfo.FOOTER: // footer
+                        return new RecyclerViewFooterViewHolder(mLayoutInflater, parent);
+                    case ItemInfo.LOADING: // loading
+                        return new RecyclerViewLoadingViewHolder(mLayoutInflater, parent);
+                    case 0: // loading
+                        return new RecyclerViewLoadingViewHolder(mLayoutInflater, parent);
+                    default:
+                        return new UserViewHolder(mLayoutInflater.inflate(viewType, parent, false));
                 }
-                mCompositeSubscription.add(RxView.clicks(holder.itemView).subscribe(aVoid -> {
-                    if (mOnItemClickListener != null)
-                        mOnItemClickListener.onItemClicked(position, userViewModel, holder);
-                }));
-                mCompositeSubscription.add(RxView.longClicks(holder.itemView).subscribe(aVoid -> {
-                    if (mOnItemClickListener != null)
-                        mOnItemClickListener.onItemLongClicked(mDataList.indexOf(userViewModel));
-                }));
-            }
-
-            @Override
-            public int getItemViewType(int position) {
-                return 0;
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return mDataList.get(position).getUserId();
-            }
-
-            @Override
-            public List<Integer> getSelectedItemsIds() {
-                ArrayList<Integer> integers = new ArrayList<>();
-                for (int i = 0; i < mDataList.size(); i++)
-                    try {
-                        if (getSelectedItems().contains(i))
-                            integers.add(mDataList.get(i).getUserId());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                return integers;
             }
         };
         mUsersAdapter.setOnItemClickListener(onItemClickListener);
@@ -304,8 +275,16 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     public void renderItemList(List<UserViewModel> userViewModelCollection) {
         if (userViewModelCollection != null) {
-            mUsersAdapter.setDataList(userViewModelCollection);
-            mUsersAdapter.animateTo(userViewModelCollection);
+            List<ItemInfo> mDataList = new ArrayList<>();
+            for (UserViewModel userViewModel : userViewModelCollection)
+                mDataList.add(new ItemInfo<UserViewModel>(userViewModel, R.layout.row_user) {
+                    @Override
+                    public long getId() {
+                        return userViewModel.getUserId();
+                    }
+                });
+            mUsersAdapter.setDataList(mDataList);
+            mUsersAdapter.animateTo(mDataList);
             rv_users.scrollToPosition(0);
         }
     }
@@ -313,7 +292,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     public void viewItemDetail(UserViewModel userViewModel, UserViewHolder holder) {
         if (Utils.hasLollipop()) {
-            Pair<View, String> firstPair = new Pair<>(holder.getmAvatar(), holder.getmAvatar()
+            Pair<View, String> firstPair = new Pair<>(holder.getAvatar(), holder.getAvatar()
                     .getTransitionName());
             Pair<View, String> secondPair = new Pair<>(holder.getTextViewTitle(),
                     holder.getTextViewTitle().getTransitionName());
@@ -417,7 +396,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
     /**
      * Toggle the selection state of an item.
-     * <p/>
+     * <p>
      * If the item was the last one in the selection and is unselected, the selection is stopped.
      * Note that the selection must already be started (actionMode must not be null).
      *

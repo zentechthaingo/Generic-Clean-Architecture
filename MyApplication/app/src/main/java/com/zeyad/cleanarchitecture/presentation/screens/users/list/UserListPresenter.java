@@ -48,7 +48,7 @@ public class UserListPresenter extends GenericListExtendedPresenter<UserViewMode
     }
 
     @Override
-    public void deleteCollection(List<Integer> ids) {
+    public void deleteCollection(List<Long> ids) {
         HashMap<String, Object> keyValuePairs = new HashMap<>(1);
         keyValuePairs.put("ids", ids);
         mGetGenericListUseCase.executeDeleteCollection(new DeleteSubscriber(), "", keyValuePairs,
