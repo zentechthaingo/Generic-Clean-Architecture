@@ -30,8 +30,7 @@ import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.presentation.annimations.DetailsTransition;
 import com.zeyad.cleanarchitecture.presentation.components.adapter.GenericRecyclerViewAdapter;
 import com.zeyad.cleanarchitecture.presentation.components.adapter.ItemInfo;
-import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewFooterViewHolder;
-import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewHeaderViewHolder;
+import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewHeadFootViewHolder;
 import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewLoadingViewHolder;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
@@ -232,9 +231,9 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
             public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 switch (viewType) {
                     case ItemInfo.HEADER: // header
-                        return new RecyclerViewHeaderViewHolder(mLayoutInflater, parent);
+                        return new RecyclerViewHeadFootViewHolder(mLayoutInflater, parent);
                     case ItemInfo.FOOTER: // footer
-                        return new RecyclerViewFooterViewHolder(mLayoutInflater, parent);
+                        return new RecyclerViewHeadFootViewHolder(mLayoutInflater, parent);
                     case ItemInfo.LOADING: // loading
                         return new RecyclerViewLoadingViewHolder(mLayoutInflater, parent);
                     default:
@@ -281,7 +280,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                         return userViewModel.getUserId();
                     }
                 });
-            mUsersAdapter.setDataList(mDataList);
+            mUsersAdapter.setItemList(mDataList);
             mUsersAdapter.animateTo(mDataList);
             mUsersAdapter.setHasHeader(true, "Header!");
             mUsersAdapter.setHasFooter(true, "Footer!");
@@ -396,7 +395,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
     /**
      * Toggle the selection state of an item.
-     * <p>
+     * <p/>
      * If the item was the last one in the selection and is unselected, the selection is stopped.
      * Note that the selection must already be started (actionMode must not be null).
      *
