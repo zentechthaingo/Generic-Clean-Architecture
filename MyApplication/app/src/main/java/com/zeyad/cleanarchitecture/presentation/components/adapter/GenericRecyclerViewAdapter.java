@@ -131,7 +131,7 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     }
 
     public boolean hasFooter() {
-        return mHasHeader;
+        return mHasFooter;
     }
 
     public void setHasFooter(boolean hasFooter, String label) {
@@ -174,14 +174,6 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
             mDataList.remove(position);
             notifyItemRemoved(position);
         }
-    }
-
-    public void setItemList(List<ItemInfo> dataSet) {
-        mDataList.addAll(dataSet);
-        validateList(mDataList);
-        if (mDataList.get(0) != null)
-            mDataList.add(0, null);
-        notifyDataSetChanged();
     }
 
     public List<ItemInfo> getDataList() {
