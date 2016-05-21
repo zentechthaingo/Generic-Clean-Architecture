@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import javax.inject.Inject;
 
+import io.realm.RealmQuery;
 import rx.Observable;
 
 /**
@@ -71,6 +72,13 @@ public class GenericUseCase extends BaseUseCase {
     public Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass,
                                                   Class domainClass, Class dataClass) {
         return repository.searchDisk(query, column, domainClass, dataClass)
+                .map(list -> modelDataMapper.transformAllToPresentation(list, presentationClass));
+    }
+
+    @Override
+    public Observable buildUseCaseObservableRealmQuery(RealmQuery realmQuery, Class presentationClass,
+                                                       Class domainClass) {
+        return repository.searchDisk(realmQuery, domainClass)
                 .map(list -> modelDataMapper.transformAllToPresentation(list, presentationClass));
     }
 }

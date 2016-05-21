@@ -3,12 +3,16 @@ package com.zeyad.cleanarchitecture.data.repository.datastore;
 import java.util.HashMap;
 import java.util.List;
 
+import io.realm.RealmQuery;
 import rx.Observable;
 
 /**
  * Interface that represents a data store from where data is retrieved.
  */
 public interface DataStore {
+
+    String IDS = "ids";
+
     /**
      * Get an {@link rx.Observable} which will emit a collectionFromDisk of ?.
      */
@@ -35,4 +39,6 @@ public interface DataStore {
                                             Class dataClass, boolean persist);
 
     Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass);
+
+    Observable<List> searchDisk(RealmQuery query, Class domainClass);
 }

@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 
+import io.realm.RealmQuery;
 import rx.Observable;
 
 public class DiskDataStore implements DataStore {
@@ -49,6 +50,12 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
+    public Observable<List> searchDisk(RealmQuery query, Class domainClass) {
+        return mRealmManager.getWhere(query)
+                .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel));
+    }
+
+    @Override
     public Observable<?> putToDisk(HashMap<String, Object> object, Class dataClass) {
         return Observable.defer(() -> mRealmManager.put(new JSONObject(object), dataClass))
                 .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
@@ -56,7 +63,7 @@ public class DiskDataStore implements DataStore {
 
     @Override
     public Observable<?> deleteCollectionFromDisk(HashMap<String, Object> keyValuePairs, Class dataClass) {
-        return Observable.defer(() -> mRealmManager.evictCollection((List<Integer>) keyValuePairs.get("ids"),
+        return Observable.defer(() -> mRealmManager.evictCollection((List<Long>) keyValuePairs.get(DataStore.IDS),
                 dataClass));
     }
 

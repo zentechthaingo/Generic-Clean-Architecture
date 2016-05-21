@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.realm.RealmModel;
 import io.realm.RealmObject;
+import io.realm.RealmQuery;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -282,7 +283,7 @@ public class CloudDataStore implements DataStore {
     public Observable<?> deleteCollectionFromCloud(final String url, final HashMap<String, Object> keyValuePairs,
                                                    Class dataClass, boolean persist) {
         this.dataClass = dataClass;
-        List<Integer> ids = (List<Integer>) keyValuePairs.get("ids");
+        List<Integer> ids = (List<Integer>) keyValuePairs.get(DataStore.IDS);
         return Observable.defer(() -> {
             if (!Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
@@ -313,7 +314,12 @@ public class CloudDataStore implements DataStore {
 
     @Override
     public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant delete from disk in cloud data store"));
+        return Observable.error(new Exception("cant search disk in cloud data store"));
+    }
+
+    @Override
+    public Observable<List> searchDisk(RealmQuery query, Class domainClass) {
+        return Observable.error(new Exception("cant search disk in cloud data store"));
     }
 
     @Override

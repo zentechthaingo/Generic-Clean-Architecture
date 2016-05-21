@@ -115,7 +115,7 @@ dependencies {
 //    compile 'com.firebase:firebase-client-android:2.5.2'
 //    compile 'com.firebaseui:firebase-ui:0.3.1'
     // Google Play Services
-    compile 'com.google.android.gms:play-services-gcm:8.4.0'
+    compile 'com.google.android.gms:play-services-gcm:9.0.0'
     // Support
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'

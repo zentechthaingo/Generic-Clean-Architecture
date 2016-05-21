@@ -18,7 +18,7 @@ public class RecyclerViewHeadFootViewHolder extends GenericRecyclerViewAdapter.V
     TextView tvHeader;
 
     public RecyclerViewHeadFootViewHolder(LayoutInflater layoutInflater, ViewGroup parent) {
-        super(layoutInflater.inflate(R.layout.list_header_layout, parent, false));
+        super(layoutInflater.inflate(R.layout.list_head_foot_layout, parent, false));
         ButterKnife.bind(this, itemView);
     }
 

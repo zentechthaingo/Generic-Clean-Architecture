@@ -11,8 +11,8 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,10 +28,14 @@ import rx.subscriptions.CompositeSubscription;
 public class Utils {
 
     public static int getNextId(Class clazz, String column) {
+        return getMaxId(clazz, column) + 1;
+    }
+
+    public static int getMaxId(Class clazz, String column) {
         Number currentMax = Realm.getDefaultInstance().where(clazz).max(column);
         if (currentMax != null)
-            return currentMax.intValue() + 1;
-        else return 1;
+            return currentMax.intValue();
+        else return 0;
     }
 
     // Simple logging to let us know what each source is returning
@@ -134,6 +138,8 @@ public class Utils {
     public static EntityMapper getDataMapper(Class dataClass) {
         switch (dataClass.getName()) {
             case "com.zeyad.cleanarchitecture.data.entities.UserRealmModel":
+                return new UserEntityDataMapper();
+            case "com.zeyad.cleanarchitecture.domain.models.User":
                 return new UserEntityDataMapper();
             default:
                 return null;

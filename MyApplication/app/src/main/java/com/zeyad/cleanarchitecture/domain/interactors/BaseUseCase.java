@@ -5,6 +5,7 @@ import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 
 import java.util.HashMap;
 
+import io.realm.RealmQuery;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -57,6 +58,9 @@ public abstract class BaseUseCase {
 
     protected abstract Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass,
                                                               Class domainClass, Class dataClass);
+
+    protected abstract Observable buildUseCaseObservableRealmQuery(RealmQuery realmQuery, Class presentationClass,
+                                                                   Class domainClass);
 
     /**
      * Executes the current use case.
@@ -125,9 +129,23 @@ public abstract class BaseUseCase {
      * @param query
      */
     @SuppressWarnings("unchecked")
-    public void executeSearch(String query, String column, Subscriber UseCaseSubscriber,
+    public void executeSearch(Subscriber UseCaseSubscriber, String query, String column,
                               Class presentationClass, Class domainClass, Class dataClass) {
         subscription = buildUseCaseObservableQuery(query, column, presentationClass, domainClass, dataClass)
+                .compose(applySchedulers())
+                .compose(getLifecycle())
+                .subscribe(UseCaseSubscriber);
+    }
+
+    /**
+     * Executes the current use case.
+     *
+     * @param query
+     */
+    @SuppressWarnings("unchecked")
+    public void executeSearch(Subscriber UseCaseSubscriber, RealmQuery query, Class presentationClass,
+                              Class domainClass) {
+        subscription = buildUseCaseObservableRealmQuery(query, presentationClass, domainClass)
                 .compose(applySchedulers())
                 .compose(getLifecycle())
                 .subscribe(UseCaseSubscriber);

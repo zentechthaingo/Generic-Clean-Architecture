@@ -354,11 +354,11 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 //                .throttleLast(100, TimeUnit.MILLISECONDS)
 //                .debounce(200, TimeUnit.MILLISECONDS)
 //                .onBackpressureLatest()
-//                .doOnNext(query -> mUserListPresenter.search(query.toString()))
+////                .doOnNext(query -> mUserListPresenter.search(query.toString()))
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .onErrorResumeNext(Observable.empty())
-//                .subscribe(new DefaultSubscriber<Object>() {
+//                .subscribe(new DefaultSubscriber<CharSequence>() {
 //                    @Override
 //                    public void onCompleted() {
 //
@@ -370,8 +370,8 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 //                    }
 //
 //                    @Override
-//                    public void onNext(Object o) {
-//
+//                    public void onNext(CharSequence newText) {
+//                        mUserListPresenter.search(newText.toString());
 //                    }
 //                });
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -395,7 +395,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
 
     /**
      * Toggle the selection state of an item.
-     * <p/>
+     * <p>
      * If the item was the last one in the selection and is unselected, the selection is stopped.
      * Note that the selection must already be started (actionMode must not be null).
      *

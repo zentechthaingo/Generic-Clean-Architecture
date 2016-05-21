@@ -66,13 +66,13 @@ public interface GeneralRealmManager {
 
     void evict(final RealmObject realmModel, Class clazz);
 
-    boolean evictById(final int itemId, Class clazz);
+    boolean evictById(final long itemId, Class clazz);
 
-    Observable<?> evictCollection(List<Integer> list, Class dataClass);
+    Observable<?> evictCollection(List<Long> list, Class dataClass);
 
     Context getContext();
 
     Observable<List> getWhere(Class clazz, String query, String filterKey);
 
-    Observable<List> getWhere(Class clazz, RealmQuery realmQuery);
+    Observable<List> getWhere(RealmQuery realmQuery);
 }

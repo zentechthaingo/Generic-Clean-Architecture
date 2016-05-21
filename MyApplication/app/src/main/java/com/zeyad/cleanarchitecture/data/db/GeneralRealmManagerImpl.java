@@ -11,7 +11,6 @@ import com.zeyad.cleanarchitecture.utilities.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,8 +46,8 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     public Observable<?> getById(final String idColumnName, final int itemId, Class dataClass) {
         return Observable.defer(() -> {
             int finalItemId = itemId;
-            if (itemId <= 0)
-                finalItemId = Realm.getDefaultInstance().where(dataClass).max(idColumnName).intValue();
+            if (finalItemId <= 0)
+                finalItemId = Utils.getMaxId(dataClass, idColumnName);
             return Observable.just(Realm.getDefaultInstance()
                     .where(dataClass).equalTo(idColumnName, finalItemId).findFirst());
         });
@@ -56,25 +55,18 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
     @Override
     public Observable<List> getAll(Class clazz) {
-        return Observable.defer(() -> Observable.from(Collections
-                .singletonList(Realm.getDefaultInstance()
-                        .where(clazz)
-                        .findAll())));
+        return Observable.defer(() -> Observable.just(Realm.getDefaultInstance().where(clazz).findAll()));
     }
 
     @Override
     public Observable<List> getWhere(Class clazz, String query, String filterKey) {
-        return Observable.defer(() -> Observable.from(Collections
-                .singletonList(Realm.getDefaultInstance()
-                        .where(clazz)
-                        .beginsWith(filterKey, query, Case.INSENSITIVE)
-                        .findAll())));
+        return Observable.defer(() -> Observable.just(Realm.getDefaultInstance()
+                .where(clazz).beginsWith(filterKey, query, Case.INSENSITIVE).findAll()));
     }
 
-    // TODO: 5/4/16 Implement!
     @Override
-    public Observable<List> getWhere(Class clazz, RealmQuery realmQuery) {
-        return null;
+    public Observable<List> getWhere(RealmQuery realmQuery) {
+        return Observable.defer(() -> Observable.just(realmQuery.findAll()));
     }
 
     @Override
@@ -109,24 +101,33 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         return Observable.error(new Exception("realmModel cant be null"));
     }
 
-    // TODO: 19/05/16 Generalize!
+    // FIXME: 5/21/16 ugly hack, please fix!
     @Override
     public Observable<?> put(JSONObject realmObject, Class dataClass) {
         if (realmObject != null) {
             return Observable.defer(() -> {
-                if (realmObject.optInt("userId") == 0)
+                String fieldName = "";
+                for (int i = 0; i < realmObject.names().length(); i++) {
+                    fieldName = realmObject.names().optString(i);
+                    if (fieldName.toLowerCase().contains("id"))
+                        break;
+                }
+                if (!fieldName.isEmpty())
                     try {
-                        realmObject.put("userId", Utils.getNextId(dataClass, "userId"));
+                        if (realmObject.getInt(fieldName) == 0)
+                            realmObject.put(fieldName, Utils.getNextId(dataClass, fieldName));
+                        mRealm = Realm.getDefaultInstance();
+                        mRealm.beginTransaction();
+                        Observable observable = Observable.just(mRealm.createOrUpdateObjectFromJson(dataClass, realmObject));
+                        mRealm.commitTransaction();
+                        writeToPreferences(System.currentTimeMillis(), Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
+                        mRealm.close();
+                        return observable;
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        return Observable.error(e);
                     }
-                mRealm = Realm.getDefaultInstance();
-                mRealm.beginTransaction();
-                Observable observable = Observable.just(mRealm.createOrUpdateObjectFromJson(dataClass, realmObject));
-                mRealm.commitTransaction();
-                writeToPreferences(System.currentTimeMillis(), Constants.DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE);
-                mRealm.close();
-                return observable;
+                return Observable.empty();
             });
         }
         return Observable.error(new Exception("json cant be null"));
@@ -237,7 +238,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     }
 
     @Override
-    public boolean evictById(final int itemId, Class clazz) {
+    public boolean evictById(final long itemId, Class clazz) {
         mRealm = Realm.getDefaultInstance();
         RealmModel toDelete = mRealm.where(clazz).equalTo("userId", itemId).findFirst();
         if (toDelete != null) {
@@ -250,7 +251,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     }
 
     @Override
-    public Observable<?> evictCollection(List<Integer> list, Class dataClass) {
+    public Observable<?> evictCollection(List<Long> list, Class dataClass) {
         return Observable.defer(() -> {
             boolean isDeleted = true;
             for (int i = 0; i < list.size(); i++)

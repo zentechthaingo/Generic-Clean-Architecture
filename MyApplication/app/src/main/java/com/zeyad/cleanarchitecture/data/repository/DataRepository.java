@@ -13,6 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.realm.RealmQuery;
 import rx.Observable;
 
 // TODO: 13/05/16 Document!
@@ -99,5 +100,10 @@ public class DataRepository implements Repository {
     public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
         return mDataStoreFactory.disk(Utils.getDataMapper(dataClass)).searchDisk(query, column,
                 domainClass, dataClass);
+    }
+
+    @Override
+    public Observable<List> searchDisk(RealmQuery query, Class domainClass) {
+        return mDataStoreFactory.disk(Utils.getDataMapper(domainClass)).searchDisk(query, domainClass);
     }
 }

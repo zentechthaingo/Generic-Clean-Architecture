@@ -3,6 +3,7 @@ package com.zeyad.cleanarchitecture.domain.repository;
 import java.util.HashMap;
 import java.util.List;
 
+import io.realm.RealmQuery;
 import rx.Observable;
 // TODO: 13/05/16 Document!
 
@@ -34,4 +35,6 @@ public interface Repository {
                                         Class dataClass, boolean persist);
 
     Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass);
+
+    Observable<List> searchDisk(RealmQuery query, Class domainClass);
 }
