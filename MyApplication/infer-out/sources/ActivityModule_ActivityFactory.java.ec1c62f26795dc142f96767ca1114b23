@@ -1,0 +1,29 @@
+package com.zeyad.cleanarchitecture.presentation.internal.di.modules;
+
+import android.support.v7.app.AppCompatActivity;
+import dagger.internal.Factory;
+import javax.annotation.Generated;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class ActivityModule_ActivityFactory implements Factory<AppCompatActivity> {
+  private final ActivityModule module;
+
+  public ActivityModule_ActivityFactory(ActivityModule module) {  
+    assert module != null;
+    this.module = module;
+  }
+
+  @Override
+  public AppCompatActivity get() {  
+    AppCompatActivity provided = module.activity();
+    if (provided == null) {
+      throw new NullPointerException("Cannot return null from a non-@Nullable @Provides method");
+    }
+    return provided;
+  }
+
+  public static Factory<AppCompatActivity> create(ActivityModule module) {  
+    return new ActivityModule_ActivityFactory(module);
+  }
+}
+

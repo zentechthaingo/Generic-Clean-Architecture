@@ -1,0 +1,14 @@
+{
+  "rtime": 0.5894360542297363,
+  "utime": 0.319061,
+  "stime": 0.045779,
+  "cutime": 0.0,
+  "cstime": 0.0,
+  "minor_words": 49467013.0,
+  "promoted_words": 528959.0,
+  "major_words": 1690928.0,
+  "minor_collections": 48,
+  "major_collections": 2,
+  "compactions": 0,
+  "top_heap_words": 1712640
+}

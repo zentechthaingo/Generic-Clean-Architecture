@@ -1,0 +1,62 @@
+// Generated code from Butter Knife. Do not modify!
+package com.zeyad.cleanarchitecture.presentation.screens.users.details;
+
+import android.view.View;
+import butterknife.ButterKnife.Finder;
+import butterknife.ButterKnife.ViewBinder;
+
+public class UserDetailsFragment$$ViewBinder<T extends com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment> implements ViewBinder<T> {
+  @Override public void bind(final Finder finder, final T target, Object source) {
+    View view;
+    view = finder.findRequiredView(source, 2131558571, "field 'tv_fullName'");
+    target.tv_fullName = finder.castView(view, 2131558571, "field 'tv_fullName'");
+    view = finder.findRequiredView(source, 2131558563, "field 'et_fullName'");
+    target.et_fullName = finder.castView(view, 2131558563, "field 'et_fullName'");
+    view = finder.findRequiredView(source, 2131558572, "field 'tv_email'");
+    target.tv_email = finder.castView(view, 2131558572, "field 'tv_email'");
+    view = finder.findRequiredView(source, 2131558564, "field 'et_email'");
+    target.et_email = finder.castView(view, 2131558564, "field 'et_email'");
+    view = finder.findRequiredView(source, 2131558573, "field 'tv_followers'");
+    target.tv_followers = finder.castView(view, 2131558573, "field 'tv_followers'");
+    view = finder.findRequiredView(source, 2131558565, "field 'et_followers'");
+    target.et_followers = finder.castView(view, 2131558565, "field 'et_followers'");
+    view = finder.findRequiredView(source, 2131558574, "field 'tv_description'");
+    target.tv_description = finder.castView(view, 2131558574, "field 'tv_description'");
+    view = finder.findRequiredView(source, 2131558566, "field 'et_description'");
+    target.et_description = finder.castView(view, 2131558566, "field 'et_description'");
+    view = finder.findRequiredView(source, 2131558567, "field 'rl_progress'");
+    target.rl_progress = finder.castView(view, 2131558567, "field 'rl_progress'");
+    view = finder.findRequiredView(source, 2131558568, "field 'rl_retry'");
+    target.rl_retry = finder.castView(view, 2131558568, "field 'rl_retry'");
+    view = finder.findRequiredView(source, 2131558562, "field 'll_edit'");
+    target.ll_edit = finder.castView(view, 2131558562, "field 'll_edit'");
+    view = finder.findRequiredView(source, 2131558570, "field 'll_item_details'");
+    target.ll_item_details = finder.castView(view, 2131558570, "field 'll_item_details'");
+    view = finder.findRequiredView(source, 2131558569, "field 'bt_retry' and method 'onButtonRetryClick'");
+    target.bt_retry = finder.castView(view, 2131558569, "field 'bt_retry'");
+    view.setOnClickListener(
+      new butterknife.internal.DebouncingOnClickListener() {
+        @Override public void doClick(
+          android.view.View p0
+        ) {
+          target.onButtonRetryClick();
+        }
+      });
+  }
+
+  @Override public void unbind(T target) {
+    target.tv_fullName = null;
+    target.et_fullName = null;
+    target.tv_email = null;
+    target.et_email = null;
+    target.tv_followers = null;
+    target.et_followers = null;
+    target.tv_description = null;
+    target.et_description = null;
+    target.rl_progress = null;
+    target.rl_retry = null;
+    target.ll_edit = null;
+    target.ll_item_details = null;
+    target.bt_retry = null;
+  }
+}

@@ -1,0 +1,30 @@
+package com.zeyad.cleanarchitecture.data.repository.datastore;
+
+import android.content.Context;
+import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
+import dagger.internal.Factory;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class DataStoreFactory_Factory implements Factory<DataStoreFactory> {
+  private final Provider<GeneralRealmManager> realmManagerProvider;
+  private final Provider<Context> contextProvider;
+
+  public DataStoreFactory_Factory(Provider<GeneralRealmManager> realmManagerProvider, Provider<Context> contextProvider) {  
+    assert realmManagerProvider != null;
+    this.realmManagerProvider = realmManagerProvider;
+    assert contextProvider != null;
+    this.contextProvider = contextProvider;
+  }
+
+  @Override
+  public DataStoreFactory get() {  
+    return new DataStoreFactory(realmManagerProvider.get(), contextProvider.get());
+  }
+
+  public static Factory<DataStoreFactory> create(Provider<GeneralRealmManager> realmManagerProvider, Provider<Context> contextProvider) {  
+    return new DataStoreFactory_Factory(realmManagerProvider, contextProvider);
+  }
+}
+

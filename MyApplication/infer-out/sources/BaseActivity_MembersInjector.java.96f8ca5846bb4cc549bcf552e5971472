@@ -1,0 +1,34 @@
+package com.zeyad.cleanarchitecture.presentation.screens;
+
+import android.support.v7.app.AppCompatActivity;
+import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
+import dagger.MembersInjector;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class BaseActivity_MembersInjector implements MembersInjector<BaseActivity> {
+  private final MembersInjector<AppCompatActivity> supertypeInjector;
+  private final Provider<RxEventBus> rxEventBusProvider;
+
+  public BaseActivity_MembersInjector(MembersInjector<AppCompatActivity> supertypeInjector, Provider<RxEventBus> rxEventBusProvider) {  
+    assert supertypeInjector != null;
+    this.supertypeInjector = supertypeInjector;
+    assert rxEventBusProvider != null;
+    this.rxEventBusProvider = rxEventBusProvider;
+  }
+
+  @Override
+  public void injectMembers(BaseActivity instance) {  
+    if (instance == null) {
+      throw new NullPointerException("Cannot inject members into a null reference");
+    }
+    supertypeInjector.injectMembers(instance);
+    instance.rxEventBus = rxEventBusProvider.get();
+  }
+
+  public static MembersInjector<BaseActivity> create(MembersInjector<AppCompatActivity> supertypeInjector, Provider<RxEventBus> rxEventBusProvider) {  
+      return new BaseActivity_MembersInjector(supertypeInjector, rxEventBusProvider);
+  }
+}
+

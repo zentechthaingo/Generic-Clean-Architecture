@@ -9,8 +9,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.HashMap;
 import java.util.List;
 
+import io.realm.RealmQuery;
 import rx.Observable;
 import rx.Subscriber;
 import rx.observers.TestSubscriber;
@@ -60,32 +62,38 @@ public class BaseUseCaseTest {
         }
 
         @Override
-        protected Observable buildUseCaseObservable() {
-            return Observable.empty();
-        }
-
-        @Override
-        protected Observable buildUseCaseObservableList(Class presentationClass, Class domainClass, Class dataClass) {
+        protected Observable buildUseCaseObservableDynamicList(String url, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
             return null;
         }
 
         @Override
-        protected Observable buildUseCaseObservableDetail(int itemId, Class presentationClass, Class domainClass, Class dataClass) {
+        protected Observable buildUseCaseObservableDynamicObjectById(String url, String idColumnName, int itemId, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
             return null;
         }
 
         @Override
-        protected Observable buildUseCaseObservablePut(Object object, Class presentationClass, Class domainClass, Class dataClass) {
+        protected Observable buildUseCaseObservablePut(String url, HashMap<String, Object> keyValuePairs, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
             return null;
         }
 
         @Override
-        protected Observable buildUseCaseObservableDeleteMultiple(List list, Class domainClass, Class dataClass) {
+        protected Observable buildUseCaseObservableDynamicPostList(String url, HashMap<String, Object> keyValuePairs, Class presentationClass, Class domainClass, Class dataClass, boolean persist) {
+            return null;
+        }
+
+        @Override
+        protected Observable buildUseCaseObservableDeleteMultiple(String url, HashMap<String, Object> keyValuePairs, Class domainClass, Class dataClass, boolean persist) {
             return null;
         }
 
         @Override
         protected Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass, Class domainClass, Class dataClass) {
+            return null;
+        }
+
+        @Override
+        protected Observable buildUseCaseObservableRealmQuery(RealmQuery realmQuery, Class presentationClass, Class domainClass) {
+            super.executeSearch(realmQuery, domainClass, domainClass);
             return null;
         }
 

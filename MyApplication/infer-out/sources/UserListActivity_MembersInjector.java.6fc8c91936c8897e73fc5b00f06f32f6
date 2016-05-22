@@ -1,0 +1,33 @@
+package com.zeyad.cleanarchitecture.presentation.screens.users.list;
+
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import dagger.MembersInjector;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class UserListActivity_MembersInjector implements MembersInjector<UserListActivity> {
+  private final MembersInjector<BaseActivity> supertypeInjector;
+  private final Provider<UserListPresenter> mUserListPresenterProvider;
+
+  public UserListActivity_MembersInjector(MembersInjector<BaseActivity> supertypeInjector, Provider<UserListPresenter> mUserListPresenterProvider) {  
+    assert supertypeInjector != null;
+    this.supertypeInjector = supertypeInjector;
+    assert mUserListPresenterProvider != null;
+    this.mUserListPresenterProvider = mUserListPresenterProvider;
+  }
+
+  @Override
+  public void injectMembers(UserListActivity instance) {  
+    if (instance == null) {
+      throw new NullPointerException("Cannot inject members into a null reference");
+    }
+    supertypeInjector.injectMembers(instance);
+    instance.mUserListPresenter = mUserListPresenterProvider.get();
+  }
+
+  public static MembersInjector<UserListActivity> create(MembersInjector<BaseActivity> supertypeInjector, Provider<UserListPresenter> mUserListPresenterProvider) {  
+      return new UserListActivity_MembersInjector(supertypeInjector, mUserListPresenterProvider);
+  }
+}
+

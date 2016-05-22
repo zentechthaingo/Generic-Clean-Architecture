@@ -1,0 +1,8 @@
+Found 1 issue
+
+app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java:166: error: RESOURCE_LEAK
+   resource of type java.io.FileOutputStream acquired to outputStream by call to FileOutputStream(...) at line 147 is not released after line 166
+
+Summary of the reports
+
+  RESOURCE_LEAK: 1

@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import br.ufs.github.rxassertions.RxAssertions;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmObject;
+import rx.Observable;
 import rx.Subscriber;
 
 import static org.mockito.Mockito.verify;
@@ -51,11 +53,18 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        verify(realmManager).getById(FAKE_USER_ID, UserRealmModel.class);
+        verify(realmManager).getById(UserRealmModel.ID_COLUMN, FAKE_USER_ID, UserRealmModel.class);
+        RxAssertions.assertThat((Observable<UserRealmModel>) realmManager
+                .getById(UserRealmModel.ID_COLUMN, FAKE_USER_ID, UserRealmModel.class))
+                .completes()
+                .withoutErrors()
+                .emissionsCount(1)
+                .expectedValues(userRealmModel);
     }
 
     public void testGetAll() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
+        List<UserRealmModel> userRealmModels = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             userRealmModel.setUserId(FAKE_USER_ID + i);
             userRealmModel.setCover_url("www.test.com");
@@ -63,9 +72,15 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
             userRealmModel.setEmail("fake@email.com");
             userRealmModel.setFollowers(22);
             userRealmModel.setFullName("Fake Name");
+            userRealmModels.add(userRealmModel);
             realmManager.put(userRealmModel);
         }
         verify(realmManager).getAll(UserRealmModel.class);
+        RxAssertions.assertThat(realmManager.getAll(UserRealmModel.class))
+                .completes()
+                .withoutErrors()
+                .emissionsCount(3)
+                .expectedValues(userRealmModels);
     }
 
     public void testPut() throws Exception {
@@ -77,7 +92,18 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         verify(realmManager).put(userRealmModel);
-        verify(realmManager).getById(FAKE_USER_ID, UserRealmModel.class);
+        verify(realmManager).getById(UserRealmModel.ID_COLUMN, FAKE_USER_ID, UserRealmModel.class);
+        RxAssertions.assertThat((Observable<UserRealmModel>) realmManager.put(userRealmModel))
+                .completes()
+                .withoutErrors()
+                .emissionsCount(1)
+                .expectedValues(userRealmModel);
+        RxAssertions.assertThat((Observable<UserRealmModel>) realmManager
+                .getById(UserRealmModel.ID_COLUMN, FAKE_USER_ID, UserRealmModel.class))
+                .completes()
+                .withoutErrors()
+                .emissionsCount(1)
+                .expectedValues(userRealmModel);
     }
 
     public void testPutAll() throws Exception {
@@ -95,7 +121,7 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
         }
         verify(realmManager).putAll(userRealmModels);
         for (int i = 0; i < 10; i++)
-            verify(realmManager).getById(FAKE_USER_ID + i, UserRealmModel.class);
+            verify(realmManager).getById(UserRealmModel.ID_COLUMN, FAKE_USER_ID + i, UserRealmModel.class);
     }
 
     public void testIsCached() throws Exception {
@@ -107,7 +133,7 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.isCached(FAKE_USER_ID, UserRealmModel.class));
+        assertTrue(realmManager.isCached(FAKE_USER_ID, UserRealmModel.ID_COLUMN, UserRealmModel.class));
     }
 
     public void testIsValid() throws Exception {
@@ -119,7 +145,7 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
         userRealmModel.setFollowers(22);
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
-        assertTrue(realmManager.isItemValid(FAKE_USER_ID, UserRealmModel.class));
+        assertTrue(realmManager.isItemValid(FAKE_USER_ID, UserRealmModel.ID_COLUMN, UserRealmModel.class));
     }
 
     public void testIsValid1() throws Exception {
@@ -173,7 +199,7 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
         realmManager.evictById(FAKE_USER_ID, UserRealmModel.class);
-        realmManager.getById(FAKE_USER_ID, UserRealmModel.class).subscribe(new Subscriber<Object>() {
+        realmManager.getById(UserRealmModel.ID_COLUMN, FAKE_USER_ID, UserRealmModel.class).subscribe(new Subscriber<Object>() {
             @Override
             public void onCompleted() {
 
@@ -201,7 +227,7 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
         userRealmModel.setFullName("Fake Name");
         realmManager.put(userRealmModel);
         realmManager.evict(userRealmModel, UserRealmModel.class);
-        realmManager.getById(FAKE_USER_ID, UserRealmModel.class).subscribe(new Subscriber<Object>() {
+        realmManager.getById(UserRealmModel.ID_COLUMN, FAKE_USER_ID, UserRealmModel.class).subscribe(new Subscriber<Object>() {
             @Override
             public void onCompleted() {
 

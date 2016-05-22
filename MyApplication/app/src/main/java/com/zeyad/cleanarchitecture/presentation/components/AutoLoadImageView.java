@@ -133,8 +133,9 @@ public class AutoLoadImageView extends ImageView {
      * Invalidate and expire the cache.
      */
     public AutoLoadImageView evictAll(File cacheDir) {
-        for (File file : cacheDir.listFiles())
-            file.delete();
+        if (cacheDir != null && cacheDir.listFiles() != null)
+            for (File file : cacheDir.listFiles())
+                file.delete();
         return this;
     }
 

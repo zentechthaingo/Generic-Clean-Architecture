@@ -1,0 +1,26 @@
+package com.zeyad.cleanarchitecture.data.repository;
+
+import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
+import dagger.internal.Factory;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class DataRepository_Factory implements Factory<DataRepository> {
+  private final Provider<DataStoreFactory> dataStoreFactoryProvider;
+
+  public DataRepository_Factory(Provider<DataStoreFactory> dataStoreFactoryProvider) {  
+    assert dataStoreFactoryProvider != null;
+    this.dataStoreFactoryProvider = dataStoreFactoryProvider;
+  }
+
+  @Override
+  public DataRepository get() {  
+    return new DataRepository(dataStoreFactoryProvider.get());
+  }
+
+  public static Factory<DataRepository> create(Provider<DataStoreFactory> dataStoreFactoryProvider) {  
+    return new DataRepository_Factory(dataStoreFactoryProvider);
+  }
+}
+

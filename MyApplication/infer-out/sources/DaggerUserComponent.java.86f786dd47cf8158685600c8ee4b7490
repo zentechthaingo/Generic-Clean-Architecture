@@ -1,0 +1,160 @@
+package com.zeyad.cleanarchitecture.presentation.internal.di.components;
+
+import android.support.v7.app.AppCompatActivity;
+import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
+import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
+import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
+import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
+import com.zeyad.cleanarchitecture.domain.repository.Repository;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule_ActivityFactory;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule_ProvidesGetGeneralListUseCaseFactory;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.UserModule;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity_MembersInjector;
+import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailPresenter;
+import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailPresenter_Factory;
+import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment;
+import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment_MembersInjector;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity_MembersInjector;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListPresenter;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListPresenter_Factory;
+import dagger.MembersInjector;
+import dagger.internal.Factory;
+import dagger.internal.MembersInjectors;
+import dagger.internal.ScopedProvider;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class DaggerUserComponent implements UserComponent {
+  private Provider<AppCompatActivity> activityProvider;
+  private Provider<RxEventBus> rxEventBusProvider;
+  private MembersInjector<BaseActivity> baseActivityMembersInjector;
+  private Provider<Repository> repositoryProvider;
+  private Provider<ThreadExecutor> threadExecutorProvider;
+  private Provider<PostExecutionThread> postExecutionThreadProvider;
+  private Provider<GenericUseCase> providesGetGeneralListUseCaseProvider;
+  private Provider<UserListPresenter> userListPresenterProvider;
+  private MembersInjector<UserListActivity> userListActivityMembersInjector;
+  private Provider<UserDetailPresenter> userDetailPresenterProvider;
+  private MembersInjector<UserDetailsFragment> userDetailsFragmentMembersInjector;
+
+  private DaggerUserComponent(Builder builder) {  
+    assert builder != null;
+    initialize(builder);
+  }
+
+  public static Builder builder() {  
+    return new Builder();
+  }
+
+  private void initialize(final Builder builder) {  
+    this.activityProvider = ScopedProvider.create(ActivityModule_ActivityFactory.create(builder.activityModule));
+    this.rxEventBusProvider = new Factory<RxEventBus>() {
+      @Override public RxEventBus get() {
+        RxEventBus provided = builder.applicationComponent.rxEventBus();
+        if (provided == null) {
+          throw new NullPointerException("Cannot return null from a non-@Nullable component method");
+        }
+        return provided;
+      }
+    };
+    this.baseActivityMembersInjector = BaseActivity_MembersInjector.create((MembersInjector) MembersInjectors.noOp(), rxEventBusProvider);
+    this.repositoryProvider = new Factory<Repository>() {
+      @Override public Repository get() {
+        Repository provided = builder.applicationComponent.repository();
+        if (provided == null) {
+          throw new NullPointerException("Cannot return null from a non-@Nullable component method");
+        }
+        return provided;
+      }
+    };
+    this.threadExecutorProvider = new Factory<ThreadExecutor>() {
+      @Override public ThreadExecutor get() {
+        ThreadExecutor provided = builder.applicationComponent.threadExecutor();
+        if (provided == null) {
+          throw new NullPointerException("Cannot return null from a non-@Nullable component method");
+        }
+        return provided;
+      }
+    };
+    this.postExecutionThreadProvider = new Factory<PostExecutionThread>() {
+      @Override public PostExecutionThread get() {
+        PostExecutionThread provided = builder.applicationComponent.postExecutionThread();
+        if (provided == null) {
+          throw new NullPointerException("Cannot return null from a non-@Nullable component method");
+        }
+        return provided;
+      }
+    };
+    this.providesGetGeneralListUseCaseProvider = ScopedProvider.create(ActivityModule_ProvidesGetGeneralListUseCaseFactory.create(builder.activityModule, repositoryProvider, threadExecutorProvider, postExecutionThreadProvider));
+    this.userListPresenterProvider = ScopedProvider.create(UserListPresenter_Factory.create((MembersInjector) MembersInjectors.noOp(), providesGetGeneralListUseCaseProvider));
+    this.userListActivityMembersInjector = UserListActivity_MembersInjector.create(baseActivityMembersInjector, userListPresenterProvider);
+    this.userDetailPresenterProvider = ScopedProvider.create(UserDetailPresenter_Factory.create(providesGetGeneralListUseCaseProvider));
+    this.userDetailsFragmentMembersInjector = UserDetailsFragment_MembersInjector.create((MembersInjector) MembersInjectors.noOp(), userDetailPresenterProvider);
+  }
+
+  @Override
+  public AppCompatActivity activity() {  
+    return activityProvider.get();
+  }
+
+  @Override
+  public void inject(UserListActivity userListActivity) {  
+    userListActivityMembersInjector.injectMembers(userListActivity);
+  }
+
+  @Override
+  public void inject(UserDetailsFragment userDetailsFragment) {  
+    userDetailsFragmentMembersInjector.injectMembers(userDetailsFragment);
+  }
+
+  public static final class Builder {
+    private ActivityModule activityModule;
+    private UserModule userModule;
+    private ApplicationComponent applicationComponent;
+  
+    private Builder() {  
+    }
+  
+    public UserComponent build() {  
+      if (activityModule == null) {
+        throw new IllegalStateException("activityModule must be set");
+      }
+      if (userModule == null) {
+        this.userModule = new UserModule();
+      }
+      if (applicationComponent == null) {
+        throw new IllegalStateException("applicationComponent must be set");
+      }
+      return new DaggerUserComponent(this);
+    }
+  
+    public Builder activityModule(ActivityModule activityModule) {  
+      if (activityModule == null) {
+        throw new NullPointerException("activityModule");
+      }
+      this.activityModule = activityModule;
+      return this;
+    }
+  
+    public Builder userModule(UserModule userModule) {  
+      if (userModule == null) {
+        throw new NullPointerException("userModule");
+      }
+      this.userModule = userModule;
+      return this;
+    }
+  
+    public Builder applicationComponent(ApplicationComponent applicationComponent) {  
+      if (applicationComponent == null) {
+        throw new NullPointerException("applicationComponent");
+      }
+      this.applicationComponent = applicationComponent;
+      return this;
+    }
+  }
+}
+

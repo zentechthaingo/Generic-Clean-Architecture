@@ -1,0 +1,33 @@
+package com.zeyad.cleanarchitecture.presentation.screens.users.details;
+
+import com.zeyad.cleanarchitecture.presentation.screens.BaseFragment;
+import dagger.MembersInjector;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class UserDetailsFragment_MembersInjector implements MembersInjector<UserDetailsFragment> {
+  private final MembersInjector<BaseFragment> supertypeInjector;
+  private final Provider<UserDetailPresenter> userDetailsPresenterProvider;
+
+  public UserDetailsFragment_MembersInjector(MembersInjector<BaseFragment> supertypeInjector, Provider<UserDetailPresenter> userDetailsPresenterProvider) {  
+    assert supertypeInjector != null;
+    this.supertypeInjector = supertypeInjector;
+    assert userDetailsPresenterProvider != null;
+    this.userDetailsPresenterProvider = userDetailsPresenterProvider;
+  }
+
+  @Override
+  public void injectMembers(UserDetailsFragment instance) {  
+    if (instance == null) {
+      throw new NullPointerException("Cannot inject members into a null reference");
+    }
+    supertypeInjector.injectMembers(instance);
+    instance.userDetailsPresenter = userDetailsPresenterProvider.get();
+  }
+
+  public static MembersInjector<UserDetailsFragment> create(MembersInjector<BaseFragment> supertypeInjector, Provider<UserDetailPresenter> userDetailsPresenterProvider) {  
+      return new UserDetailsFragment_MembersInjector(supertypeInjector, userDetailsPresenterProvider);
+  }
+}
+

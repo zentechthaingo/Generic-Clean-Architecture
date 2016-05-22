@@ -1,0 +1,32 @@
+package com.zeyad.cleanarchitecture.presentation.screens.users.list;
+
+import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
+import dagger.MembersInjector;
+import dagger.internal.Factory;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class UserListPresenter_Factory implements Factory<UserListPresenter> {
+  private final MembersInjector<UserListPresenter> membersInjector;
+  private final Provider<GenericUseCase> getUserListUserCaseProvider;
+
+  public UserListPresenter_Factory(MembersInjector<UserListPresenter> membersInjector, Provider<GenericUseCase> getUserListUserCaseProvider) {  
+    assert membersInjector != null;
+    this.membersInjector = membersInjector;
+    assert getUserListUserCaseProvider != null;
+    this.getUserListUserCaseProvider = getUserListUserCaseProvider;
+  }
+
+  @Override
+  public UserListPresenter get() {  
+    UserListPresenter instance = new UserListPresenter(getUserListUserCaseProvider.get());
+    membersInjector.injectMembers(instance);
+    return instance;
+  }
+
+  public static Factory<UserListPresenter> create(MembersInjector<UserListPresenter> membersInjector, Provider<GenericUseCase> getUserListUserCaseProvider) {  
+    return new UserListPresenter_Factory(membersInjector, getUserListUserCaseProvider);
+  }
+}
+

@@ -1,0 +1,19 @@
+package com.zeyad.cleanarchitecture.presentation.view_models.mapper;
+
+import dagger.internal.Factory;
+import javax.annotation.Generated;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public enum UserViewModelDataMapper_Factory implements Factory<UserViewModelDataMapper> {
+INSTANCE;
+
+  @Override
+  public UserViewModelDataMapper get() {  
+    return new UserViewModelDataMapper();
+  }
+
+  public static Factory<UserViewModelDataMapper> create() {  
+    return INSTANCE;
+  }
+}
+

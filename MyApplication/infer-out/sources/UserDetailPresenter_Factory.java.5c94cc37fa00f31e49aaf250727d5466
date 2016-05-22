@@ -1,0 +1,26 @@
+package com.zeyad.cleanarchitecture.presentation.screens.users.details;
+
+import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
+import dagger.internal.Factory;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class UserDetailPresenter_Factory implements Factory<UserDetailPresenter> {
+  private final Provider<GenericUseCase> genericUseCaseProvider;
+
+  public UserDetailPresenter_Factory(Provider<GenericUseCase> genericUseCaseProvider) {  
+    assert genericUseCaseProvider != null;
+    this.genericUseCaseProvider = genericUseCaseProvider;
+  }
+
+  @Override
+  public UserDetailPresenter get() {  
+    return new UserDetailPresenter(genericUseCaseProvider.get());
+  }
+
+  public static Factory<UserDetailPresenter> create(Provider<GenericUseCase> genericUseCaseProvider) {  
+    return new UserDetailPresenter_Factory(genericUseCaseProvider);
+  }
+}
+

@@ -1,0 +1,30 @@
+[INFO] Running command /usr/local/bin/infer -- ./gradlew build
+[INFO] Path to infer script /usr/local/bin/infer (/usr/local/Cellar/infer/0.8.1/libexec/infer/lib/python/infer)
+[INFO] Infer version v0.8.1
+Copyright 2009 - present Facebook. All Rights Reserved.
+
+
+[INFO] Platform: Darwin-15.4.0-x86_64-i386-64bit
+[INFO] PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+[INFO] SHELL=/bin/bash
+[INFO] PWD=/Users/ZIaDo/WorkSpaces/StudioProjects/CARlmRetro2RxTests/MyApplication
+[INFO] output of locale.getdefaultlocale(): ('en_US', 'UTF-8')
+[INFO] encoding we chose in the end: UTF-8
+[INFO] Running with:
+
+------------------------------------------------------------
+Gradle 2.10
+------------------------------------------------------------
+
+Build time:   2015-12-21 21:15:04 UTC
+Build number: none
+Revision:     276bdcded730f53aa8c11b479986aafa58e124a6
+
+Groovy:       2.4.4
+Ant:          Apache Ant(TM) version 1.9.3 compiled on December 23 2013
+JVM:          1.8.0_71 (Oracle Corporation 25.71-b15)
+OS:           Mac OS X 10.11.4 x86_64
+
+
+[INFO] Capture phase was successful
+[INFO] Starting analysis

@@ -1,0 +1,26 @@
+package com.zeyad.cleanarchitecture.data.db;
+
+import android.content.Context;
+import dagger.internal.Factory;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class GeneralRealmManagerImpl_Factory implements Factory<GeneralRealmManagerImpl> {
+  private final Provider<Context> mContextProvider;
+
+  public GeneralRealmManagerImpl_Factory(Provider<Context> mContextProvider) {  
+    assert mContextProvider != null;
+    this.mContextProvider = mContextProvider;
+  }
+
+  @Override
+  public GeneralRealmManagerImpl get() {  
+    return new GeneralRealmManagerImpl(mContextProvider.get());
+  }
+
+  public static Factory<GeneralRealmManagerImpl> create(Provider<Context> mContextProvider) {  
+    return new GeneralRealmManagerImpl_Factory(mContextProvider);
+  }
+}
+

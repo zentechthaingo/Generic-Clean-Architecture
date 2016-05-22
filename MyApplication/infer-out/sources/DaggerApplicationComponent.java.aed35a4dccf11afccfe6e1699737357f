@@ -1,0 +1,143 @@
+package com.zeyad.cleanarchitecture.presentation.internal.di.components;
+
+import android.content.Context;
+import com.google.gson.Gson;
+import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
+import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl;
+import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl_Factory;
+import com.zeyad.cleanarchitecture.data.executor.JobExecutor;
+import com.zeyad.cleanarchitecture.data.executor.JobExecutor_Factory;
+import com.zeyad.cleanarchitecture.data.repository.DataRepository;
+import com.zeyad.cleanarchitecture.data.repository.DataRepository_Factory;
+import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
+import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory_Factory;
+import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
+import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
+import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
+import com.zeyad.cleanarchitecture.domain.repository.Repository;
+import com.zeyad.cleanarchitecture.presentation.UIThread;
+import com.zeyad.cleanarchitecture.presentation.UIThread_Factory;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule_ProvideApplicationContextFactory;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule_ProvideGeneralRealmManagerFactory;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule_ProvideGsonFactory;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule_ProvidePostExecutionThreadFactory;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule_ProvideRepositoryFactory;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule_ProvideRxEventBusFactory;
+import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule_ProvideThreadExecutorFactory;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity_MembersInjector;
+import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
+import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService_MembersInjector;
+import dagger.MembersInjector;
+import dagger.internal.MembersInjectors;
+import dagger.internal.ScopedProvider;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class DaggerApplicationComponent implements ApplicationComponent {
+  private Provider<RxEventBus> provideRxEventBusProvider;
+  private MembersInjector<BaseActivity> baseActivityMembersInjector;
+  private MembersInjector<GenericNetworkQueueIntentService> genericNetworkQueueIntentServiceMembersInjector;
+  private Provider<Context> provideApplicationContextProvider;
+  private Provider<JobExecutor> jobExecutorProvider;
+  private Provider<ThreadExecutor> provideThreadExecutorProvider;
+  private Provider<UIThread> uIThreadProvider;
+  private Provider<PostExecutionThread> providePostExecutionThreadProvider;
+  private Provider<GeneralRealmManagerImpl> generalRealmManagerImplProvider;
+  private Provider<GeneralRealmManager> provideGeneralRealmManagerProvider;
+  private Provider<DataStoreFactory> dataStoreFactoryProvider;
+  private Provider<DataRepository> dataRepositoryProvider;
+  private Provider<Repository> provideRepositoryProvider;
+  private Provider<Gson> provideGsonProvider;
+
+  private DaggerApplicationComponent(Builder builder) {  
+    assert builder != null;
+    initialize(builder);
+  }
+
+  public static Builder builder() {  
+    return new Builder();
+  }
+
+  private void initialize(final Builder builder) {  
+    this.provideRxEventBusProvider = ScopedProvider.create(ApplicationModule_ProvideRxEventBusFactory.create(builder.applicationModule));
+    this.baseActivityMembersInjector = BaseActivity_MembersInjector.create((MembersInjector) MembersInjectors.noOp(), provideRxEventBusProvider);
+    this.genericNetworkQueueIntentServiceMembersInjector = GenericNetworkQueueIntentService_MembersInjector.create((MembersInjector) MembersInjectors.noOp(), provideRxEventBusProvider);
+    this.provideApplicationContextProvider = ScopedProvider.create(ApplicationModule_ProvideApplicationContextFactory.create(builder.applicationModule));
+    this.jobExecutorProvider = ScopedProvider.create(JobExecutor_Factory.create());
+    this.provideThreadExecutorProvider = ScopedProvider.create(ApplicationModule_ProvideThreadExecutorFactory.create(builder.applicationModule, jobExecutorProvider));
+    this.uIThreadProvider = ScopedProvider.create(UIThread_Factory.create());
+    this.providePostExecutionThreadProvider = ScopedProvider.create(ApplicationModule_ProvidePostExecutionThreadFactory.create(builder.applicationModule, uIThreadProvider));
+    this.generalRealmManagerImplProvider = ScopedProvider.create(GeneralRealmManagerImpl_Factory.create(provideApplicationContextProvider));
+    this.provideGeneralRealmManagerProvider = ScopedProvider.create(ApplicationModule_ProvideGeneralRealmManagerFactory.create(builder.applicationModule, generalRealmManagerImplProvider));
+    this.dataStoreFactoryProvider = DataStoreFactory_Factory.create(provideGeneralRealmManagerProvider, provideApplicationContextProvider);
+    this.dataRepositoryProvider = ScopedProvider.create(DataRepository_Factory.create(dataStoreFactoryProvider));
+    this.provideRepositoryProvider = ScopedProvider.create(ApplicationModule_ProvideRepositoryFactory.create(builder.applicationModule, dataRepositoryProvider));
+    this.provideGsonProvider = ScopedProvider.create(ApplicationModule_ProvideGsonFactory.create(builder.applicationModule));
+  }
+
+  @Override
+  public void inject(BaseActivity baseActivity) {  
+    baseActivityMembersInjector.injectMembers(baseActivity);
+  }
+
+  @Override
+  public void inject(GenericNetworkQueueIntentService genericNetworkQueueIntentService) {  
+    genericNetworkQueueIntentServiceMembersInjector.injectMembers(genericNetworkQueueIntentService);
+  }
+
+  @Override
+  public Context context() {  
+    return provideApplicationContextProvider.get();
+  }
+
+  @Override
+  public ThreadExecutor threadExecutor() {  
+    return provideThreadExecutorProvider.get();
+  }
+
+  @Override
+  public PostExecutionThread postExecutionThread() {  
+    return providePostExecutionThreadProvider.get();
+  }
+
+  @Override
+  public Repository repository() {  
+    return provideRepositoryProvider.get();
+  }
+
+  @Override
+  public RxEventBus rxEventBus() {  
+    return provideRxEventBusProvider.get();
+  }
+
+  @Override
+  public Gson gson() {  
+    return provideGsonProvider.get();
+  }
+
+  public static final class Builder {
+    private ApplicationModule applicationModule;
+  
+    private Builder() {  
+    }
+  
+    public ApplicationComponent build() {  
+      if (applicationModule == null) {
+        throw new IllegalStateException("applicationModule must be set");
+      }
+      return new DaggerApplicationComponent(this);
+    }
+  
+    public Builder applicationModule(ApplicationModule applicationModule) {  
+      if (applicationModule == null) {
+        throw new NullPointerException("applicationModule");
+      }
+      this.applicationModule = applicationModule;
+      return this;
+    }
+  }
+}
+

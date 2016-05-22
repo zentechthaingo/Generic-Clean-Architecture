@@ -1,0 +1,182 @@
+[
+  {
+    "key": 589452476, 
+    "kind": "ERROR", 
+    "hash": 204835910, 
+    "severity": "HIGH", 
+    "bug_trace": [
+      {
+        "node_tags": [
+          {
+            "tag": "kind", 
+            "value": "procedure_start"
+          }, 
+          {
+            "tag": "name", 
+            "value": "void DownloadImage$1.onNext(ResponseBody)"
+          }, 
+          {
+            "tag": "name_id", 
+            "value": "com.zeyad.cleanarchitecture.presentation.services.jobs.DownloadImage$1.onNext(okhttp3.ResponseBody):.31d9fde5f9ef159a231e4023579b8aa7"
+          }
+        ], 
+        "line_number": 138, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "start of procedure onNext(...)", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [], 
+        "line_number": 140, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [], 
+        "line_number": 141, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [], 
+        "line_number": 143, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [], 
+        "line_number": 144, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [], 
+        "line_number": 145, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [], 
+        "line_number": 146, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [], 
+        "line_number": 147, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [
+          {
+            "tag": "kind", 
+            "value": "exception"
+          }, 
+          {
+            "tag": "name", 
+            "value": "java.io.IOException"
+          }
+        ], 
+        "line_number": 149, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "exception java.io.IOException", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [
+          {
+            "tag": "kind", 
+            "value": "condition"
+          }, 
+          {
+            "tag": "branch", 
+            "value": "true"
+          }
+        ], 
+        "line_number": 158, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "Switch condition is true. Entering switch case", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [], 
+        "line_number": 159, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [
+          {
+            "tag": "kind", 
+            "value": "condition"
+          }, 
+          {
+            "tag": "branch", 
+            "value": "true"
+          }
+        ], 
+        "line_number": 161, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "Taking true branch", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [
+          {
+            "tag": "kind", 
+            "value": "exception"
+          }, 
+          {
+            "tag": "name", 
+            "value": "java.io.IOException"
+          }
+        ], 
+        "line_number": 162, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "exception java.io.IOException", 
+        "level": 0
+      }, 
+      {
+        "node_tags": [], 
+        "line_number": 166, 
+        "filename": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+        "description": "", 
+        "level": 0
+      }
+    ], 
+    "bug_class": "PROVER", 
+    "bug_type": "RESOURCE_LEAK", 
+    "file": "app/src/main/java/com/zeyad/cleanarchitecture/presentation/services/jobs/DownloadImage.java", 
+    "qualifier_tags": [
+      {
+        "tag": "line", 
+        "value": "166"
+      }, 
+      {
+        "tag": "call_procedure", 
+        "value": "FileOutputStream(...)"
+      }, 
+      {
+        "tag": "call_line", 
+        "value": "147"
+      }, 
+      {
+        "tag": "value", 
+        "value": "outputStream"
+      }
+    ], 
+    "line": 166, 
+    "procedure_id": "com.zeyad.cleanarchitecture.presentation.services.jobs.DownloadImage$1.onNext(okhttp3.ResponseBody):.31d9fde5f9ef159a231e4023579b8aa7", 
+    "procedure": "void DownloadImage$1.onNext(ResponseBody)", 
+    "qualifier": " resource of type java.io.FileOutputStream acquired to outputStream by call to FileOutputStream(...) at line 147 is not released after line 166"
+  }
+]

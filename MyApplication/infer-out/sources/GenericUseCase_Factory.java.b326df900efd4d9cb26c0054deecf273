@@ -1,0 +1,40 @@
+package com.zeyad.cleanarchitecture.domain.interactors;
+
+import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
+import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
+import com.zeyad.cleanarchitecture.domain.repository.Repository;
+import dagger.MembersInjector;
+import dagger.internal.Factory;
+import javax.annotation.Generated;
+import javax.inject.Provider;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class GenericUseCase_Factory implements Factory<GenericUseCase> {
+  private final MembersInjector<GenericUseCase> membersInjector;
+  private final Provider<Repository> repositoryProvider;
+  private final Provider<ThreadExecutor> threadExecutorProvider;
+  private final Provider<PostExecutionThread> postExecutionThreadProvider;
+
+  public GenericUseCase_Factory(MembersInjector<GenericUseCase> membersInjector, Provider<Repository> repositoryProvider, Provider<ThreadExecutor> threadExecutorProvider, Provider<PostExecutionThread> postExecutionThreadProvider) {  
+    assert membersInjector != null;
+    this.membersInjector = membersInjector;
+    assert repositoryProvider != null;
+    this.repositoryProvider = repositoryProvider;
+    assert threadExecutorProvider != null;
+    this.threadExecutorProvider = threadExecutorProvider;
+    assert postExecutionThreadProvider != null;
+    this.postExecutionThreadProvider = postExecutionThreadProvider;
+  }
+
+  @Override
+  public GenericUseCase get() {  
+    GenericUseCase instance = new GenericUseCase(repositoryProvider.get(), threadExecutorProvider.get(), postExecutionThreadProvider.get());
+    membersInjector.injectMembers(instance);
+    return instance;
+  }
+
+  public static Factory<GenericUseCase> create(MembersInjector<GenericUseCase> membersInjector, Provider<Repository> repositoryProvider, Provider<ThreadExecutor> threadExecutorProvider, Provider<PostExecutionThread> postExecutionThreadProvider) {  
+    return new GenericUseCase_Factory(membersInjector, repositoryProvider, threadExecutorProvider, postExecutionThreadProvider);
+  }
+}
+

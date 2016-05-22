@@ -1,0 +1,547 @@
+package io.realm;
+
+
+import android.util.JsonReader;
+import android.util.JsonToken;
+import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
+import io.realm.RealmFieldType;
+import io.realm.exceptions.RealmMigrationNeededException;
+import io.realm.internal.ColumnInfo;
+import io.realm.internal.ImplicitTransaction;
+import io.realm.internal.LinkView;
+import io.realm.internal.RealmObjectProxy;
+import io.realm.internal.Row;
+import io.realm.internal.Table;
+import io.realm.internal.TableOrView;
+import io.realm.internal.android.JsonUtils;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class UserRealmModelRealmProxy extends UserRealmModel
+    implements RealmObjectProxy, UserRealmModelRealmProxyInterface {
+
+    static final class UserRealmModelColumnInfo extends ColumnInfo {
+
+        public final long userIdIndex;
+        public final long cover_urlIndex;
+        public final long full_nameIndex;
+        public final long descriptionIndex;
+        public final long followersIndex;
+        public final long emailIndex;
+
+        UserRealmModelColumnInfo(String path, Table table) {
+            final Map<String, Long> indicesMap = new HashMap<String, Long>(6);
+            this.userIdIndex = getValidColumnIndex(path, table, "UserRealmModel", "userId");
+            indicesMap.put("userId", this.userIdIndex);
+
+            this.cover_urlIndex = getValidColumnIndex(path, table, "UserRealmModel", "cover_url");
+            indicesMap.put("cover_url", this.cover_urlIndex);
+
+            this.full_nameIndex = getValidColumnIndex(path, table, "UserRealmModel", "full_name");
+            indicesMap.put("full_name", this.full_nameIndex);
+
+            this.descriptionIndex = getValidColumnIndex(path, table, "UserRealmModel", "description");
+            indicesMap.put("description", this.descriptionIndex);
+
+            this.followersIndex = getValidColumnIndex(path, table, "UserRealmModel", "followers");
+            indicesMap.put("followers", this.followersIndex);
+
+            this.emailIndex = getValidColumnIndex(path, table, "UserRealmModel", "email");
+            indicesMap.put("email", this.emailIndex);
+
+            setIndicesMap(indicesMap);
+        }
+    }
+
+    private final UserRealmModelColumnInfo columnInfo;
+    private final ProxyState proxyState;
+    private static final List<String> FIELD_NAMES;
+    static {
+        List<String> fieldNames = new ArrayList<String>();
+        fieldNames.add("userId");
+        fieldNames.add("cover_url");
+        fieldNames.add("full_name");
+        fieldNames.add("description");
+        fieldNames.add("followers");
+        fieldNames.add("email");
+        FIELD_NAMES = Collections.unmodifiableList(fieldNames);
+    }
+
+    UserRealmModelRealmProxy(ColumnInfo columnInfo) {
+        this.columnInfo = (UserRealmModelColumnInfo) columnInfo;
+        this.proxyState = new ProxyState(UserRealmModel.class, this);
+    }
+
+    @SuppressWarnings("cast")
+    public int realmGet$userId() {
+        proxyState.getRealm$realm().checkIfValid();
+        return (int) proxyState.getRow$realm().getLong(columnInfo.userIdIndex);
+    }
+
+    public void realmSet$userId(int value) {
+        proxyState.getRealm$realm().checkIfValid();
+        proxyState.getRow$realm().setLong(columnInfo.userIdIndex, value);
+    }
+
+    @SuppressWarnings("cast")
+    public String realmGet$cover_url() {
+        proxyState.getRealm$realm().checkIfValid();
+        return (java.lang.String) proxyState.getRow$realm().getString(columnInfo.cover_urlIndex);
+    }
+
+    public void realmSet$cover_url(String value) {
+        proxyState.getRealm$realm().checkIfValid();
+        if (value == null) {
+            proxyState.getRow$realm().setNull(columnInfo.cover_urlIndex);
+            return;
+        }
+        proxyState.getRow$realm().setString(columnInfo.cover_urlIndex, value);
+    }
+
+    @SuppressWarnings("cast")
+    public String realmGet$full_name() {
+        proxyState.getRealm$realm().checkIfValid();
+        return (java.lang.String) proxyState.getRow$realm().getString(columnInfo.full_nameIndex);
+    }
+
+    public void realmSet$full_name(String value) {
+        proxyState.getRealm$realm().checkIfValid();
+        if (value == null) {
+            proxyState.getRow$realm().setNull(columnInfo.full_nameIndex);
+            return;
+        }
+        proxyState.getRow$realm().setString(columnInfo.full_nameIndex, value);
+    }
+
+    @SuppressWarnings("cast")
+    public String realmGet$description() {
+        proxyState.getRealm$realm().checkIfValid();
+        return (java.lang.String) proxyState.getRow$realm().getString(columnInfo.descriptionIndex);
+    }
+
+    public void realmSet$description(String value) {
+        proxyState.getRealm$realm().checkIfValid();
+        if (value == null) {
+            proxyState.getRow$realm().setNull(columnInfo.descriptionIndex);
+            return;
+        }
+        proxyState.getRow$realm().setString(columnInfo.descriptionIndex, value);
+    }
+
+    @SuppressWarnings("cast")
+    public int realmGet$followers() {
+        proxyState.getRealm$realm().checkIfValid();
+        return (int) proxyState.getRow$realm().getLong(columnInfo.followersIndex);
+    }
+
+    public void realmSet$followers(int value) {
+        proxyState.getRealm$realm().checkIfValid();
+        proxyState.getRow$realm().setLong(columnInfo.followersIndex, value);
+    }
+
+    @SuppressWarnings("cast")
+    public String realmGet$email() {
+        proxyState.getRealm$realm().checkIfValid();
+        return (java.lang.String) proxyState.getRow$realm().getString(columnInfo.emailIndex);
+    }
+
+    public void realmSet$email(String value) {
+        proxyState.getRealm$realm().checkIfValid();
+        if (value == null) {
+            proxyState.getRow$realm().setNull(columnInfo.emailIndex);
+            return;
+        }
+        proxyState.getRow$realm().setString(columnInfo.emailIndex, value);
+    }
+
+    public static Table initTable(ImplicitTransaction transaction) {
+        if (!transaction.hasTable("class_UserRealmModel")) {
+            Table table = transaction.getTable("class_UserRealmModel");
+            table.addColumn(RealmFieldType.INTEGER, "userId", Table.NOT_NULLABLE);
+            table.addColumn(RealmFieldType.STRING, "cover_url", Table.NULLABLE);
+            table.addColumn(RealmFieldType.STRING, "full_name", Table.NULLABLE);
+            table.addColumn(RealmFieldType.STRING, "description", Table.NULLABLE);
+            table.addColumn(RealmFieldType.INTEGER, "followers", Table.NOT_NULLABLE);
+            table.addColumn(RealmFieldType.STRING, "email", Table.NULLABLE);
+            table.addSearchIndex(table.getColumnIndex("userId"));
+            table.setPrimaryKey("userId");
+            return table;
+        }
+        return transaction.getTable("class_UserRealmModel");
+    }
+
+    public static UserRealmModelColumnInfo validateTable(ImplicitTransaction transaction) {
+        if (transaction.hasTable("class_UserRealmModel")) {
+            Table table = transaction.getTable("class_UserRealmModel");
+            if (table.getColumnCount() != 6) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Field count does not match - expected 6 but was " + table.getColumnCount());
+            }
+            Map<String, RealmFieldType> columnTypes = new HashMap<String, RealmFieldType>();
+            for (long i = 0; i < 6; i++) {
+                columnTypes.put(table.getColumnName(i), table.getColumnType(i));
+            }
+
+            final UserRealmModelColumnInfo columnInfo = new UserRealmModelColumnInfo(transaction.getPath(), table);
+
+            if (!columnTypes.containsKey("userId")) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'userId' in existing Realm file. Either remove field or migrate using io.realm.internal.Table.addColumn().");
+            }
+            if (columnTypes.get("userId") != RealmFieldType.INTEGER) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'int' for field 'userId' in existing Realm file.");
+            }
+            if (table.isColumnNullable(columnInfo.userIdIndex) && table.findFirstNull(columnInfo.userIdIndex) != TableOrView.NO_MATCH) {
+                throw new IllegalStateException("Cannot migrate an object with null value in field 'userId'. Either maintain the same type for primary key field 'userId', or remove the object with null value before migration.");
+            }
+            if (table.getPrimaryKey() != table.getColumnIndex("userId")) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Primary key not defined for field 'userId' in existing Realm file. Add @PrimaryKey.");
+            }
+            if (!table.hasSearchIndex(table.getColumnIndex("userId"))) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Index not defined for field 'userId' in existing Realm file. Either set @Index or migrate using io.realm.internal.Table.removeSearchIndex().");
+            }
+            if (!columnTypes.containsKey("cover_url")) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'cover_url' in existing Realm file. Either remove field or migrate using io.realm.internal.Table.addColumn().");
+            }
+            if (columnTypes.get("cover_url") != RealmFieldType.STRING) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'String' for field 'cover_url' in existing Realm file.");
+            }
+            if (!table.isColumnNullable(columnInfo.cover_urlIndex)) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Field 'cover_url' is required. Either set @Required to field 'cover_url' or migrate using RealmObjectSchema.setNullable().");
+            }
+            if (!columnTypes.containsKey("full_name")) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'full_name' in existing Realm file. Either remove field or migrate using io.realm.internal.Table.addColumn().");
+            }
+            if (columnTypes.get("full_name") != RealmFieldType.STRING) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'String' for field 'full_name' in existing Realm file.");
+            }
+            if (!table.isColumnNullable(columnInfo.full_nameIndex)) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Field 'full_name' is required. Either set @Required to field 'full_name' or migrate using RealmObjectSchema.setNullable().");
+            }
+            if (!columnTypes.containsKey("description")) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'description' in existing Realm file. Either remove field or migrate using io.realm.internal.Table.addColumn().");
+            }
+            if (columnTypes.get("description") != RealmFieldType.STRING) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'String' for field 'description' in existing Realm file.");
+            }
+            if (!table.isColumnNullable(columnInfo.descriptionIndex)) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Field 'description' is required. Either set @Required to field 'description' or migrate using RealmObjectSchema.setNullable().");
+            }
+            if (!columnTypes.containsKey("followers")) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'followers' in existing Realm file. Either remove field or migrate using io.realm.internal.Table.addColumn().");
+            }
+            if (columnTypes.get("followers") != RealmFieldType.INTEGER) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'int' for field 'followers' in existing Realm file.");
+            }
+            if (table.isColumnNullable(columnInfo.followersIndex)) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Field 'followers' does support null values in the existing Realm file. Use corresponding boxed type for field 'followers' or migrate using RealmObjectSchema.setNullable().");
+            }
+            if (!columnTypes.containsKey("email")) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Missing field 'email' in existing Realm file. Either remove field or migrate using io.realm.internal.Table.addColumn().");
+            }
+            if (columnTypes.get("email") != RealmFieldType.STRING) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Invalid type 'String' for field 'email' in existing Realm file.");
+            }
+            if (!table.isColumnNullable(columnInfo.emailIndex)) {
+                throw new RealmMigrationNeededException(transaction.getPath(), "Field 'email' is required. Either set @Required to field 'email' or migrate using RealmObjectSchema.setNullable().");
+            }
+            return columnInfo;
+        } else {
+            throw new RealmMigrationNeededException(transaction.getPath(), "The UserRealmModel class is missing from the schema for this Realm.");
+        }
+    }
+
+    public static String getTableName() {
+        return "class_UserRealmModel";
+    }
+
+    public static List<String> getFieldNames() {
+        return FIELD_NAMES;
+    }
+
+    @SuppressWarnings("cast")
+    public static UserRealmModel createOrUpdateUsingJsonObject(Realm realm, JSONObject json, boolean update)
+        throws JSONException {
+        UserRealmModel obj = null;
+        if (update) {
+            Table table = realm.getTable(UserRealmModel.class);
+            long pkColumnIndex = table.getPrimaryKey();
+            long rowIndex = TableOrView.NO_MATCH;
+            if (!json.isNull("userId")) {
+                rowIndex = table.findFirstLong(pkColumnIndex, json.getLong("userId"));
+            }
+            if (rowIndex != TableOrView.NO_MATCH) {
+                obj = new UserRealmModelRealmProxy(realm.schema.getColumnInfo(UserRealmModel.class));
+                ((RealmObjectProxy)obj).realmGet$proxyState().setRealm$realm(realm);
+                ((RealmObjectProxy)obj).realmGet$proxyState().setRow$realm(table.getUncheckedRow(rowIndex));
+            }
+        }
+        if (obj == null) {
+            if (json.has("userId")) {
+                if (json.isNull("userId")) {
+                    obj = (UserRealmModelRealmProxy) realm.createObject(UserRealmModel.class, null);
+                } else {
+                    obj = (UserRealmModelRealmProxy) realm.createObject(UserRealmModel.class, json.getInt("userId"));
+                }
+            } else {
+                obj = (UserRealmModelRealmProxy) realm.createObject(UserRealmModel.class);
+            }
+        }
+        if (json.has("userId")) {
+            if (json.isNull("userId")) {
+                throw new IllegalArgumentException("Trying to set non-nullable field userId to null.");
+            } else {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$userId((int) json.getInt("userId"));
+            }
+        }
+        if (json.has("cover_url")) {
+            if (json.isNull("cover_url")) {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$cover_url(null);
+            } else {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$cover_url((String) json.getString("cover_url"));
+            }
+        }
+        if (json.has("full_name")) {
+            if (json.isNull("full_name")) {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$full_name(null);
+            } else {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$full_name((String) json.getString("full_name"));
+            }
+        }
+        if (json.has("description")) {
+            if (json.isNull("description")) {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$description(null);
+            } else {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$description((String) json.getString("description"));
+            }
+        }
+        if (json.has("followers")) {
+            if (json.isNull("followers")) {
+                throw new IllegalArgumentException("Trying to set non-nullable field followers to null.");
+            } else {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$followers((int) json.getInt("followers"));
+            }
+        }
+        if (json.has("email")) {
+            if (json.isNull("email")) {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$email(null);
+            } else {
+                ((UserRealmModelRealmProxyInterface) obj).realmSet$email((String) json.getString("email"));
+            }
+        }
+        return obj;
+    }
+
+    @SuppressWarnings("cast")
+    public static UserRealmModel createUsingJsonStream(Realm realm, JsonReader reader)
+        throws IOException {
+        UserRealmModel obj = realm.createObject(UserRealmModel.class);
+        reader.beginObject();
+        while (reader.hasNext()) {
+            String name = reader.nextName();
+            if (name.equals("userId")) {
+                if (reader.peek() == JsonToken.NULL) {
+                    reader.skipValue();
+                    throw new IllegalArgumentException("Trying to set non-nullable field userId to null.");
+                } else {
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$userId((int) reader.nextInt());
+                }
+            } else if (name.equals("cover_url")) {
+                if (reader.peek() == JsonToken.NULL) {
+                    reader.skipValue();
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$cover_url(null);
+                } else {
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$cover_url((String) reader.nextString());
+                }
+            } else if (name.equals("full_name")) {
+                if (reader.peek() == JsonToken.NULL) {
+                    reader.skipValue();
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$full_name(null);
+                } else {
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$full_name((String) reader.nextString());
+                }
+            } else if (name.equals("description")) {
+                if (reader.peek() == JsonToken.NULL) {
+                    reader.skipValue();
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$description(null);
+                } else {
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$description((String) reader.nextString());
+                }
+            } else if (name.equals("followers")) {
+                if (reader.peek() == JsonToken.NULL) {
+                    reader.skipValue();
+                    throw new IllegalArgumentException("Trying to set non-nullable field followers to null.");
+                } else {
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$followers((int) reader.nextInt());
+                }
+            } else if (name.equals("email")) {
+                if (reader.peek() == JsonToken.NULL) {
+                    reader.skipValue();
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$email(null);
+                } else {
+                    ((UserRealmModelRealmProxyInterface) obj).realmSet$email((String) reader.nextString());
+                }
+            } else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        return obj;
+    }
+
+    public static UserRealmModel copyOrUpdate(Realm realm, UserRealmModel object, boolean update, Map<RealmModel,RealmObjectProxy> cache) {
+        if (object instanceof RealmObjectProxy && ((RealmObjectProxy) object).realmGet$proxyState().getRealm$realm() != null && ((RealmObjectProxy) object).realmGet$proxyState().getRealm$realm().threadId != realm.threadId) {
+            throw new IllegalArgumentException("Objects which belong to Realm instances in other threads cannot be copied into this Realm instance.");
+        }
+        if (object instanceof RealmObjectProxy && ((RealmObjectProxy)object).realmGet$proxyState().getRealm$realm() != null && ((RealmObjectProxy)object).realmGet$proxyState().getRealm$realm().getPath().equals(realm.getPath())) {
+            return object;
+        }
+        UserRealmModel realmObject = null;
+        boolean canUpdate = update;
+        if (canUpdate) {
+            Table table = realm.getTable(UserRealmModel.class);
+            long pkColumnIndex = table.getPrimaryKey();
+            long rowIndex = table.findFirstLong(pkColumnIndex, ((UserRealmModelRealmProxyInterface) object).realmGet$userId());
+            if (rowIndex != TableOrView.NO_MATCH) {
+                realmObject = new UserRealmModelRealmProxy(realm.schema.getColumnInfo(UserRealmModel.class));
+                ((RealmObjectProxy)realmObject).realmGet$proxyState().setRealm$realm(realm);
+                ((RealmObjectProxy)realmObject).realmGet$proxyState().setRow$realm(table.getUncheckedRow(rowIndex));
+                cache.put(object, (RealmObjectProxy) realmObject);
+            } else {
+                canUpdate = false;
+            }
+        }
+
+        if (canUpdate) {
+            return update(realm, realmObject, object, cache);
+        } else {
+            return copy(realm, object, update, cache);
+        }
+    }
+
+    public static UserRealmModel copy(Realm realm, UserRealmModel newObject, boolean update, Map<RealmModel,RealmObjectProxy> cache) {
+        UserRealmModel realmObject = realm.createObject(UserRealmModel.class, ((UserRealmModelRealmProxyInterface) newObject).realmGet$userId());
+        cache.put(newObject, (RealmObjectProxy) realmObject);
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$userId(((UserRealmModelRealmProxyInterface) newObject).realmGet$userId());
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$cover_url(((UserRealmModelRealmProxyInterface) newObject).realmGet$cover_url());
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$full_name(((UserRealmModelRealmProxyInterface) newObject).realmGet$full_name());
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$description(((UserRealmModelRealmProxyInterface) newObject).realmGet$description());
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$followers(((UserRealmModelRealmProxyInterface) newObject).realmGet$followers());
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$email(((UserRealmModelRealmProxyInterface) newObject).realmGet$email());
+        return realmObject;
+    }
+
+    public static UserRealmModel createDetachedCopy(UserRealmModel realmObject, int currentDepth, int maxDepth, Map<RealmModel, CacheData<RealmModel>> cache) {
+        if (currentDepth > maxDepth || realmObject == null) {
+            return null;
+        }
+        CacheData<RealmModel> cachedObject = cache.get(realmObject);
+        UserRealmModel standaloneObject;
+        if (cachedObject != null) {
+            // Reuse cached object or recreate it because it was encountered at a lower depth.
+            if (currentDepth >= cachedObject.minDepth) {
+                return (UserRealmModel)cachedObject.object;
+            } else {
+                standaloneObject = (UserRealmModel)cachedObject.object;
+                cachedObject.minDepth = currentDepth;
+            }
+        } else {
+            standaloneObject = new UserRealmModel();
+            cache.put(realmObject, new RealmObjectProxy.CacheData(currentDepth, standaloneObject));
+        }
+        ((UserRealmModelRealmProxyInterface) standaloneObject).realmSet$userId(((UserRealmModelRealmProxyInterface) realmObject).realmGet$userId());
+        ((UserRealmModelRealmProxyInterface) standaloneObject).realmSet$cover_url(((UserRealmModelRealmProxyInterface) realmObject).realmGet$cover_url());
+        ((UserRealmModelRealmProxyInterface) standaloneObject).realmSet$full_name(((UserRealmModelRealmProxyInterface) realmObject).realmGet$full_name());
+        ((UserRealmModelRealmProxyInterface) standaloneObject).realmSet$description(((UserRealmModelRealmProxyInterface) realmObject).realmGet$description());
+        ((UserRealmModelRealmProxyInterface) standaloneObject).realmSet$followers(((UserRealmModelRealmProxyInterface) realmObject).realmGet$followers());
+        ((UserRealmModelRealmProxyInterface) standaloneObject).realmSet$email(((UserRealmModelRealmProxyInterface) realmObject).realmGet$email());
+        return standaloneObject;
+    }
+
+    static UserRealmModel update(Realm realm, UserRealmModel realmObject, UserRealmModel newObject, Map<RealmModel, RealmObjectProxy> cache) {
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$cover_url(((UserRealmModelRealmProxyInterface) newObject).realmGet$cover_url());
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$full_name(((UserRealmModelRealmProxyInterface) newObject).realmGet$full_name());
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$description(((UserRealmModelRealmProxyInterface) newObject).realmGet$description());
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$followers(((UserRealmModelRealmProxyInterface) newObject).realmGet$followers());
+        ((UserRealmModelRealmProxyInterface) realmObject).realmSet$email(((UserRealmModelRealmProxyInterface) newObject).realmGet$email());
+        return realmObject;
+    }
+
+    @Override
+    public String toString() {
+        if (!RealmObject.isValid(this)) {
+            return "Invalid object";
+        }
+        StringBuilder stringBuilder = new StringBuilder("UserRealmModel = [");
+        stringBuilder.append("{userId:");
+        stringBuilder.append(realmGet$userId());
+        stringBuilder.append("}");
+        stringBuilder.append(",");
+        stringBuilder.append("{cover_url:");
+        stringBuilder.append(realmGet$cover_url() != null ? realmGet$cover_url() : "null");
+        stringBuilder.append("}");
+        stringBuilder.append(",");
+        stringBuilder.append("{full_name:");
+        stringBuilder.append(realmGet$full_name() != null ? realmGet$full_name() : "null");
+        stringBuilder.append("}");
+        stringBuilder.append(",");
+        stringBuilder.append("{description:");
+        stringBuilder.append(realmGet$description() != null ? realmGet$description() : "null");
+        stringBuilder.append("}");
+        stringBuilder.append(",");
+        stringBuilder.append("{followers:");
+        stringBuilder.append(realmGet$followers());
+        stringBuilder.append("}");
+        stringBuilder.append(",");
+        stringBuilder.append("{email:");
+        stringBuilder.append(realmGet$email() != null ? realmGet$email() : "null");
+        stringBuilder.append("}");
+        stringBuilder.append("]");
+        return stringBuilder.toString();
+    }
+
+    @Override
+    public ProxyState realmGet$proxyState() {
+        return proxyState;
+    }
+
+    @Override
+    public int hashCode() {
+        String realmName = proxyState.getRealm$realm().getPath();
+        String tableName = proxyState.getRow$realm().getTable().getName();
+        long rowIndex = proxyState.getRow$realm().getIndex();
+
+        int result = 17;
+        result = 31 * result + ((realmName != null) ? realmName.hashCode() : 0);
+        result = 31 * result + ((tableName != null) ? tableName.hashCode() : 0);
+        result = 31 * result + (int) (rowIndex ^ (rowIndex >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserRealmModelRealmProxy aUserRealmModel = (UserRealmModelRealmProxy)o;
+
+        String path = proxyState.getRealm$realm().getPath();
+        String otherPath = aUserRealmModel.proxyState.getRealm$realm().getPath();
+        if (path != null ? !path.equals(otherPath) : otherPath != null) return false;;
+
+        String tableName = proxyState.getRow$realm().getTable().getName();
+        String otherTableName = aUserRealmModel.proxyState.getRow$realm().getTable().getName();
+        if (tableName != null ? !tableName.equals(otherTableName) : otherTableName != null) return false;
+
+        if (proxyState.getRow$realm().getIndex() != aUserRealmModel.proxyState.getRow$realm().getIndex()) return false;
+
+        return true;
+    }
+
+}

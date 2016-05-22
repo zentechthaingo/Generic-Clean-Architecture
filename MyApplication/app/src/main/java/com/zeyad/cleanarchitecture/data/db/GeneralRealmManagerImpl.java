@@ -127,7 +127,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
                         e.printStackTrace();
                         return Observable.error(e);
                     }
-                return Observable.empty();
+                return Observable.error(new Exception("could not find id!"));
             });
         }
         return Observable.error(new Exception("json cant be null"));

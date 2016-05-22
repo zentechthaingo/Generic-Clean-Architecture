@@ -1,0 +1,29 @@
+package com.zeyad.cleanarchitecture.presentation.internal.di.modules;
+
+import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
+import dagger.internal.Factory;
+import javax.annotation.Generated;
+
+@Generated("dagger.internal.codegen.ComponentProcessor")
+public final class ApplicationModule_ProvideRxEventBusFactory implements Factory<RxEventBus> {
+  private final ApplicationModule module;
+
+  public ApplicationModule_ProvideRxEventBusFactory(ApplicationModule module) {  
+    assert module != null;
+    this.module = module;
+  }
+
+  @Override
+  public RxEventBus get() {  
+    RxEventBus provided = module.provideRxEventBus();
+    if (provided == null) {
+      throw new NullPointerException("Cannot return null from a non-@Nullable @Provides method");
+    }
+    return provided;
+  }
+
+  public static Factory<RxEventBus> create(ApplicationModule module) {  
+    return new ApplicationModule_ProvideRxEventBusFactory(module);
+  }
+}
+
