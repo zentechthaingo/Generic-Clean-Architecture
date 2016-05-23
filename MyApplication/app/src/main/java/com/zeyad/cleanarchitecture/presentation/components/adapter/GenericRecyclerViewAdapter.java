@@ -166,10 +166,11 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     public void removeLoading() {
         mIsLoadingFooterAdded = false;
         int position = mDataList.size() - 1;
-        if (mDataList.get(position).getId() == ItemInfo.LOADING) {
-            mDataList.remove(position);
-            notifyItemRemoved(position);
-        }
+        if (position > 0)
+            if (mDataList.get(position).getId() == ItemInfo.LOADING) {
+                mDataList.remove(position);
+                notifyItemRemoved(position);
+            }
     }
 
     public boolean isAllowSelection() {

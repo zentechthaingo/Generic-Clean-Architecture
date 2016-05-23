@@ -19,66 +19,66 @@ import rx.Observable;
  */
 public class GenericUseCase extends BaseUseCase {
 
-    private final Repository repository;
-    private final ModelDataMapper modelDataMapper;
+    private final Repository mRepository;
+    private final ModelDataMapper mModelDataMapper;
 
     @Inject
     public GenericUseCase(Repository repository, ThreadExecutor threadExecutor,
                           PostExecutionThread postExecutionThread) {
         super(threadExecutor, postExecutionThread);
-        this.repository = repository;
-        this.modelDataMapper = new ModelDataMapper();
+        mRepository = repository;
+        mModelDataMapper = new ModelDataMapper();
     }
 
     @Override
     protected Observable buildUseCaseObservableDynamicList(String url, Class presentationClass,
                                                            Class domainClass, Class dataClass,
                                                            boolean persist) {
-        return repository.dynamicList(url, domainClass, dataClass, persist)
-                .map(collection -> modelDataMapper.transformAllToPresentation(collection, presentationClass));
+        return mRepository.dynamicList(url, domainClass, dataClass, persist)
+                .map(collection -> mModelDataMapper.transformAllToPresentation(collection, presentationClass));
     }
 
     @Override
     protected Observable buildUseCaseObservableDynamicObjectById(String url, String idColumnName, int itemId, Class presentationClass,
                                                                  Class domainClass, Class dataClass,
                                                                  boolean persist) {
-        return repository.getObjectDynamicallyById(url, idColumnName, itemId, domainClass, dataClass, persist)
-                .map(item -> modelDataMapper.transformToPresentation(item, presentationClass));
+        return mRepository.getObjectDynamicallyById(url, idColumnName, itemId, domainClass, dataClass, persist)
+                .map(item -> mModelDataMapper.transformToPresentation(item, presentationClass));
     }
 
     @Override
     protected Observable buildUseCaseObservablePut(String url, HashMap<String, Object> keyValuePairs,
                                                    Class presentationClass, Class domainClass,
                                                    Class dataClass, boolean persist) {
-        return repository.postObjectDynamically(url, keyValuePairs, domainClass, dataClass, persist)
-                .map(object -> modelDataMapper.transformToPresentation(object, presentationClass));
+        return mRepository.postObjectDynamically(url, keyValuePairs, domainClass, dataClass, persist)
+                .map(object -> mModelDataMapper.transformToPresentation(object, presentationClass));
     }
 
     @Override
     protected Observable buildUseCaseObservableDynamicPostList(String url, HashMap<String, Object> keyValuePairs,
                                                                Class presentationClass, Class domainClass,
                                                                Class dataClass, boolean persist) {
-        return repository.postListDynamically(url, keyValuePairs, domainClass, dataClass, persist)
-                .map(object -> modelDataMapper.transformToPresentation(object, presentationClass));
+        return mRepository.postListDynamically(url, keyValuePairs, domainClass, dataClass, persist)
+                .map(object -> mModelDataMapper.transformToPresentation(object, presentationClass));
     }
 
     @Override
     public Observable buildUseCaseObservableDeleteMultiple(String url, HashMap<String, Object> keyValuePairs,
                                                            Class domainClass, Class dataClass, boolean persist) {
-        return repository.deleteListDynamically(url, keyValuePairs, domainClass, dataClass, persist);
+        return mRepository.deleteListDynamically(url, keyValuePairs, domainClass, dataClass, persist);
     }
 
     @Override
     public Observable buildUseCaseObservableQuery(String query, String column, Class presentationClass,
                                                   Class domainClass, Class dataClass) {
-        return repository.searchDisk(query, column, domainClass, dataClass)
-                .map(list -> modelDataMapper.transformAllToPresentation(list, presentationClass));
+        return mRepository.searchDisk(query, column, domainClass, dataClass)
+                .map(list -> mModelDataMapper.transformAllToPresentation(list, presentationClass));
     }
 
     @Override
     public Observable buildUseCaseObservableRealmQuery(RealmQuery realmQuery, Class presentationClass,
                                                        Class domainClass) {
-        return repository.searchDisk(realmQuery, domainClass)
-                .map(list -> modelDataMapper.transformAllToPresentation(list, presentationClass));
+        return mRepository.searchDisk(realmQuery, domainClass)
+                .map(list -> mModelDataMapper.transformAllToPresentation(list, presentationClass));
     }
 }
