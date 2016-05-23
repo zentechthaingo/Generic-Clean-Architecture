@@ -1,6 +1,7 @@
 package com.zeyad.cleanarchitecture.data.entities.mapper;
 
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
+import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.domain.models.User;
 
 import org.junit.Before;
@@ -29,7 +30,7 @@ public class UserEntityDataMapperTest extends ApplicationTestCase {
 
     @Test
     public void testTransformUserEntity() {
-        UserEntity userEntity = createFakeUserEntity();
+        UserRealmModel userEntity = createFakeUserEntity();
         User user = userEntityDataMapper.transform(userEntity);
         assertThat(user, is(instanceOf(User.class)));
         assertThat(user.getUserId(), is(FAKE_USER_ID));
@@ -38,10 +39,10 @@ public class UserEntityDataMapperTest extends ApplicationTestCase {
 
     @Test
     public void testTransformUserEntityCollection() {
-        UserEntity mockUserEntityOne = mock(UserEntity.class);
-        UserEntity mockUserEntityTwo = mock(UserEntity.class);
+        UserRealmModel mockUserEntityOne = mock(UserRealmModel.class);
+        UserRealmModel mockUserEntityTwo = mock(UserRealmModel.class);
 
-        List<UserEntity> userEntityList = new ArrayList<>(5);
+        List<UserRealmModel> userEntityList = new ArrayList<>(5);
         userEntityList.add(mockUserEntityOne);
         userEntityList.add(mockUserEntityTwo);
 
@@ -51,10 +52,40 @@ public class UserEntityDataMapperTest extends ApplicationTestCase {
         assertThat(userCollection.size(), is(2));
     }
 
-    private UserEntity createFakeUserEntity() {
-        UserEntity userEntity = new UserEntity();
+    private UserRealmModel createFakeUserEntity() {
+        UserRealmModel userEntity = new UserRealmModel();
         userEntity.setUserId(FAKE_USER_ID);
         userEntity.setFullName(FAKE_FULLNAME);
         return userEntity;
+    }
+
+    @Test
+    public void testTransformToDomain() throws Exception {
+
+    }
+
+    @Test
+    public void testTransformAllToDomain() throws Exception {
+
+    }
+
+    @Test
+    public void testTransformToDomain1() throws Exception {
+
+    }
+
+    @Test
+    public void testTransformAllToDomain1() throws Exception {
+
+    }
+
+    @Test
+    public void testTransformToRealm() throws Exception {
+
+    }
+
+    @Test
+    public void testTransformAllToRealm() throws Exception {
+
     }
 }

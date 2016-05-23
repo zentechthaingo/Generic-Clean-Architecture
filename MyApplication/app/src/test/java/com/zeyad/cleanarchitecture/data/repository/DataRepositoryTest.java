@@ -34,7 +34,7 @@ public class DataRepositoryTest extends ApplicationTestCase {
     @Mock
     private DataStore mockUserDataStore;
     @Mock
-    private UserEntity mockUserEntity;
+    private UserRealmModel mockUserEntity;
     @Mock
     private User mockUser;
     @Rule
@@ -56,8 +56,8 @@ public class DataRepositoryTest extends ApplicationTestCase {
 
     @Test
     public void testGetUsersFromCloud() {
-        List<UserEntity> usersList = new ArrayList<>();
-        usersList.add(new UserEntity());
+        List<UserRealmModel> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel());
         given(mockUserDataStore.collection(domainClass, dataClass)).willReturn(Observable.just(usersList));
         userDataRepository.collection(presentationClass, domainClass, dataClass);
         verify(mockUserDataStoreFactory).createAllFromCloud(mockUserEntityDataMapper);
@@ -66,8 +66,8 @@ public class DataRepositoryTest extends ApplicationTestCase {
 
     @Test
     public void testGetUsersFromDisk() {
-        List<UserEntity> usersList = new ArrayList<>();
-        usersList.add(new UserEntity());
+        List<UserRealmModel> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel());
         given(mockUserDataStore.collection(domainClass, dataClass)).willReturn(Observable.just(usersList));
         userDataRepository.collection(presentationClass, domainClass, dataClass);
         verify(mockUserDataStoreFactory).createAllFromDisk(mockUserEntityDataMapper);
@@ -76,8 +76,8 @@ public class DataRepositoryTest extends ApplicationTestCase {
 
     @Test
     public void testGetUserFromCloud() {
-        UserEntity userEntity = new UserEntity();
-        given(mockUserDataStore.getById(FAKE_USER_ID, domainClass, dataClass)).willReturn(Observable.just(userEntity));
+        UserRealmModel UserRealmModel = new UserRealmModel();
+        given(mockUserDataStore.getById(FAKE_USER_ID, domainClass, dataClass)).willReturn(Observable.just(UserRealmModel));
         userDataRepository.getById(FAKE_USER_ID, presentationClass, domainClass, dataClass);
         verify(mockUserDataStoreFactory).createByIdFromCloud(mockUserEntityDataMapper);
         verify(mockUserDataStore).getById(FAKE_USER_ID, domainClass, dataClass);
@@ -85,8 +85,8 @@ public class DataRepositoryTest extends ApplicationTestCase {
 
     @Test
     public void testGetUserFromDisk() {
-        UserEntity userEntity = new UserEntity();
-        given(mockUserDataStore.getById(FAKE_USER_ID, domainClass, dataClass)).willReturn(Observable.just(userEntity));
+        UserRealmModel UserRealmModel = new UserRealmModel();
+        given(mockUserDataStore.getById(FAKE_USER_ID, domainClass, dataClass)).willReturn(Observable.just(UserRealmModel));
         userDataRepository.getById(FAKE_USER_ID, presentationClass, domainClass, dataClass);
         verify(mockUserDataStoreFactory).createByIdFromDisk(mockUserEntityDataMapper);
         verify(mockUserDataStore).getById(FAKE_USER_ID, domainClass, dataClass);
@@ -94,8 +94,8 @@ public class DataRepositoryTest extends ApplicationTestCase {
 
     @Test
     public void testSearchUsersFromCloud() {
-        List<UserEntity> usersList = new ArrayList<>();
-        usersList.add(new UserEntity());
+        List<UserRealmModel> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel());
         given(mockUserDataStore.searchCloud("", domainClass, dataClass)).willReturn(Observable.just(usersList));
         userDataRepository.search("", "", presentationClass, domainClass, dataClass);
         verify(mockUserDataStoreFactory).searchCloud(mockUserEntityDataMapper);
@@ -104,8 +104,8 @@ public class DataRepositoryTest extends ApplicationTestCase {
 
     @Test
     public void testSearchUsersFromDisk() {
-        List<UserEntity> usersList = new ArrayList<>();
-        usersList.add(new UserEntity());
+        List<UserRealmModel> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel());
         given(mockUserDataStore.searchDisk("", "", domainClass, dataClass)).willReturn(Observable.just(usersList));
         userDataRepository.search("", "", presentationClass, domainClass, dataClass);
         verify(mockUserDataStoreFactory).searchDisk(mockUserEntityDataMapper);
@@ -114,11 +114,11 @@ public class DataRepositoryTest extends ApplicationTestCase {
 
     @Test
     public void testPutUserFromCloud() {
-        UserEntity userEntity = new UserEntity();
-        given(mockUserDataStore.postToCloud(userEntity, domainClass, dataClass)).willReturn(Observable.just(true));
-        userDataRepository.put(userEntity, presentationClass, domainClass, dataClass);
+        UserRealmModel UserRealmModel = new UserRealmModel();
+        given(mockUserDataStore.postToCloud(UserRealmModel, domainClass, dataClass)).willReturn(Observable.just(true));
+        userDataRepository.put(UserRealmModel, presentationClass, domainClass, dataClass);
         verify(mockUserDataStoreFactory).putToCloud(mockUserEntityDataMapper);
-        verify(mockUserDataStore).postToCloud(userEntity, domainClass, dataClass);
+        verify(mockUserDataStore).postToCloud(UserRealmModel, domainClass, dataClass);
     }
 
     @Test
@@ -132,8 +132,8 @@ public class DataRepositoryTest extends ApplicationTestCase {
 
     @Test
     public void testDeleteUsersFromCloud() {
-        List<UserEntity> usersList = new ArrayList<>();
-        usersList.add(new UserEntity());
+        List<UserRealmModel> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel());
         given(mockUserDataStore.deleteCollectionFromCloud(usersList, domainClass, dataClass)).willReturn(Observable.just(true));
         userDataRepository.deleteCollection(usersList, domainClass, dataClass);
         verify(mockUserDataStoreFactory).deleteCollectionFromCloud(mockUserEntityDataMapper);

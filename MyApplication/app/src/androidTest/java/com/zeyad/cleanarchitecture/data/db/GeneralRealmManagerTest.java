@@ -24,6 +24,7 @@ import rx.Subscriber;
 
 import static org.mockito.Mockito.verify;
 
+// TODO: 5/22/16 update!
 public class GeneralRealmManagerTest extends AndroidTestCase {
 
     @Mock
@@ -230,7 +231,6 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
         realmManager.getById(UserRealmModel.ID_COLUMN, FAKE_USER_ID, UserRealmModel.class).subscribe(new Subscriber<Object>() {
             @Override
             public void onCompleted() {
-
             }
 
             @Override

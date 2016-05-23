@@ -1,8 +1,7 @@
-package com.zeyad.cleanarchitecture.domain.interactor;
+package com.zeyad.cleanarchitecture.domain.interactors;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
-import com.zeyad.cleanarchitecture.domain.interactors.BaseUseCase;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,11 +9,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
-import java.util.List;
 
 import io.realm.RealmQuery;
 import rx.Observable;
-import rx.Subscriber;
 import rx.observers.TestSubscriber;
 import rx.schedulers.TestScheduler;
 
@@ -93,13 +90,13 @@ public class BaseUseCaseTest {
 
         @Override
         protected Observable buildUseCaseObservableRealmQuery(RealmQuery realmQuery, Class presentationClass, Class domainClass) {
-            super.executeSearch(realmQuery, domainClass, domainClass);
+//            super.executeSearch(realmQuery, domainClass);
             return null;
         }
 
-        @Override
-        public void execute(Subscriber UseCaseSubscriber) {
-            super.execute(UseCaseSubscriber);
-        }
+//        @Override
+//        public void execute(Subscriber UseCaseSubscriber) {
+//            super.execute(UseCaseSubscriber);
+//        }
     }
 }
