@@ -44,7 +44,7 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     public OnItemClickListener mOnItemClickListener;
     public SparseBooleanArray mSelectedItems;
     public boolean mIsLoadingFooterAdded = false;
-    private boolean mHasHeader = false, mHasFooter = false, allowSelection = false;
+    private boolean mHasHeader = false, mHasFooter = false, allowSelection = false, areItemsClickable = true;
     private CompositeSubscription mCompositeSubscription;
 
     public GenericRecyclerViewAdapter(Context context, List<ItemInfo> list) {
@@ -63,7 +63,7 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     public void onBindViewHolder(ViewHolder holder, int position) {
         ItemInfo itemInfo = mDataList.get(position);
         holder.bindData(itemInfo.getData(), mSelectedItems, position);
-        if (!(hasHeader() && position == 0 || hasFooter() && position == mDataList.size() - 1)) {
+        if (areItemsClickable && !(hasHeader() && position == 0 || hasFooter() && position == mDataList.size() - 1)) {
             mCompositeSubscription.add(RxView.clicks(holder.itemView).subscribe(aVoid -> {
                 if (mOnItemClickListener != null)
                     mOnItemClickListener.onItemClicked(position, itemInfo, holder);
@@ -171,6 +171,14 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
                 mDataList.remove(position);
                 notifyItemRemoved(position);
             }
+    }
+
+    public boolean areItemsClickable() {
+        return areItemsClickable;
+    }
+
+    public void setAreItemsClickable(boolean areItemsClickable) {
+        this.areItemsClickable = areItemsClickable;
     }
 
     public boolean isAllowSelection() {
