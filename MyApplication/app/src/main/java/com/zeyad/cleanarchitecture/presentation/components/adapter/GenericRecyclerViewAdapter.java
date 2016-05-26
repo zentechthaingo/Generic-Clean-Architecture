@@ -113,22 +113,25 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         mOnItemClickListener = onItemClickListener;
     }
 
+
     public boolean hasHeader() {
         return mHasHeader;
     }
 
     public void setHasHeader(boolean hasHeader, String label) {
-        mHasHeader = hasHeader;
-        if (mHasHeader)
-            mDataList.add(0, new ItemInfo<String>(label, ItemInfo.HEADER) {
-                @Override
-                public long getId() {
-                    return ItemInfo.HEADER;
-                }
-            });
-        else if (mDataList.size() > 0)
-            if (mDataList.get(0).getId() == ItemInfo.HEADER) mDataList.remove(0);
-        notifyDataSetChanged();
+        if (!mHasHeader && hasHeader) {
+            mHasHeader = hasHeader;
+            if (mHasHeader)
+                mDataList.add(0, new ItemInfo<String>(label, ItemInfo.HEADER) {
+                    @Override
+                    public long getId() {
+                        return ItemInfo.HEADER;
+                    }
+                });
+            else if (mDataList.size() > 0)
+                if (mDataList.get(0).getId() == ItemInfo.HEADER) mDataList.remove(0);
+            notifyDataSetChanged();
+        }
     }
 
     public boolean hasFooter() {
@@ -136,18 +139,26 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     }
 
     public void setHasFooter(boolean hasFooter, String label) {
-        mHasFooter = hasFooter;
-        if (mHasFooter)
-            mDataList.add(mDataList.size(), new ItemInfo<String>(label, ItemInfo.FOOTER) {
-                @Override
-                public long getId() {
-                    return ItemInfo.FOOTER;
+        if (!mHasFooter && hasFooter) {
+            mHasFooter = hasFooter;
+            int position;
+            if (mHasFooter) {
+                position = mDataList.size();
+                mDataList.add(position, new ItemInfo<String>(label, ItemInfo.FOOTER) {
+                    @Override
+                    public long getId() {
+                        return ItemInfo.FOOTER;
+                    }
+                });
+                notifyItemInserted(position);
+            } else if (!mDataList.isEmpty()) {
+                position = mDataList.size() - 1;
+                if (mDataList.get(position).getId() == ItemInfo.FOOTER) {
+                    mDataList.remove(position);
+                    notifyItemRemoved(position);
                 }
-            });
-        else if (mDataList.size() > 0)
-            if (mDataList.get(mDataList.size() - 1).getId() == ItemInfo.FOOTER)
-                mDataList.remove(mDataList.size() - 1);
-        notifyDataSetChanged();
+            }
+        }
     }
 
     public void addLoading() {
@@ -166,11 +177,16 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     public void removeLoading() {
         mIsLoadingFooterAdded = false;
         int position = mDataList.size() - 1;
-        if (position > 0)
-            if (mDataList.get(position).getId() == ItemInfo.LOADING) {
-                mDataList.remove(position);
-                notifyItemRemoved(position);
+        if (position > 0) {
+            ItemInfo itemInfo;
+            for (int i = 0; i < mDataList.size(); i++) {
+                itemInfo = mDataList.get(i);
+                if (itemInfo.getId() == ItemInfo.LOADING) {
+                    mDataList.remove(i);
+                    notifyItemRemoved(i);
+                }
             }
+        }
     }
 
     public boolean areItemsClickable() {
@@ -190,8 +206,8 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     }
 
     public void setItemList(List<ItemInfo> dataSet) {
+        validateList(dataSet);
         mDataList.addAll(dataSet);
-        validateList(mDataList);
         notifyDataSetChanged();
     }
 
