@@ -137,10 +137,8 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     public void putAll(List<RealmObject> realmModels) {
         Observable.defer(() -> {
             mRealm = Realm.getDefaultInstance();
-            mRealm.beginTransaction();
-            mRealm.copyToRealmOrUpdate(realmModels);
-            mRealm.commitTransaction();
-//            mRealm.close();
+            mRealm.executeTransaction(realm -> mRealm.copyToRealmOrUpdate(realmModels));
+            mRealm.close();
             writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
             return Observable.from(realmModels);
         }).subscribeOn(Schedulers.io())
@@ -166,7 +164,9 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
     public boolean isCached(int itemId, String columnId, Class clazz) {
         mRealm = Realm.getDefaultInstance();
         Object realmObject = mRealm.where(clazz).equalTo(columnId, itemId).findFirst();
-        return realmObject != null && ((UserRealmModel) realmObject).getDescription() != null;
+        boolean isCached = realmObject != null && ((UserRealmModel) realmObject).getDescription() != null;
+        mRealm.close();
+        return isCached;
     }
 
     @Override
@@ -184,9 +184,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         Observable.defer(() -> {
             mRealm = Realm.getDefaultInstance();
             RealmResults results = mRealm.where(clazz).findAll();
-            mRealm.beginTransaction();
-            results.deleteAllFromRealm();
-            mRealm.commitTransaction();
+            mRealm.executeTransaction(realm -> results.deleteAllFromRealm());
             mRealm.close();
             writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
             return Observable.just(results.isValid());
@@ -210,12 +208,10 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
 
 
     @Override
-    public void evict(final RealmObject realmModel, Class clazz) {
+    public void evict(RealmObject realmModel, Class clazz) {
         Observable.defer(() -> {
             mRealm = Realm.getDefaultInstance();
-            mRealm.beginTransaction();
-            realmModel.deleteFromRealm();
-            mRealm.commitTransaction();
+            mRealm.executeTransaction(realm -> realmModel.deleteFromRealm());
             mRealm.close();
             writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
             return Observable.just(realmModel.isValid());
@@ -242,9 +238,7 @@ public class GeneralRealmManagerImpl implements GeneralRealmManager {
         mRealm = Realm.getDefaultInstance();
         RealmModel toDelete = mRealm.where(clazz).equalTo("userId", itemId).findFirst();
         if (toDelete != null) {
-            mRealm.beginTransaction();
-            RealmObject.deleteFromRealm(toDelete);
-            mRealm.commitTransaction();
+            mRealm.executeTransaction(realm -> RealmObject.deleteFromRealm(toDelete));
             writeToPreferences(System.currentTimeMillis(), Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE);
             return !RealmObject.isValid(toDelete);
         } else return false;
