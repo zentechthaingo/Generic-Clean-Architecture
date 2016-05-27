@@ -51,6 +51,76 @@ public class BaseUseCaseTest {
         assertThat(testSubscriber.isUnsubscribed(), is(true));
     }
 
+    @Test
+    public void testBuildUseCaseObservableDynamicList() throws Exception {
+
+    }
+
+    @Test
+    public void testBuildUseCaseObservableDynamicObjectById() throws Exception {
+
+    }
+
+    @Test
+    public void testBuildUseCaseObservablePut() throws Exception {
+
+    }
+
+    @Test
+    public void testBuildUseCaseObservableDynamicPostList() throws Exception {
+
+    }
+
+    @Test
+    public void testBuildUseCaseObservableDeleteMultiple() throws Exception {
+
+    }
+
+    @Test
+    public void testBuildUseCaseObservableQuery() throws Exception {
+
+    }
+
+    @Test
+    public void testBuildUseCaseObservableRealmQuery() throws Exception {
+
+    }
+
+    @Test
+    public void testExecuteList() throws Exception {
+
+    }
+
+    @Test
+    public void testExecuteGetObject() throws Exception {
+
+    }
+
+    @Test
+    public void testExecuteDynamicPutObject() throws Exception {
+
+    }
+
+    @Test
+    public void testExecuteDynamicPostList() throws Exception {
+
+    }
+
+    @Test
+    public void testExecuteSearch() throws Exception {
+
+    }
+
+    @Test
+    public void testExecuteSearch1() throws Exception {
+
+    }
+
+    @Test
+    public void testExecuteDeleteCollection() throws Exception {
+
+    }
+
     private static class BaseUseCaseTestClass extends BaseUseCase {
 
         protected BaseUseCaseTestClass(ThreadExecutor threadExecutor,

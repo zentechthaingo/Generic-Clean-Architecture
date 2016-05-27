@@ -149,4 +149,39 @@ public class DataRepositoryTest extends ApplicationTestCase {
         verify(mockUserDataStoreFactory).deleteCollectionFromDisk(mockUserEntityDataMapper);
         verify(mockUserDataStore).deleteCollectionFromDisk(usersList, dataClass);
     }
+
+    @Test
+    public void testDynamicList() throws Exception {
+
+    }
+
+    @Test
+    public void testGetObjectDynamicallyById() throws Exception {
+
+    }
+
+    @Test
+    public void testPostObjectDynamically() throws Exception {
+
+    }
+
+    @Test
+    public void testPostListDynamically() throws Exception {
+
+    }
+
+    @Test
+    public void testDeleteListDynamically() throws Exception {
+
+    }
+
+    @Test
+    public void testSearchDisk() throws Exception {
+
+    }
+
+    @Test
+    public void testSearchDisk1() throws Exception {
+
+    }
 }
