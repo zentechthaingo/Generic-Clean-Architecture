@@ -21,12 +21,11 @@ The project's first version is almost done, just a couple of minor bugs and some
 
 ### Todo:
 
-* Update Tests -- version 1.0
+* Update Tests 
 * CI with infer 
-* GCM push notifications 
-* StorIO / SqlBrite
-* Migrate to native java 8
 * Data binding
+* FCM push notifications -- version 1.0
+* StorIO / SqlBrite
 * Add Strict Mode
 
 ### Who do I talk to? ###
