@@ -35,7 +35,7 @@ public class UserDetailsActivityTest extends ActivityInstrumentationTestCase2<Us
     }
 
     public void testContainsUserDetailsFragment() {
-        assertNotNull(userDetailsActivity.getFragmentManager().findFragmentById(R.id.fl_fragment));
+        assertNotNull(userDetailsActivity.getFragmentManager().findFragmentById(R.id.detail_container));
     }
 
     public void testContainsProperTitle() {

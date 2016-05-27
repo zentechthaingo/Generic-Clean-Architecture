@@ -35,11 +35,12 @@ public class GenericUseCase extends BaseUseCase {
                                                            Class domainClass, Class dataClass,
                                                            boolean persist) {
         return mRepository.dynamicList(url, domainClass, dataClass, persist)
-                .map(collection -> mModelDataMapper.transformAllToPresentation(collection, presentationClass));
+                .map(list -> mModelDataMapper.transformAllToPresentation(list, presentationClass));
     }
 
     @Override
-    protected Observable buildUseCaseObservableDynamicObjectById(String url, String idColumnName, int itemId, Class presentationClass,
+    protected Observable buildUseCaseObservableDynamicObjectById(String url, String idColumnName,
+                                                                 int itemId, Class presentationClass,
                                                                  Class domainClass, Class dataClass,
                                                                  boolean persist) {
         return mRepository.getObjectDynamicallyById(url, idColumnName, itemId, domainClass, dataClass, persist)

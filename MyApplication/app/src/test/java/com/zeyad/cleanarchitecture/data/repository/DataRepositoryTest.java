@@ -2,11 +2,10 @@ package com.zeyad.cleanarchitecture.data.repository;
 
 import com.zeyad.cleanarchitecture.data.ApplicationTestCase;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
-import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
+import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.data.repository.datastore.DataStore;
 import com.zeyad.cleanarchitecture.data.repository.datastore.DataStoreFactory;
 import com.zeyad.cleanarchitecture.domain.models.User;
-import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,8 +15,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmQuery;
 import rx.Observable;
 
 import static org.mockito.BDDMockito.given;
@@ -30,7 +32,7 @@ public class DataRepositoryTest extends ApplicationTestCase {
     @Mock
     private DataStoreFactory mockUserDataStoreFactory;
     @Mock
-    private UserEntityDataMapper mockUserEntityDataMapper;
+    private EntityMapper mockUserEntityDataMapper;
     @Mock
     private DataStore mockUserDataStore;
     @Mock
@@ -39,149 +41,159 @@ public class DataRepositoryTest extends ApplicationTestCase {
     private User mockUser;
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-    private Class presentationClass, domainClass, dataClass;
+    private Class domainClass, dataClass;
+    private HashMap<String, Object> map;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        presentationClass = UserViewModel.class;
         domainClass = User.class;
         dataClass = UserRealmModel.class;
-        userDataRepository = new DataRepository(mockUserDataStoreFactory, mockUserEntityDataMapper);
-        given(mockUserDataStoreFactory.createByIdFromCloud(mockUserEntityDataMapper)).willReturn(mockUserDataStore);
-        given(mockUserDataStoreFactory.createByIdFromDisk(mockUserEntityDataMapper)).willReturn(mockUserDataStore);
-        given(mockUserDataStoreFactory.createAllFromCloud(mockUserEntityDataMapper)).willReturn(mockUserDataStore);
-        given(mockUserDataStoreFactory.createAllFromDisk(mockUserEntityDataMapper)).willReturn(mockUserDataStore);
+        userDataRepository = new DataRepository(mockUserDataStoreFactory);
+        given(mockUserDataStoreFactory.dynamically("", mockUserEntityDataMapper)).willReturn(mockUserDataStore);
+        given(mockUserDataStoreFactory.dynamically("", "", -1, mockUserEntityDataMapper, dataClass)).willReturn(mockUserDataStore);
+        given(mockUserDataStoreFactory.cloud(mockUserEntityDataMapper)).willReturn(mockUserDataStore);
+        given(mockUserDataStoreFactory.disk(mockUserEntityDataMapper)).willReturn(mockUserDataStore);
     }
 
     @Test
-    public void testGetUsersFromCloud() {
+    public void testDynamicListFromCloud() throws Exception {
         List<UserRealmModel> usersList = new ArrayList<>();
         usersList.add(new UserRealmModel());
-        given(mockUserDataStore.collection(domainClass, dataClass)).willReturn(Observable.just(usersList));
-        userDataRepository.collection(presentationClass, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).createAllFromCloud(mockUserEntityDataMapper);
-        verify(mockUserDataStore).collection(domainClass, dataClass);
+        given(mockUserDataStore.dynamicList("", domainClass, dataClass, true)).willReturn(Observable.just(usersList));
+        userDataRepository.dynamicList("", domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).cloud(mockUserEntityDataMapper);
+        verify(mockUserDataStore).dynamicList("", domainClass, dataClass, true);
     }
 
     @Test
-    public void testGetUsersFromDisk() {
+    public void testDynamicListFromDisk() throws Exception {
         List<UserRealmModel> usersList = new ArrayList<>();
         usersList.add(new UserRealmModel());
-        given(mockUserDataStore.collection(domainClass, dataClass)).willReturn(Observable.just(usersList));
-        userDataRepository.collection(presentationClass, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).createAllFromDisk(mockUserEntityDataMapper);
-        verify(mockUserDataStore).collection(domainClass, dataClass);
+        given(mockUserDataStore.dynamicList("", domainClass, dataClass, true)).willReturn(Observable.just(usersList));
+        userDataRepository.dynamicList("", domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).disk(mockUserEntityDataMapper);
+        verify(mockUserDataStore).dynamicList("", domainClass, dataClass, true);
     }
 
     @Test
-    public void testGetUserFromCloud() {
-        UserRealmModel UserRealmModel = new UserRealmModel();
-        given(mockUserDataStore.getById(FAKE_USER_ID, domainClass, dataClass)).willReturn(Observable.just(UserRealmModel));
-        userDataRepository.getById(FAKE_USER_ID, presentationClass, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).createByIdFromCloud(mockUserEntityDataMapper);
-        verify(mockUserDataStore).getById(FAKE_USER_ID, domainClass, dataClass);
-    }
-
-    @Test
-    public void testGetUserFromDisk() {
-        UserRealmModel UserRealmModel = new UserRealmModel();
-        given(mockUserDataStore.getById(FAKE_USER_ID, domainClass, dataClass)).willReturn(Observable.just(UserRealmModel));
-        userDataRepository.getById(FAKE_USER_ID, presentationClass, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).createByIdFromDisk(mockUserEntityDataMapper);
-        verify(mockUserDataStore).getById(FAKE_USER_ID, domainClass, dataClass);
-    }
-
-    @Test
-    public void testSearchUsersFromCloud() {
-        List<UserRealmModel> usersList = new ArrayList<>();
-        usersList.add(new UserRealmModel());
-        given(mockUserDataStore.searchCloud("", domainClass, dataClass)).willReturn(Observable.just(usersList));
-        userDataRepository.search("", "", presentationClass, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).searchCloud(mockUserEntityDataMapper);
-        verify(mockUserDataStore).searchCloud("", domainClass, dataClass);
-    }
-
-    @Test
-    public void testSearchUsersFromDisk() {
-        List<UserRealmModel> usersList = new ArrayList<>();
-        usersList.add(new UserRealmModel());
-        given(mockUserDataStore.searchDisk("", "", domainClass, dataClass)).willReturn(Observable.just(usersList));
-        userDataRepository.search("", "", presentationClass, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).searchDisk(mockUserEntityDataMapper);
-        verify(mockUserDataStore).searchDisk("", "", domainClass, dataClass);
-    }
-
-    @Test
-    public void testPutUserFromCloud() {
-        UserRealmModel UserRealmModel = new UserRealmModel();
-        given(mockUserDataStore.postToCloud(UserRealmModel, domainClass, dataClass)).willReturn(Observable.just(true));
-        userDataRepository.put(UserRealmModel, presentationClass, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).putToCloud(mockUserEntityDataMapper);
-        verify(mockUserDataStore).postToCloud(UserRealmModel, domainClass, dataClass);
-    }
-
-    @Test
-    public void testPutUserFromDisk() {
+    public void testGetObjectDynamicallyByIdFromCloud() throws Exception {
         UserRealmModel userRealmModel = new UserRealmModel();
-        given(mockUserDataStore.putToDisk(userRealmModel)).willReturn(Observable.just(true));
-        userDataRepository.put(userRealmModel, presentationClass, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).putToDisk(mockUserEntityDataMapper);
-        verify(mockUserDataStore).putToDisk(userRealmModel);
+//        given(mockUserDataStore.dynamicObject("", "", FAKE_USER_ID, domainClass, dataClass, true)).willReturn(Observable.just(userRealmModel));
+        userDataRepository.getObjectDynamicallyById("", "", FAKE_USER_ID, domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).cloud(mockUserEntityDataMapper);
+        verify(mockUserDataStore).dynamicObject("", "", FAKE_USER_ID, domainClass, dataClass, true);
     }
 
     @Test
-    public void testDeleteUsersFromCloud() {
+    public void testGetObjectDynamicallyByIdFromDisk() throws Exception {
+        UserRealmModel userRealmModel = new UserRealmModel();
+//        given(mockUserDataStore.dynamicObject("", "", FAKE_USER_ID, domainClass, dataClass, true)).willReturn(Observable.just(userRealmModel));
+        userDataRepository.getObjectDynamicallyById("", "", FAKE_USER_ID, domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).disk(mockUserEntityDataMapper);
+        verify(mockUserDataStore).dynamicObject("", "", FAKE_USER_ID, domainClass, dataClass, true);
+    }
+
+    @Test
+    public void testPostObjectDynamicallyToCloud() throws Exception {
+        UserRealmModel userRealmModel = new UserRealmModel();
+        map = new HashMap<>();
+        map.put(UserRealmModel.ID_COLUMN, userRealmModel.getUserId());
+        map.put(UserRealmModel.COVER_URL, userRealmModel.getCover_url());
+        map.put(UserRealmModel.DESCRIPTION, userRealmModel.getDescription());
+        map.put(UserRealmModel.EMAIL, userRealmModel.getEmail());
+        map.put(UserRealmModel.FOLLOWERS, userRealmModel.getFollowers());
+        map.put(UserRealmModel.FULL_NAME_COLUMN, userRealmModel.getFullName());
+//        given(mockUserDataStore.dynamicPostObject("", map, domainClass, dataClass, true)).willReturn(Observable.just(true));
+        userDataRepository.postObjectDynamically("", map, domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).cloud(mockUserEntityDataMapper);
+        verify(mockUserDataStore).dynamicPostObject("", map, domainClass, dataClass, true);
+    }
+
+    @Test
+    public void testPostObjectDynamicallyToDisk() throws Exception {
+        UserRealmModel userRealmModel = new UserRealmModel();
+        map = new HashMap<>();
+        map.put(UserRealmModel.ID_COLUMN, userRealmModel.getUserId());
+        map.put(UserRealmModel.COVER_URL, userRealmModel.getCover_url());
+        map.put(UserRealmModel.DESCRIPTION, userRealmModel.getDescription());
+        map.put(UserRealmModel.EMAIL, userRealmModel.getEmail());
+        map.put(UserRealmModel.FOLLOWERS, userRealmModel.getFollowers());
+        map.put(UserRealmModel.FULL_NAME_COLUMN, userRealmModel.getFullName());
+//        given(mockUserDataStore.putToDisk(map, dataClass)).willReturn(Observable.just(true));
+        userDataRepository.postObjectDynamically("", map, domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).disk(mockUserEntityDataMapper);
+        verify(mockUserDataStore).putToDisk(map, dataClass);
+    }
+
+    // search
+    @Test
+    public void testPostListDynamicallyToCloud() throws Exception {
         List<UserRealmModel> usersList = new ArrayList<>();
         usersList.add(new UserRealmModel());
-        given(mockUserDataStore.deleteCollectionFromCloud(usersList, domainClass, dataClass)).willReturn(Observable.just(true));
-        userDataRepository.deleteCollection(usersList, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).deleteCollectionFromCloud(mockUserEntityDataMapper);
-        verify(mockUserDataStore).deleteCollectionFromCloud(usersList, domainClass, dataClass);
+        map = new HashMap<>();
+        given(mockUserDataStore.dynamicPostList("", map, domainClass, dataClass, true)).willReturn(Observable.just(usersList));
+        userDataRepository.postListDynamically("", map, domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).cloud(mockUserEntityDataMapper);
+        verify(mockUserDataStore).dynamicPostList("", map, domainClass, dataClass, true);
     }
 
+    // ??
     @Test
-    public void testDeleteUsersFromDisk() {
-        List<Integer> usersList = new ArrayList<>();
-        usersList.add(new UserRealmModel().getUserId());
-        given(mockUserDataStore.deleteCollectionFromDisk(usersList, dataClass)).willReturn(Observable.just(true));
-        userDataRepository.deleteCollection(usersList, domainClass, dataClass);
-        verify(mockUserDataStoreFactory).deleteCollectionFromDisk(mockUserEntityDataMapper);
-        verify(mockUserDataStore).deleteCollectionFromDisk(usersList, dataClass);
-    }
-
-    @Test
-    public void testDynamicList() throws Exception {
-
-    }
-
-    @Test
-    public void testGetObjectDynamicallyById() throws Exception {
-
-    }
-
-    @Test
-    public void testPostObjectDynamically() throws Exception {
-
-    }
-
-    @Test
-    public void testPostListDynamically() throws Exception {
-
-    }
-
-    @Test
-    public void testDeleteListDynamically() throws Exception {
-
+    public void testPostListDynamicallyToDisk() throws Exception {
+        List<UserRealmModel> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel());
+        map = new HashMap<>();
+        given(mockUserDataStore.dynamicPostList("", map, domainClass, dataClass, true)).willReturn(Observable.just(usersList));
+        userDataRepository.postListDynamically("", map, domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).disk(mockUserEntityDataMapper);
+        verify(mockUserDataStore).dynamicPostList("", map, domainClass, dataClass, true);
     }
 
     @Test
     public void testSearchDisk() throws Exception {
-
+        List<UserRealmModel> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel());
+        given(mockUserDataStore.searchDisk("s", UserRealmModel.FULL_NAME_COLUMN, domainClass, dataClass))
+                .willReturn(Observable.just(usersList));
+        userDataRepository.searchDisk("s", UserRealmModel.FULL_NAME_COLUMN, domainClass, dataClass);
+        verify(mockUserDataStoreFactory).disk(mockUserEntityDataMapper);
+        verify(mockUserDataStore).searchDisk("s", UserRealmModel.FULL_NAME_COLUMN, domainClass, dataClass);
     }
 
     @Test
-    public void testSearchDisk1() throws Exception {
+    public void testRealmSearchFromDisk() throws Exception {
+        List<UserRealmModel> usersList = new ArrayList<>();
+        usersList.add(new UserRealmModel());
+        RealmQuery realmQuery = Realm.getDefaultInstance().where(UserRealmModel.class)
+                .contains(UserRealmModel.FULL_NAME_COLUMN, "s");
+        given(mockUserDataStore.searchDisk(realmQuery, domainClass)).willReturn(Observable.just(usersList));
+        userDataRepository.searchDisk(realmQuery, dataClass);
+        verify(mockUserDataStoreFactory).disk(mockUserEntityDataMapper);
+        verify(mockUserDataStore).searchDisk(realmQuery, domainClass);
+    }
 
+    @Test
+    public void testDeleteListDynamicallyFromCloud() throws Exception {
+        List<Long> usersList = new ArrayList<>();
+        usersList.add((long) new UserRealmModel().getUserId());
+        map = new HashMap<>();
+        map.put(DataStore.IDS, usersList);
+//        given(mockUserDataStore.deleteCollectionFromCloud("", map, dataClass, true)).willReturn(Observable.just(true));
+        userDataRepository.deleteListDynamically("", map, domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).cloud(mockUserEntityDataMapper);
+        verify(mockUserDataStore).deleteCollectionFromCloud("", map, dataClass, true);
+    }
+
+    @Test
+    public void testDeleteListDynamicallyFromDisk() throws Exception {
+        List<Long> usersList = new ArrayList<>();
+        usersList.add((long) new UserRealmModel().getUserId());
+        map = new HashMap<>();
+        map.put(DataStore.IDS, usersList);
+//        given(mockUserDataStore.deleteCollectionFromDisk(map, dataClass)).willReturn(Observable.just(true));
+        userDataRepository.deleteListDynamically("", map, domainClass, dataClass, true);
+        verify(mockUserDataStoreFactory).disk(mockUserEntityDataMapper);
+        verify(mockUserDataStore).deleteCollectionFromDisk(map, dataClass);
     }
 }

@@ -7,7 +7,9 @@ import io.realm.annotations.PrimaryKey;
 
 public class UserRealmModel extends RealmObject {
 
-    public final static String FULL_NAME_COLUMN = "full_name", ID_COLUMN = "userId";
+    public final static String FULL_NAME_COLUMN = "full_name", ID_COLUMN = "userId", COVER_URL = "coverUrl",
+            EMAIL = "email", DESCRIPTION = "description", FOLLOWERS = "followers";
+
     @PrimaryKey
     @SerializedName("id")
     private int userId;

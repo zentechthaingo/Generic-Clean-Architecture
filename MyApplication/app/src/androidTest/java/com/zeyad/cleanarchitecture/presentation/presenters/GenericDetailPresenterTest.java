@@ -3,41 +3,47 @@ package com.zeyad.cleanarchitecture.presentation.presenters;
 import android.content.Context;
 import android.test.AndroidTestCase;
 
+import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
+import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
+import com.zeyad.cleanarchitecture.domain.models.User;
+import com.zeyad.cleanarchitecture.presentation.screens.GenericEditableItemView;
+import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailPresenter;
+import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.presentation.view_models.mapper.UserViewModelDataMapper;
 
 import org.junit.After;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import rx.Subscriber;
-
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 
 public class GenericDetailPresenterTest extends AndroidTestCase {
 
     private static final int FAKE_USER_ID = 123;
 
-    private UserDetailsPresenter userDetailsPresenter;
+    private UserDetailPresenter userDetailsPresenter;
 
     @Mock
     private Context mockContext;
     @Mock
-    private UserDetailsView mockUserDetailsView;
+    private GenericEditableItemView<UserViewModel> mockUserDetailsView;
     @Mock
     private GenericUseCase mockGetUserDetails;
     @Mock
     private UserViewModelDataMapper mockUserViewModelDataMapper;
+    private Class presentationClass, domainClass, dataClass;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         MockitoAnnotations.initMocks(this);
-        userDetailsPresenter = new UserDetailsPresenter(mockGetUserDetails,
-                mockUserViewModelDataMapper);
+        userDetailsPresenter = new UserDetailPresenter(mockGetUserDetails);
         userDetailsPresenter.setView(mockUserDetailsView);
+        presentationClass = UserViewModel.class;
+        domainClass = User.class;
+        dataClass = UserRealmModel.class;
     }
 
     public void testUserDetailsPresenterInitialize() {
@@ -47,7 +53,8 @@ public class GenericDetailPresenterTest extends AndroidTestCase {
 
         verify(mockUserDetailsView).hideRetry();
         verify(mockUserDetailsView).showLoading();
-        verify(mockGetUserDetails).execute(any(Subscriber.class));
+        verify(mockGetUserDetails).executeGetObject(new DefaultSubscriber<>(), "", "", -1,
+                presentationClass, domainClass, dataClass, true);
     }
 
     @After

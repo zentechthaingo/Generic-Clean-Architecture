@@ -283,7 +283,7 @@ public class CloudDataStore implements DataStore {
     public Observable<?> deleteCollectionFromCloud(final String url, final HashMap<String, Object> keyValuePairs,
                                                    Class dataClass, boolean persist) {
         this.dataClass = dataClass;
-        List<Integer> ids = (List<Integer>) keyValuePairs.get(DataStore.IDS);
+        List<Long> ids = (List<Long>) keyValuePairs.get(DataStore.IDS);
         return Observable.defer(() -> {
             if (!Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {

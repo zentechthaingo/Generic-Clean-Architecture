@@ -46,7 +46,7 @@ public class DiskDataStoreTest extends ApplicationTestCase {
 
     @Test
     public void testCollection() throws Exception {
-        diskDataStore.dynamicList("", domainClass, dataClass, false);
+        diskDataStore.dynamicList("", domainClass, dataClass, true);
         verify(mockRealmManager).getAll(dataClass);
     }
 

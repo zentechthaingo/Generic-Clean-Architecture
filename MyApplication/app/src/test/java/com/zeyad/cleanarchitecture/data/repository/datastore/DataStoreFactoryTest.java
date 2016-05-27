@@ -43,13 +43,34 @@ public class DataStoreFactoryTest {
     }
 
     @Test
-    public void testDynamically() throws Exception {
+    public void testListDynamically() throws Exception {
+        given(mockRealmManager.isCached(FAKE_USER_ID, "", dataClass)).willReturn(true);
+        given(mockRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE))
+                .willReturn(false);
 
+        DataStore userDataStore = dataStoreFactory.dynamically("", mockEntityDataMapper);
+
+        assertThat(userDataStore, is(notNullValue()));
+        assertThat(userDataStore, is(instanceOf(DiskDataStore.class)));
+
+        verify(mockRealmManager).isCached(FAKE_USER_ID, "", dataClass);
+        verify(mockRealmManager).isItemValid(FAKE_USER_ID, "", dataClass);
     }
 
     @Test
-    public void testDynamically1() throws Exception {
+    public void testObjectDynamically1() throws Exception {
+        given(mockRealmManager.isCached(FAKE_USER_ID, "", dataClass)).willReturn(true);
+        given(mockRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE))
+                .willReturn(false);
 
+        DataStore userDataStore = dataStoreFactory.dynamically("", "", -1, mockEntityDataMapper,
+                UserRealmModel.class);
+
+        assertThat(userDataStore, is(notNullValue()));
+        assertThat(userDataStore, is(instanceOf(DiskDataStore.class)));
+
+        verify(mockRealmManager).isCached(FAKE_USER_ID, "", dataClass);
+        verify(mockRealmManager).isItemValid(FAKE_USER_ID, "", dataClass);
     }
 
     @Test
@@ -58,8 +79,7 @@ public class DataStoreFactoryTest {
         given(mockRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE))
                 .willReturn(false);
 
-        DataStore userDataStore = dataStoreFactory.dynamically("", "", -1, mockEntityDataMapper,
-                UserRealmModel.class);
+        DataStore userDataStore = dataStoreFactory.disk(mockEntityDataMapper);
 
         assertThat(userDataStore, is(notNullValue()));
         assertThat(userDataStore, is(instanceOf(DiskDataStore.class)));

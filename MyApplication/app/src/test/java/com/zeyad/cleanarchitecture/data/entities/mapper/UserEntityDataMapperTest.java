@@ -31,7 +31,7 @@ public class UserEntityDataMapperTest extends ApplicationTestCase {
     @Test
     public void testTransformUserEntity() {
         UserRealmModel userEntity = createFakeUserEntity();
-        User user = userEntityDataMapper.transform(userEntity);
+        User user = userEntityDataMapper.transformToDomain(userEntity);
         assertThat(user, is(instanceOf(User.class)));
         assertThat(user.getUserId(), is(FAKE_USER_ID));
         assertThat(user.getFullName(), is(FAKE_FULLNAME));
@@ -46,7 +46,7 @@ public class UserEntityDataMapperTest extends ApplicationTestCase {
         userEntityList.add(mockUserEntityOne);
         userEntityList.add(mockUserEntityTwo);
 
-        Collection<User> userCollection = userEntityDataMapper.transform(userEntityList);
+        List<User> userCollection = userEntityDataMapper.transformAllToDomain(userEntityList);
         assertThat(userCollection.toArray()[0], is(instanceOf(User.class)));
         assertThat(userCollection.toArray()[1], is(instanceOf(User.class)));
         assertThat(userCollection.size(), is(2));

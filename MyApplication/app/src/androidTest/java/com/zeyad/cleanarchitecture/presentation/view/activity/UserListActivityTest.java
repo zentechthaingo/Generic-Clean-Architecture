@@ -1,6 +1,5 @@
 package com.zeyad.cleanarchitecture.presentation.view.activity;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.test.ActivityInstrumentationTestCase2;
 
@@ -28,9 +27,7 @@ public class UserListActivityTest extends ActivityInstrumentationTestCase2<UserL
     }
 
     public void testContainsUserListFragment() {
-        Fragment userListFragment =
-                userListActivity.getFragmentManager().findFragmentById(R.id.fragmentUserList);
-        assertNotNull(userListFragment);
+        assertNotNull(userListActivity.findViewById(R.id.rv_users));
     }
 
     public void testContainsProperTitle() {

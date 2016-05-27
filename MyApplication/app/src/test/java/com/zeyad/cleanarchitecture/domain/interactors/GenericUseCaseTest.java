@@ -50,7 +50,7 @@ public class GenericUseCaseTest {
     public void testBuildUseCaseObservableDynamicList() throws Exception {
         genericUseCase.buildUseCaseObservableDynamicList("", presentationClass, domainClass,
                 dataClass, true);
-        verify(mockRepository).dynamicList("", presentationClass, domainClass, true);
+        verify(mockRepository).dynamicList("", domainClass, dataClass, true);
         verifyNoMoreInteractions(mockRepository);
         verifyZeroInteractions(mockThreadExecutor);
         verifyZeroInteractions(mockPostExecutionThread);
