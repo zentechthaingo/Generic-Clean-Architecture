@@ -1,12 +1,13 @@
 package com.zeyad.cleanarchitecture.presentation.screens;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
+import butterknife.ButterKnife;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -26,6 +27,14 @@ public abstract class BaseFragment extends Fragment {
         mCompositeSubscription = Utils.getNewCompositeSubIfUnsubscribed(mCompositeSubscription);
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initialize();
+    }
+
+    public abstract void initialize();
+
     /**
      * Shows a {@link Toast} message.
      *
@@ -41,5 +50,11 @@ public abstract class BaseFragment extends Fragment {
     @SuppressWarnings("unchecked")
     protected <C> C getComponent(Class<C> componentType) {
         return componentType.cast(((HasComponent<C>) getActivity()).getComponent());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }

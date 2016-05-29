@@ -32,8 +32,6 @@ import com.zeyad.cleanarchitecture.presentation.components.adapter.GenericRecycl
 import com.zeyad.cleanarchitecture.presentation.components.adapter.ItemInfo;
 import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewHeadFootViewHolder;
 import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewLoadingViewHolder;
-import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
-import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.GenericListView;
@@ -55,12 +53,11 @@ import rx.schedulers.Schedulers;
 /**
  * Activity that shows a list of Users.
  */
-public class UserListActivity extends BaseActivity implements HasComponent<UserComponent>,
-        GenericListView<UserViewModel, UserViewHolder>, ActionMode.Callback {
+public class UserListActivity extends BaseActivity implements ActionMode.Callback,
+        GenericListView<UserViewModel, UserViewHolder> {
 
     private static final String TAG = UserListActivity.class.getSimpleName(), STATE_SCROLL = "scrollPosition";
     private boolean mTwoPane;
-    private UserComponent userComponent;
     @Inject
     UserListPresenter mUserListPresenter;
     @Bind(R.id.toolbar)
@@ -99,17 +96,9 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initializeInjector();
-        initialize();
-        setupUI();
         loadUserList();
         if (savedInstanceState != null)
             rv_users.scrollToPosition(savedInstanceState.getInt(STATE_SCROLL));
-    }
-
-    @Override
-    public UserComponent getComponent() {
-        return userComponent;
     }
 
     public static Intent getCallingIntent(Context context) {
@@ -166,14 +155,8 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
         Utils.unsubscribeIfNotNull(mUsersAdapter.getCompositeSubscription());
     }
 
-    private void initializeInjector() {
-        userComponent = DaggerUserComponent.builder()
-                .applicationComponent(getApplicationComponent())
-                .activityModule(getActivityModule())
-                .build();
-    }
-
-    private void initialize() {
+    @Override
+    public void initialize() {
         getComponent(UserComponent.class).inject(this);
         mUserListPresenter.setView(this);
         mCompositeSubscription.add(rxEventBus.toObserverable()
@@ -206,11 +189,8 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 ));
     }
 
-    protected <C> C getComponent(Class<C> componentType) {
-        return componentType.cast(((HasComponent<C>) this).getComponent());
-    }
-
-    private void setupUI() {
+    @Override
+    public void setupUI() {
         setContentView(R.layout.activity_user_list);
         ButterKnife.bind(this);
         onSearchRequested();
@@ -381,6 +361,7 @@ public class UserListActivity extends BaseActivity implements HasComponent<UserC
                 return true;
             }
 
+            // TODO: 5/28/16 use animate to!
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.isEmpty())

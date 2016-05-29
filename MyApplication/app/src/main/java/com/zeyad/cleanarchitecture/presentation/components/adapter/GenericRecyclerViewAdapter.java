@@ -143,14 +143,13 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
             mHasFooter = hasFooter;
             int position;
             if (mHasFooter) {
-                position = mDataList.size();
-                mDataList.add(position, new ItemInfo<String>(label, ItemInfo.FOOTER) {
+                mDataList.add(new ItemInfo<String>(label, ItemInfo.FOOTER) {
                     @Override
                     public long getId() {
                         return ItemInfo.FOOTER;
                     }
                 });
-                notifyItemInserted(position);
+                notifyItemInserted(mDataList.size());
             } else if (!mDataList.isEmpty()) {
                 position = mDataList.size() - 1;
                 if (mDataList.get(position).getId() == ItemInfo.FOOTER) {
@@ -164,7 +163,7 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     public void addLoading() {
         mIsLoadingFooterAdded = true;
         if (mDataList.size() > 0) {
-            mDataList.add(mDataList.size() - 1, new ItemInfo<Void>(null, ItemInfo.LOADING) {
+            mDataList.add(new ItemInfo<Void>(null, ItemInfo.LOADING) {
                 @Override
                 public long getId() {
                     return ItemInfo.LOADING;

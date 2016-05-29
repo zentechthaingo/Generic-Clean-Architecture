@@ -13,7 +13,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
+import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.ApplicationComponent;
+import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
+import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
 import com.zeyad.cleanarchitecture.presentation.navigation.Navigator;
 import com.zeyad.cleanarchitecture.utilities.Utils;
@@ -27,23 +30,27 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * Base {@link Activity} class for every Activity in this application.
  */
-public abstract class BaseActivity extends AppCompatActivity {
-    // FIXME: 3/27/16 Fix DI!
-    //    @Inject
+public abstract class BaseActivity extends AppCompatActivity implements HasComponent<UserComponent> {
+//    @Inject
     public Navigator navigator;
-    //    public static final int MSG_SERVICE_OBJ = 37;
     @Inject
-    public
-    RxEventBus rxEventBus;
+    public RxEventBus rxEventBus;
     public CompositeSubscription mCompositeSubscription;
+    private UserComponent userComponent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getApplicationComponent().inject(this);
-        navigator = new Navigator();
         mCompositeSubscription = Utils.getNewCompositeSubIfUnsubscribed(mCompositeSubscription);
+        initializeInjector();
+        initialize();
+        setupUI();
     }
+
+    public abstract void initialize();
+
+    public abstract void setupUI();
 
     /**
      * Adds a {@link Fragment} to this activity's layout.
@@ -53,9 +60,17 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected void addFragment(int containerViewId, Fragment fragment, List<Pair<View, String>> sharedElements) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        for (Pair<View, String> pair : sharedElements)
-            fragmentTransaction.addSharedElement(pair.first, pair.second);
-        fragmentTransaction.add(containerViewId, fragment).commit();
+        if (sharedElements != null)
+            for (Pair<View, String> pair : sharedElements)
+                fragmentTransaction.addSharedElement(pair.first, pair.second);
+        fragmentTransaction.addToBackStack(fragment.getTag());
+        fragmentTransaction.add(containerViewId, fragment, fragment.getTag()).commit();
+    }
+
+    protected void removeFragment(String tag) {
+        getSupportFragmentManager().beginTransaction()
+                .remove(getSupportFragmentManager().findFragmentByTag(tag))
+                .commit();
     }
 
     /**
@@ -76,12 +91,24 @@ public abstract class BaseActivity extends AppCompatActivity {
         return new ActivityModule(this);
     }
 
+    public void initializeInjector() {
+        userComponent = DaggerUserComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .activityModule(getActivityModule())
+                .build();
+    }
+
+    protected <C> C getComponent(Class<C> componentType) {
+        return componentType.cast(((HasComponent<C>) this).getComponent());
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Utils.unsubscribeIfNotNull(mCompositeSubscription);
         Glide.get(getApplicationContext()).clearMemory();
         Glide.get(getApplicationContext()).trimMemory(ComponentCallbacks2.TRIM_MEMORY_COMPLETE);
-        AndroidApplication.getRefWatcher(getApplicationContext()).watch(this);
+//        RappiApplication.getRefWatcher(getApplicationContext()).watch(this);
     }
 
     /**
@@ -93,19 +120,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
     }
 
-//    /**
-//     * Service object to interact scheduled jobs.
-//     */
-//    GenericJobService mImageDownloadJobService;
-
-    //    Handler mHandler = new Handler(/* default looper */) {
-//        @Override
-//        public void handleMessage(Message msg) {
-//            switch (msg.what) {
-//                case MSG_SERVICE_OBJ:
-//                    mImageDownloadJobService = (GenericJobService) msg.obj;
-//                    mImageDownloadJobService.setUiCallback(ProductListActivity.this);
-//            }
-//        }
-//    };
+    @Override
+    public UserComponent getComponent() {
+        return userComponent;
+    }
 }

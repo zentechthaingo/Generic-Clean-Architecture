@@ -6,7 +6,7 @@ buildscript {
     dependencies {
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'me.tatarka:gradle-retrolambda:3.2.5'
-        classpath "io.realm:realm-gradle-plugin:0.90.0"
+        classpath "io.realm:realm-gradle-plugin:1.0.0"
         classpath "com.fernandocejas.frodo:frodo-plugin:0.8.2"
     }
 }
@@ -26,7 +26,7 @@ android {
     buildToolsVersion "23.0.3"
     dexOptions {
         maxProcessCount 2
-        javaMaxHeapSize "2g"
+        javaMaxHeapSize "3g"
     }
     defaultConfig {
         applicationId "com.zeyad.cleanarchitecture"

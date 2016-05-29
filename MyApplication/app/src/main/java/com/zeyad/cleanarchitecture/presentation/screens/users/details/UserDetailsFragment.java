@@ -86,21 +86,10 @@ public class UserDetailsFragment extends BaseFragment implements GenericEditable
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_user_details, container, false);
         ButterKnife.bind(this, fragmentView);
         return fragmentView;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        initialize();
     }
 
     @Override
@@ -128,7 +117,8 @@ public class UserDetailsFragment extends BaseFragment implements GenericEditable
         userDetailsPresenter.destroy();
     }
 
-    private void initialize() {
+    @Override
+    public void initialize() {
         getComponent(UserComponent.class).inject(this);
         userDetailsPresenter.setView(this);
         userId = getArguments().getInt(ARGUMENT_KEY_USER_ID);

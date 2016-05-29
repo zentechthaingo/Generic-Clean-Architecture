@@ -25,6 +25,14 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
     }
 
+    @Override
+    public void initialize() {
+    }
+
+    @Override
+    public void setupUI() {
+    }
+
     /**
      * Goes to the user list screen.
      */

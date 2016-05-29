@@ -11,13 +11,9 @@ import android.view.MenuItem;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
-import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUserComponent;
-import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
-import com.zeyad.cleanarchitecture.presentation.internal.di.modules.UserModule;
-import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
-import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
 import com.zeyad.cleanarchitecture.presentation.components.AutoLoadImageView;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
@@ -28,7 +24,7 @@ import butterknife.ButterKnife;
 /**
  * Activity that shows details of a certain user.
  */
-public class UserDetailsActivity extends BaseActivity implements HasComponent<UserComponent> {
+public class UserDetailsActivity extends BaseActivity {
 
     private static final String INTENT_EXTRA_PARAM_USER_ID = "INTENT_PARAM_USER_ID",
             INSTANCE_STATE_PARAM_USER_ID = "STATE_PARAM_USER_ID", FAB_EDIT_TAG = "edit",
@@ -42,7 +38,6 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
     @Bind(R.id.edit_details_fab)
     FloatingActionButton editDetailsFab;
     private int userId;
-    private UserComponent userComponent;
 
     public static Intent getCallingIntent(Context context, int userId) {
         return new Intent(context, UserDetailsActivity.class).putExtra(INTENT_EXTRA_PARAM_USER_ID, userId);
@@ -51,44 +46,27 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initializeActivity(savedInstanceState);
-        initializeInjector();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        if (outState != null)
-            outState.putInt(INSTANCE_STATE_PARAM_USER_ID, userId);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            supportFinishAfterTransition(); // exit animation
-            navigateUpTo(new Intent(this, UserListActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Initializes this activity.
-     */
-    private void initializeActivity(Bundle savedInstanceState) {
-        setContentView(R.layout.activity_user_details);
-        if (savedInstanceState == null)
+        if (savedInstanceState == null) {
             userId = getIntent().getIntExtra(INTENT_EXTRA_PARAM_USER_ID, -1);
-        else
+            addFragment(R.id.user_detail_container, UserDetailsFragment.newInstance(userId), new ArrayList<>());
+        } else
             userId = savedInstanceState.getInt(INSTANCE_STATE_PARAM_USER_ID);
+
+    }
+
+    @Override
+    public void initialize() {
+    }
+
+    @Override
+    public void setupUI() {
+        setContentView(R.layout.activity_user_details);
         ButterKnife.bind(this);
         // Show the Up button in the action bar.
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-        if (savedInstanceState == null)
-            addFragment(R.id.user_detail_container, UserDetailsFragment.newInstance(userId), new ArrayList<>());
         editDetailsFab.setTag(FAB_EDIT_TAG);
         mCompositeSubscription.add(RxView.clicks(editDetailsFab)
                 .subscribe(aVoid -> {
@@ -110,12 +88,21 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
                 }));
     }
 
-    private void initializeInjector() {
-        userComponent = DaggerUserComponent.builder()
-                .applicationComponent(getApplicationComponent())
-                .activityModule(getActivityModule())
-                .userModule(new UserModule(userId))
-                .build();
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (outState != null)
+            outState.putInt(INSTANCE_STATE_PARAM_USER_ID, userId);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            supportFinishAfterTransition(); // exit animation
+            navigateUpTo(new Intent(this, UserListActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -128,11 +115,6 @@ public class UserDetailsActivity extends BaseActivity implements HasComponent<Us
         super.onDestroy();
         ButterKnife.unbind(this);
         Utils.unsubscribeIfNotNull(mCompositeSubscription);
-    }
-
-    @Override
-    public UserComponent getComponent() {
-        return userComponent;
     }
 
     public FloatingActionButton getEditDetailsFab() {
