@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -16,8 +15,8 @@ import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
+import com.zeyad.cleanarchitecture.data.repository.datastore.CloudDataStore;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
-import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.presentation.services.GenericGCMService;
 import com.zeyad.cleanarchitecture.presentation.services.GenericJobService;
 import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
@@ -26,11 +25,8 @@ import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
 
-import io.realm.RealmObject;
 import rx.Observable;
-import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 // TODO: 5/9/16 switch to DI!
 /**
  * @author Zeyad on 6/05/16.
@@ -49,16 +45,16 @@ public class Post {
         this.rxEventBus = rxEventBus;
         mContext = context;
         ArrayList extras = intent.getParcelableExtra(Constants.EXTRA);
-        postToCloud(extras.get(0));
         dataClass = (Class) extras.get(1);
         realmManager = new GeneralRealmManagerImpl(mContext);
         entityDataMapper = new UserEntityDataMapper();
+        postToCloud(extras.get(0));
     }
 
     public Observable<?> postToCloud(Object object) {
         if (Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
                 || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
-            queuePost.call(object);
+           CloudDataStore.queuePost.call(object);
             return Observable.error(new Exception());
         } else {
 //            return new RestApiImpl().postItem(object)
@@ -70,25 +66,6 @@ public class Post {
             return Observable.just(true);
         }
     }
-
-    private final Action1<Object> saveGenericToCacheAction =
-            object -> realmManager.put((RealmObject) entityDataMapper.transformToRealm(object, dataClass))
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(new DefaultSubscriber<Object>() {
-                        @Override
-                        public void onCompleted() {
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onNext(Object o) {
-                            Log.d(TAG, object.getClass().getName() + " added!");
-                        }
-                    });
 
     private Func1<Object, Boolean> queuePost = object -> {
         Bundle extras = new Bundle();

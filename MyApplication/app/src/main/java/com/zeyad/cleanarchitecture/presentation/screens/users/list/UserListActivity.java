@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.jakewharton.rxbinding.view.RxView;
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
@@ -157,6 +158,7 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
 
     @Override
     public void initialize() {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         getComponent(UserComponent.class).inject(this);
         mUserListPresenter.setView(this);
         mCompositeSubscription.add(rxEventBus.toObserverable()
@@ -368,6 +370,9 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
                     mUserListPresenter.showItemsListInView(mUserListPresenter.getItemsViewModels());
                 else
                     mUserListPresenter.search(newText);
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, newText);
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
                 return true;
             }
         });

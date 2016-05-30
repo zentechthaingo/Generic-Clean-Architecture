@@ -17,7 +17,7 @@ public class UserListActivityTest extends ActivityInstrumentationTestCase2<UserL
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        this.setActivityIntent(createTargetIntent());
+        setActivityIntent(createTargetIntent());
         userListActivity = getActivity();
     }
 

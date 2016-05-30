@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "519244820865",
+    "firebase_url": "https://generic-clean-architecture.firebaseio.com",
+    "project_id": "generic-clean-architecture",
+    "storage_bucket": "generic-clean-architecture.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519244820865:android:d713c203add0436a",
+        "android_client_info": {
+          "package_name": "com.zeyad.cleanarchitecture"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519244820865-jcu4irg9n0sb5ihscua1d04kmm0lsu04.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNyWmXWuU6VNfUoOGdTApwLkEtqvNYYsE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

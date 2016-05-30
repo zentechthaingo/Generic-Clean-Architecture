@@ -3,9 +3,11 @@ package com.zeyad.cleanarchitecture.presentation.components;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -24,7 +26,6 @@ public class AutoLoadImageView extends ImageView {
 
     private static final String TAG = AutoLoadImageView.class.getName(), CLOUD = "Cloud", DISK = "Disk";
     private String imageUrl;
-    private File img;
     private int imagePlaceHolderResourceId = -1, imageOnErrorResourceId = -1, imageFallBackResourceId = -1;
 
     public AutoLoadImageView(Context context) {
@@ -89,12 +90,12 @@ public class AutoLoadImageView extends ImageView {
      * @param imageUrl The remote image url to load.
      */
     private void loadImageFromUrl(final String imageUrl) {
-        img = Utils.buildFileFromFilename(Utils.getFileNameFromUrl(imageUrl));
+        File img = Utils.buildFileFromFilename(Utils.getFileNameFromUrl(imageUrl));
         if (img.exists())
-            loadBitmap(DISK);
+            loadBitmap(img, DISK);
         else {
-            loadBitmap(CLOUD);
-            getContext().startService(new Intent(getContext(), GenericNetworkQueueIntentService.class)
+            loadBitmap(img, CLOUD);
+            getContext().startService(new Intent(getContext().getApplicationContext(), GenericNetworkQueueIntentService.class)
                     .putExtra(GenericNetworkQueueIntentService.JOB_TYPE, GenericNetworkQueueIntentService.DOWNLOAD_IMAGE)
                     .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_PATH, imageUrl)
                     .putExtra(GenericNetworkQueueIntentService.EXTRA_REMOTE_NAME, Utils.getFileNameFromUrl(imageUrl))
@@ -108,7 +109,7 @@ public class AutoLoadImageView extends ImageView {
      *
      * @param channel The channel of retrieving the bitmap, Cloud or local.
      */
-    private void loadBitmap(String channel) {
+    private void loadBitmap(File img, String channel) {
         if (channel.equalsIgnoreCase(CLOUD))
             Glide.with(getContext().getApplicationContext())
                     .load(imageUrl)
@@ -158,5 +159,16 @@ public class AutoLoadImageView extends ImageView {
 //        drawable.setBounds(0, 0, getWidth(), getHeight());
 //        drawable.draw(canvas);
 //        return bitmap;
+    }
+
+    public Bitmap loadBitmapFromView(View v) {
+        Bitmap b = Bitmap.createBitmap(v.getWidth(), v.getHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.draw(c);
+        v.invalidate();
+        return b;
+//        buildDrawingCache();
+//        return getDrawingCache();
     }
 }

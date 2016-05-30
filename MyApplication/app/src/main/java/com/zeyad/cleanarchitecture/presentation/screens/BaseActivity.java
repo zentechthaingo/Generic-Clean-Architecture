@@ -6,11 +6,16 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
@@ -31,12 +36,13 @@ import rx.subscriptions.CompositeSubscription;
  * Base {@link Activity} class for every Activity in this application.
  */
 public abstract class BaseActivity extends AppCompatActivity implements HasComponent<UserComponent> {
-//    @Inject
+    //    @Inject
     public Navigator navigator;
     @Inject
     public RxEventBus rxEventBus;
     public CompositeSubscription mCompositeSubscription;
     private UserComponent userComponent;
+    public FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,16 @@ public abstract class BaseActivity extends AppCompatActivity implements HasCompo
         initializeInjector();
         initialize();
         setupUI();
+        FirebaseCrash.log("Activity created");
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                String value = getIntent().getExtras().getString(key);
+                Log.d("TAG", "Key: " + key + " Value: " + value);
+            }
+        }
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        Log.d("TAG", "Subscribed to news topic");
+        Log.d("TAG", "InstanceID token: " + FirebaseInstanceId.getInstance().getToken());
     }
 
     public abstract void initialize();

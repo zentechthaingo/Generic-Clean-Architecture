@@ -3,6 +3,7 @@ package com.zeyad.cleanarchitecture.presentation.screens;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
 import com.zeyad.cleanarchitecture.domain.exceptions.DefaultErrorBundle;
 import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
@@ -62,6 +63,8 @@ public abstract class GenericListExtendedPresenter<M, H extends RecyclerView.Vie
             showErrorMessage(new DefaultErrorBundle((Exception) e));
             showViewRetry();
             e.printStackTrace();
+            FirebaseCrash.logcat(Log.ERROR, "TAG", "E caught");
+            FirebaseCrash.report(e);
         }
 
         @Override

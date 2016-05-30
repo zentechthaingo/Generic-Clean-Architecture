@@ -54,7 +54,8 @@ public class GenericListPresenterTest {
 
         verify(mockUserListView).hideRetry();
         verify(mockUserListView).showLoading();
-        verify(mockGetUserList).executeList(new DefaultSubscriber<>(), "", presentationClass, domainClass, dataClass, true);
+        verify(mockGetUserList).executeList(new DefaultSubscriber<>(), "", presentationClass,
+                domainClass, dataClass, true);
     }
 
     @After
