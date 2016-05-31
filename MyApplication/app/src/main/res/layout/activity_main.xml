@@ -51,5 +51,11 @@
             android:layout_height="wrap_content"
             android:text="@string/btn_text_load_data" />
 
+        <Button
+            android:id="@+id/btn_Firebaze"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/firebaze" />
+
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

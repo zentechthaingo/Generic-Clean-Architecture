@@ -49,7 +49,7 @@
         </activity>
 
         <service
-            android:name="com.zeyad.cleanarchitecture.presentation.services.GenericGCMService"
+            android:name=".presentation.services.GenericGCMService"
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
@@ -60,7 +60,7 @@
             android:name=".presentation.services.GenericNetworkQueueIntentService"
             android:enabled="true" />
         <service
-            android:name="com.zeyad.cleanarchitecture.presentation.services.GenericJobService"
+            android:name=".presentation.services.GenericJobService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
@@ -69,17 +69,27 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <service
-            android:name=".MyFirebaseMessagingService">
+
+        <service android:name=".presentation.services.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name=".MyFirebaseInstanceIDService">
+        <service android:name=".presentation.services.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".presentation.screens.firebaze.FirebazeActivity"
+            android:label="@string/title_activity_firebaze"
+            android:parentActivityName=".presentation.screens.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.zeyad.cleanarchitecture.presentation.screens.main.MainActivity" />
+        </activity>
     </application>
+
 </manifest>

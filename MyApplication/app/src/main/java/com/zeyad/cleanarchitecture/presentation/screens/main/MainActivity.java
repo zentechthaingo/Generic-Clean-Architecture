@@ -5,6 +5,7 @@ import android.widget.Button;
 
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.firebaze.FirebazeActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,5 +40,13 @@ public class MainActivity extends BaseActivity {
     @OnClick(R.id.btn_LoadData)
     void navigateToUserList() {
         navigator.navigateToUserList(getApplicationContext());
+    }
+
+    /**
+     * Goes to the user list screen.
+     */
+    @OnClick(R.id.btn_Firebaze)
+    void navigateToFirebaze() {
+        navigator.navigateTo(getApplicationContext(), FirebazeActivity.getCallingIntent(getApplicationContext()));
     }
 }
