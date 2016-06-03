@@ -59,20 +59,18 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     @Override
     public abstract ViewHolder onCreateViewHolder(ViewGroup parent, int viewType);
 
-    // TODO: 24/05/16 change position to holder.getAdapterPosition();
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ItemInfo itemInfo = mDataList.get(position);
-        holder.getAdapterPosition();
         holder.bindData(itemInfo.getData(), mSelectedItems, position);
         if (areItemsClickable && !(hasHeader() && position == 0 || hasFooter() && position == mDataList.size() - 1)) {
             mCompositeSubscription.add(RxView.clicks(holder.itemView).subscribe(aVoid -> {
                 if (mOnItemClickListener != null)
-                    mOnItemClickListener.onItemClicked(position, itemInfo, holder);
+                    mOnItemClickListener.onItemClicked(holder.getAdapterPosition(), itemInfo, holder);
             }));
             mCompositeSubscription.add(RxView.longClicks(holder.itemView).subscribe(aVoid -> {
                 if (mOnItemClickListener != null)
-                    mOnItemClickListener.onItemLongClicked(position);
+                    mOnItemClickListener.onItemLongClicked(holder.getAdapterPosition());
             }));
         }
     }

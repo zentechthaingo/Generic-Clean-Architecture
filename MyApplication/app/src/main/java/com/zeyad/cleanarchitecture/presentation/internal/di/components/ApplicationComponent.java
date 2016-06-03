@@ -7,9 +7,10 @@ import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.repository.Repository;
+import com.zeyad.cleanarchitecture.presentation.broadcastreceivers.NetworkChangeReceiver;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule;
-import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
 
 import javax.inject.Singleton;
 
@@ -22,6 +23,8 @@ import dagger.Component;
 @Component(modules = ApplicationModule.class)
 public interface ApplicationComponent {
     void inject(BaseActivity baseActivity);
+
+    void inject(NetworkChangeReceiver networkChangeReceiver);
 
     void inject(GenericNetworkQueueIntentService genericNetworkQueueIntentService);
 
