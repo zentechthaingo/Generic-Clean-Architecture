@@ -20,7 +20,7 @@ import java.util.HashMap;
 import javax.inject.Inject;
 
 @PerActivity
-public class UserDetailPresenter implements BasePresenter {
+public class UserDetailPresenter extends BasePresenter {
 
     /**
      * id used to retrieve user details
@@ -28,11 +28,10 @@ public class UserDetailPresenter implements BasePresenter {
     private int mUserId;
     private UserViewModel mUserViewModel;
     private GenericEditableItemView<UserViewModel> mViewDetailsView;
-    private final GenericUseCase mGetUserDetailsBaseUseCase;
 
     @Inject
     public UserDetailPresenter(GenericUseCase genericUseCase) {
-        mGetUserDetailsBaseUseCase = genericUseCase;
+        super(genericUseCase);
     }
 
     public void setView(@NonNull GenericEditableItemView<UserViewModel> view) {
@@ -45,11 +44,6 @@ public class UserDetailPresenter implements BasePresenter {
 
     @Override
     public void pause() {
-    }
-
-    @Override
-    public void destroy() {
-        mGetUserDetailsBaseUseCase.unsubscribe();
     }
 
     /**
@@ -102,7 +96,7 @@ public class UserDetailPresenter implements BasePresenter {
     }
 
     private void getUserDetails() {
-        mGetUserDetailsBaseUseCase.executeGetObject(new UserDetailsSubscriber(),
+        mGenericUseCase.executeGetObject(new UserDetailsSubscriber(),
                 Constants.API_BASE_URL + "user_" + mUserId + ".json", UserRealmModel.ID_COLUMN,
                 mUserId, UserViewModel.class, User.class, UserRealmModel.class, true);
     }
@@ -121,7 +115,7 @@ public class UserDetailPresenter implements BasePresenter {
         keyValuePairs.put("email", tempUser.getEmail());
         keyValuePairs.put("description", tempUser.getDescription());
         keyValuePairs.put("followers", tempUser.getFollowers());
-        mGetUserDetailsBaseUseCase.executeDynamicPutObject(new PutSubscriber(), "", keyValuePairs,
+        mGenericUseCase.executeDynamicPutObject(new PutSubscriber(), "", keyValuePairs,
                 UserViewModel.class, User.class, UserRealmModel.class, true);
     }
 

@@ -11,7 +11,7 @@ import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 /**
  * @author by zeyad on 17/05/16.
  */
-public abstract class GenericDetailPresenter<M> implements BasePresenter {
+public abstract class GenericDetailPresenter<M> extends BasePresenter {
 
     /**
      * id used to retrieve user details
@@ -19,10 +19,9 @@ public abstract class GenericDetailPresenter<M> implements BasePresenter {
     public int mItemId;
     public M mItemViewModel;
     public GenericDetailView<M> mViewDetailsView;
-    public final GenericUseCase mGetDetailsUseCase;
 
     public GenericDetailPresenter(GenericUseCase genericUseCase) {
-        mGetDetailsUseCase = genericUseCase;
+        super(genericUseCase);
     }
 
     public void setView(@NonNull GenericDetailView<M> view) {
@@ -35,11 +34,6 @@ public abstract class GenericDetailPresenter<M> implements BasePresenter {
 
     @Override
     public void pause() {
-    }
-
-    @Override
-    public void destroy() {
-        mGetDetailsUseCase.unsubscribe();
     }
 
     /**

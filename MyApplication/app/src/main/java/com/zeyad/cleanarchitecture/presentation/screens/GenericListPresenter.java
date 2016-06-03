@@ -14,13 +14,12 @@ import java.util.List;
 /**
  * @author by zeyad on 17/05/16.
  */
-public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder> implements BasePresenter {
+public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder> extends BasePresenter {
 
     private GenericListView<M, H> mGenericListView;
-    public GenericUseCase mGetGenericListUseCase;
 
     public GenericListPresenter(GenericUseCase genericUseCase) {
-        mGetGenericListUseCase = genericUseCase;
+        super(genericUseCase);
     }
 
     public void setView(@NonNull GenericListView<M, H> view) {
@@ -33,11 +32,6 @@ public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder>
 
     @Override
     public void pause() {
-    }
-
-    @Override
-    public void destroy() {
-        mGetGenericListUseCase.unsubscribe();
     }
 
     /**
