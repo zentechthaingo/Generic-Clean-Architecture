@@ -59,9 +59,11 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     @Override
     public abstract ViewHolder onCreateViewHolder(ViewGroup parent, int viewType);
 
+    // TODO: 24/05/16 change position to holder.getAdapterPosition();
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ItemInfo itemInfo = mDataList.get(position);
+        holder.getAdapterPosition();
         holder.bindData(itemInfo.getData(), mSelectedItems, position);
         if (areItemsClickable && !(hasHeader() && position == 0 || hasFooter() && position == mDataList.size() - 1)) {
             mCompositeSubscription.add(RxView.clicks(holder.itemView).subscribe(aVoid -> {
@@ -113,7 +115,6 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         mOnItemClickListener = onItemClickListener;
     }
 
-
     public boolean hasHeader() {
         return mHasHeader;
     }
@@ -143,13 +144,14 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
             mHasFooter = hasFooter;
             int position;
             if (mHasFooter) {
-                mDataList.add(new ItemInfo<String>(label, ItemInfo.FOOTER) {
+                position = mDataList.size();
+                mDataList.add(position, new ItemInfo<String>(label, ItemInfo.FOOTER) {
                     @Override
                     public long getId() {
                         return ItemInfo.FOOTER;
                     }
                 });
-                notifyItemInserted(mDataList.size());
+                notifyItemInserted(position);
             } else if (!mDataList.isEmpty()) {
                 position = mDataList.size() - 1;
                 if (mDataList.get(position).getId() == ItemInfo.FOOTER) {
@@ -163,7 +165,7 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     public void addLoading() {
         mIsLoadingFooterAdded = true;
         if (mDataList.size() > 0) {
-            mDataList.add(new ItemInfo<Void>(null, ItemInfo.LOADING) {
+            mDataList.add(mDataList.size() - 1, new ItemInfo<Void>(null, ItemInfo.LOADING) {
                 @Override
                 public long getId() {
                     return ItemInfo.LOADING;
@@ -188,6 +190,14 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         }
     }
 
+    public boolean isAllowSelection() {
+        return allowSelection;
+    }
+
+    public void setAllowSelection(boolean allowSelection) {
+        this.allowSelection = allowSelection;
+    }
+
     public boolean areItemsClickable() {
         return areItemsClickable;
     }
@@ -196,12 +206,21 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         this.areItemsClickable = areItemsClickable;
     }
 
-    public boolean isAllowSelection() {
-        return allowSelection;
-    }
-
-    public void setAllowSelection(boolean allowSelection) {
-        this.allowSelection = allowSelection;
+    /**
+     * Clears data from the mDataList without removing the header, footer and loading views!
+     */
+    public void clearItemList() {
+        int startIndex = 0, endIndex = 0;
+        if (hasHeader())
+            startIndex = 1;
+        if (hasFooter())
+            endIndex++;
+        if (mIsLoadingFooterAdded)
+            endIndex++;
+        for (int i = startIndex; i < mDataList.size() - endIndex; i++) {
+            mDataList.remove(i);
+            notifyItemRemoved(i);
+        }
     }
 
     public void setItemList(List<ItemInfo> dataSet) {
