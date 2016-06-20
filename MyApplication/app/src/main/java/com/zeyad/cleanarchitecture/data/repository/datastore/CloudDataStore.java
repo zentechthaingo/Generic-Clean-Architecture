@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.facebook.network.connectionclass.ConnectionClassManager;
+import com.facebook.network.connectionclass.ConnectionQuality;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
@@ -182,12 +184,17 @@ public class CloudDataStore implements DataStore {
     public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
         this.dataClass = dataClass;
         return mRestApi.dynamicGetList(url)
-//                .retryWhen(attempts -> attempts.zipWith(Observable.range(Constants.COUNTER_START,
-//                        Constants.ATTEMPTS), (n, i) -> i)
-//                        .flatMap(i -> {
-//                            Log.d(TAG, "delay retry by " + i + " second(s)");
-//                            return Observable.timer(i, TimeUnit.SECONDS);
-//                        }))
+                .retryWhen(attempts -> {
+                    ConnectionQuality cq = ConnectionClassManager.getInstance().getCurrentBandwidthQuality();
+                    if (cq.compareTo(ConnectionQuality.MODERATE) >= 0)
+                        return attempts.zipWith(Observable.range(Constants.COUNTER_START,
+                                Constants.ATTEMPTS), (n, i) -> i)
+                                .flatMap(i -> {
+                                    Log.d(TAG, "delay retry by " + i + " second(s)");
+                                    return Observable.timer(i, TimeUnit.SECONDS);
+                                });
+                    else return null;
+                })
 //                .toBlocking()
                 .doOnNext(list -> {
                     if (persist)

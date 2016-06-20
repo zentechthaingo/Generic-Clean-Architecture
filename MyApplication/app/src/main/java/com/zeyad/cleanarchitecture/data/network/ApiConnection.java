@@ -7,7 +7,9 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.GsonBuilder;
 import com.zeyad.cleanarchitecture.BuildConfig;
 import com.zeyad.cleanarchitecture.data.executor.JobExecutor;
+import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecture.utilities.Constants;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.io.File;
 import java.util.Collection;
@@ -17,16 +19,22 @@ import java.util.concurrent.TimeUnit;
 
 import io.realm.RealmObject;
 import okhttp3.Cache;
+import okhttp3.CacheControl;
+import okhttp3.Interceptor;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+
+import static okhttp3.logging.HttpLoggingInterceptor.Level.HEADERS;
+import static okhttp3.logging.HttpLoggingInterceptor.Level.NONE;
 
 /**
  * Api Connection class used to retrieve data from the cloud.
@@ -175,5 +183,71 @@ public class ApiConnection {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).download(index);
+    }
+
+    // offline caching okhttp client
+    private static final String CACHE_CONTROL = "Cache-Control";
+
+
+    private static OkHttpClient provideOkHttpClient() {
+        return new OkHttpClient.Builder()
+                .addInterceptor(provideHttpLoggingInterceptor())
+                .addInterceptor(provideOfflineCacheInterceptor())
+                .addNetworkInterceptor(provideCacheInterceptor())
+                .cache(provideCache())
+                .build();
+    }
+
+    private static Cache provideCache() {
+        Cache cache = null;
+        try {
+            cache = new Cache(new File(AndroidApplication.getInstance().getCacheDir(), "http-cache"),
+                    10 * 1024 * 1024); // 10 MB
+        } catch (Exception e) {
+//            Timber.e( e, "Could not create Cache!" );
+        }
+        return cache;
+    }
+
+    private static HttpLoggingInterceptor provideHttpLoggingInterceptor() {
+        HttpLoggingInterceptor httpLoggingInterceptor =
+                new HttpLoggingInterceptor(message -> {
+//                        Timber.d( message );
+                });
+        httpLoggingInterceptor.setLevel(BuildConfig.DEBUG ? HEADERS : NONE);
+        return httpLoggingInterceptor;
+    }
+
+    public static Interceptor provideCacheInterceptor() {
+        return chain -> {
+            Response response = chain.proceed(chain.request());
+
+            // re-write response header to force use of cache
+            CacheControl cacheControl = new CacheControl.Builder()
+                    .maxAge(2, TimeUnit.MINUTES)
+                    .build();
+
+            return response.newBuilder()
+                    .header(CACHE_CONTROL, cacheControl.toString())
+                    .build();
+        };
+    }
+
+    public static Interceptor provideOfflineCacheInterceptor() {
+        return chain -> {
+            Request request = chain.request();
+
+            if (!Utils.isNetworkAvailable(AndroidApplication.getInstance().getApplicationContext())) {
+                CacheControl cacheControl = new CacheControl.Builder()
+                        .maxStale(7, TimeUnit.DAYS)
+                        .build();
+
+                request = request.newBuilder()
+                        .cacheControl(cacheControl)
+                        .build();
+            }
+
+            return chain.proceed(request);
+        };
     }
 }

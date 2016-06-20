@@ -142,7 +142,7 @@ public class Utils {
             case "com.zeyad.cleanarchitecture.domain.models.User":
                 return new UserEntityDataMapper();
             default:
-                return null;
+                return new UserEntityDataMapper();
         }
     }
 
