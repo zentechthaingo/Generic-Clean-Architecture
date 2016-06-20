@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bumptech.glide.Glide;
 import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.presentation.services.GenericNetworkQueueIntentService;
@@ -21,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import okhttp3.ResponseBody;
 import rx.Subscriber;
@@ -34,12 +32,10 @@ public class DownloadImage {
     public static final String TAG = DownloadImage.class.getSimpleName();
     private final Set<String> downloadedKeys = new HashSet<>();
     private File dir;
-    private Context mContext;
     RxEventBus rxEventBus;
 
     public DownloadImage(Intent intent, RxEventBus rxEventBus, Context context) {
         this.rxEventBus = rxEventBus;
-        mContext = context;
         if (TextUtils.isEmpty(Constants.CACHE_DIR))
             Constants.CACHE_DIR = new File(String.valueOf(context.getCacheDir())).getAbsolutePath();
         dir = new File(Constants.CACHE_DIR);
@@ -71,8 +67,9 @@ public class DownloadImage {
         else {
             Log.d(TAG, "Downloading " + url + " into " + targetPath);
             try {
-                download(target, Integer.parseInt(url.charAt(url.lastIndexOf("_") + 1) + ""), width,
-                        height);
+//                download(target, Integer.parseInt(url.charAt(url.lastIndexOf("_") + 1) + ""), width,
+//                        height);
+                retroDownload(target, Integer.parseInt(url.charAt(url.lastIndexOf("_") + 1) + ""));
                 downloadedKeys.add(url);
             } catch (Exception e) {
                 target = new File(targetPath);
@@ -85,9 +82,10 @@ public class DownloadImage {
 
     private void addAllCachedFiles() {
         File[] files = dir.listFiles();
+        String key;
         if (files != null)
             for (File file : files) {
-                String key = file.getAbsolutePath().replace(Constants.CACHE_DIR, "");
+                key = file.getAbsolutePath().replace(Constants.CACHE_DIR, "");
                 if (!downloadedKeys.contains(key)) {
                     Log.d(TAG, "Preloaded cached file: " + key);
                     downloadedKeys.add(key);
@@ -95,38 +93,11 @@ public class DownloadImage {
             }
     }
 
-    private void download(final File target, int index, int width, int height) {
-        // TODO: 5/4/16 Test!
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(target);
-            Glide.with(mContext)
-                    .load(Constants.API_BASE_URL + "cover_" + index + ".jpg")
-                    .asBitmap()
-                    .into(width, height)
-                    .get()
-                    .compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            rxEventBus.send("file Downloaded!");
-        } catch (InterruptedException | ExecutionException | IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null)
-                    out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Deprecated
-    private void retroDownload(final File target, int index, int width, int height) {
+    private void retroDownload(final File target, int index) {
         RestApiImpl restApi = new RestApiImpl();
         restApi.download(index).subscribe(new Subscriber<ResponseBody>() {
             @Override
             public void onCompleted() {
-
             }
 
             @Override

@@ -26,15 +26,15 @@ public class UserListPresenter extends GenericListExtendedPresenter<UserViewMode
 
     @Override
     public void getItemList() {
-        mGetGenericListUseCase.executeList(new ItemListSubscriber(), Constants.API_BASE_URL + "users.json",
+        mGenericUseCase.executeList(new ItemListSubscriber(), Constants.API_BASE_URL + "users.json",
                 UserViewModel.class, User.class, UserRealmModel.class, true);
     }
 
     @Override
     public void search(String query) {
-        mGetGenericListUseCase.executeSearch(new SearchSubscriber(), query, UserRealmModel.FULL_NAME_COLUMN,
+        mGenericUseCase.executeSearch(new SearchSubscriber(), query, UserRealmModel.FULL_NAME_COLUMN,
                 UserViewModel.class, User.class, UserRealmModel.class);
-        mGetGenericListUseCase.executeSearch(new SearchSubscriber(), Realm.getDefaultInstance()
+        mGenericUseCase.executeSearch(new SearchSubscriber(), Realm.getDefaultInstance()
                         .where(UserRealmModel.class).contains(UserRealmModel.FULL_NAME_COLUMN, query),
                 UserViewModel.class, User.class);
     }
@@ -43,7 +43,7 @@ public class UserListPresenter extends GenericListExtendedPresenter<UserViewMode
     public void deleteCollection(List<Long> ids) {
         HashMap<String, Object> keyValuePairs = new HashMap<>(1);
         keyValuePairs.put(DataStore.IDS, ids);
-        mGetGenericListUseCase.executeDeleteCollection(new DeleteSubscriber(), "", keyValuePairs,
+        mGenericUseCase.executeDeleteCollection(new DeleteSubscriber(), "", keyValuePairs,
                 User.class, UserRealmModel.class, true);
     }
 }

@@ -5,7 +5,6 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
