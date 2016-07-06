@@ -1,19 +1,29 @@
 package com.zeyad.cleanarchitecture.presentation.components.adapter;
 
+import java.io.Serializable;
+
 /**
  * @author by zeyad on 20/05/16.
  */
-public abstract class ItemInfo<M> {
-    public static final int HEADER = 1, FOOTER = 2, LOADING = 3;
+public class ItemInfo<M> implements Serializable {
+    public static final int HEADER = 1, FOOTER = 2, LOADING = 3, SECTION_HEADER = 4, SECTION_ITEM = 5;
     private M data;
     private int layoutId;
+    private long id;
 
     public ItemInfo(M data, int layoutId) {
         this.data = data;
         this.layoutId = layoutId;
     }
 
-    public abstract long getId();
+    public long getId() {
+        return id;
+    }
+
+    public ItemInfo<M> setId(long id) {
+        this.id = id;
+        return this;
+    }
 
     public M getData() {
         return data;
@@ -21,5 +31,9 @@ public abstract class ItemInfo<M> {
 
     public int getLayoutId() {
         return layoutId;
+    }
+
+    public void setData(M data) {
+        this.data = data;
     }
 }

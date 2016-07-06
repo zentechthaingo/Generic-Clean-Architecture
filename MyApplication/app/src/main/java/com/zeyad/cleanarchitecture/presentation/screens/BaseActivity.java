@@ -2,16 +2,22 @@ package com.zeyad.cleanarchitecture.presentation.screens;
 
 import android.app.Activity;
 import android.content.ComponentCallbacks2;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crash.FirebaseCrash;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
@@ -20,12 +26,15 @@ import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerUse
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
 import com.zeyad.cleanarchitecture.presentation.navigation.Navigator;
+import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import rx.Observable;
+import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 /**
@@ -45,14 +54,29 @@ public abstract class BaseActivity extends AppCompatActivity implements HasCompo
         super.onCreate(savedInstanceState);
         getApplicationComponent().inject(this);
         mCompositeSubscription = Utils.getNewCompositeSubIfUnsubscribed(mCompositeSubscription);
-        navigator = new Navigator();
         initializeInjector();
         initialize();
         setupUI();
+        FirebaseCrash.log("Activity created");
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                String value = getIntent().getExtras().getString(key);
+                Log.d("TAG", "Key: " + key + " Value: " + value);
+            }
+        }
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        Log.d("TAG", "Subscribed to news topic");
+        Log.d("TAG", "InstanceID token: " + FirebaseInstanceId.getInstance().getToken());
     }
 
+    /**
+     * Initialize any objects or any required dependencies.
+     */
     public abstract void initialize();
 
+    /**
+     * Setup the UI.
+     */
     public abstract void setupUI();
 
     /**
@@ -107,10 +131,35 @@ public abstract class BaseActivity extends AppCompatActivity implements HasCompo
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Utils.unsubscribeIfNotNull(mCompositeSubscription);
         Glide.get(getApplicationContext()).clearMemory();
         Glide.get(getApplicationContext()).trimMemory(ComponentCallbacks2.TRIM_MEMORY_COMPLETE);
+//        RappiApplication.getRefWatcher(getApplicationContext()).watch(this);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        Observable.defer(() -> Observable.just(saveIsInForeGroundToPrefs(false)))
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Observable.defer(() -> Observable.just(saveIsInForeGroundToPrefs(true)))
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+    }
+
+    private boolean saveIsInForeGroundToPrefs(boolean isInForeground) {
+        SharedPreferences.Editor editor = getSharedPreferences(Constants.SETTINGS_FILE_NAME,
+                Context.MODE_PRIVATE).edit();
+        editor.putBoolean(Constants.IS_IN_FOREGROUND, isInForeground);
+        editor.apply();
+        return true;
     }
 
     /**

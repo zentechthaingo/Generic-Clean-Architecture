@@ -6,6 +6,8 @@ import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.data.network.RestApi;
+import com.zeyad.cleanarchitecture.data.repository.generalstore.CloudDataStore;
+import com.zeyad.cleanarchitecture.data.repository.generalstore.DataStore;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 

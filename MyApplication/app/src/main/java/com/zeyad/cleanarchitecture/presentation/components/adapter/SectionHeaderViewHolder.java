@@ -11,19 +11,20 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * @author by zeyad on 17/05/16.
+ * @author by zeyad on 13/06/16.
  */
-public class RecyclerViewHeadFootViewHolder extends GenericRecyclerViewAdapter.ViewHolder {
-    @Bind(R.id.tvHeader)
-    TextView tvHeader;
+public class SectionHeaderViewHolder extends GenericRecyclerViewAdapter.ViewHolder {
+    @Bind(R.id.tvSectionHeader)
+    TextView tvSectionHeader;
 
-    public RecyclerViewHeadFootViewHolder(LayoutInflater layoutInflater, ViewGroup parent) {
-        super(layoutInflater.inflate(R.layout.list_head_foot_layout, parent, false));
+    public SectionHeaderViewHolder(LayoutInflater layoutInflater, ViewGroup parent) {
+        super(layoutInflater.inflate(R.layout.list_section_header_layout, parent, false));
         ButterKnife.bind(this, itemView);
     }
 
     @Override
     public void bindData(Object data, SparseBooleanArray selectedItems, int position) {
-        tvHeader.setText((String) data);
+        if (data instanceof String)
+            tvSectionHeader.setText((String) data);
     }
 }

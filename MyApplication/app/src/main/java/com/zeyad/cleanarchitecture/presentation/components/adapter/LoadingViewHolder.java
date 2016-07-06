@@ -10,9 +10,9 @@ import butterknife.ButterKnife;
 /**
  * @author by zeyad on 20/05/16.
  */
-public class RecyclerViewLoadingViewHolder extends GenericRecyclerViewAdapter.ViewHolder {
+public class LoadingViewHolder extends GenericRecyclerViewAdapter.ViewHolder {
 
-    public RecyclerViewLoadingViewHolder(LayoutInflater layoutInflater, ViewGroup parent) {
+    public LoadingViewHolder(LayoutInflater layoutInflater, ViewGroup parent) {
         super(layoutInflater.inflate(R.layout.list_loading_layout, parent, false));
         ButterKnife.bind(this, itemView);
     }

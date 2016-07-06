@@ -30,9 +30,9 @@ import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.presentation.annimations.DetailsTransition;
 import com.zeyad.cleanarchitecture.presentation.components.adapter.GenericRecyclerViewAdapter;
+import com.zeyad.cleanarchitecture.presentation.components.adapter.HeadFootViewHolder;
 import com.zeyad.cleanarchitecture.presentation.components.adapter.ItemInfo;
-import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewHeadFootViewHolder;
-import com.zeyad.cleanarchitecture.presentation.components.adapter.RecyclerViewLoadingViewHolder;
+import com.zeyad.cleanarchitecture.presentation.components.adapter.LoadingViewHolder;
 import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.GenericListView;
@@ -85,8 +85,8 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
         }
 
         @Override
-        public boolean onItemLongClicked(int position) {
-            if (mUsersAdapter.isAllowSelection()) {
+        public boolean onItemLongClicked(int position, ItemInfo userViewModel, GenericRecyclerViewAdapter.ViewHolder holder) {
+            if (mUsersAdapter.isSelectionAllowed()) {
                 actionMode = startSupportActionMode(UserListActivity.this);
                 toggleSelection(position);
             }
@@ -213,11 +213,9 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
             public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 switch (viewType) {
                     case ItemInfo.HEADER: // header
-                        return new RecyclerViewHeadFootViewHolder(mLayoutInflater, parent);
-                    case ItemInfo.FOOTER: // footer
-                        return new RecyclerViewHeadFootViewHolder(mLayoutInflater, parent);
+                        return new HeadFootViewHolder(mLayoutInflater, parent);
                     case ItemInfo.LOADING: // loading
-                        return new RecyclerViewLoadingViewHolder(mLayoutInflater, parent);
+                        return new LoadingViewHolder(mLayoutInflater, parent);
                     default:
                         return new UserViewHolder(mLayoutInflater.inflate(viewType, parent, false));
                 }
@@ -262,7 +260,7 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
                         return userViewModel.getUserId();
                     }
                 });
-            mUsersAdapter.setItemList(mDataList);
+            mUsersAdapter.appendList(mDataList);
             mUsersAdapter.animateTo(mDataList);
             mUsersAdapter.setHasHeader(true, "Header!");
             mUsersAdapter.setHasFooter(true, "Footer!");
@@ -389,7 +387,7 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
      */
     private boolean toggleSelection(int position) {
         try {
-            if (mUsersAdapter.isAllowSelection()) {
+            if (mUsersAdapter.isSelectionAllowed()) {
                 mUsersAdapter.toggleSelection(position);
                 int count = mUsersAdapter.getSelectedItemCount();
                 if (count == 0) {

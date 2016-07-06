@@ -16,7 +16,7 @@ public class Constants {
     public static final String SETTINGS_FILE_NAME = "com.zeyad.cleanarchitecture.SETTINGS",
             COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE = "collection_last_cache_update",
             DETAIL_SETTINGS_KEY_LAST_CACHE_UPDATE = "detail_last_cache_update";
-
+    public static final String IS_IN_FOREGROUND = "isInForeground";
     public static final long EXPIRATION_TIME = 600000;
     public static final int COUNTER_START = 1, ATTEMPTS = 5;
 

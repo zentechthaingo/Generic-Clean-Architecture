@@ -5,7 +5,6 @@ import android.widget.Button;
 
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
-import com.zeyad.cleanarchitecture.presentation.screens.firebaze.FirebazeActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,6 +46,6 @@ public class MainActivity extends BaseActivity {
      */
     @OnClick(R.id.btn_Firebaze)
     void navigateToFirebaze() {
-        navigator.navigateTo(getApplicationContext(), FirebazeActivity.getCallingIntent(getApplicationContext()));
+//        navigator.navigateTo(getApplicationContext(), FirebazeActivity.getCallingIntent(getApplicationContext()));
     }
 }

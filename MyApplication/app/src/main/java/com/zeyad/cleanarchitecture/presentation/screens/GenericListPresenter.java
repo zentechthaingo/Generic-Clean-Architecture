@@ -45,12 +45,6 @@ public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder>
         mGenericListView.viewItemDetail(OrderHistoryViewModel, holder);
     }
 
-    public void showItemsListInView(List<M> userViewModels) {
-        mGenericListView.renderItemList(userViewModels);
-    }
-
-    public abstract void getItemList();
-
     /**
      * Loads all users.
      */
@@ -79,6 +73,16 @@ public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder>
     public void showErrorMessage(ErrorBundle errorBundle) {
         mGenericListView.showError(ErrorMessageFactory.create(mGenericListView.getContext(),
                 errorBundle.getException()));
+    }
+
+    public void showItemsListInView(List<M> userViewModels) {
+        mGenericListView.renderItemList(userViewModels);
+    }
+
+    public abstract void getItemList();
+
+    public GenericListView<M, H> getGenericListView() {
+        return mGenericListView;
     }
 
     public final class ItemListSubscriber extends DefaultSubscriber<List<M>> {

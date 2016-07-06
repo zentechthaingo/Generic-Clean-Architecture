@@ -11,6 +11,7 @@ import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import rx.Observable;
 
+// TODO: 8/06/16 remove!
 public interface GeneralRealmManager {
     /**
      * Gets an {@link Observable} which will emit an Object.
@@ -29,9 +30,9 @@ public interface GeneralRealmManager {
      *
      * @param realmModel Element to insert in the cache.
      */
-    Observable<?> put(RealmObject realmModel);
+    Observable<?> put(RealmObject realmModel, Class dataClass);
 
-    Observable<?> put(RealmModel realmModel);
+    Observable<?> put(RealmModel realmModel, Class dataClass);
 
     Observable<?> put(JSONObject realmObject, Class dataClass);
 
@@ -40,7 +41,7 @@ public interface GeneralRealmManager {
      *
      * @param realmModels Element to insert in the cache.
      */
-    void putAll(List<RealmObject> realmModels);
+    void putAll(List<RealmObject> realmModels, Class dataClass);
 
     /**
      * Checks if an element (User) exists in the cache.
@@ -62,7 +63,7 @@ public interface GeneralRealmManager {
     /**
      * Evict all elements of the cache.
      */
-    void evictAll(Class clazz);
+    Observable<Boolean> evictAll(Class clazz);
 
     void evict(final RealmObject realmModel, Class clazz);
 

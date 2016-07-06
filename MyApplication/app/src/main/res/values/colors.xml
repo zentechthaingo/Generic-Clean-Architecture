@@ -9,4 +9,20 @@
     <color name="fab_color_pressed">#FFA000</color>
     <color name="secondary_text_material_light">#FFA000</color>
     <color name="selected_overlay">#3F51B5</color>
+
+    <color name="button_text">#fffffe</color>
+    <color name="off_white">#fffffe</color>
+    <color name="gray_light_item_price">#929395</color>
+    <color name="gray_recycler_view_header">#e3e3df</color>
+    <color name="gray_recycler_view_header_text">#82837f</color>
+    <color name="gray_text">#959592</color>
+    <color name="gray_background">#f2f2f0</color>
+    <color name="dark_gray_background">#e3e3df</color>
+    <color name="rappi_red">#e15D50</color>
+    <color name="rappi_green">#45d482</color>
+    <color name="green_light">#44d481</color>
+    <color name="green_light_transparent">#CC44d481</color>
+    <color name="in_store">#44d2d4</color>
+    <color name="on_the_way">#fd6250</color>
+    <color name="rappi_yellow">#ffe100</color>
 </resources>

@@ -14,18 +14,17 @@ import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 public abstract class GenericDetailPresenter<M> extends BasePresenter {
 
     /**
-     * id used to retrieve user details
+     * id used to retrieve item details
      */
     public int mItemId;
-    public M mItemViewModel;
-    public GenericDetailView<M> mViewDetailsView;
+    private GenericDetailView<M> mGenericDetailView;
 
     public GenericDetailPresenter(GenericUseCase genericUseCase) {
         super(genericUseCase);
     }
 
     public void setView(@NonNull GenericDetailView<M> view) {
-        mViewDetailsView = view;
+        mGenericDetailView = view;
     }
 
     @Override
@@ -37,56 +36,63 @@ public abstract class GenericDetailPresenter<M> extends BasePresenter {
     }
 
     /**
-     * Initializes the presenter by start retrieving user details.
+     * Initializes the presenter by start retrieving item details.
      */
     public void initialize(int itemId) {
         mItemId = itemId;
-        loadOrderDetails();
+        loadItemDetails();
     }
-
-    public int getmItemId() {
-        return mItemId;
-    }
-
-    public void setmItemId(int mItemId) {
-        this.mItemId = mItemId;
-    }
-
-    public abstract void getItemDetails();
 
     /**
-     * Loads user details.
+     * Loads item details.
      */
-    private void loadOrderDetails() {
+    private void loadItemDetails() {
         hideViewRetry();
         showViewLoading();
         getItemDetails();
     }
 
     public void showViewLoading() {
-        mViewDetailsView.showLoading();
+        mGenericDetailView.showLoading();
     }
 
     public void hideViewLoading() {
-        mViewDetailsView.hideLoading();
+        mGenericDetailView.hideLoading();
     }
 
     public void showViewRetry() {
-        mViewDetailsView.showRetry();
+        mGenericDetailView.showRetry();
     }
 
-    private void hideViewRetry() {
-        mViewDetailsView.hideRetry();
+    public void hideViewRetry() {
+        mGenericDetailView.hideRetry();
     }
 
     public void showErrorMessage(ErrorBundle errorBundle) {
-        mViewDetailsView.showError(ErrorMessageFactory.create(mViewDetailsView.getContext(),
+        mGenericDetailView.showError(ErrorMessageFactory.create(mGenericDetailView.getContext(),
                 errorBundle.getException()));
     }
 
-    private void showItemDetailsInView(M m) {
-        mItemViewModel = m;
-        mViewDetailsView.renderItem(m);
+    private void showUserDetailsInView(M m) {
+        mGenericDetailView.renderItem(m);
+    }
+
+    public abstract void getItemDetails();
+
+    public int getItemId() {
+        return mItemId;
+    }
+
+    public GenericDetailView<M> getGenericDetailView() {
+        return mGenericDetailView;
+    }
+
+    public void setItemId(int mItemId) {
+        this.mItemId = mItemId;
+    }
+
+    public void setViewDetailsView(GenericDetailView<M> mViewDetailsView) {
+        this.mGenericDetailView = mViewDetailsView;
     }
 
     public final class ItemDetailSubscriber extends DefaultSubscriber<M> {
@@ -105,7 +111,7 @@ public abstract class GenericDetailPresenter<M> extends BasePresenter {
 
         @Override
         public void onNext(M m) {
-            showItemDetailsInView(m);
+            showUserDetailsInView(m);
         }
     }
 }

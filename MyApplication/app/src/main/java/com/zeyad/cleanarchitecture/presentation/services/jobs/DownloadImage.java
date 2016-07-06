@@ -14,15 +14,8 @@ import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
-
-import okhttp3.ResponseBody;
-import rx.Subscriber;
 
 /**
  * @author Zeyad on 6/05/16.
@@ -95,49 +88,49 @@ public class DownloadImage {
 
     private void retroDownload(final File target, int index) {
         RestApiImpl restApi = new RestApiImpl();
-        restApi.download(index).subscribe(new Subscriber<ResponseBody>() {
-            @Override
-            public void onCompleted() {
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onNext(ResponseBody responseBody) {
-                try {
-                    InputStream inputStream = null;
-                    OutputStream outputStream = null;
-                    try {
-                        byte[] fileReader = new byte[4096];
-                        long fileSize = responseBody.contentLength();
-                        long fileSizeDownloaded = 0;
-                        inputStream = responseBody.byteStream();
-                        outputStream = new FileOutputStream(target);
-                        while (true) {
-                            int read = inputStream.read(fileReader);
-                            if (read == -1)
-                                break;
-                            outputStream.write(fileReader, 0, read);
-                            fileSizeDownloaded += read;
-                            Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
-                        }
-                        outputStream.flush();
-                        rxEventBus.send("file Downloaded!");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (inputStream != null)
-                            inputStream.close();
-                        if (outputStream != null)
-                            outputStream.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+//        restApi.download(index).subscribe(new Subscriber<ResponseBody>() {
+//            @Override
+//            public void onCompleted() {
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                e.printStackTrace();
+//            }
+//
+//            @Override
+//            public void onNext(ResponseBody responseBody) {
+//                try {
+//                    InputStream inputStream = null;
+//                    OutputStream outputStream = null;
+//                    try {
+//                        byte[] fileReader = new byte[4096];
+//                        long fileSize = responseBody.contentLength();
+//                        long fileSizeDownloaded = 0;
+//                        inputStream = responseBody.byteStream();
+//                        outputStream = new FileOutputStream(target);
+//                        while (true) {
+//                            int read = inputStream.read(fileReader);
+//                            if (read == -1)
+//                                break;
+//                            outputStream.write(fileReader, 0, read);
+//                            fileSizeDownloaded += read;
+//                            Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+//                        }
+//                        outputStream.flush();
+//                        rxEventBus.send("file Downloaded!");
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    } finally {
+//                        if (inputStream != null)
+//                            inputStream.close();
+//                        if (outputStream != null)
+//                            outputStream.close();
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
     }
 }

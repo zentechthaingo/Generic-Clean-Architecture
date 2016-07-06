@@ -1,6 +1,5 @@
 package com.zeyad.cleanarchitecture.data.network;
 
-import java.util.Collection;
 import java.util.List;
 
 import okhttp3.MultipartBody;
@@ -8,7 +7,6 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.Part;
-import retrofit2.http.Path;
 import retrofit2.http.Url;
 import rx.Observable;
 
@@ -36,8 +34,18 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
+    public Observable<Object> dynamicGetObject(@Url String url, boolean shouldCache) {
+        return ApiConnection.dynamicGetObject(url, shouldCache);
+    }
+
+    @Override
     public Observable<List> dynamicGetList(@Url String url) {
         return ApiConnection.dynamicGetList(url);
+    }
+
+    @Override
+    public Observable<List> dynamicGetList(@Url String url, boolean shouldCache) {
+        return ApiConnection.dynamicGetList(url, shouldCache);
     }
 
     @Override
@@ -50,45 +58,23 @@ public class RestApiImpl implements RestApi {
         return ApiConnection.dynamicPostList(url, body);
     }
 
-    //-------------------------------//
-
     @Override
-    public Observable<List> userCollection() {
-        return ApiConnection.userCollection();
+    public Observable<Object> dynamicPutObject(@Url String url, @Body RequestBody body) {
+        return ApiConnection.dynamicPutObject(url, body);
     }
 
     @Override
-    public Observable<Object> objectById(@Path("id") int userId) {
-        return ApiConnection.objectById(userId);
+    public Observable<List> dynamicPutList(@Url String url, @Body RequestBody body) {
+        return ApiConnection.dynamicPutList(url, body);
     }
 
     @Override
-    public Observable<Object> deleteItemById(@Path("id") int userId) {
-        return ApiConnection.deleteItemById(userId);
+    public Observable<Object> dynamicDeleteObject(@Url String url, @Body RequestBody body) {
+        return ApiConnection.dynamicDeleteObject(url, body);
     }
 
     @Override
-    public Observable<Object> deleteItem(@Path("object") Object object) {
-        return ApiConnection.deleteItem(object);
-    }
-
-    @Override
-    public Observable<Object> deleteCollection(@Path("collection") Collection collection) {
-        return ApiConnection.deleteCollection(collection);
-    }
-
-    @Override
-    public Observable<Object> postItem(@Path("id") Object object) {
-        return ApiConnection.postItem(object);
-    }
-
-    @Override
-    public Observable<List> search(@Path("query") String query) {
-        return null;
-    }
-
-    @Override
-    public Observable<ResponseBody> download(@Path("index") int index) {
-        return ApiConnection.download(index);
+    public Observable<List> dynamicDeleteList(@Url String url, @Body RequestBody body) {
+        return ApiConnection.dynamicDeleteList(url, body);
     }
 }

@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.data.repository.datastore;
+package com.zeyad.cleanarchitecture.data.repository.generalstore;
 
 import android.content.Context;
 
@@ -26,10 +26,10 @@ public class DataStoreFactory {
     /**
      * Create {@link DataStore} .
      */
-    public DataStore dynamically(String url, EntityMapper entityDataMapper) {
+    public DataStore dynamically(String url, EntityMapper entityDataMapper, Class dataClass) {
         if (url.isEmpty())
             return new DiskDataStore(mRealmManager, entityDataMapper);
-        if (mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE)
+        if (mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE + dataClass.getSimpleName())
                 || !Utils.isNetworkAvailable(mContext))
             return new DiskDataStore(mRealmManager, entityDataMapper);
         else

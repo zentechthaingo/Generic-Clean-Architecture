@@ -96,7 +96,7 @@ public class UserDetailPresenter extends BasePresenter {
     }
 
     private void getUserDetails() {
-        mGenericUseCase.executeGetObject(new UserDetailsSubscriber(),
+        getGenericUseCase().executeGetObject(new UserDetailsSubscriber(),
                 Constants.API_BASE_URL + "user_" + mUserId + ".json", UserRealmModel.ID_COLUMN,
                 mUserId, UserViewModel.class, User.class, UserRealmModel.class, true);
     }
@@ -115,7 +115,7 @@ public class UserDetailPresenter extends BasePresenter {
         keyValuePairs.put("email", tempUser.getEmail());
         keyValuePairs.put("description", tempUser.getDescription());
         keyValuePairs.put("followers", tempUser.getFollowers());
-        mGenericUseCase.executeDynamicPutObject(new PutSubscriber(), "", keyValuePairs,
+        getGenericUseCase().executeDynamicPutObject(new PutSubscriber(), "", keyValuePairs,
                 UserViewModel.class, User.class, UserRealmModel.class, true);
     }
 

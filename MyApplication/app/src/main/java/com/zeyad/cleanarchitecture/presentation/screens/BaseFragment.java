@@ -1,9 +1,11 @@
 package com.zeyad.cleanarchitecture.presentation.screens;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
+import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
@@ -16,6 +18,7 @@ import rx.subscriptions.CompositeSubscription;
 public abstract class BaseFragment extends Fragment {
 
     public CompositeSubscription mCompositeSubscription;
+    public RxEventBus rxEventBus;
 
     public BaseFragment() {
     }
@@ -54,7 +57,23 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
         ButterKnife.unbind(this);
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onPause() {
+        Utils.unsubscribeIfNotNull(mCompositeSubscription);
+        super.onPause();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            rxEventBus = ((BaseActivity) getActivity()).rxEventBus;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(e.getMessage());
+        }
     }
 }

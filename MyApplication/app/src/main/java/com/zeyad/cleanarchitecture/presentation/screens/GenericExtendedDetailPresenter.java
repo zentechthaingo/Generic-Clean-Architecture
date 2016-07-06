@@ -23,12 +23,12 @@ public abstract class GenericExtendedDetailPresenter<M> extends GenericDetailPre
 
     private void showItemPutSuccess(@NonNull M model) {
         hideViewLoading();
-        mItemViewModel = model;
-        mViewDetailsView.putItemSuccess(mItemViewModel);
+//        mItemViewModel = model;
+        mViewDetailsView.putItemSuccess(model);
     }
 
     public void setupEdit() {
-        mViewDetailsView.editItem(mItemViewModel);
+//        mViewDetailsView.editItem(model);
     }
 
     public abstract void submitEdit();

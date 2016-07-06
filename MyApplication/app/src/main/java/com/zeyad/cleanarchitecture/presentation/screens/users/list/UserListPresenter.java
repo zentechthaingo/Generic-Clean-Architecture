@@ -1,7 +1,7 @@
 package com.zeyad.cleanarchitecture.presentation.screens.users.list;
 
 import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
-import com.zeyad.cleanarchitecture.data.repository.datastore.DataStore;
+import com.zeyad.cleanarchitecture.data.repository.generalstore.DataStore;
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
 import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
@@ -26,15 +26,15 @@ public class UserListPresenter extends GenericListExtendedPresenter<UserViewMode
 
     @Override
     public void getItemList() {
-        mGenericUseCase.executeList(new ItemListSubscriber(), Constants.API_BASE_URL + "users.json",
+        getGenericUseCase().executeDynamicGetList(new ItemListSubscriber(), Constants.API_BASE_URL + "users.json",
                 UserViewModel.class, User.class, UserRealmModel.class, true);
     }
 
     @Override
     public void search(String query) {
-        mGenericUseCase.executeSearch(new SearchSubscriber(), query, UserRealmModel.FULL_NAME_COLUMN,
+        getGenericUseCase().executeSearch(new SearchSubscriber(), query, UserRealmModel.FULL_NAME_COLUMN,
                 UserViewModel.class, User.class, UserRealmModel.class);
-        mGenericUseCase.executeSearch(new SearchSubscriber(), Realm.getDefaultInstance()
+        getGenericUseCase().executeSearch(new SearchSubscriber(), Realm.getDefaultInstance()
                         .where(UserRealmModel.class).contains(UserRealmModel.FULL_NAME_COLUMN, query),
                 UserViewModel.class, User.class);
     }
@@ -43,7 +43,7 @@ public class UserListPresenter extends GenericListExtendedPresenter<UserViewMode
     public void deleteCollection(List<Long> ids) {
         HashMap<String, Object> keyValuePairs = new HashMap<>(1);
         keyValuePairs.put(DataStore.IDS, ids);
-        mGenericUseCase.executeDeleteCollection(new DeleteSubscriber(), "", keyValuePairs,
+        getGenericUseCase().executeDeleteCollection(new DeleteSubscriber(), "", keyValuePairs,
                 User.class, UserRealmModel.class, true);
     }
 }

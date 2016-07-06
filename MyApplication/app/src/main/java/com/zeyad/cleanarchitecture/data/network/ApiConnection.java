@@ -12,7 +12,6 @@ import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -33,9 +32,6 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 
-import static okhttp3.logging.HttpLoggingInterceptor.Level.HEADERS;
-import static okhttp3.logging.HttpLoggingInterceptor.Level.NONE;
-
 /**
  * Api Connection class used to retrieve data from the cloud.
  * Implements {@link Callable} so when executed asynchronously can
@@ -44,49 +40,137 @@ import static okhttp3.logging.HttpLoggingInterceptor.Level.NONE;
 public class ApiConnection {
 
     private static Retrofit retrofit;
+    private static final String CACHE_CONTROL = "Cache-Control";
 
-    private static Retrofit createRetro2Client() {
-        final OkHttpClient okHttpClient;
-        if (BuildConfig.DEBUG)
-            okHttpClient = new OkHttpClient.Builder()
-                    .cache(new Cache(new File(Constants.CACHE_DIR, "http"), 10485760))
-//                .connectionSpecs(Collections.singletonList(new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-//                        .tlsVersions(TlsVersion.TLS_1_2)
-//                        .cipherSuites(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-//                                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-//                                CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256)
-//                        .build()))
-                    .addNetworkInterceptor(chain -> {
-                        Request request = chain.request();
-                        Log.d("OkHttp REQUEST", request.toString());
-                        Log.d("OkHttp REQUEST Headers", request.headers().toString());
-                        Response response = chain.proceed(request);
-                        response = response.newBuilder()
-                                .header("Cache-Control", String.format("public, max-age=%d, max-stale=%d",
-                                        60, 2419200)).build();
-                        Log.d("OkHttp RESPONSE", response.toString());
-                        Log.d("OkHttp RESPONSE Headers", response.headers().toString());
-                        return response;
-                    })
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(10, TimeUnit.SECONDS)
-                    .writeTimeout(10, TimeUnit.SECONDS)
-                    .build();
-        else okHttpClient = new OkHttpClient.Builder()
-                .cache(new Cache(new File(Constants.CACHE_DIR, "http"), 10485760))
-//                .connectionSpecs(Collections.singletonList(new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-//                        .tlsVersions(TlsVersion.TLS_1_2)
-//                        .cipherSuites(CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-//                                CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-//                                CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256)
-//                        .build()))
+    private static OkHttpClient provideOkHttpClient() {
+        return new OkHttpClient.Builder()
+                .addInterceptor(provideHttpLoggingInterceptor())
+                .addInterceptor(provideOfflineCacheInterceptor())
+//                .addInterceptor(provideDynamicHeaderInterceptor())
+                .addNetworkInterceptor(provideCacheInterceptor())
+                .cache(provideCache())
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
+    }
+
+    private static OkHttpClient provideOkHttpClient(boolean shouldCache) {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .addInterceptor(provideHttpLoggingInterceptor())
+                .addInterceptor(provideOfflineCacheInterceptor())
+//                .addInterceptor(provideDynamicHeaderInterceptor())
+                .addNetworkInterceptor(provideCacheInterceptor())
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS);
+        if (shouldCache) {
+            builder.cache(provideCache());
+        }
+        return builder.build();
+    }
+
+    private static Cache provideCache() {
+        Cache cache = null;
+        try {
+            cache = new Cache(new File(AndroidApplication.getInstance().getCacheDir(), "http-cache"),
+                    10 * 1024 * 1024); // 10 MB
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cache;
+    }
+
+//    private static Interceptor provideDynamicHeaderInterceptor() {
+//        return chain -> {
+//            Request finalRequest = chain.request();
+//            if (finalRequest.url().toString().contains("login/storekeeper")
+//                    && !TextUtils.isEmpty(Settings.Secure.getString(AndroidApplication.getInstance()
+//                    .getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID)))
+//                finalRequest = chain.request().newBuilder()
+//                        .header("uuid", Settings.Secure.getString(AndroidApplication.getInstance()
+//                                .getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID))
+//                        .header("platform", "" + 1)
+//                        .header(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON)
+//                        .method(chain.request().method(), chain.request().body()).build();
+//            else if (finalRequest.url().toString().contains("logout/storekeeper"))
+//                finalRequest = chain.request().newBuilder()
+//                        .header("uuid", Settings.Secure.getString(AndroidApplication.getInstance()
+//                                .getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID))
+//                        .header("platform", "" + 1)
+//                        .header("Authorization", "Bearer " + AndroidApplication.getInstance()
+//                                .getApplicationContext().getSharedPreferences(Constants.SETTINGS_FILE_NAME,
+//                                        Context.MODE_PRIVATE).getString(Constants.ACCESS_TOKEN, ""))
+//                        .header(Constants.CONTENT_TYPE, Constants.APPLICATION_JSON)
+//                        .method(chain.request().method(), chain.request().body()).build();
+//            else
+//                finalRequest = chain.request().newBuilder()
+//                        .header("Authorization", "Bearer " + AndroidApplication.getInstance()
+//                                .getApplicationContext().getSharedPreferences(Constants.SETTINGS_FILE_NAME,
+//                                        Context.MODE_PRIVATE).getString(Constants.ACCESS_TOKEN, ""))
+//                        .method(chain.request().method(), chain.request().body()).build();
+//            return chain.proceed(finalRequest);
+//        };
+//    }
+
+    private static HttpLoggingInterceptor provideHttpLoggingInterceptor() {
+        return new HttpLoggingInterceptor(message -> Log.d("NetworkInfo", message))
+                .setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
+    }
+
+    public static Interceptor provideCacheInterceptor() {
+        return chain -> {
+            Response response = chain.proceed(chain.request());
+            // re-write response header to force use of cache
+            CacheControl cacheControl = new CacheControl.Builder()
+                    .maxAge(2, TimeUnit.MINUTES)
+                    .build();
+            return response.newBuilder()
+                    .header(CACHE_CONTROL, cacheControl.toString())
+                    .build();
+        };
+    }
+
+    public static Interceptor provideOfflineCacheInterceptor() {
+        return chain -> {
+            Request request = chain.request();
+            if (!Utils.isNetworkAvailable(AndroidApplication.getInstance().getApplicationContext())) {
+                CacheControl cacheControl = new CacheControl.Builder()
+                        .maxStale(1, TimeUnit.DAYS)
+                        .build();
+                request = request.newBuilder()
+                        .cacheControl(cacheControl)
+                        .build();
+            }
+            return chain.proceed(request);
+        };
+    }
+
+    private static Retrofit createRetro2Client() {
         return new Retrofit.Builder()
                 .baseUrl(Constants.API_BASE_URL)
-                .client(okHttpClient)
+                .client(provideOkHttpClient())
+                .callbackExecutor(new JobExecutor())
+                .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
+                        .setExclusionStrategies(new ExclusionStrategy() {
+                            @Override
+                            public boolean shouldSkipField(FieldAttributes f) {
+                                return f.getDeclaringClass().equals(RealmObject.class);
+                            }
+
+                            @Override
+                            public boolean shouldSkipClass(Class<?> clazz) {
+                                return false;
+                            }
+                        }).create()))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+    }
+
+    private static Retrofit createRetro2Client(boolean shouldCache) {
+        return new Retrofit.Builder()
+                .baseUrl(Constants.API_BASE_URL)
+                .client(provideOkHttpClient(shouldCache))
                 .callbackExecutor(new JobExecutor())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
                         .setExclusionStrategies(new ExclusionStrategy() {
@@ -116,10 +200,22 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).dynamicGetObject(url);
     }
 
+    public static Observable<Object> dynamicGetObject(String url, boolean shouldCache) {
+
+        Retrofit retrofit = createRetro2Client(shouldCache);
+        return retrofit.create(RestApi.class).dynamicGetObject(url);
+    }
+
     public static Observable<List> dynamicGetList(String url) {
         if (retrofit == null)
             retrofit = createRetro2Client();
         return retrofit.create(RestApi.class).dynamicGetList(url);
+    }
+
+    public static Observable<List> dynamicGetList(String url, boolean shouldCache) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicGetList(url, shouldCache);
     }
 
     public static Observable<Object> dynamicPostObject(String url, RequestBody requestBody) {
@@ -134,6 +230,18 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).dynamicPostList(url, requestBody);
     }
 
+    public static Observable<Object> dynamicPutObject(String url, RequestBody requestBody) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicPutObject(url, requestBody);
+    }
+
+    public static Observable<List> dynamicPutList(String url, RequestBody requestBody) {
+        if (retrofit == null)
+            retrofit = createRetro2Client();
+        return retrofit.create(RestApi.class).dynamicPutList(url, requestBody);
+    }
+
     // TODO: 13/05/16 Test!
     public static Observable<ResponseBody> upload(String url, MultipartBody.Part file, RequestBody description) {
         if (retrofit == null)
@@ -141,113 +249,15 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).upload(url, description, file);
     }
 
-    //------------------------------------------------//
-
-    public static Observable<List> userCollection() {
+    public static Observable<List> dynamicDeleteList(String url, RequestBody body) {
         if (retrofit == null)
             retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).userCollection();
+        return retrofit.create(RestApi.class).dynamicDeleteList(url, body);
     }
 
-    public static Observable<Object> objectById(int id) {
+    public static Observable<Object> dynamicDeleteObject(String url, RequestBody body) {
         if (retrofit == null)
             retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).objectById(id);
-    }
-
-    public static Observable<Object> postItem(Object object) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).postItem(object);
-    }
-
-    public static Observable<Object> deleteCollection(Collection collection) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).deleteCollection(collection);
-    }
-
-    public static Observable<Object> deleteItem(Object object) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).deleteItem(object);
-    }
-
-    public static Observable<Object> deleteItemById(int userId) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).deleteItemById(userId);
-    }
-
-    public static Observable<ResponseBody> download(int index) {
-        if (retrofit == null)
-            retrofit = createRetro2Client();
-        return retrofit.create(RestApi.class).download(index);
-    }
-
-    // offline caching okhttp client
-    private static final String CACHE_CONTROL = "Cache-Control";
-
-
-    private static OkHttpClient provideOkHttpClient() {
-        return new OkHttpClient.Builder()
-                .addInterceptor(provideHttpLoggingInterceptor())
-                .addInterceptor(provideOfflineCacheInterceptor())
-                .addNetworkInterceptor(provideCacheInterceptor())
-                .cache(provideCache())
-                .build();
-    }
-
-    private static Cache provideCache() {
-        Cache cache = null;
-        try {
-            cache = new Cache(new File(AndroidApplication.getInstance().getCacheDir(), "http-cache"),
-                    10 * 1024 * 1024); // 10 MB
-        } catch (Exception e) {
-//            Timber.e( e, "Could not create Cache!" );
-        }
-        return cache;
-    }
-
-    private static HttpLoggingInterceptor provideHttpLoggingInterceptor() {
-        HttpLoggingInterceptor httpLoggingInterceptor =
-                new HttpLoggingInterceptor(message -> {
-//                        Timber.d( message );
-                });
-        httpLoggingInterceptor.setLevel(BuildConfig.DEBUG ? HEADERS : NONE);
-        return httpLoggingInterceptor;
-    }
-
-    public static Interceptor provideCacheInterceptor() {
-        return chain -> {
-            Response response = chain.proceed(chain.request());
-
-            // re-write response header to force use of cache
-            CacheControl cacheControl = new CacheControl.Builder()
-                    .maxAge(2, TimeUnit.MINUTES)
-                    .build();
-
-            return response.newBuilder()
-                    .header(CACHE_CONTROL, cacheControl.toString())
-                    .build();
-        };
-    }
-
-    public static Interceptor provideOfflineCacheInterceptor() {
-        return chain -> {
-            Request request = chain.request();
-
-            if (!Utils.isNetworkAvailable(AndroidApplication.getInstance().getApplicationContext())) {
-                CacheControl cacheControl = new CacheControl.Builder()
-                        .maxStale(7, TimeUnit.DAYS)
-                        .build();
-
-                request = request.newBuilder()
-                        .cacheControl(cacheControl)
-                        .build();
-            }
-
-            return chain.proceed(request);
-        };
+        return retrofit.create(RestApi.class).dynamicDeleteObject(url, body);
     }
 }

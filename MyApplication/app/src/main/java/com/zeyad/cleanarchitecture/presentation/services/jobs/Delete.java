@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchitecture.data.repository.datastore.CloudDataStore;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
@@ -48,7 +47,7 @@ public class Delete {
     public Observable<?> deleteCollectionFromCloud(List list) {
         if (Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
                 || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
-            CloudDataStore.queueDeleteCollection.call(list);
+//            CloudDataStore.queueDeleteCollection.call(list);
             return Observable.error(new Exception());
         } else
 //            return new RestApiImpl().deleteCollection(list)

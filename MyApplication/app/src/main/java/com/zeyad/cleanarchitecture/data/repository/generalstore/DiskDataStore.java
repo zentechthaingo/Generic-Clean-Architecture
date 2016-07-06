@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.data.repository.datastore;
+package com.zeyad.cleanarchitecture.data.repository.generalstore;
 
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
@@ -12,6 +12,7 @@ import java.util.List;
 import io.realm.RealmQuery;
 import rx.Observable;
 
+// TODO: 10/06/16 reorganize!
 public class DiskDataStore implements DataStore {
 
     private GeneralRealmManager mRealmManager;
@@ -36,11 +37,26 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
+    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist,
+                                        boolean shouldCache) {
+        return mRealmManager.getAll(dataClass)
+                .map(realmModels -> mEntityDataMapper.transformAllToDomain(realmModels))
+                .compose(Utils.logSources(TAG, mRealmManager));
+    }
+
+    @Override
     public Observable<?> dynamicObject(String url, String idColumnName, int itemId, Class domainClass,
                                        Class dataClass, boolean persist) {
         return mRealmManager.getById(idColumnName, itemId, dataClass)
                 .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
         //  .compose(Utils.logSource(TAG, mRealmManager));
+    }
+
+    @Override
+    public Observable<?> dynamicObject(String url, String idColumnName, int itemId, Class domainClass,
+                                       Class dataClass, boolean persist, boolean shouldCache) {
+        return mRealmManager.getById(idColumnName, itemId, dataClass)
+                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
     }
 
     @Override
@@ -56,33 +72,49 @@ public class DiskDataStore implements DataStore {
     }
 
     @Override
-    public Observable<?> putToDisk(HashMap<String, Object> object, Class dataClass) {
-        return Observable.defer(() -> mRealmManager.put(new JSONObject(object), dataClass))
-                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
-    }
-
-    @Override
-    public Observable<?> deleteCollectionFromDisk(HashMap<String, Object> keyValuePairs, Class dataClass) {
+    public Observable<?> dynamicDeleteCollection(String url, HashMap<String, Object> keyValuePairs,
+                                                 Class dataClass, boolean persist) {
         return Observable.defer(() -> mRealmManager.evictCollection((List<Long>) keyValuePairs.get(DataStore.IDS),
                 dataClass));
     }
 
     @Override
-    public Observable<?> deleteCollectionFromCloud(String url, HashMap<String, Object> keyValuePairs,
-                                                   Class dataClass, boolean persist) {
-        return Observable.error(new Exception("cant get Object from cloud in disk data store"));
+    public Observable<?> dynamicDeleteAll(String url, Class dataClass, boolean persist) {
+        return mRealmManager.evictAll(dataClass);
     }
-
 
     @Override
     public Observable<?> dynamicPostObject(String url, HashMap<String, Object> keyValuePairs,
                                            Class domainClass, Class dataClass, boolean persist) {
-        return Observable.error(new Exception("cant post to cloud in disk data store"));
+        return Observable.defer(() -> mRealmManager.put(new JSONObject(keyValuePairs), dataClass))
+                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
     }
 
+    @Override
+    public Observable<?> dynamicPostObject(String url, JSONObject keyValuePairs, Class domainClass,
+                                           Class dataClass, boolean persist) {
+        return Observable.defer(() -> mRealmManager.put(keyValuePairs, dataClass))
+                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
+    }
+
+    @Override
+    public Observable<?> dynamicPutObject(String url, HashMap<String, Object> keyValuePairs,
+                                          Class domainClass, Class dataClass, boolean persist) {
+        return Observable.defer(() -> mRealmManager.put(new JSONObject(keyValuePairs), dataClass))
+                .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel));
+    }
+
+    // TODO: 10/06/16 implement!
     @Override
     public Observable<List> dynamicPostList(String url, HashMap<String, Object> keyValuePairs,
                                             Class domainClass, Class dataClass, boolean persist) {
         return Observable.error(new Exception("cant post to cloud in disk data store"));
+    }
+
+    // TODO: 10/06/16 implement!
+    @Override
+    public Observable<List> dynamicPutList(String url, HashMap<String, Object> keyValuePairs,
+                                           Class domainClass, Class dataClass, boolean persist) {
+        return Observable.error(new Exception("cant put list to cloud in disk data store"));
     }
 }

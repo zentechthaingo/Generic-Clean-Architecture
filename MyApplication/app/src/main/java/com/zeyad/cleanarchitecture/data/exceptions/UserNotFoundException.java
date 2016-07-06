@@ -1,7 +1,7 @@
 package com.zeyad.cleanarchitecture.data.exceptions;
 
 /**
- * Exception throw by the application when a User search can't return a valid result.
+ * Exception throw by the application when a User searchDisk can't return a valid result.
  */
 public class UserNotFoundException extends Exception {
 

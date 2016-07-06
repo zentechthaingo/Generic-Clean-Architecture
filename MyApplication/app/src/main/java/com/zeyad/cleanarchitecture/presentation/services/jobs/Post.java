@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
-import com.zeyad.cleanarchitecture.data.repository.datastore.CloudDataStore;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.presentation.services.GenericGCMService;
 import com.zeyad.cleanarchitecture.presentation.services.GenericJobService;
@@ -54,7 +53,7 @@ public class Post {
     public Observable<?> postToCloud(Object object) {
         if (Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
                 || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
-           CloudDataStore.queuePost.call(object);
+//           CloudDataStore.queuePost.call(object);
             return Observable.error(new Exception());
         } else {
 //            return new RestApiImpl().postItem(object)
