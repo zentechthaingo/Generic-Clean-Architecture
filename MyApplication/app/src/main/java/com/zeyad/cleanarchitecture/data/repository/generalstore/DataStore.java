@@ -17,22 +17,22 @@ public interface DataStore {
     /**
      * Get an {@link rx.Observable} which will emit a collectionFromDisk of ?.
      */
-    Observable<List> dynamicList(final String url, Class domainClass, Class dataClass, boolean persist);
+    Observable<List> dynamicGetList(final String url, Class domainClass, Class dataClass, boolean persist);
 
-    Observable<List> dynamicList(final String url, Class domainClass, Class dataClass, boolean persist,
-                                 boolean shouldCache);
-
-    /**
-     * Get an {@link rx.Observable} which will emit a ? by its id.
-     */
-    Observable<?> dynamicObject(final String url, final String idColumnName, final int itemId,
-                                Class domainClass, Class dataClass, boolean persist);
+    Observable<List> dynamicGetList(final String url, Class domainClass, Class dataClass, boolean persist,
+                                    boolean shouldCache);
 
     /**
      * Get an {@link rx.Observable} which will emit a ? by its id.
      */
-    Observable<?> dynamicObject(final String url, final String idColumnName, final int itemId,
-                                Class domainClass, Class dataClass, boolean persist, boolean shouldCache);
+    Observable<?> dynamicGetObject(final String url, final String idColumnName, final int itemId,
+                                   Class domainClass, Class dataClass, boolean persist);
+
+    /**
+     * Get an {@link rx.Observable} which will emit a ? by its id.
+     */
+    Observable<?> dynamicGetObject(final String url, final String idColumnName, final int itemId,
+                                   Class domainClass, Class dataClass, boolean persist, boolean shouldCache);
 
     /**
      * Post a HashMap<String, Object> which returns an {@link rx.Observable} that will emit a ?.
@@ -49,8 +49,8 @@ public interface DataStore {
     /**
      * Post a HashMap<String, Object> which returns an {@link rx.Observable} that will emit a list of ?.
      */
-    Observable<List> dynamicPostList(final String url, final HashMap<String, Object> keyValuePairs,
-                                     Class domainClass, Class dataClass, boolean persist);
+    Observable<?> dynamicPostList(final String url, final JSONArray jsonArray,
+                                  Class domainClass, Class dataClass, boolean persist);
 
     /**
      * Put a HashMap<String, Object> disk with a RealmQuery which returns an {@link rx.Observable}
@@ -58,6 +58,9 @@ public interface DataStore {
      */
     Observable<?> dynamicPutObject(final String url, final HashMap<String, Object> keyValuePairs,
                                    Class domainClass, Class dataClass, boolean persist);
+
+    Observable<?> dynamicUploadFile(final String url, File file,
+                                    Class domainClass, Class dataClass, boolean persist);
 
     /**
      * Put a HashMap<String, Object> disk with a RealmQuery which returns an {@link rx.Observable}

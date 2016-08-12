@@ -36,10 +36,11 @@ public class ModelDataMapper {
      * @param list Objects to be transformed.
      * @return {@link List} if valid {@link List} otherwise null.
      */
-    public List transformAllToPresentation(List list, Class presentationClass) {
-        List transformedList = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++)
-            transformedList.add(transformToPresentation(list.get(i), presentationClass));
+    public List<Object> transformAllToPresentation(List<Object> list, Class presentationClass) {
+        List<Object> transformedList = new ArrayList<>();
+        if (list != null)
+            for (int i = 0; i < list.size(); i++)
+                transformedList.add(transformToPresentation(list.get(i), presentationClass));
         return transformedList;
     }
 }

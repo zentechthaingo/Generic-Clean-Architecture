@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.components.adapter;
+package com.grability.rappitendero.presentation.components.adapter;
 
 import java.io.Serializable;
 
@@ -6,10 +6,12 @@ import java.io.Serializable;
  * @author by zeyad on 20/05/16.
  */
 public class ItemInfo<M> implements Serializable {
-    public static final int HEADER = 1, FOOTER = 2, LOADING = 3, SECTION_HEADER = 4, SECTION_ITEM = 5;
+    public static final int HEADER = 1, FOOTER = 2, LOADING = 3, SECTION_HEADER = 4, SECTION_ITEM = 5,
+            CARD_SECTION_HEADER = 6;
     private M data;
     private int layoutId;
     private long id;
+    private boolean isEnabled = true;
 
     public ItemInfo(M data, int layoutId) {
         this.data = data;
@@ -35,5 +37,14 @@ public class ItemInfo<M> implements Serializable {
 
     public void setData(M data) {
         this.data = data;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public ItemInfo<M> setEnabled(boolean enabled) {
+        isEnabled = enabled;
+        return this;
     }
 }

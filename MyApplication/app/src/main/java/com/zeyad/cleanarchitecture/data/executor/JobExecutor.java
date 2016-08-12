@@ -2,7 +2,7 @@ package com.zeyad.cleanarchitecture.data.executor;
 
 import android.support.annotation.NonNull;
 
-import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
+import com.grability.rappitendero.domain.executors.ThreadExecutor;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -24,8 +24,12 @@ public class JobExecutor implements ThreadExecutor {
     private static final int KEEP_ALIVE_TIME = 10;
     // Sets the Time Unit to seconds
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
+    @NonNull
     private final ThreadPoolExecutor threadPoolExecutor;
-
+    //    private final int mThreadPriority;
+//    public JobExecutor(int threadPriority) {
+//        mThreadPriority = threadPriority;
+//    }
     @Inject
     public JobExecutor() {
         threadPoolExecutor = new ThreadPoolExecutor(INITIAL_POOL_SIZE >> 1, INITIAL_POOL_SIZE,
@@ -41,9 +45,22 @@ public class JobExecutor implements ThreadExecutor {
         private static final String THREAD_NAME = "android_";
         private int counter = 0;
 
+        @NonNull
         @Override
         public Thread newThread(@NonNull Runnable runnable) {
             return new Thread(runnable, THREAD_NAME + counter++);
+//            Runnable wrapperRunnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        Process.setThreadPriority(mThreadPriority);
+//                    } catch (Throwable t) {
+//
+//                    }
+//                    runnable.run();
+//                }
+//            };
+//            return new Thread(wrapperRunnable);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.components.adapter;
+package com.grability.rappitendero.presentation.components.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.grability.rappitendero.utils.Utils;
 import com.jakewharton.rxbinding.view.RxView;
-import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,18 +35,23 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
             super(itemView);
         }
 
+        // TODO: 21/07/16 change array for boolean value!
         @Override
-        public void bindData(Object data, SparseBooleanArray selectedItems, int position) {
+        public void bindData(Object data, SparseBooleanArray selectedItems, int position, boolean isEnabled) {
+        }
+
+        public void expand(boolean expand){
         }
     }
 
-    public Context mContext;
+    private Context mContext;
     public final LayoutInflater mLayoutInflater;
-    public List<ItemInfo> mDataList;
-    public OnItemClickListener mOnItemClickListener;
-    public SparseBooleanArray mSelectedItems;
-    public boolean mIsLoadingFooterAdded = false;
-    private boolean mHasHeader = false, mHasFooter = false, allowSelection = false, areItemsClickable = true;
+    private List<ItemInfo> mDataList;
+    private OnItemClickListener mOnItemClickListener;
+    private SparseBooleanArray mSelectedItems;
+    private boolean mIsLoadingFooterAdded = false;
+    private boolean mHasHeader = false, mHasFooter = false, allowSelection = false, areItemsClickable = true, areItemsExpandable = false;
+    private int expandedPosition = -1;
     private CompositeSubscription mCompositeSubscription;
 
     public GenericRecyclerViewAdapter(Context context, List<ItemInfo> list) {
@@ -64,7 +69,7 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ItemInfo itemInfo = mDataList.get(position);
-        holder.bindData(itemInfo.getData(), mSelectedItems, position);
+        holder.bindData(itemInfo.getData(), mSelectedItems, position, itemInfo.isEnabled());
         if (areItemsClickable && !(hasHeader() && position == 0 || hasFooter() && position == mDataList.size() - 1)) {
             mCompositeSubscription.add(RxView.clicks(holder.itemView).subscribe(aVoid -> {
                 if (mOnItemClickListener != null)
@@ -74,6 +79,16 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
                 if (mOnItemClickListener != null)
                     mOnItemClickListener.onItemLongClicked(holder.getAdapterPosition(), itemInfo, holder);
             }));
+        }
+
+        if (areItemsExpandable){
+            final boolean isExpanded = position==expandedPosition;
+            holder.expand(isExpanded);
+            holder.itemView.setActivated(true);
+            holder.itemView.setOnClickListener(view -> {
+                expandedPosition = isExpanded ? -1 : position;
+                notifyDataSetChanged();
+            });
         }
     }
 
@@ -142,6 +157,14 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
             if (itemInfo.getId() == itemId)
                 return itemInfo;
         throw new Exception("Item with id " + itemId + " does not exist!");
+    }
+
+    public void disableViewHolder(int index) {
+        mDataList.get(index).setEnabled(false);
+    }
+
+    public void enableViewHolder(int index) {
+        mDataList.get(index).setEnabled(true);
     }
 
     public boolean hasHeader() {
@@ -220,10 +243,18 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         this.areItemsClickable = areItemsClickable;
     }
 
+    public boolean areItemsExpandable() {
+        return areItemsExpandable;
+    }
+
+    public void setAreItemsExpandable(boolean areItemsExpandable) {
+        this.areItemsExpandable = areItemsExpandable;
+    }
+
     /**
      * Clears data from the mDataList without removing the header, footer and loading views!
      */
-    public void clearItemList() {
+    public void clearPureItemList() {
         int startIndex = 0, endIndex = 0;
         if (hasHeader())
             startIndex = 1;
@@ -233,6 +264,13 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
             endIndex++;
         for (int i = startIndex; i < mDataList.size() - endIndex; i++)
             removeItem(i);
+    }
+
+    /**
+     * Clears data from the mDataList without removing the header, footer and loading views!
+     */
+    public void clearItemList() {
+        mDataList.clear();
     }
 
     // FIXME: 17/06/16 double check!
@@ -259,6 +297,13 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         notifyDataSetChanged();
     }
 
+    public void appendList(int position, List<ItemInfo> dataSet) {
+
+        validateList(dataSet);
+        mDataList.addAll(position, dataSet);
+        notifyDataSetChanged();
+    }
+
     public void setDataList(List<ItemInfo> dataSet) {
         validateList(dataSet);
         mDataList = dataSet;
@@ -271,6 +316,10 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
 
     public void addSectionHeader(int index, String title) {
         addItem(index, new ItemInfo<>(title, ItemInfo.SECTION_HEADER).setId(ItemInfo.SECTION_HEADER));
+    }
+
+    public void addCardSectionHeader(int index, String title) {
+        addItem(index, new ItemInfo<>(title, ItemInfo.CARD_SECTION_HEADER).setId(ItemInfo.CARD_SECTION_HEADER));
     }
 
     public void addSectionHeaderWithId(int index, String title, long id) {
@@ -359,8 +408,20 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
      * @param position Position of the item to toggle the selection status for
      */
     public void selectItem(int position) throws Exception {
-        if (allowSelection)
+        if (allowSelection) {
             mSelectedItems.put(position, true);
+            notifyItemChanged(position);
+        } else throw new Exception("Selection mode is disabled!");
+    }
+
+    /**
+     * Set an item as un-selected at a given position
+     *
+     * @param position Position of the item to toggle the selection status for
+     */
+    public void unSelectItem(int position) throws Exception {
+        if (allowSelection)
+            mSelectedItems.delete(position);
         else throw new Exception("Selection mode is disabled!");
     }
 
@@ -439,6 +500,13 @@ public abstract class GenericRecyclerViewAdapter extends RecyclerView.Adapter<Ge
         applyAndAnimateRemovals(models);
         applyAndAnimateAdditions(models);
         applyAndAnimateMovedItems(models);
+    }
+
+    public void reloadData(ArrayList<ItemInfo> newModels) {
+        for (ItemInfo item : mDataList)
+            if (newModels.contains(item))
+                newModels.remove(item);
+        appendList(newModels);
     }
 
     public ItemInfo removeItem(int position) {

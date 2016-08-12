@@ -1,9 +1,9 @@
-package com.zeyad.cleanarchitecture.presentation.components.adapter;
+package com.grability.rappitendero.presentation.components.adapter;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import com.zeyad.cleanarchitecture.R;
+import com.grability.rappitendero.R;
 
 import butterknife.ButterKnife;
 

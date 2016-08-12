@@ -1,24 +1,29 @@
 package com.zeyad.cleanarchitecture.data.repository.generalstore;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.facebook.network.connectionclass.ConnectionClassManager;
 import com.facebook.network.connectionclass.ConnectionQuality;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
-import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
-import com.zeyad.cleanarchitecture.data.exceptions.NetworkConnectionException;
-import com.zeyad.cleanarchitecture.data.network.RestApi;
-import com.zeyad.cleanarchitecture.utilities.Constants;
-import com.zeyad.cleanarchitecture.utilities.Utils;
+import com.grability.rappitendero.R;
+import com.grability.rappitendero.data.db.DataBaseManager;
+import com.grability.rappitendero.data.entities.mappers.EntityMapper;
+import com.grability.rappitendero.data.exceptions.NetworkConnectionException;
+import com.grability.rappitendero.data.network.RestApi;
+import com.grability.rappitendero.utils.Constants;
+import com.grability.rappitendero.utils.Utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +44,10 @@ public class CloudDataStore implements DataStore {
     private static final String TAG = CloudDataStore.class.getName();
     private Context mContext;
     private RestApi mRestApi;
-    private GeneralRealmManager mRealmManager;
+    private DataBaseManager mRealmManager;
     private EntityMapper mEntityDataMapper;
     private Class mDataClass;
+    private String mIdColumnName;
     private final Action1<Object> saveGenericToCacheAction = object -> {
         Object mappedObject = mEntityDataMapper.transformToRealm(object, mDataClass);
         Observable<?> observable;
@@ -52,7 +58,7 @@ public class CloudDataStore implements DataStore {
         else
             try {
                 observable = mRealmManager.put(new JSONObject(new Gson().toJson(object, mDataClass)),
-                        mDataClass);
+                        mIdColumnName, mDataClass);
             } catch (JSONException e) {
                 e.printStackTrace();
                 observable = Observable.error(e);
@@ -65,7 +71,7 @@ public class CloudDataStore implements DataStore {
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();
                     }
 
@@ -109,9 +115,9 @@ public class CloudDataStore implements DataStore {
      * Construct a {@link DataStore} based on connections to the api (Cloud).
      *
      * @param restApi      The {@link RestApi} implementation to use.
-     * @param realmManager A {@link GeneralRealmManager} to cache data retrieved from the api.
+     * @param realmManager A {@link DataBaseManager} to cache data retrieved from the api.
      */
-    public CloudDataStore(RestApi restApi, GeneralRealmManager realmManager, EntityMapper entityDataMapper) {
+    public CloudDataStore(RestApi restApi, DataBaseManager realmManager, EntityMapper entityDataMapper) {
         mRestApi = restApi;
         mEntityDataMapper = entityDataMapper;
         mRealmManager = realmManager;
@@ -119,12 +125,13 @@ public class CloudDataStore implements DataStore {
 //        mGson = new Gson();
     }
 
+    @NonNull
     @Override
-    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist) {
+    public Observable<List> dynamicGetList(String url, Class domainClass, Class dataClass, boolean persist) {
         mDataClass = dataClass;
         return mRestApi.dynamicGetList(url)
-//                .compose(applyExponentialBackoff())
-//                .toBlocking()
+                //.compose(applyExponentialBackoff())
+//                .doOnError(Throwable::printStackTrace)
                 .doOnNext(list -> {
                     if (persist)
                         saveAllGenericsToCacheAction.call(list);
@@ -132,13 +139,14 @@ public class CloudDataStore implements DataStore {
                 .map(entities -> mEntityDataMapper.transformAllToDomain(entities, domainClass));
     }
 
+    @NonNull
     @Override
-    public Observable<List> dynamicList(String url, Class domainClass, Class dataClass, boolean persist,
-                                        boolean shouldCache) {
+    public Observable<List> dynamicGetList(String url, Class domainClass, Class dataClass, boolean persist,
+                                           boolean shouldCache) {
         mDataClass = dataClass;
         return mRestApi.dynamicGetList(url, shouldCache)
-//                .compose(applyExponentialBackoff())
-//                .toBlocking()
+                //.compose(applyExponentialBackoff())
+//                .doOnError(Throwable::printStackTrace)
                 .doOnNext(list -> {
                     if (persist)
                         saveAllGenericsToCacheAction.call(list);
@@ -146,13 +154,15 @@ public class CloudDataStore implements DataStore {
                 .map(entities -> mEntityDataMapper.transformAllToDomain(entities, domainClass));
     }
 
+    @NonNull
     @Override
-    public Observable<?> dynamicObject(String url, String idColumnName, int itemId, Class domainClass,
-                                       Class dataClass, boolean persist) {
+    public Observable<?> dynamicGetObject(String url, String idColumnName, int itemId, Class domainClass,
+                                          Class dataClass, boolean persist) {
         mDataClass = dataClass;
+        mIdColumnName = idColumnName;
         return mRestApi.dynamicGetObject(url)
-                .compose(applyExponentialBackoff())
-//                .toBlocking()
+                //.compose(applyExponentialBackoff())
+                //.doOnError(Throwable::printStackTrace)
                 .doOnNext(object -> {
                     if (persist)
                         saveGenericToCacheAction.call(object);
@@ -160,13 +170,15 @@ public class CloudDataStore implements DataStore {
                 .map(entity -> mEntityDataMapper.transformToDomain(entity, domainClass));
     }
 
+    @NonNull
     @Override
-    public Observable<?> dynamicObject(String url, String idColumnName, int itemId, Class domainClass,
-                                       Class dataClass, boolean persist, boolean shouldCache) {
+    public Observable<?> dynamicGetObject(String url, String idColumnName, int itemId, Class domainClass,
+                                          Class dataClass, boolean persist, boolean shouldCache) {
+        mIdColumnName = idColumnName;
         mDataClass = dataClass;
         return mRestApi.dynamicGetObject(url, shouldCache)
-                .compose(applyExponentialBackoff())
-//                .toBlocking()
+                //.compose(applyExponentialBackoff())
+//                .doOnError(Throwable::printStackTrace)
                 .doOnNext(object -> {
                     if (persist)
                         saveGenericToCacheAction.call(object);
@@ -174,6 +186,7 @@ public class CloudDataStore implements DataStore {
                 .map(entity -> mEntityDataMapper.transformToDomain(entity, domainClass));
     }
 
+    @NonNull
     @Override
     public Observable<?> dynamicPostObject(String url, HashMap<String, Object> keyValuePairs,
                                            Class domainClass, Class dataClass, boolean persist) {
@@ -189,21 +202,22 @@ public class CloudDataStore implements DataStore {
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
             return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
                     new JSONObject(keyValuePairs).toString()))
-                    .compose(applyExponentialBackoff())
-//                .toBlocking()
+                    //.compose(applyExponentialBackoff())
                     .doOnNext(object -> {
                         if (persist)
                             saveGenericToCacheAction.call(object);
                     })
                     .doOnError(throwable -> {
+//                        Log.d(TAG, throwable.getMessage());
 //                        queuePost.call(object);
                     })
                     .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
         });
     }
 
+    @NonNull
     @Override
-    public Observable<?> dynamicPostObject(String url, JSONObject keyValuePairs, Class domainClass, Class dataClass, boolean persist) {
+    public Observable<?> dynamicPostObject(String url, @NonNull JSONObject keyValuePairs, Class domainClass, Class dataClass, boolean persist) {
         return Observable.defer(() -> {
             if (!Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
@@ -216,49 +230,53 @@ public class CloudDataStore implements DataStore {
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
             return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
                     keyValuePairs.toString()))
-                    .compose(applyExponentialBackoff())
-//                .toBlocking()
+                    //.compose(applyExponentialBackoff())
                     .doOnNext(object -> {
                         if (persist)
                             saveGenericToCacheAction.call(object);
                     })
                     .doOnError(throwable -> {
+//                        Log.d(TAG, throwable.getMessage());
 //                        queuePost.call(object);
                     })
                     .map(realmModel -> mEntityDataMapper.transformToDomain(realmModel, domainClass));
         });
     }
 
+    @NonNull
     @Override
-    public Observable<List> dynamicPostList(final String url, final HashMap<String, Object> keyValuePairs,
-                                            Class domainClass, Class dataClass, boolean persist) {
+    public Observable<List> dynamicPostList(String url, @NonNull JSONArray jsonArray, Class domainClass, Class dataClass, boolean persist) {
         mDataClass = dataClass;
         return Observable.defer(() -> {
             if (!Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
 //                queuePost.call(object);
                 if (persist)
-                    saveGenericToCacheAction.call(keyValuePairs);
+                    saveGenericToCacheAction.call(jsonArray);
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_persisted)));
             } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
                     || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
             return mRestApi.dynamicPostList(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
-                    new JSONObject(keyValuePairs).toString()))
-                    .compose(applyExponentialBackoff())
-//                .toBlocking()
-                    .doOnNext(saveGenericToCacheAction)
+                    jsonArray.toString()))
+                    //.compose(applyExponentialBackoff())
+//                    .doOnError(Throwable::printStackTrace)
+                    .doOnNext(list -> {
+                        if (persist)
+                            saveGenericToCacheAction.call(list);
+                    })
                     .doOnError(throwable -> {
                         if (persist)
-                            saveGenericToCacheAction.call(keyValuePairs);
+                            saveGenericToCacheAction.call(jsonArray);
 //                        queuePost.call(object);
                     })
                     .map(realmModel -> mEntityDataMapper.transformAllToDomain(realmModel, domainClass));
         });
     }
 
+    @NonNull
     @Override
-    public Observable<?> dynamicDeleteCollection(final String url, final HashMap<String, Object> keyValuePairs,
+    public Observable<?> dynamicDeleteCollection(final String url, @NonNull final HashMap<String, Object> keyValuePairs,
                                                  Class dataClass, boolean persist) {
         mDataClass = dataClass;
         List<Integer> ids = (List<Integer>) keyValuePairs.get(DataStore.IDS);
@@ -274,9 +292,10 @@ public class CloudDataStore implements DataStore {
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
             return mRestApi.dynamicPostObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
                     new JSONObject(keyValuePairs).toString()))
-                    .compose(applyExponentialBackoff())
-//                .toBlocking()
-                    .doOnCompleted(() -> deleteCollectionGenericsFromCacheAction.call(ids))
+                    //.compose(applyExponentialBackoff())
+                    .doOnNext(object -> {
+                        if (persist) deleteCollectionGenericsFromCacheAction.call(ids);
+                    })
                     .doOnError(throwable -> {
 //                        queueDeleteCollection.call(list);
                         if (persist)
@@ -285,6 +304,7 @@ public class CloudDataStore implements DataStore {
         });
     }
 
+    @NonNull
     @Override
     public Observable<?> dynamicPutObject(String url, HashMap<String, Object> keyValuePairs, Class domainClass, Class dataClass, boolean persist) {
         return Observable.defer(() -> {
@@ -299,8 +319,7 @@ public class CloudDataStore implements DataStore {
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
             return mRestApi.dynamicPutObject(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
                     new JSONObject(keyValuePairs).toString()))
-//                    .compose(applyExponentialBackoff())
-//                .toBlocking()
+                    //.compose(applyExponentialBackoff())
                     .doOnNext(object -> {
                         if (persist)
                             saveGenericToCacheAction.call(object);
@@ -312,6 +331,36 @@ public class CloudDataStore implements DataStore {
         });
     }
 
+    @NonNull
+    @Override
+    public Observable<?> dynamicUploadFile(String url, @NonNull File file, Class domainClass, Class dataClass,
+                                           boolean persist) {
+        String mimeType = getMimeType(file.getPath());
+        RequestBody requestFile = RequestBody.create(MediaType.parse(mimeType), file);
+        return Observable.defer(() -> {
+            if (!Utils.isNetworkAvailable(mContext) && (Utils.hasLollipop()
+                    || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS)) {
+//                queuePut.call(object);
+//                if (persist)
+//                    saveGenericToCacheAction.call(keyValuePairs);
+                return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_persisted)));
+            } else if (!Utils.isNetworkAvailable(mContext) && !(Utils.hasLollipop()
+                    || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
+                return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
+            return mRestApi.upload(url, requestFile)
+                    .doOnNext(object -> {
+                        if (persist)
+                            saveGenericToCacheAction.call(object);
+                    })
+                    .doOnError(throwable -> {
+
+                    })
+                    .map(realmModel ->
+                            mEntityDataMapper.transformToDomain(realmModel, domainClass));
+        });
+    }
+
+    @NonNull
     @Override
     public Observable<List> dynamicPutList(String url, HashMap<String, Object> keyValuePairs, Class domainClass, Class dataClass, boolean persist) {
         mDataClass = dataClass;
@@ -327,9 +376,11 @@ public class CloudDataStore implements DataStore {
                 return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
             return mRestApi.dynamicPutList(url, RequestBody.create(MediaType.parse(Constants.APPLICATION_JSON),
                     new JSONObject(keyValuePairs).toString()))
-                    .compose(applyExponentialBackoff())
-//                .toBlocking()
-                    .doOnNext(saveGenericToCacheAction)
+                    //.compose(applyExponentialBackoff())
+                    .doOnNext(list -> {
+                        if (persist)
+                            saveGenericToCacheAction.call(list);
+                    })
                     .doOnError(throwable -> {
                         if (persist)
                             saveGenericToCacheAction.call(keyValuePairs);
@@ -339,6 +390,7 @@ public class CloudDataStore implements DataStore {
         });
     }
 
+    @NonNull
     @Override
     public Observable<?> dynamicDeleteAll(String url, Class dataClass, boolean persist) {
 //        mDataClass = mDataClass;
@@ -353,7 +405,7 @@ public class CloudDataStore implements DataStore {
 //                    || GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(mContext) == ConnectionResult.SUCCESS))
 //                return Observable.error(new NetworkConnectionException(mContext.getString(R.string.network_error_not_persisted)));
 //            return mRestApi.dynamicDeleteAll(url)
-//       .compose(applyExponentialBackoff())
+//       //.compose(applyExponentialBackoff())
 ////                .toBlocking()
 //                    .doOnNext(saveGenericToCacheAction)
 //                    .doOnError(throwable -> {
@@ -363,6 +415,19 @@ public class CloudDataStore implements DataStore {
 //                    });
 //        });
         return Observable.error(new Exception("cant delete all from cloud data store"));
+    }
+
+
+    @NonNull
+    @Override
+    public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
+        return Observable.error(new Exception("cant search disk in cloud data store"));
+    }
+
+    @NonNull
+    @Override
+    public Observable<List> searchDisk(RealmQuery query, Class domainClass) {
+        return Observable.error(new Exception("cant search disk in cloud data store"));
     }
 
     private <T> Observable.Transformer<T, T> applyExponentialBackoff() {
@@ -379,13 +444,12 @@ public class CloudDataStore implements DataStore {
         });
     }
 
-    @Override
-    public Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass) {
-        return Observable.error(new Exception("cant search disk in cloud data store"));
-    }
-
-    @Override
-    public Observable<List> searchDisk(RealmQuery query, Class domainClass) {
-        return Observable.error(new Exception("cant search disk in cloud data store"));
+    @Nullable
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null)
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        return type;
     }
 }

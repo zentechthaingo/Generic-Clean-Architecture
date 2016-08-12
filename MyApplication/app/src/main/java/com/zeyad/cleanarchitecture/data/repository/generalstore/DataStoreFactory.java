@@ -1,22 +1,25 @@
 package com.zeyad.cleanarchitecture.data.repository.generalstore;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
-import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
-import com.zeyad.cleanarchitecture.utilities.Constants;
-import com.zeyad.cleanarchitecture.utilities.Utils;
+import com.grability.rappitendero.data.db.DataBaseManager;
+import com.grability.rappitendero.data.entities.mappers.EntityMapper;
+import com.grability.rappitendero.data.network.RestApiImpl;
+import com.grability.rappitendero.utils.Constants;
+import com.grability.rappitendero.utils.Utils;
 
 import javax.inject.Inject;
 
 public class DataStoreFactory {
 
-    private GeneralRealmManager mRealmManager;
+    @Nullable
+    private DataBaseManager mRealmManager;
     private final Context mContext;
 
     @Inject
-    public DataStoreFactory(GeneralRealmManager realmManager, Context context) {
+    public DataStoreFactory(@Nullable DataBaseManager realmManager, Context context) {
         if (realmManager == null)
             throw new IllegalArgumentException("Constructor parameters cannot be null!");
         mContext = context;
@@ -26,32 +29,33 @@ public class DataStoreFactory {
     /**
      * Create {@link DataStore} .
      */
-    public DataStore dynamically(String url, EntityMapper entityDataMapper, Class dataClass) {
-        if (url.isEmpty())
+    @NonNull
+    public DataStore dynamically(@NonNull String url, EntityMapper entityDataMapper, @NonNull Class dataClass) {
+        if (url.isEmpty() && (mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE
+                + dataClass.getSimpleName()) || !Utils.isNetworkAvailable(mContext)))
             return new DiskDataStore(mRealmManager, entityDataMapper);
-        if (mRealmManager.areItemsValid(Constants.COLLECTION_SETTINGS_KEY_LAST_CACHE_UPDATE + dataClass.getSimpleName())
-                || !Utils.isNetworkAvailable(mContext))
-            return new DiskDataStore(mRealmManager, entityDataMapper);
-        else
+        else if (!url.isEmpty())
             return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
+        else return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
     /**
      * Create {@link DataStore} from an id.
      */
-    public DataStore dynamically(String url, String idColumnName, int id, EntityMapper entityDataMapper,
+    @NonNull
+    public DataStore dynamically(@NonNull String url, String idColumnName, int id, EntityMapper entityDataMapper,
                                  Class dataClass) {
-        if (url.isEmpty())
+        if (url.isEmpty() && (mRealmManager.isItemValid(id, idColumnName, dataClass) || !Utils.isNetworkAvailable(mContext)))
             return new DiskDataStore(mRealmManager, entityDataMapper);
-        if (mRealmManager.isItemValid(id, idColumnName, dataClass) || !Utils.isNetworkAvailable(mContext))
-            return new DiskDataStore(mRealmManager, entityDataMapper);
-        else
+        else if (!url.isEmpty())
             return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
+        else return new DiskDataStore(mRealmManager, entityDataMapper);
     }
 
     /**
      * Creates a disk {@link DataStore}.
      */
+    @NonNull
     public DataStore disk(EntityMapper entityDataMapper) {
         return new DiskDataStore(mRealmManager, entityDataMapper);
     }
@@ -59,6 +63,7 @@ public class DataStoreFactory {
     /**
      * Creates a cloud {@link DataStore}.
      */
+    @NonNull
     public DataStore cloud(EntityMapper entityDataMapper) {
         return new CloudDataStore(new RestApiImpl(), mRealmManager, entityDataMapper);
     }

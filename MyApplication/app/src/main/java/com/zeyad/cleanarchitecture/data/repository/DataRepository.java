@@ -1,13 +1,15 @@
 package com.zeyad.cleanarchitecture.data.repository;
 
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityDataMapper;
-import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
-import com.zeyad.cleanarchitecture.data.repository.generalstore.DataStoreFactory;
-import com.zeyad.cleanarchitecture.domain.repository.Repository;
-import com.zeyad.cleanarchitecture.utilities.Utils;
+import android.support.annotation.NonNull;
 
+import com.grability.rappitendero.data.repository.generalstore.DataStoreFactory;
+import com.grability.rappitendero.domain.repository.Repository;
+import com.grability.rappitendero.utils.Utils;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -22,7 +24,6 @@ import rx.Observable;
 public class DataRepository implements Repository {
 
     private final DataStoreFactory mDataStoreFactory;
-    private EntityMapper mEntityDataMapper;
 
     /**
      * Constructs a {@link Repository}.
@@ -32,7 +33,6 @@ public class DataRepository implements Repository {
     @Inject
     public DataRepository(DataStoreFactory dataStoreFactory) {
         mDataStoreFactory = dataStoreFactory;
-        mEntityDataMapper = new EntityDataMapper();
     }
 
     /**
@@ -48,9 +48,9 @@ public class DataRepository implements Repository {
      */
     @Override
 //    @RxLogObservable
-    public Observable<List> getListDynamically(String url, Class domainClass, Class dataClass, boolean persist) {
+    public Observable<List> getListDynamically(@NonNull String url, Class domainClass, @NonNull Class dataClass, boolean persist) {
         return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
-                .dynamicList(url, domainClass, dataClass, persist);
+                .dynamicGetList(url, domainClass, dataClass, persist);
     }
 
     /**
@@ -67,90 +67,59 @@ public class DataRepository implements Repository {
      */
     @Override
 //    @RxLogObservable
-    public Observable<List> getListDynamically(String url, Class domainClass, Class dataClass, boolean persist,
+    public Observable<List> getListDynamically(@NonNull String url, Class domainClass, @NonNull Class dataClass, boolean persist,
                                                boolean shouldCache) {
         return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
-                .dynamicList(url, domainClass, dataClass, persist, shouldCache);
+                .dynamicGetList(url, domainClass, dataClass, persist, shouldCache);
     }
 
     @Override
 //    @RxLogObservable
-    public Observable<?> getObjectDynamicallyById(String url, String idColumnName, int itemId,
-                                                  Class domainClass, Class dataClass,
-                                                  boolean persist) {
-        if (persist || url.isEmpty())
-            return mDataStoreFactory.dynamically(url, idColumnName, itemId, Utils.getDataMapper(dataClass),
-                    dataClass).dynamicObject(url, idColumnName, itemId, domainClass, dataClass, true);
-        else
-            return mDataStoreFactory.cloud(Utils.getDataMapper(dataClass))
-                    .dynamicObject(url, idColumnName, itemId, domainClass, dataClass, false);
+    public Observable<?> getObjectDynamicallyById(@NonNull String url, String idColumnName, int itemId,
+                                                  Class domainClass, Class dataClass, boolean persist) {
+        return mDataStoreFactory.dynamically(url, idColumnName, itemId, Utils.getDataMapper(dataClass),
+                dataClass).dynamicGetObject(url, idColumnName, itemId, domainClass, dataClass, persist);
     }
 
     @Override
 //    @RxLogObservable
-    public Observable<?> getObjectDynamicallyById(String url, String idColumnName, int itemId,
-                                                  Class domainClass, Class dataClass,
-                                                  boolean persist, boolean shouldCache) {
-        if (persist || url.isEmpty())
-            return mDataStoreFactory.dynamically(url, idColumnName, itemId, Utils.getDataMapper(dataClass),
-                    dataClass).dynamicObject(url, idColumnName, itemId, domainClass, dataClass, true, shouldCache);
-        else
-            return mDataStoreFactory.cloud(Utils.getDataMapper(dataClass))
-                    .dynamicObject(url, idColumnName, itemId, domainClass, dataClass, false, shouldCache);
+    public Observable<?> getObjectDynamicallyById(@NonNull String url, String idColumnName, int itemId,
+                                                  Class domainClass, Class dataClass, boolean persist,
+                                                  boolean shouldCache) {
+        return mDataStoreFactory.dynamically(url, idColumnName, itemId, Utils.getDataMapper(dataClass),
+                dataClass).dynamicGetObject(url, idColumnName, itemId, domainClass, dataClass, persist,
+                shouldCache);
     }
 
     @Override
 //    @RxLogObservable
-    public Observable<?> postObjectDynamically(String url, HashMap<String, Object> keyValuePairs,
-                                               Class domainClass, Class dataClass, boolean persist) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
-        if (persist)
-            return Observable.concat(mDataStoreFactory
-                            .disk(mEntityDataMapper)
-                            .dynamicPostObject(url, keyValuePairs, domainClass, dataClass, persist),
-                    mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url,
-                            keyValuePairs, domainClass, dataClass, true))
-                    .distinct();
-        return mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url, keyValuePairs,
-                domainClass, dataClass, false);
+    public Observable<?> postObjectDynamically(@NonNull String url, HashMap<String, Object> keyValuePairs,
+                                               Class domainClass, @NonNull Class dataClass, boolean persist) {
+        return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
+                .dynamicPostObject(url, keyValuePairs, domainClass, dataClass, persist);
     }
 
     @Override
-    public Observable<?> postObjectDynamically(String url, JSONObject keyValuePairs, Class domainClass,
-                                               Class dataClass, boolean persist) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
-        if (persist)
-            return Observable.concat(mDataStoreFactory.disk(mEntityDataMapper)
-                            .dynamicPostObject(url, keyValuePairs, domainClass, dataClass, persist),
-                    mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url,
-                            keyValuePairs, domainClass, dataClass, true))
-                    .distinct();
-        return mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url, keyValuePairs,
-                domainClass, dataClass, false);
+    public Observable<?> postObjectDynamically(@NonNull String url, JSONObject keyValuePairs, Class domainClass,
+                                               @NonNull Class dataClass, boolean persist) {
+        return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
+                .dynamicPostObject(url, keyValuePairs, domainClass, dataClass, false);
     }
 
     @Override
 //    @RxLogObservable
-    public Observable<List> postListDynamically(String url, HashMap<String, Object> keyValuePairs,
-                                                Class domainClass, Class dataClass, boolean persist) {
-        return mDataStoreFactory.cloud(Utils.getDataMapper(dataClass)).dynamicPostList(url, keyValuePairs,
-                domainClass, dataClass, persist);
+    public Observable<?> postListDynamically(@NonNull String url, JSONArray jsonArray, Class domainClass,
+                                             @NonNull Class dataClass, boolean persist) {
+        return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
+                .dynamicPostList(url, jsonArray, domainClass, dataClass, persist);
     }
 
     @Override
 //    @RxLogObservable
-    public Observable<?> deleteListDynamically(String url, HashMap<String, Object> keyValuePairs,
-                                               Class domainClass, Class dataClass, boolean persist) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
-        if (persist)
-            return Observable.concat(mDataStoreFactory
-                            .disk(mEntityDataMapper)
-                            .dynamicDeleteCollection(url, keyValuePairs, dataClass, persist),
-                    mDataStoreFactory.cloud(mEntityDataMapper).dynamicDeleteCollection(url,
-                            keyValuePairs, dataClass, true))
-                    .distinct();
-        return mDataStoreFactory.cloud(mEntityDataMapper).dynamicPostObject(url, keyValuePairs,
-                domainClass, dataClass, false);
+    public Observable<?> deleteListDynamically(@NonNull String url, HashMap<String, Object> keyValuePairs,
+                                               Class domainClass, @NonNull Class dataClass, boolean persist) {
+        return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
+                .dynamicPostObject(url, keyValuePairs, domainClass, dataClass, false);
     }
 
     @Override
@@ -166,38 +135,29 @@ public class DataRepository implements Repository {
     }
 
     @Override
-    public Observable<?> putObjectDynamically(String url, HashMap<String, Object> keyValuePairs, Class domainClass,
-                                              Class dataClass, boolean persist) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
-        if (persist)
-            return Observable.concat(mDataStoreFactory
-                            .disk(mEntityDataMapper)
-                            .dynamicPutObject(url, keyValuePairs, domainClass, dataClass, persist),
-                    mDataStoreFactory.cloud(mEntityDataMapper).dynamicPutObject(url,
-                            keyValuePairs, domainClass, dataClass, true))
-                    .distinct();
-        return mDataStoreFactory.cloud(mEntityDataMapper).dynamicPutObject(url, keyValuePairs,
-                domainClass, dataClass, false);
+    public Observable<?> uploadFileDynamically(@NonNull String url, File file, Class domainClass, @NonNull Class dataClass,
+                                               boolean persist) {
+        return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
+                .dynamicUploadFile(url, file, domainClass, dataClass, false);
     }
 
     @Override
-    public Observable<List> putListDynamically(String url, HashMap<String, Object> keyValuePairs,
-                                               Class domainClass, Class dataClass, boolean persist) {
-        return mDataStoreFactory.cloud(Utils.getDataMapper(dataClass)).dynamicPutList(url, keyValuePairs,
-                domainClass, dataClass, persist);
+    public Observable<?> putObjectDynamically(@NonNull String url, HashMap<String, Object> keyValuePairs,
+                                              Class domainClass, @NonNull Class dataClass, boolean persist) {
+        return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
+                .dynamicPutObject(url, keyValuePairs, domainClass, dataClass, false);
     }
 
     @Override
-    public Observable<?> deleteAllDynamically(String url, Class dataClass, boolean persist) {
-        mEntityDataMapper = Utils.getDataMapper(dataClass);
-        if (persist && !url.isEmpty())
-            return Observable.concat(mDataStoreFactory
-                            .disk(mEntityDataMapper)
-                            .dynamicDeleteAll(url, dataClass, true),
-                    mDataStoreFactory.cloud(mEntityDataMapper).dynamicDeleteAll(url, dataClass, true))
-                    .distinct();
-        if (url.isEmpty())
-            return mDataStoreFactory.disk(mEntityDataMapper).dynamicDeleteAll(url, dataClass, true);
-        return mDataStoreFactory.cloud(mEntityDataMapper).dynamicDeleteAll(url, dataClass, false);
+    public Observable<List> putListDynamically(@NonNull String url, HashMap<String, Object> keyValuePairs,
+                                               Class domainClass, @NonNull Class dataClass, boolean persist) {
+        return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
+                .dynamicPutList(url, keyValuePairs, domainClass, dataClass, persist);
+    }
+
+    @Override
+    public Observable<?> deleteAllDynamically(@NonNull String url, @NonNull Class dataClass, boolean persist) {
+        return mDataStoreFactory.dynamically(url, Utils.getDataMapper(dataClass), dataClass)
+                .dynamicDeleteAll(url, dataClass, false);
     }
 }

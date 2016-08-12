@@ -10,39 +10,19 @@ import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActiv
 /**
  * Class used to navigate through the application.
  */
-//@Singleton
+@Singleton
 public class Navigator {
 
-    //    @Inject
+    @Inject
     public Navigator() {
-        //empty
-    }
-
-    /**
-     * Goes to the user list screen.
-     *
-     * @param context A Context needed to open the destiny activity.
-     */
-    public void navigateToUserList(Context context) {
-        if (context != null)
-            context.startActivity(UserListActivity.getCallingIntent(context));
-    }
-
-    /**
-     * Goes to the user details screen.
-     *
-     * @param context A Context needed to open the destiny activity.
-     */
-    public void navigateToUserDetails(Context context, int userId, Bundle bundle) {
-        if (context != null) {
-            Intent intentToLaunch = UserDetailsActivity.getCallingIntent(context, userId);
-            if (bundle == null)
-                context.startActivity(intentToLaunch);
-            else context.startActivity(intentToLaunch, bundle);
-        }
+        // empty
     }
 
     public void navigateTo(Context context, Intent intent) {
         context.startActivity(intent);
+    }
+
+    public void navigateToForResult(BaseActivity activity, Intent intent, int requestCode) {
+        activity.startActivityForResult(intent, requestCode);
     }
 }

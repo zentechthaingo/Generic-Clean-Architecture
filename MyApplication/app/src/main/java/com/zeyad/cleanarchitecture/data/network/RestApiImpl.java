@@ -24,8 +24,31 @@ public class RestApiImpl implements RestApi {
     }
 
     @Override
-    public Observable<ResponseBody> upload(@Url String url, @Part("description") RequestBody description, @Part MultipartBody.Part file) {
-        return ApiConnection.upload(url, file, description);
+    public Observable<ResponseBody> upload(@Url String url, @Part("description") RequestBody description,
+                                           @Part MultipartBody.Part file) {
+        return ApiConnection.upload(url, file);
+    }
+
+    @Override
+    public Observable<ResponseBody> upload(@Url String url, @Part("description") RequestBody description,
+                                           @Part MultipartBody.Part file, boolean shouldCache) {
+        return ApiConnection.upload(url, file);
+    }
+
+    @Override
+    public Observable<Object> upload(@Url String url, @Part(value = "image", encoding = "binary") RequestBody requestBody) {
+        return ApiConnection.upload(url, requestBody);
+    }
+
+    @Override
+    public Observable<Object> upload(@Url String url, @Part(value = "file\";filename=\"somename.jpg\"",
+            encoding = "binary") RequestBody description, boolean shouldCache) {
+        return ApiConnection.upload(url, description);
+    }
+
+    @Override
+    public Observable<ResponseBody> upload(@Url String url, @Part MultipartBody.Part file, boolean shouldCache) {
+        return ApiConnection.upload(url, file);
     }
 
     @Override
@@ -76,5 +99,15 @@ public class RestApiImpl implements RestApi {
     @Override
     public Observable<List> dynamicDeleteList(@Url String url, @Body RequestBody body) {
         return ApiConnection.dynamicDeleteList(url, body);
+    }
+
+    @Override
+    public Call<RefreshTokenEntity> refreshToken(@Url String url, @Body RequestBody body) {
+        return ApiConnection.refreshToken(url, body);
+    }
+
+    @Override
+    public Observable<ResponseBody> upload(@Url String url, @Part MultipartBody.Part file) {
+        return ApiConnection.upload(url, file);
     }
 }

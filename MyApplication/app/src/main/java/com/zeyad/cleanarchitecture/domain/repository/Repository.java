@@ -1,7 +1,9 @@
 package com.zeyad.cleanarchitecture.domain.repository;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,8 +48,8 @@ public interface Repository {
     Observable<?> postObjectDynamically(String url, JSONObject keyValuePairs, Class domainClass,
                                         Class dataClass, boolean persist);
 
-    Observable<List> postListDynamically(String url, HashMap<String, Object> keyValuePairs,
-                                         Class domainClass, Class dataClass, boolean persist);
+    Observable<?> postListDynamically(String url, JSONArray jsonArray,
+                                      Class domainClass, Class dataClass, boolean persist);
 
     Observable<?> deleteListDynamically(String url, HashMap<String, Object> keyValuePairs, Class domainClass,
                                         Class dataClass, boolean persist);
@@ -63,4 +65,7 @@ public interface Repository {
     Observable<List> searchDisk(String query, String column, Class domainClass, Class dataClass);
 
     Observable<List> searchDisk(RealmQuery query, Class domainClass);
+
+    Observable<?> uploadFileDynamically(String url, File file, Class domainClass, Class dataClass,
+                                        boolean persist);
 }

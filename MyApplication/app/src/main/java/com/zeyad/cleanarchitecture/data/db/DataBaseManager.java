@@ -12,17 +12,19 @@ import io.realm.RealmQuery;
 import rx.Observable;
 
 // TODO: 8/06/16 remove!
-public interface GeneralRealmManager {
+public interface DataBaseManager {
     /**
      * Gets an {@link Observable} which will emit an Object.
      *
      * @param userId The user id to retrieve data.
      */
+    @NonNull
     Observable<?> getById(final String idColumnName, final int userId, Class clazz);
 
     /**
      * Gets an {@link Observable} which will emit a List of Objects.
      */
+    @NonNull
     Observable<List> getAll(Class clazz);
 
     /**
@@ -30,11 +32,14 @@ public interface GeneralRealmManager {
      *
      * @param realmModel Element to insert in the cache.
      */
+    @NonNull
     Observable<?> put(RealmObject realmModel, Class dataClass);
 
+    @NonNull
     Observable<?> put(RealmModel realmModel, Class dataClass);
 
-    Observable<?> put(JSONObject realmObject, Class dataClass);
+    @NonNull
+    Observable<?> put(JSONObject realmObject, String idColumnName, Class dataClass);
 
     /**
      * Puts and element into the cache.
@@ -42,6 +47,14 @@ public interface GeneralRealmManager {
      * @param realmModels Element to insert in the cache.
      */
     void putAll(List<RealmObject> realmModels, Class dataClass);
+
+    /**
+     * Puts and element into the cache.
+     *
+     * @param jsonArray Element to insert in the cache.
+     */
+    @NonNull
+    Observable putAll(JSONArray jsonArray, Class dataClass);
 
     /**
      * Checks if an element (User) exists in the cache.
@@ -63,17 +76,21 @@ public interface GeneralRealmManager {
     /**
      * Evict all elements of the cache.
      */
+    @NonNull
     Observable<Boolean> evictAll(Class clazz);
 
     void evict(final RealmObject realmModel, Class clazz);
 
-    boolean evictById(final long itemId, Class clazz);
+    boolean evictById(Class clazz, String idFieldName, long idFieldValue);
 
-    Observable<?> evictCollection(List<Long> list, Class dataClass);
+    @NonNull
+    Observable<?> evictCollection(String idFieldName, List<Long> list, Class dataClass);
 
     Context getContext();
 
+    @NonNull
     Observable<List> getWhere(Class clazz, String query, String filterKey);
 
+    @NonNull
     Observable<List> getWhere(RealmQuery realmQuery);
 }

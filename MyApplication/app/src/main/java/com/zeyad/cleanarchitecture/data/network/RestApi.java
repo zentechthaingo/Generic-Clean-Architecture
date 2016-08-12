@@ -25,13 +25,13 @@ public interface RestApi {
     Observable<Object> dynamicGetObject(@Url String url);
 
     @GET
-    Observable<Object> dynamicGetObject(@Url String url, boolean shouldCache);
+    Observable<Object> dynamicGetObject(@Url String url, @Field("") boolean shouldCache);
 
     @GET
     Observable<List> dynamicGetList(@Url String url);
 
     @GET
-    Observable<List> dynamicGetList(@Url String url, boolean shouldCache);
+    Observable<List> dynamicGetList(@Url String url, @Field("") boolean shouldCache);
 
     @POST
     Observable<Object> dynamicPostObject(@Url String url, @Body RequestBody body);
@@ -59,4 +59,31 @@ public interface RestApi {
     @POST
     Observable<ResponseBody> upload(@Url String url, @Part("description") RequestBody description,
                                     @Part MultipartBody.Part file);
+
+    @Multipart
+    @POST
+    Observable<Object> upload(@Url String url, @Part(value = "file\";filename=\"somename.jpg\"", encoding = "binary") RequestBody description);
+
+    @Multipart
+    @POST
+    Observable<Object> upload(@Url String url, @Part(value = "file\";filename=\"somename.jpg\"", encoding = "binary") RequestBody description, boolean shouldCache);
+
+    @Multipart
+    @POST
+    Observable<ResponseBody> upload(@Url String url, @Part("description") RequestBody description,
+                                    @Part MultipartBody.Part file, boolean shouldCache);
+
+    @Multipart
+    @POST
+    Observable<ResponseBody> upload(@Url String url,
+                                    @Part MultipartBody.Part file);
+
+    @Multipart
+    @POST
+    Observable<ResponseBody> upload(@Url String url,
+                                    @Part MultipartBody.Part file, boolean shouldCache);
+
+
+    @POST
+    Call<RefreshTokenEntity> refreshToken(@Url String url, @Body RequestBody body);
 }

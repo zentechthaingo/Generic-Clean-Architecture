@@ -1,13 +1,19 @@
 package com.zeyad.cleanarchitecture.presentation.screens;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.View;
 import android.widget.Toast;
 
-import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
-import com.zeyad.cleanarchitecture.presentation.internal.di.HasComponent;
-import com.zeyad.cleanarchitecture.utilities.Utils;
+import com.grability.rappitendero.RappiApplication;
+import com.grability.rappitendero.domain.eventbus.RxEventBus;
+import com.grability.rappitendero.presentation.di.HasComponent;
+import com.grability.rappitendero.presentation.di.components.ApplicationComponent;
+import com.grability.rappitendero.presentation.factories.SnackBarFactory;
+import com.grability.rappitendero.presentation.navigation.Navigator;
+import com.grability.rappitendero.utils.Utils;
+
+import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import rx.subscriptions.CompositeSubscription;
@@ -17,8 +23,11 @@ import rx.subscriptions.CompositeSubscription;
  */
 public abstract class BaseFragment extends Fragment {
 
-    public CompositeSubscription mCompositeSubscription;
+    @Inject
+    public Navigator navigator;
+    @Inject
     public RxEventBus rxEventBus;
+    public CompositeSubscription mCompositeSubscription;
 
     public BaseFragment() {
     }
@@ -26,6 +35,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getApplicationComponent().inject(this);
         setRetainInstance(true);
         mCompositeSubscription = Utils.getNewCompositeSubIfUnsubscribed(mCompositeSubscription);
     }
@@ -39,12 +49,27 @@ public abstract class BaseFragment extends Fragment {
     public abstract void initialize();
 
     /**
+     * Get the Main Application component for dependency injection.
+     *
+     * @return {@link com.grability.rappitendero.presentation.di.components.ApplicationComponent}
+     */
+    protected ApplicationComponent getApplicationComponent() {
+        return ((RappiApplication) getContext().getApplicationContext()).getApplicationComponent();
+    }
+
+    /**
      * Shows a {@link Toast} message.
      *
      * @param message An string representing a message to be shown.
      */
-    protected void showToastMessage(String message) {
-        Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    protected void showSnackBarMessage(@SnackBarFactory.SnackBarType String typeSnackBar, View view, String message, int duration) {
+        SnackBarFactory.getSnackBar(typeSnackBar, view, message, duration)
+                .show();
+    }
+
+    protected void showSnackBarMessage(@SnackBarFactory.SnackBarType String typeSnackBar, View view, int messageId, int duration) {
+        SnackBarFactory.getSnackBar(typeSnackBar, view, getString(messageId), duration)
+                .show();
     }
 
     /**
@@ -58,22 +83,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroyView() {
         ButterKnife.unbind(this);
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onPause() {
         Utils.unsubscribeIfNotNull(mCompositeSubscription);
-        super.onPause();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            rxEventBus = ((BaseActivity) getActivity()).rxEventBus;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(e.getMessage());
-        }
+        super.onDestroyView();
     }
 }

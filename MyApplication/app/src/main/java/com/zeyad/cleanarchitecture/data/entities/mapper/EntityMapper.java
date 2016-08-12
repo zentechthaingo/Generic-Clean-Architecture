@@ -1,4 +1,6 @@
-package com.zeyad.cleanarchitecture.data.entities.mapper;
+package com.grability.rappitendero.data.entities.mappers;
+
+import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -11,10 +13,13 @@ public interface EntityMapper<D, R> {
 
     List<R> transformAllToRealm(List<D> list, Class dataClass);
 
+    @Nullable
     D transformToDomain(R tenderoRealmModel);
 
+    @Nullable
     List<D> transformAllToDomain(List<R> tenderoRealmModels);
 
+    @Nullable
     D transformToDomain(R userRealmModel, Class domainClass);
 
     List<D> transformAllToDomain(List<R> tenderoRealmModels, Class domainClass);
