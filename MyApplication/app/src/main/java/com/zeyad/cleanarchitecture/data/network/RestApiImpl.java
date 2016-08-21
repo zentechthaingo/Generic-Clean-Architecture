@@ -101,10 +101,10 @@ public class RestApiImpl implements RestApi {
         return ApiConnection.dynamicDeleteList(url, body);
     }
 
-    @Override
-    public Call<RefreshTokenEntity> refreshToken(@Url String url, @Body RequestBody body) {
-        return ApiConnection.refreshToken(url, body);
-    }
+//    @Override
+//    public Call<RefreshTokenEntity> refreshToken(@Url String url, @Body RequestBody body) {
+//        return ApiConnection.refreshToken(url, body);
+//    }
 
     @Override
     public Observable<ResponseBody> upload(@Url String url, @Part MultipartBody.Part file) {

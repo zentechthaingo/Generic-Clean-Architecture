@@ -1,9 +1,9 @@
-package com.zeyad.cleanarchitecture.presentation.internal.di.components;
+package com.zeyad.cleanarchitecture.presentation.di.components;
 
 import android.support.v7.app.AppCompatActivity;
 
-import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
-import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
+import com.zeyad.cleanarchitecture.presentation.di.PerActivity;
+import com.zeyad.cleanarchitecture.presentation.di.modules.ActivityModule;
 
 import dagger.Component;
 
@@ -12,7 +12,7 @@ import dagger.Component;
  * Activity-level components should extend this component.
  * <p>
  * Subtypes of ActivityComponent should be decorated with annotation:
- * {@link com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity}
+ * {@link com.zeyad.cleanarchitecture.presentation.di.PerActivity}
  */
 @PerActivity
 @Component(dependencies = ApplicationComponent.class, modules = ActivityModule.class)

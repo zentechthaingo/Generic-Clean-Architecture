@@ -81,15 +81,15 @@
             </intent-filter>
         </service>
 
-        <activity
-            android:name=".presentation.screens.firebaze.FirebazeActivity"
-            android:label="@string/title_activity_firebaze"
-            android:parentActivityName=".presentation.screens.main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.zeyad.cleanarchitecture.presentation.screens.main.MainActivity" />
-        </activity>
+        <!--<activity-->
+        <!--android:name=".FirebazeActivity"-->
+        <!--android:label="@string/title_activity_firebaze"-->
+        <!--android:parentActivityName=".presentation.screens.main.MainActivity"-->
+        <!--android:theme="@style/AppTheme.NoActionBar">-->
+        <!--<meta-data-->
+        <!--android:name="android.support.PARENT_ACTIVITY"-->
+        <!--android:value="com.zeyad.cleanarchitecture.presentation.screens.main.MainActivity" />-->
+        <!--</activity>-->
     </application>
 
 </manifest>

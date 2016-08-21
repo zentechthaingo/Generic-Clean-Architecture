@@ -4,11 +4,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.grability.rappitendero.data.db.DataBaseManager;
-import com.grability.rappitendero.data.entities.mappers.EntityMapper;
-import com.grability.rappitendero.data.network.RestApiImpl;
-import com.grability.rappitendero.utils.Constants;
-import com.grability.rappitendero.utils.Utils;
+import com.zeyad.cleanarchitecture.data.db.DataBaseManager;
+import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
+import com.zeyad.cleanarchitecture.data.network.RestApiImpl;
+import com.zeyad.cleanarchitecture.utilities.Constants;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import javax.inject.Inject;
 

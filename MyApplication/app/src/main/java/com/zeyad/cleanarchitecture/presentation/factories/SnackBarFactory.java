@@ -1,4 +1,4 @@
-package com.grability.rappitendero.presentation.factories;
+package com.zeyad.cleanarchitecture.presentation.factories;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,8 +8,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import com.grability.rappitendero.R;
-import com.grability.rappitendero.presentation.components.widgets.ColoredSnackbar;
+import com.zeyad.cleanarchitecture.R;
+import com.zeyad.cleanarchitecture.presentation.components.ColoredSnackbar;
 
 import java.lang.annotation.Retention;
 

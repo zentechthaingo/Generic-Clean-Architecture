@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.DataBaseManager;
-import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl;
+import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.executor.JobExecutor;
 import com.zeyad.cleanarchitecture.data.repository.DataRepository;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;

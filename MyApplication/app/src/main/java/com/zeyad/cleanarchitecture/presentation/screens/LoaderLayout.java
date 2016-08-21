@@ -1,8 +1,7 @@
-package com.grability.rappitendero.presentation.screens;
+package com.zeyad.cleanarchitecture.presentation.screens;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,7 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.grability.rappitendero.R;
+import com.zeyad.cleanarchitecture.R;
 
 
 /**
@@ -56,7 +55,7 @@ public class LoaderLayout extends FrameLayout implements View.OnClickListener {
      */
     private void initView(Context context) {
 
-        setBackgroundColor(ContextCompat.getColor(getContext(),R.color.white_transparent));
+        setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white_transparent));
 
         // inflate views.
         LayoutInflater.from(context).inflate(R.layout.view_loader_layout, this, true);

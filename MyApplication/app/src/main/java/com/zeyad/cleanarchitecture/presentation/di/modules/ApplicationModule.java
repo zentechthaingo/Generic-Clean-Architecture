@@ -1,10 +1,10 @@
-package com.zeyad.cleanarchitecture.presentation.internal.di.modules;
+package com.zeyad.cleanarchitecture.presentation.di.modules;
 
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.zeyad.cleanarchitecture.data.db.DataBaseManager;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.executor.JobExecutor;
 import com.zeyad.cleanarchitecture.data.repository.DataRepository;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
@@ -33,7 +33,7 @@ public class ApplicationModule {
     @Provides
     @Singleton
     Context provideApplicationContext() {
-        return application;
+        return application.getApplicationContext();
     }
 
     @Provides
@@ -50,7 +50,7 @@ public class ApplicationModule {
 
     @Provides
     @Singleton
-    GeneralRealmManager provideGeneralRealmManager(GeneralRealmManagerImpl generalRealmManager) {
+    DataBaseManager provideGeneralRealmManager(GeneralRealmManager generalRealmManager) {
         return generalRealmManager;
     }
 

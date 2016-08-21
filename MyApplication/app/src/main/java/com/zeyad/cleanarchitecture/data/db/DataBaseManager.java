@@ -1,7 +1,9 @@
 package com.zeyad.cleanarchitecture.data.db;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;

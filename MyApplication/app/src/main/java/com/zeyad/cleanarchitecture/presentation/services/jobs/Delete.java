@@ -7,7 +7,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.utilities.Constants;
@@ -40,7 +39,7 @@ public class Delete {
         ArrayList extras = intent.getParcelableArrayListExtra(Constants.EXTRA);
         deleteCollectionFromCloud((List) extras.get(0));
         dataClass = (Class) extras.get(1);
-        realmManager = new GeneralRealmManagerImpl(mContext);
+        realmManager = new GeneralRealmManager(mContext);
         entityDataMapper = new UserEntityDataMapper();
     }
 

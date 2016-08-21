@@ -1,7 +1,9 @@
 package com.zeyad.cleanarchitecture.data.repository.generalstore;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 

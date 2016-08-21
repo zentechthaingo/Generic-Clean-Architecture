@@ -1,11 +1,11 @@
-package com.grability.rappitendero.presentation.components.adapter;
+package com.zeyad.cleanarchitecture.presentation.components.adapter;
 
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.grability.rappitendero.R;
+import com.zeyad.cleanarchitecture.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

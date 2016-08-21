@@ -2,10 +2,11 @@ package com.zeyad.cleanarchitecture.presentation.navigation;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 
-import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsActivity;
-import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Class used to navigate through the application.

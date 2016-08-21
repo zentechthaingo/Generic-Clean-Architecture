@@ -29,7 +29,7 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
 
     @Mock
     Context context;
-    private GeneralRealmManagerImpl realmManager;
+    private GeneralRealmManager realmManager;
     private static final int FAKE_USER_ID = 1;
 
     @Before
@@ -37,7 +37,7 @@ public class GeneralRealmManagerTest extends AndroidTestCase {
         MockitoAnnotations.initMocks(this);
         assertNotNull(context);
         Realm.setDefaultConfiguration(new RealmConfiguration.Builder(context).deleteRealmIfMigrationNeeded().build());
-        realmManager = new GeneralRealmManagerImpl(context);
+        realmManager = new GeneralRealmManager(context);
     }
 
     @After

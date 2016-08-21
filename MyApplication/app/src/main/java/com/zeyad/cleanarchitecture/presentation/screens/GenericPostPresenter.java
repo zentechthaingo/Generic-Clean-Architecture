@@ -3,11 +3,11 @@ package com.zeyad.cleanarchitecture.presentation.screens;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.grability.rappitendero.domain.exceptions.DefaultErrorBundle;
-import com.grability.rappitendero.domain.exceptions.ErrorBundle;
-import com.grability.rappitendero.domain.interactors.DefaultSubscriber;
-import com.grability.rappitendero.domain.interactors.GenericUseCase;
-import com.grability.rappitendero.presentation.exceptions.ErrorMessageFactory;
+import com.zeyad.cleanarchitecture.domain.exceptions.DefaultErrorBundle;
+import com.zeyad.cleanarchitecture.domain.exceptions.ErrorBundle;
+import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
+import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
+import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,11 +78,10 @@ public abstract class GenericPostPresenter<M> extends BasePresenter {
         public void onError(Throwable e) {
             hideViewLoading();
             String message = getErrorMessage(e);
-            if(TextUtils.isEmpty(message)){
+            if (TextUtils.isEmpty(message)) {
                 showErrorMessage(new DefaultErrorBundle((Exception) e));
-            }else{
+            } else
                 mGenericPostView.showError(message);
-            }
             e.printStackTrace();
         }
 
@@ -92,7 +91,7 @@ public abstract class GenericPostPresenter<M> extends BasePresenter {
         }
     }
 
-    private String getErrorMessage(Throwable e){
+    private String getErrorMessage(Throwable e) {
         String message = "";
         try {
             JSONObject json = new JSONObject(((HttpException) e).response().errorBody().string());
@@ -100,7 +99,6 @@ public abstract class GenericPostPresenter<M> extends BasePresenter {
         } catch (JSONException | IOException e1) {
             e1.printStackTrace();
         }
-
         return message;
     }
 }

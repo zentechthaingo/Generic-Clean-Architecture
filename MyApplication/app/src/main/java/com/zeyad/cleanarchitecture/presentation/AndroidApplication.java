@@ -2,15 +2,18 @@ package com.zeyad.cleanarchitecture.presentation;
 
 import android.app.Application;
 import android.content.Context;
-import android.widget.Toast;
 
+import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.uphyca.stetho_realm.RealmInspectorModulesProvider;
 import com.zeyad.cleanarchitecture.BuildConfig;
-import com.zeyad.cleanarchitecture.presentation.internal.di.components.ApplicationComponent;
-import com.zeyad.cleanarchitecture.presentation.internal.di.components.DaggerApplicationComponent;
-import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ApplicationModule;
+import com.zeyad.cleanarchitecture.presentation.di.components.ApplicationComponent;
+import com.zeyad.cleanarchitecture.presentation.di.components.DaggerApplicationComponent;
+import com.zeyad.cleanarchitecture.presentation.di.modules.ApplicationModule;
 import com.zeyad.cleanarchitecture.utilities.Constants;
+
+import java.util.regex.Pattern;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -52,14 +55,18 @@ public class AndroidApplication extends Application {
     }
 
     private void initializeStetho() {
-//        Stetho.initializeWithDefaults(this);
-//        new OkHttpClient.Builder()
-//                .addNetworkInterceptor(new StethoInterceptor())
-//                .build();
-//        Stetho.initialize(Stetho.newInitializerBuilder(this)
-//                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-//                .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
-//                .build());
+        Stetho.initialize(Stetho.newInitializerBuilder(this)
+                .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
+                .build());
+        RealmInspectorModulesProvider.builder(this)
+                .withFolder(getCacheDir())
+//                .withEncryptionKey("encrypted.realm", key)
+                .withMetaTables()
+                .withDescendingOrder()
+                .withLimit(1000)
+                .databaseNamePattern(Pattern.compile(".+\\.realm"))
+                .build();
     }
 
     private void initializeRealm() {
@@ -68,10 +75,7 @@ public class AndroidApplication extends Application {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(config);
-//        if (BuildConfig.DEBUG)
-//            new RealmBrowser.Builder(this)
-//                    .add(Realm.getDefaultInstance(), UserRealmModel.class) // add class, you want to view
-//                    .showNotification(); // call method showNotification()
+
     }
 
 //    private void initializeFirebase() {
@@ -87,11 +91,5 @@ public class AndroidApplication extends Application {
 
     public ApplicationComponent getApplicationComponent() {
         return applicationComponent;
-    }
-
-    @Override
-    public void onTerminate() {
-        Toast.makeText(getApplicationContext(), "Good bye!", Toast.LENGTH_SHORT).show();
-        super.onTerminate();
     }
 }

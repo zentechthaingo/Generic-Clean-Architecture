@@ -25,4 +25,14 @@
     <color name="in_store">#44d2d4</color>
     <color name="on_the_way">#fd6250</color>
     <color name="rappi_yellow">#ffe100</color>
+    <color name="lighter_black">#5c5c5c</color>
+    <color name="checkbox_border">#33000000</color>
+    <color name="separator_background">#bbbcb9</color>
+    <color name="butterscotch">#febc48</color>
+    <color name="azure">#03a9f4</color>
+    <color name="white">#FFFFFF</color>
+    <color name="lighter_gray_text_color">#b35c5c5c</color>
+    <color name="gray_even_lighter">#DFDFDF</color>
+    <color name="white_transparent">#AAFFFFFF</color>
+    <color name="black">#000000</color>
 </resources>

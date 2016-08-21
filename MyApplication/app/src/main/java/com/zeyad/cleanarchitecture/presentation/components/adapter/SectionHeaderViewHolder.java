@@ -1,4 +1,4 @@
-package com.grability.rappitendero.presentation.components.adapter;
+package com.zeyad.cleanarchitecture.presentation.components.adapter;
 
 import android.support.v4.content.ContextCompat;
 import android.util.SparseBooleanArray;
@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.grability.rappitendero.R;
-import com.grability.rappitendero.RappiApplication;
+import com.zeyad.cleanarchitecture.R;
+import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,7 +27,7 @@ public class SectionHeaderViewHolder extends GenericRecyclerViewAdapter.ViewHold
     @Override
     public void bindData(Object data, SparseBooleanArray selectedItems, int position, boolean isEnabled) {
         itemView.setEnabled(isEnabled);
-        itemView.setBackgroundColor(ContextCompat.getColor(RappiApplication.getInstance().getApplicationContext(),
+        itemView.setBackgroundColor(ContextCompat.getColor(AndroidApplication.getInstance().getApplicationContext(),
                 R.color.gray_background));
         if (data instanceof String)
             tvSectionHeader.setText((String) data);

@@ -2,11 +2,11 @@ package com.zeyad.cleanarchitecture.presentation.screens;
 
 import android.support.annotation.NonNull;
 
-import com.grability.rappitendero.domain.exceptions.DefaultErrorBundle;
-import com.grability.rappitendero.domain.exceptions.ErrorBundle;
-import com.grability.rappitendero.domain.interactors.DefaultSubscriber;
-import com.grability.rappitendero.domain.interactors.GenericUseCase;
-import com.grability.rappitendero.presentation.exceptions.ErrorMessageFactory;
+import com.zeyad.cleanarchitecture.domain.exceptions.DefaultErrorBundle;
+import com.zeyad.cleanarchitecture.domain.exceptions.ErrorBundle;
+import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
+import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
+import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
 
 /**
  * @author by zeyad on 17/05/16.

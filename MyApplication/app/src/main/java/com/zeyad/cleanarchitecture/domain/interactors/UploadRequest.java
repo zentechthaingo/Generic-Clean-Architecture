@@ -1,4 +1,4 @@
-package com.grability.rappitendero.domain.interactors;
+package com.zeyad.cleanarchitecture.domain.interactors;
 
 import android.support.annotation.NonNull;
 

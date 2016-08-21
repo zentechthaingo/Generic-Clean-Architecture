@@ -40,7 +40,7 @@ public class UserViewHolder extends GenericRecyclerViewAdapter.ViewHolder {
     }
 
     @Override
-    public void bindData(Object data, SparseBooleanArray selectedItems, int position) {
+    public void bindData(Object data, SparseBooleanArray selectedItems, int position, boolean isEnabled) {
         UserViewModel userViewModel = (UserViewModel) data;
         textViewTitle.setText(userViewModel.getFullName());
         rl_row_user.setBackgroundColor(selectedItems.get(position) ? Color.GRAY : Color.WHITE);

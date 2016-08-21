@@ -1,12 +1,11 @@
 buildscript {
     repositories {
-        mavenCentral()
         jcenter()
     }
     dependencies {
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'me.tatarka:gradle-retrolambda:3.2.5'
-        classpath "io.realm:realm-gradle-plugin:1.0.0"
+        classpath "io.realm:realm-gradle-plugin:1.2.0"
         classpath "com.fernandocejas.frodo:frodo-plugin:0.8.2"
     }
 }
@@ -19,13 +18,14 @@ apply plugin: 'com.fernandocejas.frodo'
 
 repositories {
     maven { url "https://jitpack.io" }
+    maven { url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo' }
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion '24.0.1'
     dexOptions {
-        maxProcessCount 2
+        maxProcessCount 4
         javaMaxHeapSize "3g"
     }
     defaultConfig {
@@ -34,10 +34,16 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitTestRunner'
     }
     buildTypes {
+        debug {
+            minifyEnabled false
+            shrinkResources true
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            testCoverageEnabled true
+        }
         release {
             minifyEnabled true
             shrinkResources true
@@ -56,33 +62,16 @@ android {
     }
 }
 
-String java8 = getJavaVersion(8)
-String java7 = getJavaVersion(7)
-
-retrolambda {
-    jdk java8
-    oldJdk java7
-    javaVersion JavaVersion.VERSION_1_7
-//    jvmArgs '-arg1', '-arg2' < if I don't comment this line gradle fails
-    defaultMethods false
-    incremental true
-}
-
-String getJavaVersion(Integer v) {
-    def sout = new StringBuffer()
-    def proc = "/usr/libexec/java_home -v 1.$v".execute()
-    proc.consumeProcessOutput(sout, new StringBuffer())
-    proc.waitForOrKill(1000)
-    return sout.toString().replace("\n", "").replace("\r", "")
-}
-
 ext {
-    supportLibraryVersion = '23.4.0'
-    retrofitVersion = '2.0.2'
-    firebaseGPSVersion = '9.0.2'
+    supportLibraryVersion = '24.2.0'
+    retrofitVersion = '2.1.0'
+    okhttpVersion = '3.3.1'
+    googlePlayVersion = '9.4.0'
+    rxbindingVersion = '0.4.0'
+    daggerVersion = '2.5'
+    parcelerVersion = '1.1.1'
     leakCanaryVersion = '1.3.1'
 }
-
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -120,17 +109,18 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-library:1.1'
     androidTestCompile 'org.hamcrest:hamcrest-library:1.1'
     // Stetho
-//    debugCompile 'com.facebook.stetho:stetho:1.3.1'
+    debugCompile 'com.facebook.stetho:stetho:1.3.1'
+    debugCompile 'com.uphyca:stetho_realm:0.9.0'
 //    debugCompile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
     // Leak Canary
     debugCompile "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
     releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
     // Firebase SDK & UI
-    compile "com.google.firebase:firebase-messaging:$firebaseGPSVersion"
-    compile "com.google.firebase:firebase-crash:$firebaseGPSVersion"
-    compile "com.google.firebase:firebase-analytics:$firebaseGPSVersion"
+    compile "com.google.firebase:firebase-messaging:$googlePlayVersion"
+    compile "com.google.firebase:firebase-crash:$googlePlayVersion"
+    compile "com.google.firebase:firebase-analytics:$googlePlayVersion"
     // Google Play Services
-    compile "com.google.android.gms:play-services-gcm:$firebaseGPSVersion"
+    compile "com.google.android.gms:play-services-gcm:$googlePlayVersion"
     // Support
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
     compile "com.android.support:support-v4:$supportLibraryVersion"
@@ -142,19 +132,19 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
     compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     compile "com.squareup.retrofit2:adapter-rxjava:$retrofitVersion"
-    compile 'com.squareup.okhttp3:okhttp:3.2.0'
-    compile "com.squareup.okhttp3:logging-interceptor:3.2.0"
+    compile "com.squareup.okhttp3:okhttp:$okhttpVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$okhttpVersion"
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.facebook.network.connectionclass:connectionclass:1.0.1'
     // Rx
     compile 'io.reactivex:rxandroid:1.2.0'
     compile 'io.reactivex:rxjava:1.1.5'
-    compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
-    compile 'com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.4.0'
+    compile "com.jakewharton.rxbinding:rxbinding:$rxbindingVersion"
+    compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7:$rxbindingVersion"
     // Injection
-    apt 'com.google.dagger:dagger-compiler:2.0'
+    compile "com.google.dagger:dagger:$daggerVersion"
+    apt "com.google.dagger:dagger-compiler:$daggerVersion"
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'javax.annotation:jsr250-api:1.0'
-    compile 'com.google.dagger:dagger:2.0'
 }
 apply plugin: 'com.google.gms.google-services'

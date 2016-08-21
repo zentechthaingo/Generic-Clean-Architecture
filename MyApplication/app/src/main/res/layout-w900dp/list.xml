@@ -1,6 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +9,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context=".views.activities.ProductListActivity">
+    tools:context=".presentation.screens.users.list.UserListActivity">
 
     <!-- This layout is a two-pane layout for the Products master/detail flow. -->
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -52,5 +51,4 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3" />
-
 </LinearLayout>

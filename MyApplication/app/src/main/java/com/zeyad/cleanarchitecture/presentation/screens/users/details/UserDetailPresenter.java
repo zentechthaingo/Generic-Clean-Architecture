@@ -8,8 +8,8 @@ import com.zeyad.cleanarchitecture.domain.exceptions.ErrorBundle;
 import com.zeyad.cleanarchitecture.domain.interactors.DefaultSubscriber;
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
+import com.zeyad.cleanarchitecture.presentation.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.exception.ErrorMessageFactory;
-import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.BasePresenter;
 import com.zeyad.cleanarchitecture.presentation.screens.GenericEditableItemView;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
@@ -80,7 +80,7 @@ public class UserDetailPresenter extends BasePresenter {
     }
 
     private void showErrorMessage(ErrorBundle errorBundle) {
-        mViewDetailsView.showError(ErrorMessageFactory.create(mViewDetailsView.getContext(),
+        mViewDetailsView.showError(ErrorMessageFactory.create(mViewDetailsView.getApplicationContext(),
                 errorBundle.getException()));
     }
 

@@ -1,13 +1,22 @@
 package com.zeyad.cleanarchitecture.domain.interactors;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.models.mapper.ModelDataMapper;
 import com.zeyad.cleanarchitecture.domain.repository.Repository;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import javax.inject.Inject;

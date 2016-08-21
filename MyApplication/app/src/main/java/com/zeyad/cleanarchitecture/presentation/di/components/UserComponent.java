@@ -1,15 +1,15 @@
-package com.zeyad.cleanarchitecture.presentation.internal.di.components;
+package com.zeyad.cleanarchitecture.presentation.di.components;
 
-import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
-import com.zeyad.cleanarchitecture.presentation.internal.di.modules.ActivityModule;
-import com.zeyad.cleanarchitecture.presentation.internal.di.modules.UserModule;
-import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
+import com.zeyad.cleanarchitecture.presentation.di.PerActivity;
+import com.zeyad.cleanarchitecture.presentation.di.modules.ActivityModule;
+import com.zeyad.cleanarchitecture.presentation.di.modules.UserModule;
 import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
 
 import dagger.Component;
 
 /**
- * A scope {@link com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity} component.
+ * A scope {@link com.zeyad.cleanarchitecture.presentation.di.PerActivity} component.
  * Injects user specific Fragments.
  */
 @PerActivity

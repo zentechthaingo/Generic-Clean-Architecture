@@ -5,6 +5,7 @@ import android.widget.Button;
 
 import com.zeyad.cleanarchitecture.R;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
+import com.zeyad.cleanarchitecture.presentation.screens.users.list.UserListActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,7 +39,7 @@ public class MainActivity extends BaseActivity {
      */
     @OnClick(R.id.btn_LoadData)
     void navigateToUserList() {
-        navigator.navigateToUserList(getApplicationContext());
+        navigator.navigateTo(getApplicationContext(), UserListActivity.getCallingIntent(getApplicationContext()));
     }
 
     /**

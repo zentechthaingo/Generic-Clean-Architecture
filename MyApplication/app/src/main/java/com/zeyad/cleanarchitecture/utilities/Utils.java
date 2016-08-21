@@ -10,6 +10,7 @@ import android.os.Build;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.zeyad.cleanarchitecture.data.db.DataBaseManager;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
 import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
@@ -40,7 +41,7 @@ public class Utils {
 
     // Simple logging to let us know what each source is returning
     public static Observable.Transformer<List, List> logSources(final String source,
-                                                                GeneralRealmManager realmManager) {
+                                                                DataBaseManager realmManager) {
         return observable -> observable.doOnNext(entities -> {
             if (entities == null)
                 System.out.println(source + " does not have any data.");

@@ -36,5 +36,5 @@ public interface LoadDataView {
     /**
      * Get a {@link Context}.
      */
-    Context getContext();
+    Context getApplicationContext();
 }

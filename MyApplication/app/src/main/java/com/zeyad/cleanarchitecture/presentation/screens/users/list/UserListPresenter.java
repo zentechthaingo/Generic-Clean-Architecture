@@ -4,7 +4,7 @@ import com.zeyad.cleanarchitecture.data.entities.UserRealmModel;
 import com.zeyad.cleanarchitecture.data.repository.generalstore.DataStore;
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.models.User;
-import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
+import com.zeyad.cleanarchitecture.presentation.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.GenericListExtendedPresenter;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.utilities.Constants;

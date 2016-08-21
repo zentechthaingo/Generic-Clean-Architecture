@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.graphics.Palette;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,8 @@ import android.widget.TextView;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.zeyad.cleanarchitecture.R;
-import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
+import com.zeyad.cleanarchitecture.presentation.di.components.UserComponent;
+import com.zeyad.cleanarchitecture.presentation.factories.SnackBarFactory;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseFragment;
 import com.zeyad.cleanarchitecture.presentation.screens.GenericEditableItemView;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
@@ -247,11 +249,11 @@ public class UserDetailsFragment extends BaseFragment implements GenericEditable
 
     @Override
     public void showError(String message) {
-        showToastMessage(message);
+        showSnackBarMessage(SnackBarFactory.TYPE_ERROR, bt_retry, message, Snackbar.LENGTH_LONG);
     }
 
     @Override
-    public Context getContext() {
+    public Context getApplicationContext() {
         return getActivity().getApplicationContext();
     }
 

@@ -71,7 +71,7 @@ public abstract class GenericListPresenter<M, H extends RecyclerView.ViewHolder>
     }
 
     public void showErrorMessage(ErrorBundle errorBundle) {
-        mGenericListView.showError(ErrorMessageFactory.create(mGenericListView.getContext(),
+        mGenericListView.showError(ErrorMessageFactory.create(mGenericListView.getApplicationContext(),
                 errorBundle.getException()));
     }
 

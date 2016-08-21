@@ -7,6 +7,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -83,7 +84,6 @@ public interface RestApi {
     Observable<ResponseBody> upload(@Url String url,
                                     @Part MultipartBody.Part file, boolean shouldCache);
 
-
-    @POST
-    Call<RefreshTokenEntity> refreshToken(@Url String url, @Body RequestBody body);
+//    @POST
+//    Call<RefreshTokenEntity> refreshToken(@Url String url, @Body RequestBody body);
 }

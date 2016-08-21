@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:visibility="gone">
 
-    <ProgressBar
-        style="@style/AppTheme.ProgressBar"
-        android:layout_centerInParent="true" />
-
+    <com.zeyad.cleanarchitecture.presentation.screens.LoaderLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

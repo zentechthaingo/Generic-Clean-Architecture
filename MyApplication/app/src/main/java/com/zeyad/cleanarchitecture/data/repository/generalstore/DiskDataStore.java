@@ -2,9 +2,9 @@ package com.zeyad.cleanarchitecture.data.repository.generalstore;
 
 import android.support.annotation.NonNull;
 
-import com.grability.rappitendero.data.db.DataBaseManager;
-import com.grability.rappitendero.data.entities.mappers.EntityMapper;
-import com.grability.rappitendero.utils.Utils;
+import com.zeyad.cleanarchitecture.data.db.DataBaseManager;
+import com.zeyad.cleanarchitecture.data.entities.mapper.EntityMapper;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

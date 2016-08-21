@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.internal.di;
+package com.zeyad.cleanarchitecture.presentation.di;
 
 import java.lang.annotation.Retention;
 

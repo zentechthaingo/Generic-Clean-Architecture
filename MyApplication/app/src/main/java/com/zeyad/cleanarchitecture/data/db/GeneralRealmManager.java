@@ -6,8 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.grability.rappitendero.utils.Constants;
-import com.grability.rappitendero.utils.Utils;
+import com.zeyad.cleanarchitecture.utilities.Constants;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,14 +31,14 @@ import rx.schedulers.Schedulers;
  * {@link DataBaseManager} implementation.
  */
 @Singleton
-public class GeneralRealmManagerImpl implements DataBaseManager {
+public class GeneralRealmManager implements DataBaseManager {
 
-    public final String TAG = GeneralRealmManagerImpl.class.getName();
+    public final String TAG = GeneralRealmManager.class.getName();
     private Realm mRealm;
     private Context mContext;
 
     @Inject
-    public GeneralRealmManagerImpl(Context mContext) {
+    public GeneralRealmManager(Context mContext) {
         mRealm = Realm.getDefaultInstance();
         this.mContext = mContext;
     }

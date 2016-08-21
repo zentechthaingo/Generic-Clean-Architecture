@@ -5,13 +5,13 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.Toast;
 
-import com.grability.rappitendero.RappiApplication;
-import com.grability.rappitendero.domain.eventbus.RxEventBus;
-import com.grability.rappitendero.presentation.di.HasComponent;
-import com.grability.rappitendero.presentation.di.components.ApplicationComponent;
-import com.grability.rappitendero.presentation.factories.SnackBarFactory;
-import com.grability.rappitendero.presentation.navigation.Navigator;
-import com.grability.rappitendero.utils.Utils;
+import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
+import com.zeyad.cleanarchitecture.presentation.AndroidApplication;
+import com.zeyad.cleanarchitecture.presentation.di.HasComponent;
+import com.zeyad.cleanarchitecture.presentation.di.components.ApplicationComponent;
+import com.zeyad.cleanarchitecture.presentation.factories.SnackBarFactory;
+import com.zeyad.cleanarchitecture.presentation.navigation.Navigator;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import javax.inject.Inject;
 
@@ -51,10 +51,10 @@ public abstract class BaseFragment extends Fragment {
     /**
      * Get the Main Application component for dependency injection.
      *
-     * @return {@link com.grability.rappitendero.presentation.di.components.ApplicationComponent}
+     * @return {@link com.zeyad.cleanarchitecture.presentation.di.components.ApplicationComponent}
      */
     protected ApplicationComponent getApplicationComponent() {
-        return ((RappiApplication) getContext().getApplicationContext()).getApplicationComponent();
+        return ((AndroidApplication) getContext().getApplicationContext()).getApplicationComponent();
     }
 
     /**

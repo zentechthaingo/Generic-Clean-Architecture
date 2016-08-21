@@ -1,5 +1,7 @@
 package com.zeyad.cleanarchitecture.data.network;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.ExclusionStrategy;
@@ -12,6 +14,7 @@ import com.zeyad.cleanarchitecture.utilities.Constants;
 import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +23,7 @@ import io.realm.RealmObject;
 import okhttp3.Cache;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -27,6 +31,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import okio.Buffer;
+import okio.BufferedSink;
+import okio.GzipSink;
+import okio.Okio;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -47,7 +55,7 @@ public class ApiConnection {
     private static Cache provideCache() {
         Cache cache = null;
         try {
-            cache = new Cache(new File(RappiApplication.getInstance().getCacheDir(), "http-cache"),
+            cache = new Cache(new File(AndroidApplication.getInstance().getCacheDir(), "http-cache"),
                     10 * 1024 * 1024); // 10 MB
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +84,7 @@ public class ApiConnection {
     private static Interceptor provideOfflineCacheInterceptor() {
         return chain -> {
             Request request = chain.request();
-            if (!Utils.isNetworkAvailable(RappiApplication.getInstance().getApplicationContext())) {
+            if (!Utils.isNetworkAvailable(AndroidApplication.getInstance().getApplicationContext())) {
                 CacheControl cacheControl = new CacheControl.Builder()
                         .maxStale(1, TimeUnit.DAYS)
                         .build();
@@ -252,9 +260,9 @@ public class ApiConnection {
         return retrofit.create(RestApi.class).dynamicDeleteObject(url, body);
     }
 
-    public static Call<RefreshTokenEntity> refreshToken(String url, RequestBody body) {
-        if (retrofit == null)
-            retrofit = createRetro2Client(false);
-        return retrofit.create(RestApi.class).refreshToken(url, body);
-    }
+//    public static Call<RefreshTokenEntity> refreshToken(String url, RequestBody body) {
+//        if (retrofit == null)
+//            retrofit = createRetro2Client(false);
+//        return retrofit.create(RestApi.class).refreshToken(url, body);
+//    }
 }

@@ -2,7 +2,7 @@ package com.zeyad.cleanarchitecture.data.executor;
 
 import android.support.annotation.NonNull;
 
-import com.grability.rappitendero.domain.executors.ThreadExecutor;
+import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;

@@ -13,7 +13,6 @@ import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.OneoffTask;
 import com.google.gson.Gson;
 import com.zeyad.cleanarchitecture.data.db.GeneralRealmManager;
-import com.zeyad.cleanarchitecture.data.db.GeneralRealmManagerImpl;
 import com.zeyad.cleanarchitecture.data.entities.mapper.UserEntityDataMapper;
 import com.zeyad.cleanarchitecture.domain.eventbus.RxEventBus;
 import com.zeyad.cleanarchitecture.presentation.services.GenericGCMService;
@@ -45,7 +44,7 @@ public class Post {
         mContext = context;
         ArrayList extras = intent.getParcelableExtra(Constants.EXTRA);
         dataClass = (Class) extras.get(1);
-        realmManager = new GeneralRealmManagerImpl(mContext);
+        realmManager = new GeneralRealmManager(mContext);
         entityDataMapper = new UserEntityDataMapper();
         postToCloud(extras.get(0));
     }

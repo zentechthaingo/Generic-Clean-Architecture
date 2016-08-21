@@ -1,4 +1,4 @@
-package com.grability.rappitendero.presentation.components.adapter;
+package com.zeyad.cleanarchitecture.presentation.components.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.grability.rappitendero.utils.Utils;
 import com.jakewharton.rxbinding.view.RxView;
+import com.zeyad.cleanarchitecture.utilities.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;

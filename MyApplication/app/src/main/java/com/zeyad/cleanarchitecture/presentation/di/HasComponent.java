@@ -1,4 +1,4 @@
-package com.zeyad.cleanarchitecture.presentation.internal.di;
+package com.zeyad.cleanarchitecture.presentation.di;
 
 /**
  * Interface representing a contract for clients that contains a component for dependency injection.

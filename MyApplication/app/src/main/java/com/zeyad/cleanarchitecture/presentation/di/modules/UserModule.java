@@ -1,10 +1,10 @@
-package com.zeyad.cleanarchitecture.presentation.internal.di.modules;
+package com.zeyad.cleanarchitecture.presentation.di.modules;
 
 import com.zeyad.cleanarchitecture.domain.executors.PostExecutionThread;
 import com.zeyad.cleanarchitecture.domain.executors.ThreadExecutor;
 import com.zeyad.cleanarchitecture.domain.interactors.GenericUseCase;
 import com.zeyad.cleanarchitecture.domain.repository.Repository;
-import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
+import com.zeyad.cleanarchitecture.presentation.di.PerActivity;
 
 import javax.inject.Named;
 

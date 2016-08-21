@@ -1,4 +1,4 @@
-package com.grability.rappitendero.data.entities.mappers;
+package com.zeyad.cleanarchitecture.data.entities.mapper;
 
 import android.support.annotation.Nullable;
 

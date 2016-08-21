@@ -1,4 +1,4 @@
-package com.grability.rappitendero.presentation.components.adapter;
+package com.zeyad.cleanarchitecture.presentation.components.adapter;
 
 import android.util.SparseBooleanArray;
 

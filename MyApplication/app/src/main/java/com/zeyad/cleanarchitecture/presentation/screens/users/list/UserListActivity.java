@@ -1,6 +1,5 @@
 package com.zeyad.cleanarchitecture.presentation.screens.users.list;
 
-import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -33,9 +32,10 @@ import com.zeyad.cleanarchitecture.presentation.components.adapter.GenericRecycl
 import com.zeyad.cleanarchitecture.presentation.components.adapter.HeadFootViewHolder;
 import com.zeyad.cleanarchitecture.presentation.components.adapter.ItemInfo;
 import com.zeyad.cleanarchitecture.presentation.components.adapter.LoadingViewHolder;
-import com.zeyad.cleanarchitecture.presentation.internal.di.components.UserComponent;
+import com.zeyad.cleanarchitecture.presentation.di.components.UserComponent;
 import com.zeyad.cleanarchitecture.presentation.screens.BaseActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.GenericListView;
+import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsActivity;
 import com.zeyad.cleanarchitecture.presentation.screens.users.details.UserDetailsFragment;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 import com.zeyad.cleanarchitecture.utilities.Utils;
@@ -137,7 +137,8 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
                         arguments.putBoolean(UserDetailsFragment.ADD_NEW_ITEM, true);
                         fragment.setArguments(arguments);
                         addFragment(R.id.detail_container, fragment, mSharedElements);
-                    } else navigator.navigateToUserDetails(this, -1, null);
+                    } else
+                        navigator.navigateTo(getApplicationContext(), UserDetailsActivity.getCallingIntent(getApplicationContext(), -1));
                 }));
     }
 
@@ -208,7 +209,7 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
         if (findViewById(R.id.detail_container) != null) // Two pane for tablets(res/values-w900dp).
             mTwoPane = true;
         rv_users.setLayoutManager(new LinearLayoutManager(this));
-        mUsersAdapter = new GenericRecyclerViewAdapter(getContext(), new ArrayList<>()) {
+        mUsersAdapter = new GenericRecyclerViewAdapter(getApplicationContext(), new ArrayList<>()) {
             @Override
             public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 switch (viewType) {
@@ -295,10 +296,12 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
                 fragment.setArguments(arguments);
                 addFragment(R.id.detail_container, fragment, mSharedElements);
             } else
-                navigator.navigateToUserDetails(this, userViewModel.getUserId(),
-                        ActivityOptions.makeSceneTransitionAnimation(this, firstPair, secondPair, thirdPair).toBundle());
+                navigator.navigateTo(getApplicationContext(),
+                        UserDetailsActivity.getCallingIntent(getApplicationContext(), userViewModel.getUserId()));
+//                        ActivityOptions.makeSceneTransitionAnimation(this, firstPair, secondPair, thirdPair).toBundle());
         } else
-            navigator.navigateToUserDetails(this, userViewModel.getUserId(), null);
+            navigator.navigateTo(getApplicationContext(), UserDetailsActivity
+                    .getCallingIntent(getApplicationContext(), userViewModel.getUserId()));
     }
 
     @Override
@@ -307,7 +310,7 @@ public class UserListActivity extends BaseActivity implements ActionMode.Callbac
     }
 
     @Override
-    public Context getContext() {
+    public Context getApplicationContext() {
         return getApplicationContext();
     }
 

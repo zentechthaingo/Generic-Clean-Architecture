@@ -1,7 +1,7 @@
 package com.zeyad.cleanarchitecture.presentation.view_models.mapper;
 
 import com.zeyad.cleanarchitecture.domain.models.User;
-import com.zeyad.cleanarchitecture.presentation.internal.di.PerActivity;
+import com.zeyad.cleanarchitecture.presentation.di.PerActivity;
 import com.zeyad.cleanarchitecture.presentation.view_models.UserViewModel;
 
 import java.util.ArrayList;
